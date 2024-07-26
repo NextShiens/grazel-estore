@@ -1,0 +1,10 @@
+.ant-radio-inner:after {
+  background: red !important;
+}
+
+.ant-radio-checked .ant-radio-inner,
+.ant-radio:hover .ant-radio-inner,
+.ant-radio-wrapper:hover,
+.ant-radio-input:focus .ant-radio-inner {
+  border-color: red !important;
+}
