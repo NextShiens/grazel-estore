@@ -14,6 +14,8 @@ import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { getReferralByIdApi, joinedReferralApi, registerApi } from "@/apis";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { updateUser } from "@/features/features";
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,6 +26,7 @@ export default function Register() {
   const [registeredUser, setRegisteredUser] = useState(null);
   const [referralCode, setReferralCode] = useState("");
   const router = useRouter();
+  const dispatch = useDispatch();
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -63,8 +66,10 @@ export default function Register() {
       setLoading(true);
       const { data } = await registerApi(formdata);
       setRegisteredUser(data.user);
+      dispatch(updateUser(data.user));
+      localStorage.setItem("token", data.token);
       setLoading(false);
-      toast.success("Account created successfully");
+      toast.success("Account created successfully and logged in start using our platform");
       setShowRefModal(true);
     } catch (err: any) {
       setLoading(false);
@@ -81,7 +86,7 @@ export default function Register() {
       const res = await joinedReferralApi(formdata);
 
       setShowRefModal(false);
-      router.push("/signIn");
+      window.location.href = "/";
     } catch (error) {
       setShowRefModal(false);
     }
@@ -230,9 +235,8 @@ export default function Register() {
 
           <button
             disabled={!isChecked}
-            className={`${
-              !isChecked && "opacity-50"
-            } bg-[#F70000] rounded-xl h-[50px] mt-[30px] w-[100%] text-[18px] font-medium text-white`}
+            className={`${!isChecked && "opacity-50"
+              } bg-[#F70000] rounded-xl h-[50px] mt-[30px] w-[100%] text-[18px] font-medium text-white`}
           >
             {loading ? (
               <BiLoader className="self-center animate-spin h-5 w-full" />
@@ -276,7 +280,7 @@ export default function Register() {
                 className="bg-[#F70000] rounded-xl  p-2   font-medium text-white"
                 onClick={() => {
                   setShowRefModal(false);
-                  router.push("/signIn");
+                  window.location.href = "/";
                 }}
               >
                 Skip
