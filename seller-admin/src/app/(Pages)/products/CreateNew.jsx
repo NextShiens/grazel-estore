@@ -6,7 +6,6 @@ import { updatePageNavigation } from "../../../features/features";
 import { FaCamera } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import { WithContext as ReactTags } from "react-tag-input";
-// import "react-tag-input/example/reactTags.css";
 import { MdCancel } from "react-icons/md";
 import Image from "next/image";
 import { axiosPrivate } from "../../../axios/index";
@@ -28,6 +27,7 @@ const AddProduct = () => {
   useEffect(() => {
     dispatch(updatePageNavigation("products"));
   }, [dispatch]);
+
   useEffect(() => {
     const getAllCategories = async () => {
       const { data } = await axiosPrivate.get("/global/categories", {
@@ -35,10 +35,11 @@ const AddProduct = () => {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
-      !allCategories.length && setAllCategories(data?.categories); // to show data on web
+      !allCategories.length && setAllCategories(data?.categories);
     };
     getAllCategories();
   }, []);
+
   useEffect(() => {
     const getAllBrands = async () => {
       const { data } = await axiosPrivate.get("/global/brands", {
@@ -46,32 +47,47 @@ const AddProduct = () => {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
-      !allBrands.length && setAllBrands(data?.brands); // to show data on web
+      !allBrands.length && setAllBrands(data?.brands);
     };
     getAllBrands();
   }, []);
-  async function onAddProduct(formdata) {
+
+  async function onAddProduct(e) {
+    e.preventDefault();
     try {
       setPending(true);
 
+      const formData = new FormData();
+      formData.append("category_id", e.target.category_id.value);
+      formData.append("brand_id", e.target.brand_id.value);
+      formData.append("title", e.target.title.value);
+      formData.append("price", e.target.price.value);
+      formData.append("featured_image", productImage[0]);
+
       for (let key in galleryImage) {
-        formdata.append("gallery_images", galleryImage[key]);
+        formData.append("gallery_images", galleryImage[key]);
       }
+
+      formData.append("description", e.target.description.value);
+      formData.append("tags", e.target.tags.value);
+      formData.append("size", e.target.size.value);
+      formData.append("color", e.target.color.value);
+      formData.append("discount", e.target.discount.value);
+
       faqs.forEach((faq, i) => {
-        formdata.append(`answers[${i}]`, faq.answer);
-        formdata.append(`questions[${i}]`, faq.question);
+        formData.append(`answers[${i}]`, faq.answer);
+        formData.append(`questions[${i}]`, faq.question);
       });
 
       variants.forEach((variant, i) => {
-        formdata.append(`variants[${i}][price]`, variant.price);
-        formdata.append(`variants[${i}][variant]`, variant.variant);
+        formData.append(`variants[${i}][price]`, variant.price);
+        formData.append(`variants[${i}][variant]`, variant.variant);
       });
 
-      // formdata.append("variants", variants);
-      // formdata.append("faqs", faqs);
-      const { data } = await axiosPrivate.post("/vendor/products", formdata, {
+      const { data } = await axiosPrivate.post("/vendor/products", formData, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
+          "Content-Type": "multipart/form-data",
         },
       });
       toast.success("Product has been created");
@@ -83,11 +99,13 @@ const AddProduct = () => {
       }, 1000);
     }
   }
+
   function onRemoveImg(index) {
     const tempArr = [...galleryImage];
     tempArr.splice(index, 1);
     setGalleryImage(tempArr);
   }
+
   function onRemoveFeatureImg() {
     setProductImage([]);
   }
@@ -111,7 +129,6 @@ const AddProduct = () => {
       const newVariants = [...variants, { variant: tag.text, price: variant }];
       setVariants(newVariants);
     }
-    console.log(variants);
   };
 
   const handleAddFaq = () => {
@@ -121,14 +138,14 @@ const AddProduct = () => {
       setQuestion("");
       setAnswer("");
     }
-    console.log(faqs);
   };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex-1 flex">
         <div className="flex-1 mt-[30px] px-[22px]">
           <form
-            action={onAddProduct}
+            onSubmit={onAddProduct}
             className="bg-white rounded-[8px] shadow-sm px-[20px] py-[25px]"
           >
             <p className="text-[20px] font-[600]">Create New Product</p>
@@ -177,13 +194,12 @@ const AddProduct = () => {
               </div>
               <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
                 <label className="text-[#777777]">Variants</label>
-
                 <div className="ReactTags__tags">
                   <ReactTags
                     tags={tags}
                     handleDelete={handleDelete}
                     handleAddition={handleAddition}
-                    delimiters={[188, 13]} // Comma and Enter keys
+                    delimiters={[188, 13]}
                   />
                 </div>
               </div>
@@ -292,7 +308,6 @@ const AddProduct = () => {
                       className="hidden"
                       name="featured_image"
                       required
-                      // multiple
                       onChange={(e) => {
                         setProductImage([e.target.files[0]]);
                       }}
@@ -343,11 +358,9 @@ const AddProduct = () => {
                       type="file"
                       id="uploadGalleryPic"
                       className="hidden"
-                      // name="featured_image"
-                      required
                       multiple
                       onChange={(e) => {
-                        const filesArray = Array.from(e.target.files); // Convert FileList to Array
+                        const filesArray = Array.from(e.target.files);
                         setGalleryImage([...galleryImage, ...filesArray]);
                       }}
                     />
@@ -365,7 +378,7 @@ const AddProduct = () => {
                         </p>
                       </label>
 
-                      <div className="flex flex-row gap-3">
+                      <div className="flex flex-row gap-3 flex-wrap">
                         {galleryImage?.map((item, index) => (
                           <div key={index} className="relative">
                             <Image
@@ -389,14 +402,33 @@ const AddProduct = () => {
               </div>
             </div>
 
+            <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
+              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
+                <label className="text-[#777777]">Size</label>
+                <input
+                  placeholder="Size (e.g., XS, S, M, L, XL, XXL)"
+                  name="size"
+                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                />
+              </div>
+              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
+                <label className="text-[#777777]">Color</label>
+                <input
+                  placeholder="Color"
+                  name="color"
+                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                />
+              </div>
+            </div>
+
             <div className="flex flex-col gap-10 pb-8">
               <button
+                type="submit"
                 disabled={isPending}
-                className="h-[50px] rounded-[8px] bg-[#FE4242] flex items-center justify-center  text-white font-[500] w-[200px] mt-10 disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none"
+                className="h-[50px] rounded-[8px] bg-[#FE4242] flex items-center justify-center text-white font-[500] w-full sm:w-[200px] mt-10 disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none"
               >
                 {isPending ? (
                   <p>
-                    {" "}
                     <LuLoader2
                       size={20}
                       className="animate-spin mx-auto mt-3"
