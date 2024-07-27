@@ -232,6 +232,7 @@ export default function MyAccount() {
     try {
       await logout();
       localStorage.clear();
+      window.location.href = "/signIn";
       router.push("/signIn");
     } catch (error) {
       console.log(error);
@@ -348,31 +349,28 @@ export default function MyAccount() {
         >
           <div
             onClick={() => handleSectionChange("Personal Info")}
-            className={`cursor-pointer pl-5 text-[14px] font-medium cursor-pointer ${
-              activeSection === "Personal Info"
+            className={`cursor-pointer pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "Personal Info"
                 ? "border-l-[4px] border-[#F70000] pl-2"
                 : "text-[#8B8B8B] "
-            }`}
+              }`}
           >
             Personal Information
           </div>
           <div
             onClick={() => handleSectionChange("Orders")}
-            className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${
-              activeSection === "Orders"
+            className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${activeSection === "Orders"
                 ? "border-l-[4px] border-[#F70000] pl-2"
                 : "text-[#8B8B8B]"
-            }`}
+              }`}
           >
             My Orders
           </div>
           <div
             onClick={() => handleSectionChange("Manage Address")}
-            className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${
-              activeSection === "Manage Address"
+            className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${activeSection === "Manage Address"
                 ? "border-l-[4px] border-[#F70000] pl-2"
                 : "text-[#8B8B8B] "
-            }`}
+              }`}
           >
             Manage Address
           </div>
@@ -388,35 +386,32 @@ export default function MyAccount() {
           </div> */}
           <div
             onClick={() => handleSectionChange("Password Manager")}
-            className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
-              activeSection === "Password Manager"
+            className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "Password Manager"
                 ? "border-l-[4px] border-[#F70000] pl-2"
                 : "text-[#8B8B8B] "
-            }`}
+              }`}
           >
             Password Manager
           </div>
 
           <div
             onClick={() => handleSectionChange("referral")}
-            className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
-              activeSection === "referral"
+            className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "referral"
                 ? "border-l-[4px] border-[#F70000] pl-2"
                 : "text-[#8B8B8B] "
-            }`}
+              }`}
           >
             Referrals
           </div>
 
           <div
             onClick={handelLogout}
-            className={`cursor-pointer  mt-[40px] pl-5  text-[14px] font-medium cursor-pointer   ${
-              activeSection === "Logout"
+            className={`cursor-pointer  mt-[40px] pl-5  text-[14px] font-medium cursor-pointer   ${activeSection === "Logouts"
                 ? "border-l-[4px] border-[#F70000] pl-2"
                 : "text-[#8B8B8B] "
-            }`}
+              }`}
           >
-            Logout
+            Logouts
           </div>
         </div>
         <div className="rounded-3xl  lg:w-[77%] w-[100%] min-h-[454px] max-h-auto">
@@ -642,11 +637,10 @@ export default function MyAccount() {
                         <div className="flex items-center justify-center border-[1px] border-[#BABABA] rounded-md w-[55px] h-[35px] mr-3">
                           {editEnabled !== item?.id ? (
                             <FiEdit
-                              className={`${
-                                editEnabled === item?.id
+                              className={`${editEnabled === item?.id
                                   ? "text-[#F70000]"
                                   : "text-[#BABABA]"
-                              } h-[20px] w-[20px]  cursor-pointer`}
+                                } h-[20px] w-[20px]  cursor-pointer`}
                               onClick={() => setEditEnabled(item?.id)}
                             />
                           ) : (
