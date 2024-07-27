@@ -1,18 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
 import { Rating } from '@mui/material';
 import { FaShoppingCart } from 'react-icons/fa';
 import { calculateFinalPrice } from '@/utils/priceCalculation';
+import { updateCart } from '@/features/features';
+import { toast } from 'react-toastify';
 import LikeButton from './LikeButton';
 
 interface ProductCardProps {
   product: any;
-  onAddToCart: (product: any) => void;
+  width?: string;
+  offerId?: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
-  const { price, basePrice, discountInfo } = calculateFinalPrice(product, null);
+const ProductCard: React.FC<ProductCardProps> = ({ product, width, offerId }) => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const [isPending, setPending] = useState(false);
+
+  const { basePrice, price, discountInfo } = calculateFinalPrice(product, null);
+
+  const goToDetail = () => {
+    const id = product.id;
+    if (typeof window !== 'undefined') {
+      const ids = localStorage.getItem('productIds')
+        ? JSON.parse(localStorage.getItem('productIds')!)
+        : [];
+
+      if (!ids.includes(id)) {
+        ids.push(id);
+        localStorage.setItem('productIds', JSON.stringify(ids));
+      }
+    }
+    router.push('/detailProduct/' + id);
+  };
+
+  const onAddingCart = (product) => {
+    const updateProduct = {
+      ...product,
+      qty: 1,
+      discountPrice: price,
+      originalPrice: basePrice,
+      discountInfo: discountInfo,
+    };
+    dispatch(updateCart({ type: null, product: updateProduct }));
+    toast.success('Item has been added to cart!');
+  };
+
+  if (offerId && offerId !== product?.offer_id) return null;
 
   return (
     <div className="group bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
@@ -31,7 +69,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
           <LikeButton productId={product.id} />
         </div>
       </div>
-      
+
       <div className="p-4">
         <Link href={`/detailProduct/${product.id}`} className="block">
           <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">{product.title}</h3>
@@ -46,9 +84,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
             <span className="text-sm text-gray-500 line-through ml-2">₹{basePrice}</span>
           </div>
         </Link>
-        
+
         <button
-          onClick={() => onAddToCart(product)}
+          onClick={() => onAddingCart(product)}
           className="w-full bg-white text-red-600 border border-red-600 font-semibold py-2 px-4 rounded-full hover:bg-red-600 hover:text-white transition-colors duration-300 flex items-center justify-center"
         >
           <FaShoppingCart className="mr-2" />
