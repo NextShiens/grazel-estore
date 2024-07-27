@@ -26,6 +26,7 @@ import { RiDeleteBin6Fill } from "react-icons/ri";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { IoCloseSharp, IoLockClosed } from "react-icons/io5";
+import Auth from "@/components/Auth";
 
 export default function Leave() {
   const [meta, setMeta] = useState({});
@@ -87,104 +88,103 @@ export default function Leave() {
   };
 
   return (
-    <div className="lg:my-[50px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[20px] sm:mx-[20px] md:mx-[30px]">
-      <div
-        style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-        className="rounded-3xl p-[20px] w-[100%] gap-8 md:justify-start justify-center flex items-algin "
-      >
-        <p
-          onClick={() => handleSectionChange("Active")}
-          className={`lg:text-[16px] text-[10px] md:text-[14px]  font-normal cursor-pointer ${
-            activeSection === "Active"
+    <Auth>
+      <div className="lg:my-[50px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[20px] sm:mx-[20px] md:mx-[30px]">
+        <div
+          style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
+          className="rounded-3xl p-[20px] w-[100%] gap-8 md:justify-start justify-center flex items-algin "
+        >
+          <p
+            onClick={() => handleSectionChange("Active")}
+            className={`lg:text-[16px] text-[10px] md:text-[14px]  font-normal cursor-pointer ${activeSection === "Active"
               ? "border-b-[4px] border-[#F70000] font-semibold"
               : "text-[#8B8B8B]"
-          }`}
-        >
-          Active orders
-        </p>
+              }`}
+          >
+            Active orders
+          </p>
 
-        <p
-          onClick={() => handleSectionChange("Completed")}
-          className={`lg:text-[16px] text-[10px] md:text-[14px] font-normal cursor-pointer ${
-            activeSection === "Completed"
+          <p
+            onClick={() => handleSectionChange("Completed")}
+            className={`lg:text-[16px] text-[10px] md:text-[14px] font-normal cursor-pointer ${activeSection === "Completed"
               ? "border-b-[4px] border-[#F70000] font-semibold"
               : "text-[#8B8B8B]"
-          }`}
-        >
-          Completed orders
-        </p>
+              }`}
+          >
+            Completed orders
+          </p>
 
-        <p
-          onClick={() => handleSectionChange("Cancelled")}
-          className={`lg:text-[16px] text-[10px] md:text-[14px] font-normal cursor-pointer ${
-            activeSection === "Cancelled"
+          <p
+            onClick={() => handleSectionChange("Cancelled")}
+            className={`lg:text-[16px] text-[10px] md:text-[14px] font-normal cursor-pointer ${activeSection === "Cancelled"
               ? "border-b-[4px] border-[#F70000] font-semibold"
               : "text-[#8B8B8B]"
-          }`}
-        >
-          Cancelled orders
-        </p>
-      </div>
+              }`}
+          >
+            Cancelled orders
+          </p>
+        </div>
 
-      {activeSection === "Active" && (
-        <>
-          {!orders?.length ? (
-            <SkeletonLoader />
-          ) : (
-            orders.map((order: any) => {
-              return (
-                <MyorderCard
-                  status={["in_progress", "new", "shipped"]}
-                  order={order}
-                />
-              );
-            })
-          )}
+        {activeSection === "Active" && (
+          <>
+            {!orders?.length ? (
+              <SkeletonLoader />
+            ) : (
+              orders.map((order: any) => {
+                return (
+                  <MyorderCard
+                    status={["in_progress", "new", "shipped"]}
+                    order={order}
+                  />
+                );
+              })
+            )}
 
-          <CustomModal showModal={showConfirm}>
-            <div className="flex-col justify-center w-[800px]">
-              <div className="mx-[150px] my-[100px]">
-                <div className="flex justify-center mb-[22px]">
-                  <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
+            <CustomModal showModal={showConfirm}>
+              <div className="flex-col justify-center w-[800px]">
+                <div className="mx-[150px] my-[100px]">
+                  <div className="flex justify-center mb-[22px]">
+                    <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
 
-                  <FaCircleCheck className="text-[#E24C4B] h-[105px] mx-[16px] w-[105px]" />
-                  <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
+                    <FaCircleCheck className="text-[#E24C4B] h-[105px] mx-[16px] w-[105px]" />
+                    <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
+                  </div>
+
+                  <p className="text-[24px] mt-10 text-center font-bold text-[#434343]">
+                    You Have Successfully purchased Prime Plan. Your order has
+                    been successfully cancelled.{" "}
+                  </p>
                 </div>
-
-                <p className="text-[24px] mt-10 text-center font-bold text-[#434343]">
-                  You Have Successfully purchased Prime Plan. Your order has
-                  been successfully cancelled.{" "}
-                </p>
               </div>
-            </div>
-          </CustomModal>
-        </>
-      )}
+            </CustomModal>
+          </>
+        )}
 
-      {activeSection === "Completed" && (
-        <>
-          {!orders?.length ? (
-            <SkeletonLoader />
-          ) : (
-            orders.map((order: any) => {
-              return <MyorderCard status={["completed"]} order={order} />;
-            })
-          )}
-        </>
-      )}
+        {activeSection === "Completed" && (
+          <>
+            {!orders?.length ? (
+              <SkeletonLoader />
+            ) : (
+              orders.map((order: any) => {
+                return <MyorderCard status={["completed"]} order={order} />;
+              })
+            )}
+          </>
+        )}
 
-      {activeSection === "Cancelled" && (
-        <>
-          {!orders?.length ? (
-            <SkeletonLoader />
-          ) : (
-            orders.map((order: any) => {
-              return <MyorderCard status={["cancelled"]} order={order} />;
-            })
-          )}
-        </>
-      )}
-    </div>
+        {activeSection === "Cancelled" && (
+          <>
+            {!orders?.length ? (
+              <SkeletonLoader />
+            ) : (
+              orders.map((order: any) => {
+                return <MyorderCard status={["cancelled"]} order={order} />;
+              })
+            )}
+          </>
+        )}
+      </div>
+    </Auth>
   );
 }
 
