@@ -10,6 +10,7 @@ import axios from "axios";
 import Baner from "@/assets/mainBag.png";
 import MenuIcon from "@/assets/VectorMenu.png";
 import ProductCard from "@/components/ProductCard";
+import { useSelector } from "react-redux";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000/api";
 
@@ -19,11 +20,13 @@ export default function StoreProductPage() {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [products, setProducts] = useState([]);
   const [brands, setBrands] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const catredux = useSelector((state) => state.catagories);
+  console.log("catredux", catredux);
+  const [categories, setCategories] = useState(catredux);
   const [filters, setFilters] = useState({
-    keyword: searchParams.get("keyword") || "",
+    keyword: searchParams.get("keyword") || "i",
     brand_id: "",
-    category_id: "",
+    category_id: searchParams.get("category_id") || "",
     rating: "",
     min_price: 0,
     max_price: 100000,
@@ -75,7 +78,7 @@ export default function StoreProductPage() {
   const fetchCategories = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/global/categories`);
-      setCategories(response.data.categories);
+      // setCategories(response.data.categories);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }

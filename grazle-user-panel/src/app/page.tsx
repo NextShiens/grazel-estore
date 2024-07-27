@@ -34,6 +34,7 @@ import Fram22 from "@/assets/Frame 22.png";
 import Fram44 from "@/assets/Frame 44.png";
 import ProductCard from "@/components/ProductCard";
 import Arrow from "@/assets/Round Alt Arrow Right.png";
+import { useDispatch } from "react-redux";
 
 import {
   getSeasonTop,
@@ -57,8 +58,10 @@ import {
   calculateTimeLeft,
 } from "@/utils/priceCalculation";
 import Link from "next/link";
+import { updateCategories } from "@/features/features";
 
 export default function Home() {
+  const dispatch = useDispatch();
   const [seasonTop, setSeasonTop] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [recentProducts, setRecentProducts] = useState([]);
@@ -118,6 +121,7 @@ export default function Home() {
     (async () => {
       const { data } = await getAllCategoriesApi();
       setCategories(data?.categories || []);
+      dispatch(updateCategories(data?.categories || []));
     })();
   }, []);
 
@@ -182,7 +186,7 @@ export default function Home() {
   const seventyFivePercentSaleProducts = allProducts.filter(
     (product) =>
       product?.offer?.discount_type?.toLowerCase() ===
-        "percentage".toLowerCase() &&
+      "percentage".toLowerCase() &&
       product?.offer?.discount_value?.toLowerCase() === "75.00".toLowerCase()
   );
   const seventyFiveEndDate = new Date(
@@ -207,7 +211,7 @@ export default function Home() {
   const fiftyPercentSaleProducts = allProducts.filter(
     (product) =>
       product?.offer?.discount_type?.toLowerCase() ===
-        "percentage".toLowerCase() &&
+      "percentage".toLowerCase() &&
       product?.offer?.discount_value?.toLowerCase() === "50.00".toLowerCase()
   );
 
@@ -480,8 +484,8 @@ export default function Home() {
             {timeLeft?.days > 0
               ? timeLeft?.days + "d"
               : timeLeft?.hours > 0
-              ? timeLeft?.hours
-              : 0}
+                ? timeLeft?.hours
+                : 0}
           </span>
           <span>:</span>
           <span className="p-2 bg-[#F81F1F] rounded-sm text-white md:text-base text-xs">
@@ -552,11 +556,10 @@ export default function Home() {
             disabled={click?.name === item?.name || loading}
             key={index}
             onClick={() => handleClickCategory(item)}
-            className={`${
-              item?.name === click?.name
+            className={`${item?.name === click?.name
                 ? "border border-[#FC3030] text-[#FC3030]"
                 : "bg-[#F8F8F8]"
-            } lg:text-sm text-xs py-2 px-3 rounded-md whitespace-nowrap`}
+              } lg:text-sm text-xs py-2 px-3 rounded-md whitespace-nowrap`}
           >
             {item?.name?.toUpperCase()}
           </button>
@@ -830,8 +833,8 @@ export default function Home() {
               {seventyFiveTimeLeft?.days > 0
                 ? seventyFiveTimeLeft?.days + "d"
                 : seventyFiveTimeLeft?.hours > 0
-                ? seventyFiveTimeLeft?.hours
-                : 0}
+                  ? seventyFiveTimeLeft?.hours
+                  : 0}
             </span>
             <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
               {seventyFiveTimeLeft?.days > 0
