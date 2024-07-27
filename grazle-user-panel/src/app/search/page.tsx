@@ -65,7 +65,7 @@ export default function StoreProductPage() {
 
   const fetchBrands = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/brands`);
+      const response = await axios.get(`${BASE_URL}/global/brands`);
       setBrands(response.data.brands);
     } catch (error) {
       console.error("Error fetching brands:", error);
