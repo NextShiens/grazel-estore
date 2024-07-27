@@ -21,7 +21,6 @@ export default function StoreProductPage() {
   const [products, setProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const catredux = useSelector((state) => state.catagories);
-  console.log("catredux", catredux);
   const [categories, setCategories] = useState(catredux);
   const [filters, setFilters] = useState({
     keyword: searchParams.get("keyword") || "i",
@@ -42,7 +41,6 @@ export default function StoreProductPage() {
   useEffect(() => {
     fetchProducts();
     fetchBrands();
-    fetchCategories();
   }, []);
 
   useEffect(() => {
