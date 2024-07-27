@@ -172,8 +172,8 @@ export default function StoreProductPage() {
               max={100000}
             />
             <div className="flex justify-between mt-2 text-sm text-gray-600">
-              <span>${filters.min_price}</span>
-              <span>${filters.max_price}</span>
+              <span>₹{filters.min_price}</span>
+              <span>₹{filters.max_price}</span>
             </div>
           </div>
         )}
