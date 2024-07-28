@@ -128,7 +128,7 @@ export const placeOrderApi = async (data) =>
 export const getOrderByStatusApi = async (status) =>
   await axios.get(`/buyer/orders?status=${status}`);
 
-// ==============================irfan================================
+// ============================== ================================
 export const getAllProductsApi = async () =>
   await axios.get(`/global/products`);
 
@@ -199,3 +199,13 @@ export const getSeasonTop = async () =>
 
 export const getSingleCategoryProductsApi = async (id) =>
   await axios.get(`/global/products?categoryId=${id}`);
+export const forgetPasswordApi = async (email) => {
+  const formData = new FormData();
+  formData.append('email', email);
+
+  await axios.post("/auth/forgot-password", formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+};
