@@ -35,9 +35,9 @@ export default function Cartpage() {
     dispatch(deleteCartProduct(productId));
   };
 
-  // const goToShippingAddress = () => {
-  //   router.push("/PaymentAndAddress");
-  // };
+  const goToShippingAddress = () => {
+    router.push("/address");
+  };
 
   console.log(cartProducts);
   return (
@@ -53,7 +53,7 @@ export default function Cartpage() {
             </p>
           </div>
 
-          <div className="lg:w-[70%] w-[100%] mb-3 rounded-2xl bg-[#FFFAFA] flex justify-between p-3">
+          {/* <div className="lg:w-[70%] w-[100%] mb-3 rounded-2xl bg-[#FFFAFA] flex justify-between p-3">
             <p className="text-[16px] font-medium text-[#777777]">
               Add More Products
             </p>
@@ -61,7 +61,7 @@ export default function Cartpage() {
             <p className="text-[16px] font-medium text-[#F70000]">
               <Link href="/">+ Add</Link>
             </p>
-          </div>
+          </div> */}
 
           <div className="flex flex-wrap lg:flex-nowrap sm:flex-wrap md:flex-wrap  gap-8">
             <div className="lg:w-[70%] w-[100%] sm:w-[100%] md:w-[100%] h-auto ">
@@ -71,16 +71,26 @@ export default function Cartpage() {
                     style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
                     className="w-[100%] rounded-[20px] p-[20px] mb-2  border-[1px] border-[#777777] hover:border-[#F70000]"
                   >
-                    {/* <div className="flex items-center">
+                    <div className="flex items-center">
                       <CiSquareCheck className="text-[#F70000] text-[24px] mr-3" />
                       <p className="text-[24px] font-normal">{item?.title}</p>
-                    </div> */}
+                    </div>
 
-                    {/* <div className="my-5 border-b-[1px] border-[#777777]"></div> */}
+                    <div className="my-5 border-b-[1px] border-[#777777]"></div>
+
+                    <div className="lg:w-[100%] w-[100%] mb-3 rounded-2xl bg-[#FFFAFA] flex justify-between p-3">
+                      <p className="text-[16px] font-medium text-[#777777]">
+                        Add More Products
+                      </p>
+
+                      <p className="text-[16px] font-medium text-[#F70000]">
+                        <Link href="/">+ Add</Link>
+                      </p>
+                    </div>
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
-                        {/* <CiSquareCheck className="text-[#F70000] lg:block sm:hidden hidden text-[32px] mr-3" /> */}
+                        <CiSquareCheck className="text-[#F70000] lg:block sm:hidden hidden text-[32px] mr-3" />
                         <Image
                           src={"/" + item.featured_image}
                           width={100}
@@ -142,9 +152,9 @@ export default function Cartpage() {
                         </div>
 
                         <div className="flex justify-end mt-4 gap-4">
-                          {/* <div className="lg:w-[43px] lg:h-[43px] h-[30px] w-[30px]  bg-[#5EF7000A] rounded-md flex items-center justify-center">
-                                <FaRegEdit className="lg:text-[24px] text-[18px] text-[#00F763]" />
-                              </div> */}
+                          <div className="lg:w-[43px] lg:h-[43px] h-[30px] w-[30px]  bg-[#5EF7000A] rounded-md flex items-center justify-center">
+                                {/* <FaRegEdit className="lg:text-[24px] text-[18px] text-[#00F763]" /> */}
+                              </div>
 
                           <div
                             onClick={() => onDeleteProduct(item?.id)}
@@ -215,7 +225,7 @@ export default function Cartpage() {
 
                 <button
                   className=" bg-[#F70000] rounded-full h-[45px] mt-8  w-[100%] text-[18px] font-medium text-white"
-                  onClick={() => router.push("/address")}
+                  onClick={() =>{goToShippingAddress()}}
                 >
                   Continue Checkout
                 </button>

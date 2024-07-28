@@ -1,11 +1,20 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { getAllProductsApi, getOfferProductsApi } from "@/apis";
+import { getAllProductsApi, getBannersApi, getOfferProductsApi } from "@/apis";
 import ProductCard from "@/components/ProductCard";
 import RecentViewSlider from "@/components/rencentView";
 import { useSearchParams } from "next/navigation";
+import router from "next/router";
+import Cardmm from "@/assets/Cardmmm.png";
+import Image from "next/image";
+import MainSlider from "@/components/mianSlider";
+
+
 
 const Offers = () => {
+  const [positionOneBanners, setPositionOneBanners] = useState([]);
+
+  // const router = useRouter();
   const id = useSearchParams().get("id");
   console.log(id);
   const [allProducts, setAllProducts] = useState<any>([]);
@@ -18,6 +27,13 @@ const Offers = () => {
     })();
   }, [id]);
 
+  useEffect(() => {
+    (async () => {
+      const positionOneBanners = await getBannersApi(1);
+      setPositionOneBanners(positionOneBanners.data.banners);
+    })();
+  }, []);
+
   // useEffect(() => {
   //   if (id && allProducts?.length > 0) {
   //     // const { data } = await getOfferProductsApi();
@@ -27,23 +43,36 @@ const Offers = () => {
   //     );
   //     console.log("cr", allProducts);
   //     setAllProducts(currentOfferProds);
+  //     // const { data } = await getOfferProductsApi();
+  //     // console.log(data);
   //   }
   // }, [id]);
 
-  // const { data } = await getOfferProductsApi();
+
+  // const goToCreditLimit = () => {
+  //   router.push("/CreditLimit");
+  // };
   return (
-    <div className="p-6 lg:p-10 overflow-x-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8">
+    <>
+      <div className="lg:mx-[150px] md:mx-[60px] lg:px-0 md:px-3">
+        <MainSlider banners={positionOneBanners} />
+      </div>
+      <div className="p-6 lg:p-10 overflow-x-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8">
       {allProducts?.map((product: any) => (
         <ProductCard
           width="100"
           key={product.id}
-          offerId={id || null}
+          offerId={id || ''}
           product={product}
         />
       ))}
+
       {/* <RecentViewSlider Data={allProducts} /> */}
       <></>
+      {/* <RecentViewSlider Data={allProducts} /> */}
     </div>
+    </>
+
   );
 };
 

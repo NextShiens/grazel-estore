@@ -44,6 +44,7 @@ import {
   getOrderByStatusApi,
   getProfileApi,
   getReferralApi,
+  deleteuserApi,
 } from "@/apis";
 import { toast } from "react-toastify";
 import { logout } from "@/lib";
@@ -183,6 +184,23 @@ export default function MyAccount() {
 
   const toggleCancelOrderVisibility = () => {
     setIsCancelOrderVisible(!isCancelOonSelectAddressrderVisible);
+  };
+
+  const deleteuser = async () => {
+    console.log("delete user");
+    try {
+      let formdata: any = [];
+      setPending(true);
+      await deleteuserApi(formdata);
+      toast.success("User has been deleted");
+      router.push("/signIn");
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setTimeout(() => {
+        setPending(false);
+      }, 500);
+    }
   };
 
   async function onEditPassword(formdata) {
@@ -531,28 +549,28 @@ export default function MyAccount() {
                   </div>
                 </div>
                 <CustomModal showModal={showModelDelete}>
-                  <div className=" w-[620px] p-6">
-                    <p className="text-[40px] text-center font-bold text-[#777777]">
-                      Delete Account
-                    </p>
-                    <p className="text-[20px]  font-medium text-[#777777] mt-[32px]">
-                      Deleting your account may remove all your information From
-                      our database, this can not be undone.
-                    </p>
-                    <p className="text-[14px] font-normal text-[#777777] mt-[18px]">
-                      To Confirm this ype ‘Delete’
-                    </p>
-                    <div className="flex items-center gap-4 mt-[4px]">
-                      <input className="border-[1px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"></input>
-                      <button
-                        className=" bg-[#F70000] rounded-2xl h-[50px] w-[275px] text-[18px] font-medium text-white"
-                        onClick={handleCloseModelDelete}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </CustomModal>
+              <div className=" w-[620px] p-6">
+                <p className="text-[40px] text-center font-bold text-[#777777]">
+                  Delete Account
+                </p>
+                <p className="text-[20px]  font-medium text-[#777777] mt-[32px]">
+                  Deleting your account may remove all your information From our
+                  database, this can not be undone.
+                </p>
+                <p className="text-[14px] font-normal text-[#777777] mt-[18px]">
+                  To Confirm this ype ‘Delete’
+                </p>
+                <div className="flex items-center gap-4 mt-[4px]">
+                  <input className="border-[1px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"></input>
+                  <button
+                    className=" bg-[#d63131] rounded-2xl h-[50px] w-[275px] text-[18px] font-medium text-white"
+                    onClick={deleteuser}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </CustomModal>
               </form>
             )}
 

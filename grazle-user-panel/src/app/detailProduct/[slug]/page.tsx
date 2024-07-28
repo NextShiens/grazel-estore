@@ -61,16 +61,16 @@ export default function ProductDetail() {
     (async () => {
       const { data } = await getProductBySlugApi(slug);
       setSingleProduct(data?.product);
-      // setSelectedVariant(
-      //   data.product.variants && data.product.variants.length > 0
-      //     ? data.product.variants[0]
-      //     : null
-      // );
-      // setCurrentVariant(
-      //   data.product.variants && data.product.variants.length > 0
-      //     ? data.product.variants[0]
-      //     : {}
-      // );
+      setSelectedVariant(
+        data.product.variants && data.product.variants.length > 0
+          ? data.product.variants[0]
+          : null
+      );
+      setCurrentVariant(
+        data.product.variants && data.product.variants.length > 0
+          ? data.product.variants[0]
+          : {}
+      );
     })();
   }, []);
 
@@ -88,15 +88,15 @@ export default function ProductDetail() {
     router.push("/StoreProduct?id=" + singleProduct?.store.store_id);
   };
 
-  // const [showPopup, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
-  // const handleClick = () => {
-  //   setShowPopup(true);
-  // };
+  const handleClick = () => {
+    setShowPopup(true);
+  };
 
-  // const closePopup = () => {
-  //   setShowPopup(false);
-  // };
+  const closePopup = () => {
+    setShowPopup(false);
+  };
 
   useEffect(() => {
     (async () => {
@@ -355,7 +355,7 @@ export default function ProductDetail() {
                   Add to cart
                 </button>
 
-                {/* {showPopup && (
+                {showPopup && (
                   <div className="bg-[#F8F8F8] absolute top-[250px] right-0 h-[50px] shadow-lg  w-[350px] flex items-center">
                     <div className="rounded-l-lg bg-[#4FAD2E] w-3  h-[50px]"></div>
 
@@ -367,9 +367,9 @@ export default function ProductDetail() {
                       </p>
                     </div>
                   </div>
-                )} */}
+                )}
 
-                {/* <button className="border-[1px] border-[#F70000] rounded-full h-[50px] mt-[20px] lg:w-[275px] w-[200px] sm:w-[200px] md:w-[200px]  font-medium text-[#F70000]">
+                <button className="border-[1px] border-[#F70000] rounded-full h-[50px] mt-[20px] lg:w-[275px] w-[200px] sm:w-[200px] md:w-[200px]  font-medium text-[#F70000]">
                   Get Started
                 </button>
 
@@ -384,7 +384,7 @@ export default function ProductDetail() {
                       <Image src={heart} alt="like" />
                     )}
                   </IconButton>
-                </div> */}
+                </div>
                 <div className="mt-[20px] flex justify-center items-center rounded-full  h-[52px] w-[52px]">
                   <LikeButton productId={singleProduct?.id} />
                 </div>
@@ -458,7 +458,7 @@ export default function ProductDetail() {
             } text-[14px] font-semibold cursor-pointer`}
             onClick={() => setSelectedTab("description")}
           >
-            Descriptions
+            Descriptions 
           </p>
 
           <p

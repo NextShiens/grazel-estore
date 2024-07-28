@@ -25,7 +25,7 @@ export default function AddressPage() {
   const [addressId, setAddressId] = useState("");
   const [isPending, setPending] = useState(false);
   const [showAddress, setAddress] = useState(false);
-  const [allAddress, setAllAddress] = useState([]);
+  const [allAddress, setAllAddress] = useState<any>([]);
   const [indexDialog, setDialogIndex] = useState("");
 
   const router = useRouter();
@@ -39,23 +39,26 @@ export default function AddressPage() {
 
   function onShowDialog(i: any) {
     setDialogIndex(i);
-    setAddressId("");
+    // setAddressId("");
   }
 
   function onChangeAddress(id: any) {
     setDialogIndex("");
     setAddressId(id);
+  console.log("id", id); 
   }
 
-  async function onCreateAddress(formdata) {
+  async function onCreateAddress(formdata:any) {
     try {
       setPending(true);
+      console.log("formdata", formdata);  
+      const res:any = await createAddressApi(formdata);
 
-      const res = await createAddressApi(formdata);
 
       setAllAddress([...allAddress, res?.data?.address]);
       toast.success("Address has been created");
-    } catch (error) {
+      console.log("res", res);
+    } catch (error:any) {
       if (error?.response?.status === 400) {
         toast.error(error?.response?.data?.message);
       } else {
@@ -90,7 +93,7 @@ export default function AddressPage() {
     try {
       setPending(true);
       await deleteAddressApi(id);
-      const filterAddress = allAddress.filter((item) => item.id !== id);
+      const filterAddress = allAddress.filter((item:any) => item.id !== id);
       setAllAddress(filterAddress);
       toast.success("Address has been deleted");
     } catch (error) {
@@ -123,7 +126,7 @@ export default function AddressPage() {
             </div>
 
             <div className="space-y-3">
-              {allAddress?.map((item, index) => (
+              {allAddress?.map((item:any, index:any) => (
                 <div
                   style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
                   className="rounded-3xl p-[20px] w-full h-auto hover:border-[#F70000] border-[1px] "
@@ -147,7 +150,7 @@ export default function AddressPage() {
                         },
                       }}
                       checked={
-                        addressId === item?.id || indexDialog === index
+                        addressId === item?.id 
                           ? true
                           : false
                       }
@@ -194,18 +197,18 @@ export default function AddressPage() {
                     </div>
 
                     <div className="flex items-center relative">
-                      <div className="flex items-center cursor-pointer justify-center border-[1px] border-[#BABABA] rounded-md w-[35px] h-[35px] mr-3">
-                        <FiEdit
+                      <div className="flex items-center cursor-pointer justify-center rounded-md w-[35px] h-[35px] mr-3"  style={{backgroundColor:'rgba(94, 247, 0, 0.04)'}}>
+                        <FiEdit color="rgba(0, 247, 99, 1)"
                           onClick={() => onShowDialog(index)}
                           className="h-[20px] w-[20px] text-[#BABABA]"
                         />
                       </div>
 
                       <div
-                        style={{ pointerEvents: `${isPending} && "none"` }}
-                        className="flex cursor-pointer items-center justify-center border-[1px] border-[#BABABA] rounded-md w-[35px] h-[35px] "
+                        style={{ pointerEvents: isPending ? "none" : undefined , backgroundColor: "rgba(247, 0, 0, 0.04)"}}
+                        className="flex cursor-pointer items-center justify-center rounded-md w-[35px] h-[35px] "
                       >
-                        <MdOutlineDeleteOutline
+                        <MdOutlineDeleteOutline color="red"
                           onClick={() => onShowDialog(index)}
                           className="h-[20px] w-[20px] text-[#BABABA]"
                         />
@@ -215,7 +218,7 @@ export default function AddressPage() {
                         <>
                           <div className="absolute top-0 right-[100%] px-3 py-4 mr-1 h-auto rounded-sm w-[230px] bg-white shadow-lg">
                             <p
-                              style={{ pointerEvents: `${isPending} && "none"` }}
+                              style={{ pointerEvents: isPending ? "none" : undefined }}
                               onClick={() => onEditAddress(item?.id)}
                               className="flex text-[#777777] items-center gap-2 mb-3 text-sm cursor-pointer"
                             >
@@ -223,7 +226,7 @@ export default function AddressPage() {
                             </p>
 
                             <p
-                              style={{ pointerEvents: `${isPending} && "none"` }}
+                              style={{ pointerEvents: isPending ? "none" : undefined }}
                               onClick={() => onDeleteAddress(item?.id)}
                               className="flex items-center text-[#777777] gap-2 text-sm cursor-pointer"
                             >

@@ -105,7 +105,7 @@ export const editProfileApi = async (data, id) =>
   await axios.put(`/profile/${id}/edit`, data);
 
 export const editPasswordApi = async (data) =>
-  await axios.post("/profile/change-password", data);
+  await axios.post("/profile/reset-password", data);
 
 export const createAddressApi = async (data) =>
   await axios.post("/addresses", data);
@@ -209,3 +209,6 @@ export const forgetPasswordApi = async (email) => {
     }
   });
 };
+
+export const deleteuserApi = async (id) =>
+  await axios.delete(`/users/:id`, id);

@@ -20,10 +20,13 @@ const MyorderCard = ({
   order,
   status,
   setHasOrderCanceled,
+  getMyAllOrders
+
 }: {
   order: any;
   status?: any;
   setHasOrderCanceled?: any;
+  getMyAllOrders:()=>void;
 }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -96,11 +99,11 @@ const MyorderCard = ({
   const handleOrderCancel = async () => {
     if (!order?.id) return;
     try {
+      setIsModalVisible(false);
       const { data } = await cancelOrderApi(order.id);
-
+      getMyAllOrders()
       if (data.success) {
-        setHasOrderCanceled((prev) => !prev);
-        setIsModalVisible(false);
+        // setHasOrderCanceled((prev) => !prev);
         toast.success("Order has been cancelled");
       }
     } catch (error) {
@@ -121,7 +124,7 @@ const MyorderCard = ({
   const deliveredOrder = orderTracking?.status_history?.find((status: any) => {
     return status.status === "completed";
   });
-  console.log("iam updated", orderTracking);
+  // console.log("iam updated", orderTracking);
 
   const orderStatus = orderTracking?.status_history?.slice(-1)[0]?.status;
 
@@ -150,7 +153,7 @@ const MyorderCard = ({
                     {showcancel && (
                       <>
                         <button
-                          onClick={handleOrderCancel}
+                          onClick={() => setIsModalVisible(true)}
                           className="hidden lg:flex items-center p-2 rounded-lg shadow-lg mr-3  cursor-pointer"
                         >
                           <IoCloseSharp className="text-[24px] text-[#FC0005] mr-4 cursor-pointer" />
@@ -200,11 +203,11 @@ const MyorderCard = ({
                 </div>
               </div>
               <p className="hidden lg:block lg:text-[20px] text-[18px] mt-3 lg:mt-0 sm:mt-3 md:mt-3 text-[#777777]  font-medium">
-                {prod.quantity}
+                Quantity {prod.quantity}
               </p>
 
               <p className="hidden lg:block lg:text-[20px] text-[18px] mt-3 lg:mt-0 sm:mt-3 md:mt-3 text-[#777777]  font-medium">
-                ₹{" "}
+                Price:₹{" "}
                 {prod.discounted_price
                   ? prod.discounted_price
                   : prod.price * prod.quantity}
