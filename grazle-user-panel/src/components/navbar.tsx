@@ -53,7 +53,7 @@ export default function Navbar() {
   if (typeof window !== "undefined") {
     token = localStorage.getItem("token")!;
   }
-
+  const [recentSearches, setRecentSearches] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenSearch, setIsOpenSearch] = useState(false);
   const [menuBar, setIsMenuBar] = useState(false);
@@ -116,7 +116,7 @@ export default function Navbar() {
       try {
         const { data } = await getProfileApi();
         setUser(data.user);
-      } catch (error) { }
+      } catch (error) {}
     })();
   }, []);
 
@@ -152,14 +152,21 @@ export default function Navbar() {
     }
   }, 700);
   function onClickDetail(item: any) {
-    router.push(`/search?keyword=${searchValue}`);
+    const newSearch = item.title; // Use the item's title as the new search
+    setRecentSearches((prevSearches) => {
+      const updatedSearches = [
+        newSearch,
+        ...prevSearches.filter((search) => search !== newSearch),
+      ].slice(0, 5);
+      return updatedSearches;
+    });
+    router.push(`/search?keyword=${encodeURIComponent(newSearch)}`); // Use the item's title in the URL
     setIsOpenSearch(false);
     setSearchResult([]);
     if (searchRef.current) {
       searchRef.current.value = "";
     }
   }
-  
   return (
     <>
       <div
@@ -353,6 +360,7 @@ export default function Navbar() {
                   <div className="absolute bg-white opacity-100 right-[34%] w-[400px] z-10 p-4 px-6 shadow-lg border border-[#D2D4DA] rounded-xl">
                     {searchResult?.map((item: any) => (
                       <div
+                        key={item.id}
                         className="flex items-center gap-3 my-3 cursor-pointer"
                         onClick={() => onClickDetail(item)}
                       >
@@ -374,6 +382,20 @@ export default function Navbar() {
                       <p className="text-black text-[16px] font-semibold">
                         Recent Searches
                       </p>
+                    </div>
+                    <div className="rounded-xl mt-3 bg-[#F8F8F8] p-3 w-[80%]">
+                      {recentSearches.map((search, index) => (
+                        <div key={index} className="flex gap-3 mt-3">
+                          <Link
+                            href={`/search?keyword=${encodeURIComponent(
+                              search
+                            )}`}
+                            className="text-black text-[14px] font-normal"
+                          >
+                            {search}
+                          </Link>
+                        </div>
+                      ))}
                     </div>
                     <div className="rounded-xl mt-3 bg-[#F8F8F8] p-3 w-[80%]">
                       <p className="text-black text-[16px] font-semibold">
@@ -460,8 +482,9 @@ export default function Navbar() {
                 )}
                 {isOpen && (
                   <div
-                    className={`absolute right-0 mt-2 w-[335px] ${isOpen ? "h-auto" : "h-0"
-                      } bg-white p-5 shadow-lg border border-[#D2D4DA] rounded-md
+                    className={`absolute right-0 mt-2 w-[335px] ${
+                      isOpen ? "h-auto" : "h-0"
+                    } bg-white p-5 shadow-lg border border-[#D2D4DA] rounded-md
                     transition-all
                     duration-800
                     origin-top z-[9999999]
