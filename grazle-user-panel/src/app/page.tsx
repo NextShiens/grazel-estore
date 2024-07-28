@@ -34,6 +34,7 @@ import Fram22 from "@/assets/Frame 22.png";
 import Fram44 from "@/assets/Frame 44.png";
 import ProductCard from "@/components/ProductCard";
 import Arrow from "@/assets/Round Alt Arrow Right.png";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import {
   getSeasonTop,
@@ -74,6 +75,8 @@ export default function Home() {
   const [timeLeft, setTimeLeft] = useState();
   const [seventyFiveTimeLeft, setSeventyFiveTimeLeft] = useState();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
   const sliderRef1 = useRef<any>(null);
   const sliderRef2 = useRef<any>(null);
   const sliderRef3 = useRef<any>(null);
@@ -457,15 +460,23 @@ export default function Home() {
       {/* Flash sale */}
       <div className="flex justify-between items-center lg:mx-[150px] md:mx-[60px] mx-[14px] md:mt-14 mt-5">
         <span className="text-xl font-semibold">Flash Sale</span>
-        <button className="flex items-center gap-3 border border-[#FC3030] text-[#FC3030] text-sm rounded-lg py-2 px-4">
-          <span
-            onClick={() =>
-              router.push(`/offers?id=${flashSaleProducts[0]?.offer?.id}`)
-            }
-          >
-            View All
-          </span>
-          <FaArrowRightLong />
+        <button
+          className="flex items-center gap-3 border border-[#FC3030] text-[#FC3030] text-sm rounded-lg py-2 px-4"
+          onClick={async () => {
+            setIsLoading(true);
+            await router.push(`/offers?id=${flashSaleProducts[0]?.offer?.id}`);
+            setIsLoading(false);
+          }}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <CircularProgress size={20} color="inherit" />
+          ) : (
+            <>
+              <span>View All</span>
+              <FaArrowRightLong />
+            </>
+          )}
         </button>
       </div>
 
@@ -873,14 +884,33 @@ export default function Home() {
             <p className="md:hidden text-md font-semibold">
               50% On All Products
             </p>
-            <button className="flex items-center gap-3 border border-[#FC3030] text-[#FC3030] text-sm rounded-lg py-2 px-4">
-              <Link
-                href={`/offers?id=${fiftyPercentSaleProducts[0]?.offer_id}`}
+            <Link
+              href={`/offers?id=${fiftyPercentSaleProducts[0]?.offer_id}`}
+              passHref
+              legacyBehavior
+            >
+              <button
+                className="flex items-center gap-3 border border-[#FC3030] text-[#FC3030] text-sm rounded-lg py-2 px-4"
+                onClick={async (e) => {
+                  e.preventDefault();
+                  setIsLoading(true);
+                  await router.push(
+                    `/offers?id=${fiftyPercentSaleProducts[0]?.offer_id}`
+                  );
+                  setIsLoading(false);
+                }}
+                disabled={isLoading}
               >
-                View All
-              </Link>
-              <FaArrowRightLong />
-            </button>
+                {isLoading ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : (
+                  <>
+                    <span>View All</span>
+                    <FaArrowRightLong />
+                  </>
+                )}
+              </button>
+            </Link>
           </div>
 
           {/* {trendingProducts?.length ? (
