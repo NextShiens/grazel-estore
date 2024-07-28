@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { Drawer, Badge } from "@mui/material";
+import { Drawer, Badge, CircularProgress } from "@mui/material";
 import { IoClose } from "react-icons/io5";
 import { PiClockCountdownThin } from "react-icons/pi";
 import { FaUser } from "react-icons/fa";
@@ -46,6 +46,7 @@ const Navbar = () => {
   const [searchResult, setSearchResult] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const containerRef = useRef(null);
   const searchContainerRef = useRef(null);
@@ -62,7 +63,9 @@ const Navbar = () => {
 
   const fetchPopularSearches = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/global/popular-searches`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/global/popular-searches`
+      );
       const data = await response.json();
       setPopularSearches(data.keywords);
     } catch (error) {
@@ -72,11 +75,14 @@ const Navbar = () => {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/profile`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/user/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-      });
+      );
       const data = await response.json();
       setUser(data.user);
     } catch (error) {
@@ -90,7 +96,9 @@ const Navbar = () => {
       return;
     }
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/global/search-results?keywords=${keyword}`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/global/search-results?keywords=${keyword}`
+      );
       const data = await response.json();
       setSearchResult(data.products);
     } catch (error) {
@@ -110,7 +118,10 @@ const Navbar = () => {
     if (containerRef.current && !containerRef.current.contains(event.target)) {
       setIsOpen(false);
     }
-    if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+    if (
+      searchContainerRef.current &&
+      !searchContainerRef.current.contains(event.target)
+    ) {
       setIsOpenSearch(false);
     }
   };
@@ -124,7 +135,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      localStorage.removeItem('token');
+      localStorage.removeItem("token");
       setIsMenuBar(false);
       router.push("/signIn");
     } catch (error) {
@@ -141,9 +152,38 @@ const Navbar = () => {
     }
   };
 
+  const handleBecomeSeller = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      router.push("/RegisterSeller");
+    }, 2000);
+  };
+
   return (
-    <nav className="bg-white shadow-md">
-      <div className="container mx-auto px-4 py-3">
+    <nav className="bg-white shadow-md relative">
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <style>
+            {`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}
+          </style>
+          <CircularProgress
+            color="primary"
+            style={{
+              animation: "spin 1s linear infinite",
+            }}
+          />
+        </div>
+      )}
+      <div
+        className={`container mx-auto px-4 py-3 ${loading ? "blur-sm" : ""}`}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Image
@@ -162,8 +202,12 @@ const Navbar = () => {
           </div>
 
           <div className="hidden lg:flex items-center space-x-6">
-            <Link href="/" className="text-gray-700 hover:text-red-600">Home</Link>
-            <Link href="/offers" className="text-gray-700 hover:text-red-600">Offers</Link>
+            <Link href="/" className="text-gray-700 hover:text-red-600">
+              Home
+            </Link>
+            <Link href="/offers" className="text-gray-700 hover:text-red-600">
+              Offers
+            </Link>
           </div>
 
           <div className="flex-1 max-w-xl mx-6 hidden lg:block">
@@ -201,7 +245,9 @@ const Navbar = () => {
                     </div>
                   ))}
                   <div className="p-3 border-t">
-                    <p className="text-sm font-semibold mb-2">Popular Searches</p>
+                    <p className="text-sm font-semibold mb-2">
+                      Popular Searches
+                    </p>
                     <div className="flex flex-wrap gap-2">
                       {popularSearches.map((search, index) => (
                         <span
@@ -220,14 +266,15 @@ const Navbar = () => {
 
           <div className="flex items-center space-x-4">
             <Link href="/CartPage" className="relative">
-              <Badge
-                badgeContent={cartLength}
-                color="error"
-              >
+              <Badge badgeContent={cartLength} color="error">
                 <Image src={Cart} alt="Cart" className="w-6 h-6" />
               </Badge>
             </Link>
-            <Link href="/RegisterSeller" className="hidden sm:flex items-center space-x-1">
+            <Link
+              href="/RegisterSeller"
+              className="hidden sm:flex items-center space-x-1"
+              onClick={handleBecomeSeller}
+            >
               <Image src={Seller} alt="Seller" className="w-5 h-5" />
               <span className="text-sm">Become Seller</span>
             </Link>
@@ -251,32 +298,53 @@ const Navbar = () => {
               )}
               {isOpen && (
                 <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-20 p-4">
-                  <Link href="/MyAccount" className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
+                  <Link
+                    href="/MyAccount"
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  >
                     <Image src={user} alt="User" className="w-5 h-5" />
                     <span className="text-sm">Your Account</span>
                   </Link>
-                  <Link href="/MyOrders" className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
+                  <Link
+                    href="/MyOrders"
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  >
                     <Image src={order} alt="Orders" className="w-5 h-5" />
                     <span className="text-sm">My Orders</span>
                   </Link>
-                  <Link href="/favorite" className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
+                  <Link
+                    href="/favorite"
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  >
                     <Image src={Fav} alt="Favorites" className="w-5 h-5" />
                     <span className="text-sm">Favorites</span>
                   </Link>
-                  <Link href="/CreditLimit" className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
+                  <Link
+                    href="/CreditLimit"
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  >
                     <Image src={card} alt="Credit" className="w-5 h-5" />
                     <span className="text-sm">Credit Limit</span>
                   </Link>
-                  <Link href="/ReferralRanking" className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
+                  <Link
+                    href="/ReferralRanking"
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  >
                     <Image src={bulid} alt="Referral" className="w-5 h-5" />
                     <span className="text-sm">Referral Ranking</span>
                   </Link>
                   <div className="border-t my-2"></div>
-                  <Link href="/FAQs" className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
+                  <Link
+                    href="/FAQs"
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  >
                     <Image src={FAQ} alt="FAQ" className="w-5 h-5" />
                     <span className="text-sm">FAQs</span>
                   </Link>
-                  <Link href="/privacy-policy" className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded">
+                  <Link
+                    href="/privacy-policy"
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  >
                     <Image src={Privcy} alt="Privacy" className="w-5 h-5" />
                     <span className="text-sm">Privacy Policy</span>
                   </Link>
@@ -320,28 +388,103 @@ const Navbar = () => {
         <div className="w-64 p-4">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold">Menu</h2>
-            <IoClose className="w-6 h-6 cursor-pointer" onClick={handleMenuclose} />
+            <IoClose
+              className="w-6 h-6 cursor-pointer"
+              onClick={handleMenuclose}
+            />
           </div>
           <div className="space-y-4">
-            <Link href="/" className="block py-2 hover:text-red-600" onClick={handleMenuclose}>Home</Link>
-            <Link href="/offers" className="block py-2 hover:text-red-600" onClick={handleMenuclose}>Offers</Link>
-            <Link href="/CartPage" className="block py-2 hover:text-red-600" onClick={handleMenuclose}>Cart</Link>
-            <Link href="/RegisterSeller" className="block py-2 hover:text-red-600" onClick={handleMenuclose}>Become a Seller</Link>
+            <Link
+              href="/"
+              className="block py-2 hover:text-red-600"
+              onClick={handleMenuclose}
+            >
+              Home
+            </Link>
+            <Link
+              href="/offers"
+              className="block py-2 hover:text-red-600"
+              onClick={handleMenuclose}
+            >
+              Offers
+            </Link>
+            <Link
+              href="/CartPage"
+              className="block py-2 hover:text-red-600"
+              onClick={handleMenuclose}
+            >
+              Cart
+            </Link>
+            <Link
+              href="/RegisterSeller"
+              className="block py-2 hover:text-red-600"
+              onClick={handleBecomeSeller}
+            >
+              Become a Seller
+            </Link>
             <hr className="my-4" />
             {user?.profile ? (
               <>
-                <Link href="/MyAccount" className="block py-2 hover:text-red-600" onClick={handleMenuclose}>Your Account</Link>
-                <Link href="/MyOrders" className="block py-2 hover:text-red-600" onClick={handleMenuclose}>My Orders</Link>
-                <Link href="/favorite" className="block py-2 hover:text-red-600" onClick={handleMenuclose}>Favorites</Link>
-                <Link href="/CreditLimit" className="block py-2 hover:text-red-600" onClick={handleMenuclose}>Credit Limit</Link>
-                <Link href="/ReferralRanking" className="block py-2 hover:text-red-600" onClick={handleMenuclose}>Referral Ranking</Link>
+                <Link
+                  href="/MyAccount"
+                  className="block py-2 hover:text-red-600"
+                  onClick={handleMenuclose}
+                >
+                  Your Account
+                </Link>
+                <Link
+                  href="/MyOrders"
+                  className="block py-2 hover:text-red-600"
+                  onClick={handleMenuclose}
+                >
+                  My Orders
+                </Link>
+                <Link
+                  href="/favorite"
+                  className="block py-2 hover:text-red-600"
+                  onClick={handleMenuclose}
+                >
+                  Favorites
+                </Link>
+                <Link
+                  href="/CreditLimit"
+                  className="block py-2 hover:text-red-600"
+                  onClick={handleMenuclose}
+                >
+                  Credit Limit
+                </Link>
+                <Link
+                  href="/ReferralRanking"
+                  className="block py-2 hover:text-red-600"
+                  onClick={handleMenuclose}
+                >
+                  Referral Ranking
+                </Link>
               </>
             ) : (
-              <Link href="/signIn" className="block py-2 hover:text-red-600" onClick={handleMenuclose}>Sign In</Link>
+              <Link
+                href="/signIn"
+                className="block py-2 hover:text-red-600"
+                onClick={handleMenuclose}
+              >
+                Sign In
+              </Link>
             )}
             <hr className="my-4" />
-            <Link href="/FAQs" className="block py-2 hover:text-red-600" onClick={handleMenuclose}>FAQs</Link>
-            <Link href="/privacy-policy" className="block py-2 hover:text-red-600" onClick={handleMenuclose}>Privacy Policy</Link>
+            <Link
+              href="/FAQs"
+              className="block py-2 hover:text-red-600"
+              onClick={handleMenuclose}
+            >
+              FAQs
+            </Link>
+            <Link
+              href="/privacy-policy"
+              className="block py-2 hover:text-red-600"
+              onClick={handleMenuclose}
+            >
+              Privacy Policy
+            </Link>
             {user?.profile && (
               <button
                 className="block w-full text-left py-2 text-red-600 hover:text-red-800"
