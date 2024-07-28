@@ -136,6 +136,8 @@ export default function Home() {
   }, []);
 
   const goToCreditLimit = () => {
+    setLoading(true);
+
     router.push("/CreditLimit");
   };
 
@@ -323,11 +325,16 @@ export default function Home() {
             </div>
           </div>
           <button
-            className="text-[#F70000] text-[10px] lg:text-xl font-semibold bg-white rounded-lg lg:h-[45px] h-[35px] lg:w-[300px] sm:h-[40px] lg:h-[50px] px-10 lg:px-10"
-            onClick={goToCreditLimit}
-          >
-            Get Now
-          </button>
+      className="text-[#F70000] text-[10px] lg:text-xl font-semibold bg-white rounded-lg lg:h-[45px] h-[35px] lg:w-[300px] sm:h-[40px] lg:h-[50px] px-10 lg:px-10 flex items-center justify-center"
+      onClick={goToCreditLimit}
+      disabled={loading}
+    >
+      {loading ? (
+        <CircularProgress size={24} color="inherit" />
+      ) : (
+        "Get Now"
+      )}
+    </button>
         </div>
       </div>
 
