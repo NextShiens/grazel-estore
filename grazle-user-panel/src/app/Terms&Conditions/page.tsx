@@ -108,39 +108,39 @@ export default function TermsConditions() {
         <p>
           <br />
         </p>
-        <p>TABLE OF CONTENTS</p>
-        <p>1. OUR SERVICES</p>
-        <p>2. INTELLECTUAL PROPERTY RIGHTS</p>
-        <p>3. USER REPRESENTATIONS</p>
-        <p>4. USER REGISTRATION</p>
-        <p>5. PRODUCTS</p>
-        <p>6. PURCHASES AND PAYMENT</p>
-        <p>7. RETURN POLICY</p>
-        <p>8. PROHIBITED ACTIVITIES</p>
-        <p>9. USER GENERATED CONTRIBUTIONS</p>
-        <p>10. CONTRIBUTION LICENSE</p>
-        <p>11. GUIDELINES FOR REVIEWS</p>
-        <p>12. MOBILE APPLICATION LICENSE</p>
-        <p>13. SERVICES MANAGEMENT</p>
-        <p>14. PRIVACY POLICY</p>
-        <p>15. COPYRIGHT INFRINGEMENTS</p>
-        <p>16. TERM AND TERMINATION</p>
-        <p>17. MODIFICATIONS AND INTERRUPTIONS</p>
-        <p>18. GOVERNING LAW</p>
-        <p>19. DISPUTE RESOLUTION</p>
-        <p>20. CORRECTIONS</p>
-        <p>21. DISCLAIMER</p>
-        <p>22. LIMITATIONS OF LIABILITY</p>
-        <p>23. INDEMNIFICATION</p>
-        <p>24. USER DATA</p>
-        <p>25. ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES</p>
-        <p>26. SMS TEXT MESSAGING</p>
-        <p>27. MISCELLANEOUS</p>
-        <p>28. CONTACT US</p>
+        <p><strong>TABLE OF CONTENTS</strong></p>
+        <p><strong>1. OUR SERVICES</strong></p>
+        <p><strong>2. INTELLECTUAL PROPERTY RIGHTS</strong></p>
+        <p><strong>3. USER REPRESENTATIONS</strong></p>
+        <p><strong>4. USER REGISTRATION</strong></p>
+        <p><strong>5. PRODUCTS</strong></p>
+        <p><strong>6. PURCHASES AND PAYMENT</strong></p>
+        <p><strong>7. RETURN POLICY</strong></p>
+        <p><strong>8. PROHIBITED ACTIVITIES</strong></p>
+        <p><strong>9. USER GENERATED CONTRIBUTIONS</strong></p>
+        <p><strong>10. CONTRIBUTION LICENSE</strong></p>
+        <p><strong>11. GUIDELINES FOR REVIEWS</strong></p>
+        <p><strong>12. MOBILE APPLICATION LICENSE</strong></p>
+        <p><strong>13. SERVICES MANAGEMENT</strong></p>
+        <p><strong>14. PRIVACY POLICY</strong></p>
+        <p><strong >15. COPYRIGHT INFRINGEMENTS</strong></p>
+        <p><strong>16. TERM AND TERMINATION</strong></p>
+        <p><strong>17. MODIFICATIONS AND INTERRUPTIONS</strong></p>
+        <p><strong>18. GOVERNING LAW</strong></p>
+        <p><strong>19. DISPUTE RESOLUTION</strong></p>
+        <p><strong>20. CORRECTIONS</strong></p>
+        <p><strong>21. DISCLAIMER</strong></p>
+        <p> <strong>22. LIMITATIONS OF LIABILITY</strong></p>
+        <p><strong>23. INDEMNIFICATION</strong></p>
+        <p><strong>24. USER DATA</strong></p>
+        <p><strong>25. ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES</strong></p>
+        <p><strong>26. SMS TEXT MESSAGING</strong></p>
+        <p><strong>27. MISCELLANEOUS</strong></p>
+        <p><strong>28. CONTACT US</strong></p>
         <p>
           <br />
         </p>
-        <p>1. OUR SERVICES</p>
+        <p><strong>1. OUR SERVICES</strong></p>
         <p>
           The information provided when using the Services is not intended for
           distribution to or use by any person or entity in any
@@ -158,7 +158,7 @@ export default function TermsConditions() {
           responsible for compliance with local laws, if and to the
         </p>
         <p>extent local laws are applicable.</p>
-        <p>2. INTELLECTUAL PROPERTY RIGHTS</p>
+        <p><strong>2. INTELLECTUAL PROPERTY RIGHTS</strong></p>
         <p>Our intellectual property</p>
         <p>
           We are the owner or the licensee of all intellectual property rights
@@ -351,7 +351,7 @@ export default function TermsConditions() {
           any copyright you own or control, please immediately refer to the
           &quot;COPYRIGHT INFRINGEMENTS&quot; section below.
         </p>
-        <p>3. USER REPRESENTATIONS</p>
+        <p><strong>3. USER REPRESENTATIONS</strong></p>
         <p>
           By using the Services, you represent and warrant that: (1) all
           registration information you submit will be true, accurate, current,
@@ -372,7 +372,7 @@ export default function TermsConditions() {
           account and refuse any and all current or future use of the Services
           (or any portion thereof).
         </p>
-        <p>4. USER REGISTRATION</p>
+        <p><strong>4. USER REGISTRATION</strong></p>
         <p>
           You may be required to register to use the Services. You agree to keep
           your password confidential and will be responsible for all use of your
@@ -381,7 +381,7 @@ export default function TermsConditions() {
           that such username is inappropriate, obscene, or otherwise
           objectionable.
         </p>
-        <p>5. PRODUCTS</p>
+        <p><strong>5. PRODUCTS</strong></p>
         <p>
           We make every effort to display as accurately as possible the colors,
           features, specifications, and details of the products available on the
@@ -394,7 +394,7 @@ export default function TermsConditions() {
           to discontinue any products at any time for any reason. Prices for all
           products are subject to change.
         </p>
-        <p>6. PURCHASES AND PAYMENT</p>
+        <p><strong>6. PURCHASES AND PAYMENT</strong></p>
         <p>We accept the following forms of payment:</p>
         <p>- Visa</p>
         <p>- Mastercard</p>
@@ -429,12 +429,13 @@ export default function TermsConditions() {
           sole judgment, appear to be placed by dealers, resellers, or
           distributors.
         </p>
-        <p>7. RETURN POLICY</p>
+        <p><strong>7. RETURN POLICY</strong></p>
         <p>
           Please review our Return Policy posted on the Services prior to making
           any purchases.
         </p>
-        <p>8. PROHIBITED ACTIVITIES</p>
+        <p><strong>8. PROHIBITED ACTIVITIES</strong></p>
+
         <p>
           You may not access or use the Services for any purpose other than that
           for which we make the Services available. The Services may not be used
@@ -565,7 +566,7 @@ export default function TermsConditions() {
         <p>
           <br />
         </p>
-        <p>9. USER GENERATED CONTRIBUTIONS</p>
+        <p><strong>9. USER GENERATED CONTRIBUTIONS</strong></p>
         <p>
           The Services may invite you to chat, contribute to, or participate in
           blogs, message boards, online forums, and other functionality, and may
@@ -653,7 +654,7 @@ export default function TermsConditions() {
           violates these Legal Terms and may result in, among other things,
           termination or suspension of your rights to use the Services.
         </p>
-        <p>10. CONTRIBUTION LICENSE</p>
+        <p><strong>10. CONTRIBUTION LICENSE</strong></p>
         <p>
           ⦁ &nbsp; &nbsp;By posting your Contributions to any part of the
           Services, you automatically grant, and you represent and warrant that
@@ -698,7 +699,7 @@ export default function TermsConditions() {
           Contributions at any time and for any reason, without notice. We have
           no obligation to monitor your Contributions.
         </p>
-        <p>11. GUIDELINES FOR REVIEWS</p>
+        <p><strong>11. GUIDELINES FOR REVIEWS</strong></p>
         <p>
           We may provide you areas on the Services to leave reviews or ratings.
           When posting a review, you must comply with the following criteria:
@@ -727,7 +728,8 @@ export default function TermsConditions() {
           translate, transmit by any means, display, perform, and/or distribute
           all content relating to review.
         </p>
-        <p>12. MOBILE APPLICATION LICENSE</p>
+        <p><strong>12. MOBILE APPLICATION LICENSE</strong></p>
+
         <p>Use License</p>
         <p>
           If you access the Services via the App, then we grant you a revocable,
@@ -798,7 +800,7 @@ export default function TermsConditions() {
         <p>
           <br />
         </p>
-        <p>13. SERVICES MANAGEMENT</p>
+        <p style={{fontWeight:"bold"}}>13. SERVICES MANAGEMENT</p>
         <p>
           We reserve the right, but not the obligation, to: (1) monitor the
           Services for violations of these Legal Terms; (2) take appropriate
@@ -814,7 +816,7 @@ export default function TermsConditions() {
           the Services in a manner designed to protect our rights and property
           and to facilitate the proper functioning of the Services.
         </p>
-        <p>14. PRIVACY POLICY</p>
+        <p style={{fontWeight:"bold"}}>14. PRIVACY POLICY</p>
         <p>
           We care about data privacy and security. Please review our Privacy
           Policy:
@@ -830,7 +832,7 @@ export default function TermsConditions() {
           India, and you expressly consent to have your data transferred to and
           processed in India.
         </p>
-        <p>15. COPYRIGHT INFRINGEMENTS</p>
+        <p style={{fontWeight:"bold"}}>15. COPYRIGHT INFRINGEMENTS</p>
         <p>
           We respect the intellectual property rights of others. If you believe
           that any material available on or through the Services infringes upon
@@ -844,7 +846,7 @@ export default function TermsConditions() {
           infringes your copyright, you should consider first contacting an
           attorney.
         </p>
-        <p>16. TERM AND TERMINATION</p>
+        <p style={{fontWeight:"bold"}}>16. TERM AND TERMINATION</p>
         <p>
           These Legal Terms shall remain in full force and effect while you use
           the Services. WITHOUT LIMITING ANY OTHER PROVISION OF THESE LEGAL
@@ -867,7 +869,7 @@ export default function TermsConditions() {
           appropriate legal action, including without limitation pursuing civil,
           criminal, and injunctive redress.
         </p>
-        <p>17. MODIFICATIONS AND INTERRUPTIONS</p>
+        <p  style={{fontWeight:"bold"}}>17. MODIFICATIONS AND INTERRUPTIONS</p>
         <p>
           We reserve the right to change, modify, or remove the contents of the
           Services at any time or for any reason at our sole discretion without
@@ -897,7 +899,7 @@ export default function TermsConditions() {
         <p>
           <br />
         </p>
-        <p>18. GOVERNING LAW</p>
+        <p style={{fontWeight:"bold"}}>18. GOVERNING LAW</p>
         <p>
           These Legal Terms shall be governed by and defined following the laws
           of India. Barika and Vihanna Private Limited and yourself irrevocably
@@ -918,7 +920,7 @@ export default function TermsConditions() {
           initiating arbitration. Such informal negotiations commence upon
           written notice from one Party to the other Party.
         </p>
-        <p>Binding Arbitration</p>
+        <p style={{fontWeight:"bold"}}>Binding Arbitration</p>
         <p>
           Any dispute arising out of or in connection with these Legal Terms,
           including any question regarding its existence, validity, or
@@ -931,7 +933,7 @@ export default function TermsConditions() {
           India. The language of the proceedings shall be English. The governing
           law of these Legal Terms shall be substantive law of India.
         </p>
-        <p>Restrictions</p>
+        <p style={{fontWeight:"bold"}}>Restrictions</p>
         <p>
           The Parties agree that any arbitration shall be limited to the Dispute
           between the Parties individually. To the full extent permitted by law,
@@ -958,7 +960,7 @@ export default function TermsConditions() {
           above, and the Parties agree to submit to the personal jurisdiction of
           that court.
         </p>
-        <p>20. CORRECTIONS</p>
+        <p style={{fontWeight:"bold"}}>20. CORRECTIONS</p>
         <p>
           There may be information on the Services that contains typographical
           errors, inaccuracies, or omissions, including descriptions, pricing,
@@ -966,7 +968,7 @@ export default function TermsConditions() {
           correct any errors, inaccuracies, or omissions and to change or update
           the information on the Services at any time, without prior notice.
         </p>
-        <p>21. DISCLAIMER</p>
+        <p style={{fontWeight:"bold"}}>21. DISCLAIMER</p>
         <p>
           THE SERVICES ARE PROVIDED ON AN AS-IS AND AS-AVAILABLE BASIS. YOU
           AGREE THAT YOUR USE OF THE SERVICES WILL BE AT YOUR SOLE RISK. TO THE
@@ -999,7 +1001,7 @@ export default function TermsConditions() {
           MEDIUM OR IN ANY ENVIRONMENT, YOU SHOULD USE YOUR BEST JUDGMENT AND
           EXERCISE CAUTION WHERE APPROPRIATE.
         </p>
-        <p>22. &nbsp; &nbsp;LIMITATIONS OF LIABILITY</p>
+        <p style={{fontWeight:"bold"}}>22. &nbsp; &nbsp;LIMITATIONS OF LIABILITY</p>
         <p>
           IN NO EVENT WILL WE OR OUR DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE
           TO YOU OR ANY THIRD PARTY FOR ANY DIRECT, INDIRECT, CONSEQUENTIAL,
@@ -1016,7 +1018,7 @@ export default function TermsConditions() {
           ALL OF THE ABOVE DISCLAIMERS OR LIMITATIONS MAY NOT APPLY TO YOU, AND
           YOU MAY HAVE ADDITIONAL RIGHTS.
         </p>
-        <p>23. INDEMNIFICATION</p>
+        <p style={{fontWeight:"bold"}}>23. INDEMNIFICATION</p>
         <p>
           You agree to defend, indemnify, and hold us harmless, including our
           subsidiaries, affiliates, and all of our respective officers, agents,
@@ -1036,7 +1038,7 @@ export default function TermsConditions() {
           claim, action, or proceeding which is subject to this indemnification
           upon becoming aware of it.
         </p>
-        <p>24. USER DATA</p>
+        <p style={{fontWeight:"bold"}}>24. USER DATA</p>
         <p>
           We will maintain certain data that you transmit to the Services for
           the purpose of managing the performance of the Services, as well as
@@ -1048,7 +1050,7 @@ export default function TermsConditions() {
           action against us arising from any such loss or corruption of such
           data.
         </p>
-        <p>25. ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES</p>
+        <p style={{fontWeight:"bold"}}>25. ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES</p>
         <p>
           Visiting the Services, sending us emails, and completing online forms
           constitute electronic communications. You consent to receive
@@ -1065,7 +1067,7 @@ export default function TermsConditions() {
           non-electronic records, or to payments or the granting of credits by
           any means other than electronic means.
         </p>
-        <p>26. SMS TEXT MESSAGING</p>
+        <p style={{fontWeight:"bold"}}>26. SMS TEXT MESSAGING</p>
         <p>Opting Out</p>
         <p>
           if at any time you wish to stop receiving SMS messages from us, please
@@ -1096,7 +1098,7 @@ export default function TermsConditions() {
         <p>
           <br />
         </p>
-        <p>27. MISCELLANEOUS</p>
+        <p style={{fontWeight:"bold"}}>27. MISCELLANEOUS</p>
         <p>
           These Legal Terms and any policies or operating rules posted by us on
           the Services or in respect to the Services constitute the entire
@@ -1119,16 +1121,16 @@ export default function TermsConditions() {
           form of these Legal Terms and the lack of signing by the parties
           hereto to execute these Legal Terms.
         </p>
-        <p>28. CONTACT US</p>
+        <p style={{fontWeight:"bold"}}>28. CONTACT US</p>
         <p>
           In order to resolve a complaint regarding the Services or to receive
           further information regarding use of the Services, please contact us
           at:
         </p>
-        <p>Barika and Vihanna Private Limited</p>
-        <p>New Delhi, Delhi 1100037</p>
-        <p>India</p>
-        <p>Phone: +91 910-820-2334</p>
+        <p style={{fontWeight:"bold"}}>Barika and Vihanna Private Limited</p>
+        <p style={{fontWeight:"bold"}}>New Delhi, Delhi 1100037</p>
+        <p style={{fontWeight:"bold"}}>India</p>
+        <p style={{fontWeight:"bold"}}>Phone: +91 910-820-2334</p>
         <p>
           <a className="text-blue-500" href="mailto:support@grazle.com">
             support@grazle.com

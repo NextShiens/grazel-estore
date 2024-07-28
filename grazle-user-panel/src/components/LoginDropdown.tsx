@@ -26,15 +26,14 @@ const LoginDropdown = () => {
 
   return (
     <div>
-      <Button
+      <button
         aria-controls="login-menu"
         aria-haspopup="true"
         onClick={handleClick}
-        variant="contained"
         className="bg-[#F70000] py-2 px-6 rounded-md text-white hover:bg-[#F75050] ml-2"
       >
-        Login
-      </Button>
+        LOGIN
+      </button>
       <Menu
         id="login-menu"
         anchorEl={anchorEl}
