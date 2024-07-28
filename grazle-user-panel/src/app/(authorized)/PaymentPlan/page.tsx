@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import logo from "@/assets/Grazle Logo.png";
 import Pay from "@/assets/Group 1820550001.png";
+import Auth from "@/components/Auth";
 
 export default function PaymentPlan() {
   return (

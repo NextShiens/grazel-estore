@@ -8,8 +8,12 @@ export default function RootLayout({
 }>) {
   return (
     <div>
-      <Auth />
-      {children}
+
+      <Auth>
+
+        {children}
+      </Auth>
+
     </div>
   );
 }

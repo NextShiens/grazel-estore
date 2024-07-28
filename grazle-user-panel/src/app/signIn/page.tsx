@@ -6,7 +6,7 @@ import { loginApi } from "@/apis";
 import { loginAction } from "@/lib";
 import login from "@/assets/login.png";
 import { toast } from "react-toastify";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Checkbox } from "@mui/material";
 import { IoMdMail } from "react-icons/io";
 import { useDispatch } from "react-redux";
@@ -19,6 +19,7 @@ import { BiLoader } from "react-icons/bi";
 import { useRouter } from "next/navigation";
 
 const Login = () => {
+  console.log("login page");
   const router = useRouter();
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
@@ -26,6 +27,11 @@ const Login = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      router.push("/");
+    }
+  }, []);
 
   async function onLogin(formdata: any) {
     try {
@@ -161,4 +167,7 @@ const Login = () => {
     </form>
   );
 };
-export default Login;
+
+export default function SignInPage() {
+  return <Login />;
+}

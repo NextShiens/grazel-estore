@@ -1,12 +1,15 @@
+"use client";
 import axios from "axios";
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 let token = "";
+
 if (typeof window !== "undefined") {
   token = localStorage.getItem("token");
   if (token) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   }
 }
+
 
 export const debounce = function debounce(fn, delay = 700) {
   let timeout;
@@ -93,6 +96,7 @@ export const createCreditLimitApi = async (data) =>
   await axios.post("/credit-limit-request", data);
 
 export const getProfileApi = async () => {
+  console.log("token", token);
   if (!token || token.trim() === "" || token === undefined) return;
   return await axios.get("/profile");
 };
