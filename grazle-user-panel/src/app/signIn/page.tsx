@@ -54,7 +54,7 @@ const Login = () => {
     } catch (err: any) {
       setLoading(false);
 
-      toast.error(err?.response.data.message);
+      toast.error(err?.response?.data?.message);
     }
   }
 
