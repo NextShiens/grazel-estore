@@ -1,32 +1,24 @@
 "use client";
 
-import { getProfileApi } from "@/apis";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { checkAuth } from "@/lib/auth";
 
 const Auth = ({ children }) => {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await getProfileApi();
-        if (res && res.data) {
-          setIsAuthenticated(true);
-        } else {
-          throw new Error("Authentication failed");
-        }
-      } catch (error) {
-        console.error("Authentication error:", error);
+    const verifyAuth = async () => {
+      const isAuthenticated = await checkAuth();
+      if (!isAuthenticated) {
         router.push("/signIn");
-      } finally {
+      } else {
         setIsLoading(false);
       }
     };
 
-    checkAuth();
+    verifyAuth();
   }, [router]);
 
   if (isLoading) {
@@ -44,20 +36,12 @@ const Auth = ({ children }) => {
           }
 
           @keyframes spin {
-            0% {
-              transform: rotate(0deg);
-            }
-            100% {
-              transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
           }
         `}</style>
       </div>
     );
-  }
-
-  if (!isAuthenticated) {
-    return null;
   }
 
   return <>{children}</>;

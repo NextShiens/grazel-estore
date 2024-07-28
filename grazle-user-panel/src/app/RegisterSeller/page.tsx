@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { toast } from "react-toastify";
 import React, { useState, useEffect, FormEvent, ChangeEvent } from "react";
-import { registerApi } from "@/apis/index";
+import { registerApi, registerApiStore } from "@/apis/index";
 import logo from "@/assets/Grazle Logo.png";
 import { useRouter } from "next/navigation";
 import CustomStepper from "@/components/Stepper";
@@ -98,7 +98,7 @@ export default function RegisterSeller() {
         });
         console.log(formValues, "formValues");
 
-        await registerApi(newFormData);
+        await registerApiStore(newFormData);
         toast.success("Account created successfully");
         router.push("/");
       }

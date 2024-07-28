@@ -1,0 +1,7052 @@
+{
+	"info": {
+		"_postman_id": "1aee3190-41da-4029-99bb-7714f5b5d404",
+		"name": "Grazle Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30687120",
+		"_collection_link": "https://bold-moon-160036.postman.co/workspace/Grazle-Ecommerce~44344f68-dfe9-40bb-9ae7-857f869ac161/collection/30687120-1aee3190-41da-4029-99bb-7714f5b5d404?action=share&source=collection_link&creator=30687120"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "seller@test.com",
+									"description": "required",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "12345678",
+									"description": "required",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "seller",
+									"description": "required",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "seller@test.com",
+									"description": "required",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "12345678",
+									"description": "required",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "12345678",
+									"description": "required",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "seller",
+									"description": "role = seller | buyer | admin",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/register",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "",
+									"description": "required",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/forgot-password",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "new_password",
+									"value": "",
+									"description": "required",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/reset-password?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImlhdCI6MTcxNjUyNDAwMiwiZXhwIjoxNzE2NTI3NjAyfQ.8vHxOZyWlPG6CdKmACZ3D5kstP2CPGUrWYhVZHVfnXo",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"reset-password"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImlhdCI6MTcxNjUyNDAwMiwiZXhwIjoxNzE2NTI3NjAyfQ.8vHxOZyWlPG6CdKmACZ3D5kstP2CPGUrWYhVZHVfnXo"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImlhdCI6MTcxNjUyNzE1OCwiZXhwIjoxNzE2NTMwNzU4fQ.kzcv6Z26kBMiBaP7OFI34bBpwsnSKU8WXQj7fbD8TJc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/auth/logout",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Public",
+			"item": [
+				{
+					"name": "Brand",
+					"item": [
+						{
+							"name": "All Brands",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/brands",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"brands"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Brand By Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/brands/details/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"brands",
+										"details",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Brand By Slug",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/brands/:slug",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"brands",
+										":slug"
+									],
+									"variable": [
+										{
+											"key": "slug",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Category",
+					"item": [
+						{
+							"name": "All Categories",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/categories",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"categories"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Category By Slug",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/categories/:slug",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"categories",
+										":slug"
+									],
+									"variable": [
+										{
+											"key": "slug",
+											"value": "watches"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Category By Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/categories/details/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"categories",
+										"details",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Product",
+					"item": [
+						{
+							"name": "Get All Products",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Product By Slug",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/products/:slug",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"products",
+										":slug"
+									],
+									"variable": [
+										{
+											"key": "slug",
+											"value": "samsug-s21"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Product By Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/products/details/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"products",
+										"details",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Products By Category Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/products?categoryId=1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"products"
+									],
+									"query": [
+										{
+											"key": "categoryId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Products By Brand Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/products?brandId=1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"products"
+									],
+									"query": [
+										{
+											"key": "brandId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Related Products",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/related-product?product_id=2&category_id=1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"related-product"
+									],
+									"query": [
+										{
+											"key": "product_id",
+											"value": "2"
+										},
+										{
+											"key": "category_id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Single Product All Reviews",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/products/reviews/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"products",
+										"reviews",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Single Product All Reviews Filters",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/products/reviews/:id?latest_arrival=desc&top_rated=top&popular=popular",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"products",
+										"reviews",
+										":id"
+									],
+									"query": [
+										{
+											"key": "latest_arrival",
+											"value": "desc"
+										},
+										{
+											"key": "top_rated",
+											"value": "top"
+										},
+										{
+											"key": "popular",
+											"value": "popular"
+										}
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Recently Viewed Products",
+					"item": [
+						{
+							"name": "Add Recent VIew Product",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTg1MTg5NzEsImV4cCI6MTcxODYwNTM3MX0.K1iPTK2munhyQ24ZidC_1Y6cMtbSgHzMpPqs0b4zWzA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "product_id",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/recently-viewed",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"recently-viewed"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "All Recent Viewed",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTg1MTg5NzEsImV4cCI6MTcxODYwNTM3MX0.K1iPTK2munhyQ24ZidC_1Y6cMtbSgHzMpPqs0b4zWzA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/recently-viewed",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"recently-viewed"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Recent Viewed By Guest",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTg1MTg5NzEsImV4cCI6MTcxODYwNTM3MX0.K1iPTK2munhyQ24ZidC_1Y6cMtbSgHzMpPqs0b4zWzA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "product_ids",
+											"value": "1,2,3",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/recently-viewed-by-guest",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"recently-viewed-by-guest"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Suggested Products",
+					"item": [
+						{
+							"name": "Add Product Interaction Log",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTkzOTc3MTIsImV4cCI6MTcxOTQ4NDExMn0.IMwQ2ynWGYPJ0NzvM30IwU4Htvnfis9hURbO4azExnE",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "product_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "interaction_type",
+											"value": "purchase",
+											"description": "type :  view , click , purchase",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/suggested-products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"suggested-products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "All Suggested Products",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTkzNzYzNDIsImV4cCI6MTcxOTQ2Mjc0Mn0.aYDKLvCvnk_Y1_On2QUl4cvW4Ei4MDvrlgCWyXK008c",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/suggested-products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"suggested-products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Suggested Products for Guest",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTg1MTg5NzEsImV4cCI6MTcxODYwNTM3MX0.K1iPTK2munhyQ24ZidC_1Y6cMtbSgHzMpPqs0b4zWzA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/suggested-products-for-guest",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"suggested-products-for-guest"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Trending Products",
+					"item": [
+						{
+							"name": "Trending Category Products",
+							"item": [
+								{
+									"name": "First Trending Category Products",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{BASE_URL}}/trending-products-by-first-category",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"trending-products-by-first-category"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Second Trending Category Products",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{BASE_URL}}/trending-products-by-second-category",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"trending-products-by-second-category"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Trending Products",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/trending-products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"trending-products"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Search",
+					"item": [
+						{
+							"name": "Search Results",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/search-results?keywords=shirt",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"search-results"
+									],
+									"query": [
+										{
+											"key": "keywords",
+											"value": "shirt"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Results Filters",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/search-results?keywords=shirt&rating=&brand_id=3",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"search-results"
+									],
+									"query": [
+										{
+											"key": "keywords",
+											"value": "shirt"
+										},
+										{
+											"key": "latest_arrival",
+											"value": "desc",
+											"description": "desc",
+											"disabled": true
+										},
+										{
+											"key": "price",
+											"value": "highest",
+											"description": "value : highest | lowest",
+											"disabled": true
+										},
+										{
+											"key": "top_rated",
+											"value": "top",
+											"description": "values : top",
+											"disabled": true
+										},
+										{
+											"key": "popular",
+											"value": "popular",
+											"description": "value : popular",
+											"disabled": true
+										},
+										{
+											"key": "rating",
+											"value": "",
+											"description": "values : 3 , 4 , 5"
+										},
+										{
+											"key": "brand_id",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Popular Searches",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/popular-searches",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"popular-searches"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Store",
+					"item": [
+						{
+							"name": "Store Details with products",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/store/:id/products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"store",
+										":id",
+										"products"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "12"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Store Details with products Filters",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/store/:id/products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"store",
+										":id",
+										"products"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "12"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Customer Support",
+					"item": [
+						{
+							"name": "Create Message Request",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/global/customer-support",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"customer-support"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Offer",
+					"item": [
+						{
+							"name": "All Products with Offer",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/product-offers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"product-offers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Products with offer by seller id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/product-offers/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"product-offers",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Homepage Products Section Api",
+					"item": [
+						{
+							"name": "Best of All Products",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/best-products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"best-products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Top Selection Products",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/top-selected-products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"top-selected-products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Discount for you  products",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/discounted-products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"discounted-products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Season Top Products",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/season-top-products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"season-top-products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Sponsored Products",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/sponsored-products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"sponsored-products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Festival Products",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/festival-products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"festival-products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dynamic Products",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/products-dynamic",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"products-dynamic"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Banner",
+					"item": [
+						{
+							"name": "Get Banner By Position",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/banners/:position",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"banners",
+										":position"
+									],
+									"variable": [
+										{
+											"key": "position",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Feedback",
+					"item": [
+						{
+							"name": "Give Feedback",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "subject",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "message",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/give-feedback",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"give-feedback"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "States Cities",
+					"item": [
+						{
+							"name": "All states",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/states",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"states"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cities by state id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/cities-by-state/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"cities-by-state",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "All cities",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/cities",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"cities"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Profile",
+					"item": [
+						{
+							"name": "Get Profile",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzE4MTY1NTU2LCJleHAiOjE3MTgyNTE5NTZ9.g_3TlmK9GXdMEJkkDYH8wUlIwOGv6yt0Rv-LtKt5JY8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/profile",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Profile",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "first_name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "last_name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "country",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "city",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "state",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "store_name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "address",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/profile/:id/edit",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"profile",
+										":id",
+										"edit"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "12"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change Password",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "old_password",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "new_password",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/profile/change-password",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"profile",
+										"change-password"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Users",
+					"item": [
+						{
+							"name": "Get Users",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTk4NDA2NzYsImV4cCI6MTcxOTkyNzA3Nn0.G-Bt7ed8MyZV-NrB-G60D24IdiH24e1LBdeTXQuS5Nk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/users?role=buyer",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users"
+									],
+									"query": [
+										{
+											"key": "role",
+											"value": "buyer",
+											"description": "seller | buyer"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User By Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/users/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get seller details with products",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/users/:id/seller",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users",
+										":id",
+										"seller"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update User",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/users/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create User",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/users",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete User",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/users/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Seller Details",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/users/:id/seller",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users",
+										":id",
+										"seller"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Seller with store profile",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/seller-stores",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"seller-stores"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Seller approval | disapproval",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/seller-stores/:id/approval",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"seller-stores",
+										":id",
+										"approval"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Product",
+					"item": [
+						{
+							"name": "Create Product",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTgyNTY4NjMsImV4cCI6MTcxODM0MzI2M30.K9WYBRuNb_mSvzQzAJURBUXSXhuiuzLv1rS0Di0Lnu8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "category_id",
+											"value": "1",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "brand_id",
+											"value": "2",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "Test Product",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "1000",
+											"description": "reqired",
+											"type": "text"
+										},
+										{
+											"key": "featured_image",
+											"type": "file",
+											"src": "/C:/Users/Ubaid Computers/OneDrive/Desktop/0_0.jpg"
+										},
+										{
+											"key": "descripton",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "tags",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "gallery_images",
+											"description": "upload multiple images",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Products",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTgxMjA4NTMsImV4cCI6MTcxODIwNzI1M30.Ieap-jqZ7ymKaMERkaEz-4DCDwp-1GbCga_4aHz8nKg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Product By Slug",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/products/:slug",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"products",
+										":slug"
+									],
+									"variable": [
+										{
+											"key": "slug",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Product",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "category_id",
+											"value": "",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "brand_id",
+											"value": "",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "",
+											"description": "reqired",
+											"type": "text"
+										},
+										{
+											"key": "featured_image",
+											"type": "file",
+											"src": []
+										},
+										{
+											"key": "descripton",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "tags",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Make Product Sponsored",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "category_id",
+											"value": "",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "brand_id",
+											"value": "",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "",
+											"description": "reqired",
+											"type": "text"
+										},
+										{
+											"key": "featured_image",
+											"type": "file",
+											"src": []
+										},
+										{
+											"key": "descripton",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "tags",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Product in  Festival Event",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "category_id",
+											"value": "",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "brand_id",
+											"value": "",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "",
+											"description": "reqired",
+											"type": "text"
+										},
+										{
+											"key": "featured_image",
+											"type": "file",
+											"src": []
+										},
+										{
+											"key": "descripton",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "tags",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Product",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJpYXQiOjE3MTc2MTQ5NTAsImV4cCI6MTcxNzcwMTM1MH0.9Ee0hKiJ-ILQmg8D4kJRubOinkAi2C__RnxpRD7fF7s",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "category_id",
+											"value": "",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "brand_id",
+											"value": "",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "",
+											"description": "reqired",
+											"type": "text"
+										},
+										{
+											"key": "featured_image",
+											"type": "file",
+											"src": []
+										},
+										{
+											"key": "descripton",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "tags",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/products/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"products",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "8"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Gallery Image",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJpYXQiOjE3MTc2MDM4ODIsImV4cCI6MTcxNzY5MDI4Mn0.A2OX3sHKr9kFGxAoOeXiwHjsN8vi0OneuN31jRANWIk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/products/:productId/gallery/:imageId",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"products",
+										":productId",
+										"gallery",
+										":imageId"
+									],
+									"variable": [
+										{
+											"key": "productId",
+											"value": "43"
+										},
+										{
+											"key": "imageId",
+											"value": "43"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Categories",
+					"item": [
+						{
+							"name": "All Categories",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTg0MjgwOTMsImV4cCI6MTcxODUxNDQ5M30.oorX-ElUFtIANQ1B0Vm6IJyKEUadSyZPgV8xGaXNzkg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/categories",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"categories"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Category By Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/categories/details/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"categories",
+										"details",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Category By Slug",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/categories/:slug",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"categories",
+										":slug"
+									],
+									"variable": [
+										{
+											"key": "slug",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTgyNTY0MjEsImV4cCI6MTcxODM0MjgyMX0.M06vbdM7OzBM36FOeCkRNp4h81n-3PbmhyMtLs1oisw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/categories",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"categories"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/categories/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"categories",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Category",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/categories/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"categories",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Brands",
+					"item": [
+						{
+							"name": "All Brands",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/brands",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"brands"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Brand By Id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTgxNzE1MjgsImV4cCI6MTcxODI1NzkyOH0.WeyXb6d6dyUQbcQkhjw5pqrRheK5sN_XjI3zx0Oe8Hk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/brands/details/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"brands",
+										"details",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Brand By Slug",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTg0MjgwOTMsImV4cCI6MTcxODUxNDQ5M30.oorX-ElUFtIANQ1B0Vm6IJyKEUadSyZPgV8xGaXNzkg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/brands/:slug",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"brands",
+										":slug"
+									],
+									"variable": [
+										{
+											"key": "slug",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Brand",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTgyNTY4NjMsImV4cCI6MTcxODM0MzI2M30.K9WYBRuNb_mSvzQzAJURBUXSXhuiuzLv1rS0Di0Lnu8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Ndure",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/brands",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"brands"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Brand",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/brands/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"brands",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Brand",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/brands/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"brands",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Order",
+					"item": [
+						{
+							"name": "All Orders",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/orders",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Orders By Status",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTg0MjgwOTMsImV4cCI6MTcxODUxNDQ5M30.oorX-ElUFtIANQ1B0Vm6IJyKEUadSyZPgV8xGaXNzkg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/orders?status=shipped",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"orders"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "shipped",
+											"description": "options : new , shipped , completed"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Multi Orders Details By Ref Id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTg0MjgwOTMsImV4cCI6MTcxODUxNDQ5M30.oorX-ElUFtIANQ1B0Vm6IJyKEUadSyZPgV8xGaXNzkg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/multi-orders/:ref_id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"multi-orders",
+										":ref_id"
+									],
+									"variable": [
+										{
+											"key": "ref_id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Order details By Id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTg0MjgwOTMsImV4cCI6MTcxODUxNDQ5M30.oorX-ElUFtIANQ1B0Vm6IJyKEUadSyZPgV8xGaXNzkg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/orders/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"orders",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Order Status",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTg0MjgwOTMsImV4cCI6MTcxODUxNDQ5M30.oorX-ElUFtIANQ1B0Vm6IJyKEUadSyZPgV8xGaXNzkg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "status",
+											"value": "",
+											"description": "options : new , shipped , completed",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/orders/:id/status",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"orders",
+										":id",
+										"status"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Customer Support",
+					"item": [
+						{
+							"name": "All Message Requests",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/customer-support",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"customer-support"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Single Message Details By Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/customer-support/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"customer-support",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Banner",
+					"item": [
+						{
+							"name": "Create Banner",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTk2NzEwOTAsImV4cCI6MTcxOTc1NzQ5MH0.nIIVpk7Qh0KBxxWZ9ZBdsef0N4-yKjgDqN7qBjd8oYU",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "banner_image",
+											"type": "file",
+											"src": "/D:/mehwish/2.jpeg"
+										},
+										{
+											"key": "position",
+											"value": "2",
+											"description": "values  1 , 2, 3 ,4 5, ",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "sale banner",
+											"type": "text"
+										},
+										{
+											"key": "video",
+											"type": "file",
+											"src": "/C:/Users/Ubaid Computers/Downloads/WhatsApp Video 2024-06-29 at 11.14.01 PM.mp4"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/banners",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"banners"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Banners",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/banners",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"banners"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Banner By Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/banners/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"banners",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Activate Banner",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/banners/:id/activate",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"banners",
+										":id",
+										"activate"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deactivate Banner",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/banners/:id/deactivate",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"banners",
+										":id",
+										"deactivate"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Banner",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/banners/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"banners",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Credit Limit Requests",
+					"item": [
+						{
+							"name": "All Requests",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/credit-limit-requests",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"credit-limit-requests"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Request By Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/credit-limit-requests/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"credit-limit-requests",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Request Status",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/credit-limit-requests/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"credit-limit-requests",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Request",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/credit-limit-requests/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"credit-limit-requests",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Feedback",
+					"item": [
+						{
+							"name": "All Feedbacks",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/feedbacks",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"feedbacks"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Feedback By Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/feedbacks/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"feedbacks",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Feedback",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/feedbacks/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"feedbacks",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Statistics",
+					"item": [
+						{
+							"name": "Best Sellers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/statistics/best-sellers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"statistics",
+										"best-sellers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Recent Orders",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/statistics/recent-orders",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"statistics",
+										"recent-orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Buyer Stats",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/statistics/buyers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"statistics",
+										"buyers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Seller Stats",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/statistics/sellers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"statistics",
+										"sellers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Order antalytics",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/statistics/order-analytics",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"statistics",
+										"order-analytics"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Revenue",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/statistics/revenue",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"statistics",
+										"revenue"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Revenue By date",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/statistics/revenue-by-date?date",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"statistics",
+										"revenue-by-date"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Sale Statistics",
+					"item": [
+						{
+							"name": "Order Stats",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/sales/order-stats",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"sales",
+										"order-stats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Sale Stats",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/sales/sale-stats",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"sales",
+										"sale-stats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Order value stats",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/sales/order-value-stats",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"sales",
+										"order-value-stats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Trending categories stats",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/sales/trending-categories-sales",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"sales",
+										"trending-categories-sales"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "All categories Sales",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/sales/all-categories-sales",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"sales",
+										"all-categories-sales"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Performance data",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/sales/sales-performance-data",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"sales",
+										"sales-performance-data"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Sales By date",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/sales/revenue-by-date?date=",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"sales",
+										"revenue-by-date"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Member ship plans",
+					"item": [
+						{
+							"name": "All plans",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/membership-plans",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"membership-plans"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get single plan",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/membership-plans/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"membership-plans",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Plan",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InRlYWNoZXIiLCJpYXQiOjE3MjIwNzk4NDUsImV4cCI6MTcyMjA4MzQ0NX0.28p8K_QivQnodzQ75rI69RRkcpr-yI5GPUpvUkH6wdQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "duration_months",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "discount",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/membership-plans",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"membership-plans"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Plan",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InRlYWNoZXIiLCJpYXQiOjE3MjIwNzk4NDUsImV4cCI6MTcyMjA4MzQ0NX0.28p8K_QivQnodzQ75rI69RRkcpr-yI5GPUpvUkH6wdQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "duration_months",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "discount",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/membership-plans/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"membership-plans",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Plan",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}//admin/membership-plans/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"",
+										"admin",
+										"membership-plans",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "States",
+					"item": [
+						{
+							"name": "All States",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/states",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"states"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get single state",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/states/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"states",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create State",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/states",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"states"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update State",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/states/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"states",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete State",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/states/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"states",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Cities",
+					"item": [
+						{
+							"name": "All Cities",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/cities",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"cities"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get single city",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/cities/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"cities",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create City",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "state_id",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/cities",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"cities"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update City",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/cities/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"cities",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete City",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/cities/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"cities",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cities by state id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/admin/cities/state/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"cities",
+										"state",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Seller",
+			"item": [
+				{
+					"name": "Profile",
+					"item": [
+						{
+							"name": "Get Profile",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTcxNzM1MTAwMiwiZXhwIjoxNzE3NDM3NDAyfQ.JJliJF7xcWuTjwsNd4bmBYRSd2uxHMG_qnOlykWb7aA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/profile",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Profile",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzE4MjAwNDczLCJleHAiOjE3MTgyODY4NzN9._2XjnM1GoALsOITQE_JPLbIzZh-jnyZWdJSAYJR8-a8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "first_name",
+											"value": "first",
+											"type": "text"
+										},
+										{
+											"key": "last_name",
+											"value": "last",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "country",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "city",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "state",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "store_name",
+											"value": "Ndure",
+											"type": "text"
+										},
+										{
+											"key": "address",
+											"value": "no address",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/profile/:id/edit",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"profile",
+										":id",
+										"edit"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "12"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change Password",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "old_password",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "new_password",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/profile/change-password",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"profile",
+										"change-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deactivate Account",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/profile/deactivate-account",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"profile",
+										"deactivate-account"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Activate Account",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjI3LCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTkxMjAyNDgsImV4cCI6MTcxOTIwNjY0OH0.Z7EM1y5qiMlY5c48MdAjA9fzCh9n7pJBlI21_onh-Bs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/profile/activate-account",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"profile",
+										"activate-account"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Account",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjI3LCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTkxMjAyNDgsImV4cCI6MTcxOTIwNjY0OH0.Z7EM1y5qiMlY5c48MdAjA9fzCh9n7pJBlI21_onh-Bs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/profile/delete-account",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"profile",
+										"delete-account"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Store Profile",
+					"item": [
+						{
+							"name": "Get Profile",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTcxNzM1MTAwMiwiZXhwIjoxNzE3NDM3NDAyfQ.JJliJF7xcWuTjwsNd4bmBYRSd2uxHMG_qnOlykWb7aA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/store-profile",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"store-profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Profile",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzE4MjAwNDczLCJleHAiOjE3MTgyODY4NzN9._2XjnM1GoALsOITQE_JPLbIzZh-jnyZWdJSAYJR8-a8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "store_name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "store_description",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "account_name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "account_number",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "bank_name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "bank_code",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "store_image",
+											"type": "file",
+											"src": []
+										},
+										{
+											"key": "business_license",
+											"type": "file",
+											"src": []
+										},
+										{
+											"key": "tax_id",
+											"type": "file",
+											"src": []
+										},
+										{
+											"key": "proof_of_address",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/store-profile",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"store-profile"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Product",
+					"item": [
+						{
+							"name": "All Products",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTg0MjgwOTMsImV4cCI6MTcxODUxNDQ5M30.oorX-ElUFtIANQ1B0Vm6IJyKEUadSyZPgV8xGaXNzkg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/vendor/products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"vendor",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Product By Slug",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTg0MjgwOTMsImV4cCI6MTcxODUxNDQ5M30.oorX-ElUFtIANQ1B0Vm6IJyKEUadSyZPgV8xGaXNzkg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/vendor/products/:slug",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"vendor",
+										"products",
+										":slug"
+									],
+									"variable": [
+										{
+											"key": "slug",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Product",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzE5Mzk3OTgyLCJleHAiOjE3MTk0ODQzODJ9.kEPoEuYtLLJdiEpHqKYQzlYKrm5K0FcoRJhR16-zTxQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "category_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "brand_id",
+											"value": "2",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "Node js ",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "1000",
+											"type": "text"
+										},
+										{
+											"key": "discount",
+											"value": "10",
+											"description": "nullable",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "JavaScript , Typescript",
+											"type": "text"
+										},
+										{
+											"key": "tags",
+											"value": "2024",
+											"type": "text"
+										},
+										{
+											"key": "product_info",
+											"value": "{\"info\": \"value\"} (optional)",
+											"type": "text"
+										},
+										{
+											"key": "questions[0]",
+											"value": "What is this?",
+											"type": "text"
+										},
+										{
+											"key": "questions[1]",
+											"value": "How does it work?",
+											"type": "text"
+										},
+										{
+											"key": "answers[0]",
+											"value": "This is a sample product.",
+											"type": "text"
+										},
+										{
+											"key": "answers[1]",
+											"value": "It works well.",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][variant]",
+											"value": "size",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][price]",
+											"value": "100",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][measurements]",
+											"value": "M",
+											"type": "text"
+										},
+										{
+											"key": "featured_image",
+											"type": "file",
+											"src": []
+										},
+										{
+											"key": "gallery_images",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/vendor/products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"vendor",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Product",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/vendor/products/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"vendor",
+										"products",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Product to festival Event",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzE5NDMxMTgwLCJleHAiOjE3MTk1MTc1ODB9.u2-cha16NzxWD7N9I6R-E7QBm_FhfBEpN-dSqj1nYAM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/vendor/product-festival/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"vendor",
+										"product-festival",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Product",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTg0MjgwOTMsImV4cCI6MTcxODUxNDQ5M30.oorX-ElUFtIANQ1B0Vm6IJyKEUadSyZPgV8xGaXNzkg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/vendor/products/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"vendor",
+										"products",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Product Gallery Image",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}/vendor/products/:productId/gallery/:imageId",
+									"host": [
+										"{{BASE_URL}"
+									],
+									"path": [
+										"vendor",
+										"products",
+										":productId",
+										"gallery",
+										":imageId"
+									],
+									"variable": [
+										{
+											"key": "productId",
+											"value": ""
+										},
+										{
+											"key": "imageId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Order",
+					"item": [
+						{
+							"name": "All Orders",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzE4NDI0MzUyLCJleHAiOjE3MTg1MTA3NTJ9.B_Ik9ZnmkDHRYtRWcYIpC4HGPGcM3ztvYZGuastoC6w",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/seller/orders",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"seller",
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Multi Orders details By Ref Id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzIwMTU1MDYyLCJleHAiOjE3MjAyNDE0NjJ9.UxxkBFeTUKoAq8c77NIHgAMXn-sHlrUFGswpcdQJhck",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/seller/multi-orders/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"seller",
+										"multi-orders",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "cd3ab82d-3690-4080-9102-a1892684e276"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Orders By Status",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzE4OTcxMjM4LCJleHAiOjE3MTkwNTc2Mzh9.kJjFngOLNuXIc26QO1d6qwxDe9-VJGAuyGx0BJw_iXc",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/seller/orders?status=completed",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"seller",
+										"orders"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "completed",
+											"description": "options : new , shipped , completed , cancelled"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Order Details By Id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzE4OTcxMjM4LCJleHAiOjE3MTkwNTc2Mzh9.kJjFngOLNuXIc26QO1d6qwxDe9-VJGAuyGx0BJw_iXc",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/seller/orders/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"seller",
+										"orders",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Order Status",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzE4NDI0MzUyLCJleHAiOjE3MTg1MTA3NTJ9.B_Ik9ZnmkDHRYtRWcYIpC4HGPGcM3ztvYZGuastoC6w",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "status",
+											"value": "shipped",
+											"description": "options : new , shipped , completed",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/seller/orders/:id/status",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"seller",
+										"orders",
+										":id",
+										"status"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Favorite Products",
+					"item": [
+						{
+							"name": "All Favorite Products",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/favorite-products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"favorite-products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "All Favorite Products Ids Array",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/favorite-products/ids",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"favorite-products",
+										"ids"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Make Product Favorite Toggle",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjI3LCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTkxMjAyNDgsImV4cCI6MTcxOTIwNjY0OH0.Z7EM1y5qiMlY5c48MdAjA9fzCh9n7pJBlI21_onh-Bs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "product_id",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/favorite-product",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"favorite-product"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Credit Limit Request",
+					"item": [
+						{
+							"name": "Create Credit Limit Requet",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "shop_name",
+											"value": "Saphire",
+											"type": "text"
+										},
+										{
+											"key": "phone_number",
+											"value": "123445678",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "test@saphire.com",
+											"type": "text"
+										},
+										{
+											"key": "shop_address",
+											"value": "Commercial Market",
+											"type": "text"
+										},
+										{
+											"key": "aadhar_card",
+											"value": "121134433213234",
+											"type": "text"
+										},
+										{
+											"key": "pin_card_number",
+											"value": "121",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/create-credit-limit-request",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"create-credit-limit-request"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Offers",
+					"item": [
+						{
+							"name": "Create Offer",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/vendor/create-offer",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"vendor",
+										"create-offer"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "All Offers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/vendor/offers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"vendor",
+										"offers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single Offer Details",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/vendor/offers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"vendor",
+										"offers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Offer",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/vendor/offers/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"vendor",
+										"offers",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Offer",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/vendor/offers/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"vendor",
+										"offers",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Apply Offer",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzE5NzM5MTAwLCJleHAiOjE3MTk4MjU1MDB9.ggAad5nSHicdawQW3912-1iW7UexsuvnjuGM7VN8Brg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "product_ids",
+											"value": "2,3",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/vendor/offers/:offer_id/apply",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"vendor",
+										"offers",
+										":offer_id",
+										"apply"
+									],
+									"variable": [
+										{
+											"key": "offer_id",
+											"value": "7"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Statistics",
+					"item": [
+						{
+							"name": "Recent Orders",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/seller/statistics/orders",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"seller",
+										"statistics",
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Seller Total Sales",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/seller/statistics/sales",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"seller",
+										"statistics",
+										"sales"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Order Stats",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/seller/statistics/orders-stats",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"seller",
+										"statistics",
+										"orders-stats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Lifetime Revenue",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/seller/statistics/lifetime-revenue",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"seller",
+										"statistics",
+										"lifetime-revenue"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Return stats",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/seller/statistics/return-stats",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"seller",
+										"statistics",
+										"return-stats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Revenue Trend",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/seller/statistics/revenue-trend",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"seller",
+										"statistics",
+										"revenue-trend"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Buyer",
+			"item": [
+				{
+					"name": "Profile",
+					"item": [
+						{
+							"name": "Get Profile",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTkxNTQ0MDcsImV4cCI6MTcxOTI0MDgwN30.cPngK1wv6KTXnnpIWRloPGfdz7oDLCp_vmjoZzZIAn4",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/profile",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Profile",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "first_name ",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "last_name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "country",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "state",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "city",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "address",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/profile/:id/edit",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"profile",
+										":id",
+										"edit"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change Password",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "old_password",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "new_password",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/profile/change-password",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"profile",
+										"change-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deactivate Account",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzE5MTk4MjY3LCJleHAiOjE3MTkyODQ2Njd9.huM8Mn-8FnE-j_0qxdsHck_eoYcQgVoWYQYFZ_rrFTc",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/profile/deactivate-account",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"profile",
+										"deactivate-account"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Activate Account",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE5LCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTkwNzQ2MjQsImV4cCI6MTcxOTE2MTAyNH0.O8I5p5m0e2skXTzWmT5dlVHZ2EJg85DcAyBUY8IrhwA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/profile/activate-account",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"profile",
+										"activate-account"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Account",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE5LCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTkxOTk2NDksImV4cCI6MTcxOTI4NjA0OX0.MWqeBJdS8XBaLmVGnNFRcy1IeS2jimZv62J1Zs_SBpM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "message",
+											"value": "Delete Account Test",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/profile/delete-account",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"profile",
+										"delete-account"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Address",
+					"item": [
+						{
+							"name": "All Addresses",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/addresses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"addresses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Address By Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/addresses/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"addresses",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Address",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTg0NDkzOTAsImV4cCI6MTcxODUzNTc5MH0.e_jilraprQ0GvwlmYc6BF-1mzY0GoAYWjPEg5GaOw2A",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "address",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "address_label",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "note",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "recipient_name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "recipient_phone",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/addresses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"addresses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Address",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "address",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "address_label",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "note",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "recipient_name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "recipient_phone",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/addresses/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"addresses",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Set Primary Address",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "address",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "address_label",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "note",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "recipient_name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "recipient_phone",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/addresses/:id/setPrimary",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"addresses",
+										":id",
+										"setPrimary"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Address",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/addresses/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"addresses",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Order",
+					"item": [
+						{
+							"name": "All Orders",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTkzMjc4NjIsImV4cCI6MTcxOTQxNDI2Mn0.Wh9hAwbkvx7qyTc4-dp-LsCNO-dLIiy_bqWwcGz6DtU",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/buyer/orders",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"buyer",
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Order By Status",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTg0MjIyMTEsImV4cCI6MTcxODUwODYxMX0.iy70vT06K5PhdVOSIi8RCKez1p2YMcS38ZipmUOTfhc",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/buyer/orders?status",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"buyer",
+										"orders"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": null,
+											"description": "status : new , shipped , completed , cancelled"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Multi Orders detail By Ref Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/buyer/multi-orders/:ref_id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"buyer",
+										"multi-orders",
+										":ref_id"
+									],
+									"variable": [
+										{
+											"key": "ref_id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Single Order Details By Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/buyer/orders/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"buyer",
+										"orders",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Order",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTg5ODcyODcsImV4cCI6MTcxOTA3MzY4N30.DIDRIctk5XJDWZoEGK8oBf8p_a-FklnSQN2XSsOOBYE",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "address_id",
+											"value": "1",
+											"description": "required",
+											"type": "text"
+										},
+										{
+											"key": "payment_type",
+											"value": "creditcard",
+											"description": "payment types :   cod ,  creditcard , paypal",
+											"type": "text"
+										},
+										{
+											"key": "quantities",
+											"value": "1,2",
+											"description": "required  | for multiple products format : 2,5,6 ",
+											"type": "text"
+										},
+										{
+											"key": "discount",
+											"value": "",
+											"description": "nullable",
+											"type": "text"
+										},
+										{
+											"key": "payment",
+											"value": "paid",
+											"description": "payment : paid , notpiad",
+											"type": "text"
+										},
+										{
+											"key": "transaction_id",
+											"value": "11",
+											"type": "text"
+										},
+										{
+											"key": "product_ids",
+											"value": "2,3",
+											"description": "required  | for multiple products format : 2,5,6 ",
+											"type": "text"
+										},
+										{
+											"key": "prices",
+											"value": "400,500",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/buyer/orders",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"buyer",
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cancel Order",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTk5MDA5MDMsImV4cCI6MTcxOTk4NzMwM30.VpP_lZMLFODhMZr1WS2M4Bu0q3kTQX8S3saCoHnb0XI",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "address_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "payment_type",
+											"value": "",
+											"description": "payment types :   cod ,  creditcard , paypal",
+											"type": "text"
+										},
+										{
+											"key": "quantity",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "coupon_code",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "discount",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "payment",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "transaction_id",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/buyer/orders/:id/cancel",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"buyer",
+										"orders",
+										":id",
+										"cancel"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "38"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Track Order",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTk5MDA5MDMsImV4cCI6MTcxOTk4NzMwM30.VpP_lZMLFODhMZr1WS2M4Bu0q3kTQX8S3saCoHnb0XI",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/buyer/orders/:id/track-status",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"buyer",
+										"orders",
+										":id",
+										"track-status"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "57"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update payment status",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTk5MDA5MDMsImV4cCI6MTcxOTk4NzMwM30.VpP_lZMLFODhMZr1WS2M4Bu0q3kTQX8S3saCoHnb0XI",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "payment_status",
+											"value": "",
+											"description": "paid | notpaid",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/buyer/orders/:id/payment-status",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"buyer",
+										"orders",
+										":id",
+										"payment-status"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "57"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Favorite Products",
+					"item": [
+						{
+							"name": "All Favorite Products",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTkxMTcwNTMsImV4cCI6MTcxOTIwMzQ1M30.DlZruz1lO5VOSYLJB4uRvmOLDoTDtpIhUvHzRNFA-KY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/favorite-products",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"favorite-products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "All Favorite Products Ids Array",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTkxMTcwNTMsImV4cCI6MTcxOTIwMzQ1M30.DlZruz1lO5VOSYLJB4uRvmOLDoTDtpIhUvHzRNFA-KY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/favorite-products/ids",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"favorite-products",
+										"ids"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Make Product Favorite Toggle",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTg4NjI4ODAsImV4cCI6MTcxODk0OTI4MH0.TRKQFBFu17J-FpJadIElN4sj9Q18IapUCTg9EaGkeSc",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "product_id",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/favorite-product",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"favorite-product"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Reviews",
+					"item": [
+						{
+							"name": "Add Review",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "product_id",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "rating",
+											"value": "",
+											"description": "values : 1,2,3,4,6",
+											"type": "text"
+										},
+										{
+											"key": "comment",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "images",
+											"description": "Upload multiple images",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/reviews",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"reviews"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "All Reviews",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTkwNTU5NzYsImV4cCI6MTcxOTE0MjM3Nn0.B1e9jQSnquVCHY5BcHpXgYFxpJ1Zl11u04AtB2etYVY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/reviews",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"reviews"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Review Details By Id",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/reviews/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"reviews",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Review",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/reviews/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"reviews",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Review",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/reviews/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"reviews",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Notification Settings",
+					"item": [
+						{
+							"name": "Notification Settings",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTk4MjU0ODUsImV4cCI6MTcxOTkxMTg4NX0.mcuEU6EG_XFHMG683rrxWNdxETgGcA7VlwOBrO5Gfm8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "true",
+											"description": "true | false",
+											"type": "text"
+										},
+										{
+											"key": "offer_and_promotion",
+											"value": "true",
+											"description": "true | false",
+											"type": "text"
+										},
+										{
+											"key": "newsletter",
+											"value": "",
+											"description": "true | false",
+											"type": "text"
+										},
+										{
+											"key": "personalized",
+											"value": "",
+											"description": "true | false",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/notifications/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"notifications",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Notification Settings",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTk4MjU0ODUsImV4cCI6MTcxOTkxMTg4NX0.mcuEU6EG_XFHMG683rrxWNdxETgGcA7VlwOBrO5Gfm8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "true",
+											"description": "true | false",
+											"type": "text"
+										},
+										{
+											"key": "offer_and_promotion",
+											"value": "true",
+											"description": "true | false",
+											"type": "text"
+										},
+										{
+											"key": "newsletter",
+											"value": "",
+											"description": "true | false",
+											"type": "text"
+										},
+										{
+											"key": "personalized",
+											"value": "",
+											"description": "true | false",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/notifications/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"notifications",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Membership plan usage",
+					"item": [
+						{
+							"name": "All Plans",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/membership-plans",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"membership-plans"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Plan By id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/membership-plans/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"membership-plans",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Purchase membership plan",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "membership_plan_id",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/purchase-membership-plan",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"purchase-membership-plan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Confirm plan payment",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "transaction_id",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "payment_status",
+											"value": "",
+											"description": "paid | notpaid",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/confirm-plan-payment/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"confirm-plan-payment",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "My membership plans",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/user-membership-plan",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"user-membership-plan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Active membership plan",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/active-membership-plan",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"active-membership-plan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Apply Plan discount",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "product_ids",
+											"value": "",
+											"description": "format = [1,4,7]",
+											"type": "text"
+										},
+										{
+											"key": "quantities",
+											"value": "",
+											"description": "format = [2,3,4]",
+											"type": "text"
+										},
+										{
+											"key": "variant_ids",
+											"value": "",
+											"description": "format = [2,null,3]   pass null iff product has no variant",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/apply-membership-discount",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"apply-membership-discount"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Payment Gateway",
+			"item": [
+				{
+					"name": "Billing Page of PG",
+					"item": [
+						{
+							"name": "Billing Page",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "order_id",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "amount",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "address",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/payment/ccavenue-billing-page",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"payment",
+										"ccavenue-billing-page"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Response Handler",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "enc_resp",
+											"value": "onW+nHdapLq1U4IPsOlFDg==:a9bMiCO9mXahOnz0zaCp6oGCQ33eTCKxcV/um0dJe/WhgWnG0nBnoGT42w/zovqDDaJW1VKz5Cv2Y1NyK+k9/iUdhMowCOjwZEnevv5CSJf+57mhZmtjkJUD1r8bMaQtAvTmXsBb3jvSxF2v1IrJBpwzQgZbmhGO2pL8pNAgzsu1pwwtyH99GqXqrezLEP6eW7U7JVviHT2NUaQuZa2yTurN51udQnTuw5ZtfIrcyKrIR5RCGZ3oZNswVSszHY1ZukZtb33DA8adjDe23oAEBw==",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/payment/ccav-response-handler",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"payment",
+										"ccav-response-handler"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "iFrame Checkout Page of PG",
+					"item": [
+						{
+							"name": "iFrame Checkout",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "order_id",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "amount",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "address",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/payment/ccavenue-iframe-checkout",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"payment",
+										"ccavenue-iframe-checkout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Response Handler",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "enc_resp",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/payment/ccav-response-handler",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"payment",
+										"ccav-response-handler"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Custom Checkout",
+					"item": [
+						{
+							"name": "Custom Checkout",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "order_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "name",
+											"value": "John Doe",
+											"type": "text"
+										},
+										{
+											"key": "address",
+											"value": "123 Street, City, State, Country",
+											"type": "text"
+										},
+										{
+											"key": "payment_option",
+											"value": "OPTCRDC",
+											"type": "text"
+										},
+										{
+											"key": "card_type",
+											"value": "VISA",
+											"type": "text"
+										},
+										{
+											"key": "card_name",
+											"value": "JOHN DOE",
+											"type": "text"
+										},
+										{
+											"key": "card_number",
+											"value": "4111111111111111",
+											"type": "text"
+										},
+										{
+											"key": "expiry_month",
+											"value": "12",
+											"type": "text"
+										},
+										{
+											"key": "expiry_year",
+											"value": "2025",
+											"type": "text"
+										},
+										{
+											"key": "cvv_number",
+											"value": "123",
+											"type": "text"
+										},
+										{
+											"key": "amount",
+											"value": "1000",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/payment/ccavenue-custom-checkout",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"payment",
+										"ccavenue-custom-checkout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Response Handler",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "enc_resp",
+											"value": "qSAnDVluiXc4qJW8dwJ10Q==:Js8VOcyyveI04Ox1vtJu2O3NwLWAip0exxQomIg5dhtOsPu+vjQfze+k2W2dLE1MxJe9It6dtieVQfIUq2qEBjI7WtKR1um68WhppaZsp2sXKQ8xTXydERo6eCUD29Aip7UV7iM87r4Og17EM+qSTtTifJ6vo3uVwsDkgmasHskk4QopMLnOSPOgd0NWyj24LJ5FlvnftR0MtXkMa6zb6/9QpOMClF+UjPi5Ttaj3VOyP08tJ5c1B52eS8HeBvU+inVrVgXNo+HfILmCviCtyh2Xc9W+jzGZ9EZbMbF7WqxgmDyagb8JQGBtU8fqunN0y0cZDV0rPJo8Js8uvzibs4DUFadTwmJ2E5ESafccKjcOP0OtotzQsX3GXP1Gd7cCV26mdIZgBOyC+fmcl+eBSlSOl1QRiGCUH3+qcLX8Hj1LJDLHOTTu5m2CzqvPQlgft/jwYrHe9V1oTfbelxaJH7l7Jbvrk1ka5UKU6uVVx9o=",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/payment/ccav-response-handler",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"payment",
+										"ccav-response-handler"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Referral Reanking",
+			"item": [
+				{
+					"name": "Create Referral",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "sender_user_id",
+									"value": "12",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/create-referral",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"create-referral"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "12",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Join Referral",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "referral_code",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "receiver_id",
+									"value": "13",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/joined-referral",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"joined-referral"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Refers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/referrals/:sender_user_id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"referrals",
+								":sender_user_id"
+							],
+							"variable": [
+								{
+									"key": "sender_user_id",
+									"value": "12"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Top Ten Referrals",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/top-referrals",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"top-referrals"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "https://ecommerce-backend-api-production-84b3.up.railway.app/api",
+			"type": "string"
+		},
+		{
+			"key": "LIVE_URL",
+			"value": "https://ecommerce-backend-api-production-84b3.up.railway.app/api",
+			"type": "string"
+		}
+	]
+}

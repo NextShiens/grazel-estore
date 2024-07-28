@@ -23,7 +23,8 @@ export const debounce = function debounce(fn, delay = 700) {
 };
 export const registerApi = async (data) =>
   await axios.post("/auth/register", data);
-
+export const registerApiStore = async (data) =>
+  await axios.put("/store-profile", data);
 export const loginApi = async (data) => await axios.post("/auth/login", data);
 
 export const getAllCategoriesApi = async () =>
@@ -93,7 +94,7 @@ export const getAllFavoriteProductApi = async () =>
   await axios.get("/favorite-products");
 // /global/products/details/:id
 export const createCreditLimitApi = async (data) =>
-  await axios.post("/credit-limit-request", data);
+  await axios.post("/create-credit-limit-request", data);
 
 export const getProfileApi = async () => {
   console.log("token", token);

@@ -41,6 +41,8 @@ import {
 } from "@/apis";
 import axios from "axios";
 import LoginDropdown from "./LoginDropdown";
+import { useAuth } from "@/app/AuthContext";
+import ShoppingLoader from "@/components/shopingLoader";
 export default function Navbar() {
   // const router = useRouter();
   const cartLength = useSelector((state: any) => state.cartLength);
@@ -67,6 +69,7 @@ export default function Navbar() {
   const dispatch = useDispatch();
   const router = useRouter();
   const [user, setUser] = useState({});
+  const { user: authUser, loading, login, logout } = useAuth();
 
   useEffect(() => {
     !cartProducts.length && dispatch(updateCart({ type: "onRefresh" }));
@@ -116,7 +119,7 @@ export default function Navbar() {
       try {
         const { data } = await getProfileApi();
         setUser(data.user);
-      } catch (error) {}
+      } catch (error) { }
     })();
   }, []);
 
@@ -167,6 +170,13 @@ export default function Navbar() {
       searchRef.current.value = "";
     }
   }
+  if (loading) {
+    return (
+      <ShoppingLoader />
+    );
+  }
+
+
   return (
     <>
       <div
@@ -482,9 +492,8 @@ export default function Navbar() {
                 )}
                 {isOpen && (
                   <div
-                    className={`absolute right-0 mt-2 w-[335px] ${
-                      isOpen ? "h-auto" : "h-0"
-                    } bg-white p-5 shadow-lg border border-[#D2D4DA] rounded-md
+                    className={`absolute right-0 mt-2 w-[335px] ${isOpen ? "h-auto" : "h-0"
+                      } bg-white p-5 shadow-lg border border-[#D2D4DA] rounded-md
                     transition-all
                     duration-800
                     origin-top z-[9999999]

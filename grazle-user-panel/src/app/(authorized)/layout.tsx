@@ -1,5 +1,4 @@
 import Auth from "@/components/Auth";
-// const [isAuthenticated, setIsAuthenticated] = useState(false);
 
 export default function RootLayout({
   children,
@@ -7,13 +6,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div>
-
-      <Auth>
-
-        {children}
-      </Auth>
-
-    </div>
+    <html lang="en">
+      <body>
+        <Auth>{children}</Auth>
+      </body>
+    </html>
   );
 }

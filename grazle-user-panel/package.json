@@ -19,6 +19,7 @@
     "axios": "^1.7.2",
     "country-state-city": "^3.2.1",
     "jose": "^5.4.1",
+    "lucide-react": "^0.417.0",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
