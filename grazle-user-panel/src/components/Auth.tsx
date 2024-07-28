@@ -20,7 +20,6 @@ const Auth = ({ children }) => {
         }
       } catch (error) {
         console.error("Authentication error:", error);
-        localStorage.removeItem("token");
         router.push("/signIn");
       } finally {
         setIsLoading(false);
