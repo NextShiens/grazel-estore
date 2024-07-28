@@ -42,7 +42,8 @@ import {
 import axios from "axios";
 import LoginDropdown from "./LoginDropdown";
 import { useAuth } from "@/app/AuthContext";
-import ShoppingLoader from "@/components/shopingLoader";
+import { ShoppingLoader } from 'vibrant-loaders';
+
 export default function Navbar() {
   // const router = useRouter();
   const cartLength = useSelector((state: any) => state.cartLength);
