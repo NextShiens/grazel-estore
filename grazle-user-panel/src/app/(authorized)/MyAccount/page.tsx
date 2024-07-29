@@ -369,28 +369,31 @@ export default function MyAccount() {
           >
             <div
               onClick={() => handleSectionChange("Personal Info")}
-              className={`cursor-pointer pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "Personal Info"
-                ? "border-l-[4px] border-[#F70000] pl-2"
-                : "text-[#8B8B8B] "
-                }`}
+              className={`cursor-pointer pl-5 text-[14px] font-medium cursor-pointer ${
+                activeSection === "Personal Info"
+                  ? "border-l-[4px] border-[#F70000] pl-2"
+                  : "text-[#8B8B8B] "
+              }`}
             >
               Personal Information
             </div>
             <div
               onClick={() => handleSectionChange("Orders")}
-              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${activeSection === "Orders"
-                ? "border-l-[4px] border-[#F70000] pl-2"
-                : "text-[#8B8B8B]"
-                }`}
+              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${
+                activeSection === "Orders"
+                  ? "border-l-[4px] border-[#F70000] pl-2"
+                  : "text-[#8B8B8B]"
+              }`}
             >
               My Orders
             </div>
             <div
               onClick={() => handleSectionChange("Manage Address")}
-              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${activeSection === "Manage Address"
-                ? "border-l-[4px] border-[#F70000] pl-2"
-                : "text-[#8B8B8B] "
-                }`}
+              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${
+                activeSection === "Manage Address"
+                  ? "border-l-[4px] border-[#F70000] pl-2"
+                  : "text-[#8B8B8B] "
+              }`}
             >
               Manage Address
             </div>
@@ -406,30 +409,33 @@ export default function MyAccount() {
           </div> */}
             <div
               onClick={() => handleSectionChange("Password Manager")}
-              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "Password Manager"
-                ? "border-l-[4px] border-[#F70000] pl-2"
-                : "text-[#8B8B8B] "
-                }`}
+              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
+                activeSection === "Password Manager"
+                  ? "border-l-[4px] border-[#F70000] pl-2"
+                  : "text-[#8B8B8B] "
+              }`}
             >
               Password Manager
             </div>
 
             <div
               onClick={() => handleSectionChange("referral")}
-              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "referral"
-                ? "border-l-[4px] border-[#F70000] pl-2"
-                : "text-[#8B8B8B] "
-                }`}
+              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
+                activeSection === "referral"
+                  ? "border-l-[4px] border-[#F70000] pl-2"
+                  : "text-[#8B8B8B] "
+              }`}
             >
               Referrals
             </div>
 
             <div
               onClick={handelLogout}
-              className={`cursor-pointer  mt-[40px] pl-5  text-[14px] font-medium cursor-pointer   ${activeSection === "Logouts"
-                ? "border-l-[4px] border-[#F70000] pl-2"
-                : "text-[#8B8B8B] "
-                }`}
+              className={`cursor-pointer  mt-[40px] pl-5  text-[14px] font-medium cursor-pointer   ${
+                activeSection === "Logouts"
+                  ? "border-l-[4px] border-[#F70000] pl-2"
+                  : "text-[#8B8B8B] "
+              }`}
             >
               Logouts
             </div>
@@ -548,29 +554,38 @@ export default function MyAccount() {
                     </p>
                   </div>
                 </div>
-                <CustomModal showModal={showModelDelete}>
-              <div className=" w-[620px] p-6">
-                <p className="text-[40px] text-center font-bold text-[#777777]">
-                  Delete Account
-                </p>
-                <p className="text-[20px]  font-medium text-[#777777] mt-[32px]">
-                  Deleting your account may remove all your information From our
-                  database, this can not be undone.
-                </p>
-                <p className="text-[14px] font-normal text-[#777777] mt-[18px]">
-                  To Confirm this ype ‘Delete’
-                </p>
-                <div className="flex items-center gap-4 mt-[4px]">
-                  <input className="border-[1px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"></input>
-                  <button
-                    className=" bg-[#d63131] rounded-2xl h-[50px] w-[275px] text-[18px] font-medium text-white"
-                    onClick={deleteuser}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </CustomModal>
+                <CustomModal
+                  showModal={showModelDelete}
+                  onClose={handleCloseModelDelete}
+                >
+                  <div className="p-4 sm:p-6 relative w-full max-w-[100%] sm:max-w-md mx-auto sm:rounded-lg">
+                    <h2 className="text-xl sm:text-2xl text-center font-bold text-gray-800 mb-3 sm:mb-4">
+                      Delete Account
+                    </h2>
+                    <p className="text-sm sm:text-base text-center text-gray-600 mb-3 sm:mb-4">
+                      Deleting your account will remove all your information
+                      from our database. This action cannot be undone.
+                    </p>
+                    <input
+                      className="border border-gray-300 w-full sm:rounded-md h-10 sm:h-12 px-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent mb-3 sm:mb-4"
+                      placeholder="Type 'Delete' to confirm"
+                    />
+                    <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+                      <button
+                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 sm:rounded-md h-10 sm:h-12 w-full text-sm sm:text-base font-medium transition-colors"
+                        onClick={handleCloseModelDelete}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="bg-red-500 hover:bg-red-600 sm:rounded-md h-10 sm:h-12 w-full text-sm sm:text-base font-medium text-white transition-colors"
+                        onClick={deleteuser}
+                      >
+                        Delete Account
+                      </button>
+                    </div>
+                  </div>
+                </CustomModal>
               </form>
             )}
 
@@ -657,10 +672,11 @@ export default function MyAccount() {
                           <div className="flex items-center justify-center border-[1px] border-[#BABABA] rounded-md w-[55px] h-[35px] mr-3">
                             {editEnabled !== item?.id ? (
                               <FiEdit
-                                className={`${editEnabled === item?.id
-                                  ? "text-[#F70000]"
-                                  : "text-[#BABABA]"
-                                  } h-[20px] w-[20px]  cursor-pointer`}
+                                className={`${
+                                  editEnabled === item?.id
+                                    ? "text-[#F70000]"
+                                    : "text-[#BABABA]"
+                                } h-[20px] w-[20px]  cursor-pointer`}
                                 onClick={() => setEditEnabled(item?.id)}
                               />
                             ) : (
@@ -967,7 +983,10 @@ export default function MyAccount() {
                 className="rounded-3xl p-[30px] w-full "
               >
                 <div className="flex-col">
-                  <label className="text-[16px] font-semibold"> Password *</label>
+                  <label className="text-[16px] font-semibold">
+                    {" "}
+                    Password *
+                  </label>
                   <input
                     placeholder="Enter Password"
                     name="old_password"

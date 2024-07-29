@@ -211,5 +211,5 @@ export const forgetPasswordApi = async (email) => {
   });
 };
 
-export const deleteuserApi = async (id) =>
-  await axios.delete(`/users/:id`, id);
+export const deleteuserApi = async (formdata) =>
+  await axios.delete(`/profile/delete-account`, formdata);

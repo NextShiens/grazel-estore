@@ -59,31 +59,32 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, width, offerId }) =>
       <div className="relative aspect-square">
         <Image
           src={'/' + product.featured_image}
-          alt={product.title}
+          // alt={product.title}
           layout="fill"
           objectFit="cover"
-          className="rounded-t-lg"
-        />
-        <div className="absolute top-2 left-2 right-2 flex justify-between items-center">
-          <span className="bg-red-100 text-red-600 text-xs font-semibold px-2 py-1 rounded-full">
-            {discountInfo?.toUpperCase() || '0% OFF'}
-          </span>
-          <LikeButton productId={product.id} />
+          className="rounded-t-lg" alt={''}        />
+        <div className="flex items-center mb-2 absolute top-2 left-2 right-2 justify-between">
+            <span className="text-sm text-white ml-2 bg-yellow-600 font-semibold px-2 py-1 rounded-full">
+              {product.rating} ({product.reviews > 0 ? product.reviews : 0})
+            </span>
+            <LikeButton productId={product.id} />
+          </div>
+          <div className="absolute top-2 left-2 right-2 flex justify-between">
         </div>
       </div>
 
       <div className="p-4">
         <Link href={`/detailProduct/${product.id}`} className="block">
           <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">{product.title}</h3>
-          <div className="flex items-center mb-2">
-            <Rating value={Number(product.rating)} readOnly size="small" />
-            <span className="text-sm text-yellow-600 ml-2">
-              {product.rating} ({product.reviews > 0 ? product.reviews : 0})
-            </span>
-          </div>
+          {/* <span className="bg-red-100 text-red-600 text-xs font-semibold px-2 py-1 rounded-full">
+            {discountInfo?.toUpperCase() || '0% OFF'}
+          </span> */}
           <div className="flex items-baseline mb-2">
             <span className="text-2xl font-bold text-red-600">₹{price}</span>
             <span className="text-sm text-gray-500 line-through ml-2">₹{basePrice}</span>
+            <span className="bg-red-100 text-red-600 text-xs font-semibold px-2 py-1 rounded-full ml-2">
+            {discountInfo?.toUpperCase() || '0% OFF'}
+          </span>
           </div>
         </Link>
       </div>

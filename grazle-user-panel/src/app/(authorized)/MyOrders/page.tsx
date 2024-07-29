@@ -6,10 +6,11 @@ import { Avatar, Checkbox, Radio } from "@mui/material";
 import CustomModal from "@/components/CustomModel";
 import { MdDelete, MdOutlineDeleteOutline, MdUpdate } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
-import { AiFillCloseCircle } from "react-icons/ai";
+import { AiFillCloseCircle, AiOutlineClose } from "react-icons/ai";
 import { FaCircleCheck } from "react-icons/fa6";
 import Dots from "@/assets/Group 1820549907.png";
 import { FaCamera } from "react-icons/fa";
+import { MdClose } from "react-icons/md";
 import {
   createAddressApi,
   createReferralApi,
@@ -31,7 +32,7 @@ import MyorderCard from "@/components/MyorderCard";
 import { BiCopy, BiLoader } from "react-icons/bi";
 import Auth from "@/components/Auth";
 import SkeletonLoader from "@/components/SkeletonLoader";
-import { UseSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 export default function MyAccount() {
   const [showSendModel, setShowSendModel] = useState(false);
@@ -57,6 +58,7 @@ export default function MyAccount() {
   const [referralLink, setReferralLink] = useState("");
   const [hasOrderCanceled, setHasOrderCanceled] = useState(false);
   const router: any = useRouter();
+  const cartProducts = useSelector((state: any) => state.user);
 
   const [profileData, setProfileData] = useState({
     first_name: "",
@@ -81,11 +83,10 @@ export default function MyAccount() {
       const { data } = await getBuyerOrdersApi();
       setOrders(data.orders);
       setMeta(data.meta);
-      console.log("my orders", data.orders);
     } catch (e) {}
   };
 
-  const profileDataHandler = (e) => {
+  const profileDataHandler = (e: any) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
   };
   const [pending, startTransition] = useTransition();
@@ -93,7 +94,6 @@ export default function MyAccount() {
   useEffect(() => {
     (async () => {
       const { data } = await getProfileApi();
-
       setCurrentUser(data?.user);
     })();
   }, []);
@@ -101,7 +101,6 @@ export default function MyAccount() {
   useEffect(() => {
     (async () => {
       const res = await getAddressApi();
-
       setAllAddress(res?.data?.addresses || []);
     })();
   }, []);
@@ -110,15 +109,12 @@ export default function MyAccount() {
     const getOrderByStatus = async () => {
       if (activeSectionorder === "new" && !activeOrder.length) {
         const { data } = await getOrderByStatusApi(activeSectionorder);
-
         setActiveOrder(data?.orders || []);
       } else if (activeSectionorder === "completed" && !completedOrder.length) {
         const { data } = await getOrderByStatusApi(activeSectionorder);
-
         setCompletedOrder(data?.orders || []);
       } else if (activeSectionorder === "cancelled" && !canceledOrder.length) {
         const { data } = await getOrderByStatusApi(activeSectionorder);
-
         setCanceledOrder(data?.orders || []);
       } else {
         return;
@@ -150,8 +146,6 @@ export default function MyAccount() {
   };
 
   const deleteuser = async () => {
-    
-    console.log("delete user");
     try {
       let formdata: any = [];
       setPending(true);
@@ -168,7 +162,6 @@ export default function MyAccount() {
   };
 
   async function onEditPassword(formdata) {
-    debugger;
     const cPassword = formdata.get("cPassword");
     const newPassword = formdata.get("new_password");
     if (cPassword !== newPassword) {
@@ -179,8 +172,6 @@ export default function MyAccount() {
       await editPasswordApi(formdata);
       toast.success("Password has been updated");
     } catch (error) {
-      console.log(error);
-
       if (error?.response?.status === 400) {
         toast.error(error?.response?.data?.message);
       } else {
@@ -192,12 +183,10 @@ export default function MyAccount() {
       }, 500);
     }
   }
-  async function onCreateAddress(formdata) {
+  async function onCreateAddress(formdata: any) {
     try {
       setPending(true);
-
       const res = await createAddressApi(formdata);
-
       setAllAddress([...allAddress, res?.data?.address]);
       toast.success("Address has been created");
     } catch (error) {
@@ -223,12 +212,10 @@ export default function MyAccount() {
     }
   }
 
-  async function onEditAddress(formdata) {
-    debugger;
+  async function onEditAddress(formdata: any) {
     try {
       setPending(true);
       const res = await editAddressApi(formdata, addressId);
-      console.log(res);
       toast.success("Address has been updated");
     } catch (error) {
       toast.error("Something went wrong");
@@ -264,7 +251,6 @@ export default function MyAccount() {
       const objectUrl = URL.createObjectURL(file);
       setProfileImg(objectUrl);
 
-      // Clean up the object URL when the component unmounts or the file changes
       return () => URL.revokeObjectURL(objectUrl);
     }
   };
@@ -293,7 +279,6 @@ export default function MyAccount() {
       setPending(true);
       if (!currentUser.id) return null;
       const { data } = await editProfileApi(formdata, currentUser.id);
-
       toast.success("Profile has been updated");
     } catch (error) {
       toast.error("Something went wrong");
@@ -314,7 +299,6 @@ export default function MyAccount() {
         console.error("Failed to copy text: ", err);
       });
   };
-  console.log(currentUser);
 
   return (
     <Auth>
@@ -364,7 +348,6 @@ export default function MyAccount() {
             >
               Password Manager
             </div>
-
             <div
               onClick={handelLogout}
               className={`cursor-pointer  mt-[40px] pl-5  text-[14px] font-medium cursor-pointer   ${
@@ -411,7 +394,6 @@ export default function MyAccount() {
                     />
                   </label>
                 </div>
-                {/* <Avatar className="w-[80px] h-[80px]" /> */}
                 <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center gap-4  ">
                   <div className="flex-col mt-[30px] lg:w-[50%] w-[100%] sm:w-[100%] md:w-[100%]">
                     <label className="text-[16px] font-semibold">
@@ -492,151 +474,135 @@ export default function MyAccount() {
                 </div>
               </form>
             )}
-            <CustomModal showModal={showModelDelete}>
-              <div className=" w-[620px] p-6">
-                <p className="text-[40px] text-center font-bold text-[#777777]">
+            <CustomModal
+              showModal={showModelDelete}
+              onClose={handleCloseModelDelete}
+            >
+              <div className="p-4 sm:p-6 relative w-full max-w-[100%] sm:max-w-md mx-auto sm:rounded-lg">
+                <h2 className="text-xl sm:text-2xl text-center font-bold text-gray-800 mb-3 sm:mb-4">
                   Delete Account
+                </h2>
+                <p className="text-sm sm:text-base text-center text-gray-600 mb-3 sm:mb-4">
+                  Deleting your account will remove all your information from
+                  our database. This action cannot be undone.
                 </p>
-                <p className="text-[20px]  font-medium text-[#777777] mt-[32px]">
-                  Deleting your account may remove all your information From our
-                  database, this can not be undone.
-                </p>
-                <p className="text-[14px] font-normal text-[#777777] mt-[18px]">
-                  To Confirm this ype ‘Delete’
-                </p>
-                <div className="flex items-center gap-4 mt-[4px]">
-                  <input className="border-[1px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"></input>
+                <input
+                  className="border border-gray-300 w-full sm:rounded-md h-10 sm:h-12 px-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent mb-3 sm:mb-4"
+                  placeholder="Type 'Delete' to confirm"
+                />
+                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
                   <button
-                    className=" bg-[#d63131] rounded-2xl h-[50px] w-[275px] text-[18px] font-medium text-white"
+                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 sm:rounded-md h-10 sm:h-12 w-full text-sm sm:text-base font-medium transition-colors"
+                    onClick={handleCloseModelDelete}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-red-500 hover:bg-red-600 sm:rounded-md h-10 sm:h-12 w-full text-sm sm:text-base font-medium text-white transition-colors"
                     onClick={deleteuser}
                   >
-                    Delete
+                    Delete Account
                   </button>
                 </div>
               </div>
             </CustomModal>
             {activeSection === "Orders" && (
-              <>
-                <Auth>
-                  <div className="">
-                    <div
-                      style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-                      className="rounded-3xl p-[20px] w-[100%] gap-8 md:justify-start justify-center flex items-algin "
+              <Auth>
+                <div className="">
+                  <div
+                    style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
+                    className="rounded-3xl p-[20px] w-[100%] gap-8 md:justify-start justify-center flex items-algin "
+                  >
+                    <p
+                      onClick={() => handleSectionChanges("Active")}
+                      className={`lg:text-[16px] text-[10px] md:text-[14px]  font-normal cursor-pointer ${
+                        activeSections === "Active"
+                          ? "border-b-[4px] border-[#F70000] font-semibold"
+                          : "text-[#8B8B8B]"
+                      }`}
                     >
-                      <p
-                        onClick={() => handleSectionChanges("Active")}
-                        className={`lg:text-[16px] text-[10px] md:text-[14px]  font-normal cursor-pointer ${
-                          activeSections === "Active"
-                            ? "border-b-[4px] border-[#F70000] font-semibold"
-                            : "text-[#8B8B8B]"
-                        }`}
-                      >
-                        Active orders
-                      </p>
+                      Active orders
+                    </p>
 
-                      <p
-                        onClick={() => handleSectionChanges("Completed")}
-                        className={`lg:text-[16px] text-[10px] md:text-[14px] font-normal cursor-pointer ${
-                          activeSections === "Completed"
-                            ? "border-b-[4px] border-[#F70000] font-semibold"
-                            : "text-[#8B8B8B]"
-                        }`}
-                      >
-                        Completed orders
-                      </p>
+                    <p
+                      onClick={() => handleSectionChanges("Completed")}
+                      className={`lg:text-[16px] text-[10px] md:text-[14px] font-normal cursor-pointer ${
+                        activeSections === "Completed"
+                          ? "border-b-[4px] border-[#F70000] font-semibold"
+                          : "text-[#8B8B8B]"
+                      }`}
+                    >
+                      Completed orders
+                    </p>
 
-                      <p
-                        onClick={() => handleSectionChanges("Cancelled")}
-                        className={`lg:text-[16px] text-[10px] md:text-[14px] font-normal cursor-pointer ${
-                          activeSections === "Cancelled"
-                            ? "border-b-[4px] border-[#F70000] font-semibold"
-                            : "text-[#8B8B8B]"
-                        }`}
-                      >
-                        Cancelled orders
-                      </p>
-                    </div>
-
-                    {activeSections === "Active" && (
-                      <>
-                        {!orders?.length ? (
-                          <SkeletonLoader />
-                        ) : (
-                          orders.map((order: any) => {
-                            return (
-                              <MyorderCard
-                                status={["in_progress", "new", "shipped"]}
-                                order={order}
-                                getMyAllOrders={getMyAllOrders}
-                              />
-                            );
-                          })
-                        )}
-
-                        <CustomModal showModal={showConfirm}>
-                          <div className="flex-col justify-center w-[800px]">
-                            <div className="mx-[150px] my-[100px]">
-                              <div className="flex justify-center mb-[22px]">
-                                <Image
-                                  src={Dots}
-                                  alt=""
-                                  className="h-[64px] w-[64px]"
-                                />
-
-                                <FaCircleCheck className="text-[#E24C4B] h-[105px] mx-[16px] w-[105px]" />
-                                <Image
-                                  src={Dots}
-                                  alt=""
-                                  className="h-[64px] w-[64px]"
-                                />
-                              </div>
-
-                              <p className="text-[24px] mt-10 text-center font-bold text-[#434343]">
-                                You Have Successfully purchased Prime Plan. Your
-                                order has been successfully cancelled.{" "}
-                              </p>
-                            </div>
-                          </div>
-                        </CustomModal>
-                      </>
-                    )}
-
-                    {activeSections === "Completed" && (
-                      <>
-                        {!orders?.length ? (
-                          <SkeletonLoader />
-                        ) : (
-                          orders.map((order: any) => {
-                            return (
-                              <MyorderCard
-                                status={["completed"]}
-                                order={order}
-                              />
-                            );
-                          })
-                        )}
-                      </>
-                    )}
-
-                    {activeSections === "Cancelled" && (
-                      <>
-                        {!orders?.length ? (
-                          <SkeletonLoader />
-                        ) : (
-                          orders.map((order: any) => {
-                            return (
-                              <MyorderCard
-                                status={["cancelled"]}
-                                order={order}
-                              />
-                            );
-                          })
-                        )}
-                      </>
-                    )}
+                    <p
+                      onClick={() => handleSectionChanges("Cancelled")}
+                      className={`lg:text-[16px] text-[10px] md:text-[14px] font-normal cursor-pointer ${
+                        activeSections === "Cancelled"
+                          ? "border-b-[4px] border-[#F70000] font-semibold"
+                          : "text-[#8B8B8B]"
+                      }`}
+                    >
+                      Cancelled orders
+                    </p>
                   </div>
-                </Auth>
-              </>
+
+                  {activeSections === "Active" && (
+                    <>
+                      {!orders?.length ? (
+                        <SkeletonLoader />
+                      ) : (
+                        orders.map((order: any) => {
+                          return (
+                            <MyorderCard
+                              key={order.id}
+                              status={["in_progress", "new", "shipped"]}
+                              order={order}
+                              getMyAllOrders={getMyAllOrders}
+                            />
+                          );
+                        })
+                      )}
+                    </>
+                  )}
+
+                  {activeSections === "Completed" && (
+                    <>
+                      {!orders?.length ? (
+                        <SkeletonLoader />
+                      ) : (
+                        orders.map((order: any) => {
+                          return (
+                            <MyorderCard
+                              key={order.id}
+                              status={["completed"]}
+                              order={order}
+                            />
+                          );
+                        })
+                      )}
+                    </>
+                  )}
+
+                  {activeSections === "Cancelled" && (
+                    <>
+                      {!orders?.length ? (
+                        <SkeletonLoader />
+                      ) : (
+                        orders.map((order: any) => {
+                          return (
+                            <MyorderCard
+                              key={order.id}
+                              status={["cancelled"]}
+                              order={order}
+                            />
+                          );
+                        })
+                      )}
+                    </>
+                  )}
+                </div>
+              </Auth>
             )}
 
             {activeSection === "Manage Address" && (
@@ -644,6 +610,7 @@ export default function MyAccount() {
                 <form action={onEditAddress}>
                   {allAddress?.map((item, index) => (
                     <div
+                      key={item.id}
                       style={{ boxShadow: "0px 4px 29px 0px #0000000A " }}
                       className="rounded-3xl p-[20px] w-full h-auto hover:border-[#F70000] border-[1px] mb-4"
                     >
@@ -818,7 +785,6 @@ export default function MyAccount() {
               >
                 <div className="flex-col">
                   <label className="text-[16px] font-semibold">
-                    {" "}
                     Password *
                   </label>
                   <input
@@ -864,7 +830,10 @@ export default function MyAccount() {
             )}
             {activeSection === "Logout" && (
               <>
-                <CustomModal showModal={showSendModel}>
+                <CustomModal
+                  showModal={showSendModel}
+                  onClose={() => setShowSendModel(false)}
+                >
                   <form action={onLogout} className=" w-[400px] p-6">
                     <p className="text-[40px] text-center font-bold text-[#191919]">
                       Logout

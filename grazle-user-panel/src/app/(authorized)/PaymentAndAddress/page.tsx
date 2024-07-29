@@ -92,6 +92,10 @@ export default function PaymentAndAddress() {
     setShowSendModel(false);
   };
 
+  const handleReviewpage = () => {
+    router.push("/Review");
+  };
+
   async function onEditAddress(formdata: any) {
     const addressId = searchParams.get("addressId");
     if (!addressId) return;
@@ -727,12 +731,12 @@ export default function PaymentAndAddress() {
               </p>
 
               <div className="flex mt-[30px] mb-[100px] gap-4 justify-center">
-                {/* <button
+                <button
                 className=" bg-[#F70000] rounded-lg h-[50px] w-[275px] text-white font-medium"
-                onClick={handleCloseModel}
+                onClick={handleReviewpage}
               >
                 Leave a Review
-              </button> */}
+              </button>
 
                 <button
                   className=" bg-[#F69B26] rounded-lg h-[50px] w-[275px] text-white font-medium"
