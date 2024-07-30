@@ -358,6 +358,16 @@ export default function MyAccount() {
             >
               Logouts
             </div>
+            <div
+              onClick={() => router.push("/")}
+              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
+                activeSection === "nothing"
+                  ? "border-l-[4px] border-[#F70000] pl-2"
+                  : "text-[#8B8B8B] "
+              }`}
+            >
+              Go Back
+            </div>
           </div>
           <div className="rounded-3xl  lg:w-[77%] w-[100%] min-h-[454px] max-h-auto">
             {activeSection === "Personal Info" && (

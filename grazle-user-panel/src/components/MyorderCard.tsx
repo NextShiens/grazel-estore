@@ -20,13 +20,12 @@ const MyorderCard = ({
   order,
   status,
   setHasOrderCanceled,
-  getMyAllOrders
-
+  getMyAllOrders,
 }: {
   order: any;
   status?: any;
   setHasOrderCanceled?: any;
-  getMyAllOrders:()=>void;
+  getMyAllOrders: () => void;
 }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -38,6 +37,7 @@ const MyorderCard = ({
   const [showSendModel, setShowSendModel] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  console.log(order, status, "status");
 
   useEffect(() => {
     (async () => {
@@ -94,6 +94,7 @@ const MyorderCard = ({
       handleRevModal();
       toast.success("review has been added");
     }
+    setShowLeave((prev) => !prev);
   };
 
   const handleOrderCancel = async () => {
@@ -101,7 +102,7 @@ const MyorderCard = ({
     try {
       setIsModalVisible(false);
       const { data } = await cancelOrderApi(order.id);
-      getMyAllOrders()
+      getMyAllOrders();
       if (data.success) {
         // setHasOrderCanceled((prev) => !prev);
         toast.success("Order has been cancelled");
@@ -237,12 +238,10 @@ const MyorderCard = ({
                     >
                       {orderTracking?.status_history?.slice(-1)[0].status}
                     </button>
-
-                    {order.status !== "completed" && (
+                    {orderTracking?.status_history?.slice(-1)[0].status !==
+                      "completed" && (
                       <button
-                        className="flex items-center justify-center gap-2 bg-[#FFFAF4]
-                    outline-[2px] outline-[#F69B26] outline-dashed rounded-2xl h-[40px] 
-                    lg:w-[160px] w-fit text-[12px] font-medium text-[#F69B26] px-2"
+                        className="flex items-center justify-center gap-2 bg-[#FFFAF4] outline-[2px] outline-[#F69B26] outline-dashed rounded-2xl h-[40px] lg:w-[160px] w-fit text-[12px] font-medium text-[#F69B26] px-2"
                         onClick={handleButtonClick}
                       >
                         <span>Order Tracking</span>
@@ -250,10 +249,11 @@ const MyorderCard = ({
                       </button>
                     )}
 
-                    {order.status === "completed" && (
+                    {orderTracking?.status_history?.slice(-1)[0].status ===
+                      "completed" && (
                       <button
-                        className=" bg-[#FFFAF4] lg:mt-3 mt-0 outline-[2px] outline-[#F69B26] outline-dashed rounded-2xl h-[50px] lg:w-[181px] w-[130px] lg:w-[181px] sm:w-[100px]   lg:text-[18px] text-[14px] sm:text-[14px] font-medium text-[#F69B26]"
-                        onClick={() => {
+                      className=" bg-[#FFFAF4] lg:mt-3 mt-0 outline-[2px] outline-[#F69B26] outline-dashed rounded-2xl h-[40px] lg:w-[181px] w-[130px] lg:w-[181px] sm:w-[100px]   lg:text-[18px] text-[14px] sm:text-[14px] font-medium text-[#F69B26]"
+                      onClick={() => {
                           setProductId(prod.id);
                           handleRevModal();
                         }}
@@ -269,7 +269,8 @@ const MyorderCard = ({
                 <button className=" bg-[#00F7630F] rounded-2xl h-[40px] outline-[2px] outline-[#26F63B] outline-dashed  lg:w-[160px] w-[300px] text-[15px] font-medium text-[#07D459]">
                   {orderTracking?.status_history?.slice(-1)[0].status}
                 </button>
-                {order.status !== "completed" && (
+                {orderTracking?.status_history?.slice(-1)[0].status !==
+                  "completed" && (
                   <button
                     className="flex items-center justify-center gap-2 bg-[#FFFAF4] mt-3 
                     outline-[2px] outline-[#F69B26] outline-dashed rounded-2xl h-[40px] 
@@ -281,9 +282,11 @@ const MyorderCard = ({
                   </button>
                 )}
 
-                {order.status === "completed" && (
+                {orderTracking?.status_history?.slice(-1)[0].status ===
+                  "completed" && (
                   <button
-                    className=" bg-[#FFFAF4] lg:mt-3 mt-0 outline-[2px] outline-[#F69B26] outline-dashed rounded-2xl h-[50px] lg:w-[181px] w-[130px] lg:w-[181px] sm:w-[100px]   lg:text-[18px] text-[14px] sm:text-[14px] font-medium text-[#F69B26]"
+                    className="bg-[#FFFAF4] rounded-2xl h-[40px] outline-[2px] outline-[#F69B26] outline-dashed  lg:w-[160px] w-[300px] text-[15px] font-medium text-[#F69B26] "
+                    style={{marginLeft: '15px'}}
                     onClick={() => {
                       setProductId(prod.id);
                       handleRevModal();
@@ -555,10 +558,12 @@ const MyorderCard = ({
           </CustomModal>
 
           <CustomModal showModal={showleave}>
-            <div className="flex-col justify-center w-[800px]">
-              <div className="w-[100%] rounded-[30px] p-[30px]">
-                <p className="text-[40px]  font-medium">Write a Review</p>
-                <p className="text-[20px]  font-semibold  mt-3">
+            <div className="flex-col justify-center w-[100%] sm:w-[800px]">
+              <div className="w-[100%] rounded-[20px] sm:rounded-[30px] p-[20px] sm:p-[30px]">
+                <p className="text-[28px] sm:text-[40px] font-medium">
+                  Write a Review
+                </p>
+                <p className="text-[18px] sm:text-[20px] font-semibold mt-3">
                   Rate the Product
                 </p>
                 <Rating
@@ -569,22 +574,22 @@ const MyorderCard = ({
                   onChange={(_, val) => setRating(val as number)}
                   sx={{
                     "& .MuiSvgIcon-root": {
-                      fontSize: 50,
+                      fontSize: { xs: 40, sm: 50 },
                     },
                   }}
                 />
 
-                <div className="mt-5">
-                  <label className="text-[16px] font-semibold text-[#777777]">
-                    Messsage
+                <div className="mt-4 sm:mt-5">
+                  <label className="text-[14px] sm:text-[16px] font-semibold text-[#777777]">
+                    Message
                   </label>
                   <textarea
                     onChange={(e) => setComment(e.target.value)}
-                    className="border-[1px] border-[#0000061] resize-none  w-full rounded-md h-[100px] p-3 focus:outline-none placeholder:text-[#777777]"
-                    placeholder="Messsage"
+                    className="border-[1px] border-[#0000061] resize-none w-full rounded-md h-[80px] sm:h-[100px] p-2 sm:p-3 focus:outline-none placeholder:text-[#777777]"
+                    placeholder="Message"
                   />
                 </div>
-                <div className="flex items-center justify-between gap-4 mt-5">
+                <div className="flex flex-wrap items-center justify-start gap-3 sm:gap-4 mt-4 sm:mt-5">
                   {selectedImages.length > 0 &&
                     selectedImages.map((image, index) => (
                       <Image
@@ -592,11 +597,11 @@ const MyorderCard = ({
                         height={130}
                         key={index}
                         src={image}
-                        className="rounded-2xl w-[130px] h-[130px]"
+                        className="rounded-xl sm:rounded-2xl w-[80px] h-[80px] sm:w-[130px] sm:h-[130px] object-cover"
                         alt=""
                       />
                     ))}
-                  <div className=" w-[130px] h-[130px] border-[3px] rounded-2xl border-[#F70000] flex justify-center items-center">
+                  <div className="w-[80px] h-[80px] sm:w-[130px] sm:h-[130px] border-[2px] sm:border-[3px] rounded-xl sm:rounded-2xl border-[#F70000] flex justify-center items-center">
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -606,21 +611,21 @@ const MyorderCard = ({
                       multiple
                     />
                     <PiCameraThin
-                      className="h-[90px] w-[90px] text-[#F70000]"
+                      className="h-[50px] w-[50px] sm:h-[90px] sm:w-[90px] text-[#F70000]"
                       onClick={handleIconClick}
                       style={{ cursor: "pointer" }}
                     />
                   </div>
                 </div>
-                <div className="flex mt-5 items-center gap-6">
+                <div className="flex flex-col sm:flex-row mt-4 sm:mt-5 items-center gap-3 sm:gap-6">
                   <button
-                    className=" bg-[#F70000] rounded-xl h-[50px]  mt-[30px] w-[230px] text-[18px] font-medium text-white"
+                    className="bg-[#F70000] rounded-lg sm:rounded-xl h-[45px] sm:h-[50px] w-full sm:w-[230px] text-[16px] sm:text-[18px] font-medium text-white"
                     onClick={revSubHandler}
                   >
-                    Submit
+                    Submit Review
                   </button>
                   <button
-                    className=" bg-[#F69B26] rounded-xl h-[50px] mt-[30px] w-[230px] text-[18px] font-medium text-white"
+                    className="bg-[#F69B26] rounded-lg sm:rounded-xl h-[45px] sm:h-[50px] w-full sm:w-[230px] text-[16px] sm:text-[18px] font-medium text-white"
                     onClick={handleRevModal}
                   >
                     Cancel
