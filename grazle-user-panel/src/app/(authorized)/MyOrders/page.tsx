@@ -150,7 +150,6 @@ export default function MyAccount() {
   };
 
   const deleteuser = async () => {
-    
     console.log("delete user");
     try {
       let formdata: any = [];
@@ -374,6 +373,16 @@ export default function MyAccount() {
               }`}
             >
               Logouts
+            </div>
+            <div
+              onClick={() => router.push("/")}
+              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
+                activeSection === "nothing"
+                  ? "border-l-[4px] border-[#F70000] pl-2"
+                  : "text-[#8B8B8B] "
+              }`}
+            >
+              Go Back
             </div>
           </div>
           <div className="rounded-3xl  lg:w-[77%] w-[100%] min-h-[454px] max-h-auto">
@@ -863,26 +872,33 @@ export default function MyAccount() {
               </form>
             )}
             {activeSection === "Logout" && (
-              <>
-                <CustomModal showModal={showSendModel}>
-                  <form action={onLogout} className=" w-[400px] p-6">
-                    <p className="text-[40px] text-center font-bold text-[#191919]">
-                      Logout
-                    </p>
-                    <p className="text-center font-medium text-[#777777] mt-[16px]">
-                      Are you sure you want to log out?
-                    </p>
-                    <div className="flex justify-center">
-                      <button
-                        type="submit"
-                        className=" bg-[#F70000]  rounded-full h-[50px] mt-[24px] w-[275px] text-[18px] font-medium text-white"
-                      >
-                        Yes, Logout
-                      </button>
-                    </div>
-                  </form>
-                </CustomModal>
-              </>
+              <CustomModal showModal={showSendModel}>
+                <div className="w-[400px] p-6">
+                  <p className="text-[40px] text-center font-bold text-[#191919]">
+                    Logout
+                  </p>
+                  <p className="text-center font-medium text-[#777777] mt-[16px]">
+                    Are you sure you want to log out?
+                  </p>
+                  <div className="flex flex-col sm:flex-row justify-center items-center gap-3 mt-[24px]">
+                    <button
+                      onClick={onLogout}
+                      className="bg-[#F70000] rounded-full h-[50px] w-full sm:w-[180px] text-[18px] font-medium text-white"
+                    >
+                      Yes, Logout
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowSendModel(false);
+                        setActiveSection("Personal Info");
+                      }}
+                      className="bg-[#F69B26] rounded-full h-[50px] w-full sm:w-[180px] text-[18px] font-medium text-white"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </CustomModal>
             )}
           </div>
         </div>
