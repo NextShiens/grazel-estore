@@ -34,6 +34,7 @@ import Fram22 from "@/assets/Frame 22.png";
 import Fram44 from "@/assets/Frame 44.png";
 import ProductCard from "@/components/ProductCard";
 import Arrow from "@/assets/Round Alt Arrow Right.png";
+import { useDispatch } from "react-redux";
 
 import {
   getSeasonTop,
@@ -57,12 +58,14 @@ import {
   calculateTimeLeft,
 } from "@/utils/priceCalculation";
 import Link from "next/link";
+import { updateCategories } from "@/features/features";
 
 export default function Home() {
+  const dispatch = useDispatch();
   const [seasonTop, setSeasonTop] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [recentProducts, setRecentProducts] = useState([]);
-  const [allCategories, setCategories] = useState([]);
+  const [allCategories, setCategories] = useState<any>([]);
   const [trendingProducts, setTrendingProducts] = useState([]);
   const [suggestedProducts, setSuggestedProducts] = useState([]);
   const [positionOneBanners, setPositionOneBanners] = useState([]);
@@ -71,8 +74,8 @@ export default function Home() {
   const [positionThreeBanners, setPositionThreeBanners] = useState([]);
   const [selectedCategoryProducts, setSelectedCategoryProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [timeLeft, setTimeLeft] = useState();
-  const [seventyFiveTimeLeft, setSeventyFiveTimeLeft] = useState();
+  const [timeLeft, setTimeLeft] = useState<any>();
+  const [seventyFiveTimeLeft, setSeventyFiveTimeLeft] = useState<any>();
   const router = useRouter();
   const sliderRef1 = useRef<any>(null);
   const sliderRef2 = useRef<any>(null);
@@ -118,6 +121,7 @@ export default function Home() {
     (async () => {
       const { data } = await getAllCategoriesApi();
       setCategories(data?.categories || []);
+      dispatch(updateCategories(data?.categories || []));
     })();
   }, []);
 
@@ -163,15 +167,15 @@ export default function Home() {
   // console.log(allProducts);
 
   // /+++++++++++++++++++++++++++++++falsh sale products++++++++++++++++++++++++++++++++++++++++++
-  const flashSaleProducts = allProducts.filter(
-    (product) =>
+  const flashSaleProducts:any = allProducts.filter(
+    (product:any) =>
       product?.offer?.name?.toLowerCase() === "flash sale".toLowerCase()
   );
   const endDate = new Date(flashSaleProducts[0]?.offer?.end_date);
   useEffect(() => {
     const timer = setTimeout(() => {
       const endDate = flashSaleProducts[0]?.offer?.end_date;
-      const leftTime = calculateTimeLeft(endDate);
+      const leftTime:any = calculateTimeLeft(endDate);
       setTimeLeft(leftTime);
     }, 1000);
     return () => clearTimeout(timer);
@@ -179,13 +183,13 @@ export default function Home() {
 
   // ++++++++++++++++++++++++75% off products++++++++++++++++++++++++++++++++++++++++++
   // /category sale 75% off
-  const seventyFivePercentSaleProducts = allProducts.filter(
-    (product) =>
+  const seventyFivePercentSaleProducts:any = allProducts.filter(
+    (product:any) =>
       product?.offer?.discount_type?.toLowerCase() ===
-        "percentage".toLowerCase() &&
+      "percentage".toLowerCase() &&
       product?.offer?.discount_value?.toLowerCase() === "75.00".toLowerCase()
   );
-  const seventyFiveEndDate = new Date(
+  const seventyFiveEndDate:any = new Date(
     seventyFivePercentSaleProducts[0]?.offer?.end_date
   );
 
@@ -204,10 +208,10 @@ export default function Home() {
   // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   // +++++++++++++++++++++++++++++++++++++++++50% off products ++++++++++++++++++++++++++++++++++++++++++
-  const fiftyPercentSaleProducts = allProducts.filter(
-    (product) =>
+  const fiftyPercentSaleProducts:any = allProducts.filter(
+    (product:any) =>
       product?.offer?.discount_type?.toLowerCase() ===
-        "percentage".toLowerCase() &&
+      "percentage".toLowerCase() &&
       product?.offer?.discount_value?.toLowerCase() === "50.00".toLowerCase()
   );
 
@@ -480,8 +484,8 @@ export default function Home() {
             {timeLeft?.days > 0
               ? timeLeft?.days + "d"
               : timeLeft?.hours > 0
-              ? timeLeft?.hours
-              : 0}
+                ? timeLeft?.hours
+                : 0}
           </span>
           <span>:</span>
           <span className="p-2 bg-[#F81F1F] rounded-sm text-white md:text-base text-xs">
@@ -547,16 +551,15 @@ export default function Home() {
         style={{ scrollbarWidth: "none" }}
         className="lg:mx-[150px] md:mx-[60px] mx-[14px] pb-2 md:my-[24px] mt-5 flex items-center  overflow-x-auto lg:justify-between gap-3"
       >
-        {allCategories.map((item, index) => (
+        {allCategories.map((item:any, index:any) => (
           <button
             disabled={click?.name === item?.name || loading}
             key={index}
             onClick={() => handleClickCategory(item)}
-            className={`${
-              item?.name === click?.name
+            className={`${item?.name === click?.name
                 ? "border border-[#FC3030] text-[#FC3030]"
                 : "bg-[#F8F8F8]"
-            } lg:text-sm text-xs py-2 px-3 rounded-md whitespace-nowrap`}
+              } lg:text-sm text-xs py-2 px-3 rounded-md whitespace-nowrap`}
           >
             {item?.name?.toUpperCase()}
           </button>
@@ -830,8 +833,8 @@ export default function Home() {
               {seventyFiveTimeLeft?.days > 0
                 ? seventyFiveTimeLeft?.days + "d"
                 : seventyFiveTimeLeft?.hours > 0
-                ? seventyFiveTimeLeft?.hours
-                : 0}
+                  ? seventyFiveTimeLeft?.hours
+                  : 0}
             </span>
             <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
               {seventyFiveTimeLeft?.days > 0

@@ -6,6 +6,7 @@ const initialState = {
   user: {},
   cartProducts: [],
   cartLocalStorage: [],
+  catagories: [],
 
   cartLength: 0,
   cartTotal: 0,
@@ -23,6 +24,9 @@ export const featuresSlice = createSlice({
   reducers: {
     updatePageNavigation: (state, action) => {
       state.pageNavigation = action.payload;
+    },
+    updateCategories: (state, action) => {
+      state.catagories = action.payload;
     },
     updateSidebar: (state, action) => {
       state.showSidebar = action.payload;
@@ -192,5 +196,6 @@ export const {
   deleteCartProduct,
   updateCartInitialState,
   onVariantChange,
+  updateCategories,
 } = featuresSlice.actions;
 export const featuresReducer = featuresSlice.reducer;

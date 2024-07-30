@@ -1,12 +1,15 @@
+"use client";
 import axios from "axios";
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 let token = "";
+
 if (typeof window !== "undefined") {
   token = localStorage.getItem("token");
   if (token) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   }
 }
+
 
 export const debounce = function debounce(fn, delay = 700) {
   let timeout;
@@ -20,7 +23,8 @@ export const debounce = function debounce(fn, delay = 700) {
 };
 export const registerApi = async (data) =>
   await axios.post("/auth/register", data);
-
+export const registerApiStore = async (data) =>
+  await axios.put("/store-profile", data);
 export const loginApi = async (data) => await axios.post("/auth/login", data);
 
 export const getAllCategoriesApi = async () =>
@@ -90,9 +94,10 @@ export const getAllFavoriteProductApi = async () =>
   await axios.get("/favorite-products");
 // /global/products/details/:id
 export const createCreditLimitApi = async (data) =>
-  await axios.post("/credit-limit-request", data);
+  await axios.post("/create-credit-limit-request", data);
 
 export const getProfileApi = async () => {
+  console.log("token", token);
   if (!token || token.trim() === "" || token === undefined) return;
   return await axios.get("/profile");
 };
@@ -101,7 +106,7 @@ export const editProfileApi = async (data, id) =>
   await axios.put(`/profile/${id}/edit`, data);
 
 export const editPasswordApi = async (data) =>
-  await axios.post("/profile/change-password", data);
+  await axios.post("/profile/reset-password", data);
 
 export const createAddressApi = async (data) =>
   await axios.post("/addresses", data);
@@ -124,7 +129,7 @@ export const placeOrderApi = async (data) =>
 export const getOrderByStatusApi = async (status) =>
   await axios.get(`/buyer/orders?status=${status}`);
 
-// ==============================irfan================================
+// ============================== ================================
 export const getAllProductsApi = async () =>
   await axios.get(`/global/products`);
 
@@ -195,3 +200,16 @@ export const getSeasonTop = async () =>
 
 export const getSingleCategoryProductsApi = async (id) =>
   await axios.get(`/global/products?categoryId=${id}`);
+export const forgetPasswordApi = async (email) => {
+  const formData = new FormData();
+  formData.append('email', email);
+
+  await axios.post("/auth/forgot-password", formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+};
+
+export const deleteuserApi = async (formdata) =>
+  await axios.delete(`/profile/delete-account`, formdata);
