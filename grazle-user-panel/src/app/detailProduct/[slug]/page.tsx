@@ -10,7 +10,7 @@ import Image from "next/image";
 import heart from "@/assets/like.png";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import ReviewCard from "@/components/ReviewCard";
+import ReviewSection from "@/components/ReviewCard";
 import { onVariantChange, updateCart } from "@/features/features";
 import React, { useEffect, useState } from "react";
 import ProductCard from "@/components/ProductCard";
@@ -39,6 +39,8 @@ import Card1 from "@/assets/a5a6296b2158604a47215a2b0a00bde0.png";
 import { MdExpandMore } from "react-icons/md";
 import { calculateFinalPrice } from "@/utils/priceCalculation";
 import LikeButton from "@/components/LikeButton";
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000/api";
 
 export default function ProductDetail() {
   const dispatch = useDispatch();
@@ -54,6 +56,8 @@ export default function ProductDetail() {
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [selectedTab, setSelectedTab] = useState("description");
   const [showPopup, setShowPopup] = useState(false);
+  const [reviews, setReviews] = useState([]);
+
 
   const router = useRouter();
   const { slug } = useParams();
@@ -76,6 +80,31 @@ export default function ProductDetail() {
     };
     fetchProductData();
   }, [slug]);
+  const url = `${BASE_URL}/global/products/reviews/${slug}`;
+
+  useEffect(() => {
+    async function fetchProductReviews() {
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok " + response.statusText);
+        }
+
+        const data = await response.json();
+        setReviews(data); // Update state with the fetched reviews
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    }
+
+    fetchProductReviews();
+  }, [url]);
 
   useEffect(() => {
     const fetchBrandData = async () => {
@@ -130,29 +159,29 @@ export default function ProductDetail() {
     }
   }
   const excellentRating =
-  (singleProduct?.total_rating?.total_excellent_count /
-    singleProduct?.total_rating?.total_rating_count) *
-  100;
+    (singleProduct?.total_rating?.total_excellent_count /
+      singleProduct?.total_rating?.total_rating_count) *
+    100;
 
-const topVgRating =
-  (singleProduct?.total_rating?.total_verygood_count /
-    singleProduct?.total_rating?.total_rating_count) *
-  100;
+  const topVgRating =
+    (singleProduct?.total_rating?.total_verygood_count /
+      singleProduct?.total_rating?.total_rating_count) *
+    100;
 
-const goodRating =
-  (singleProduct?.total_rating?.total_good_count /
-    singleProduct?.total_rating?.total_rating_count) *
-  100;
+  const goodRating =
+    (singleProduct?.total_rating?.total_good_count /
+      singleProduct?.total_rating?.total_rating_count) *
+    100;
 
-const averageRating =
-  (singleProduct?.total_rating?.total_average_count /
-    singleProduct?.total_rating?.total_rating_count) *
-  100;
+  const averageRating =
+    (singleProduct?.total_rating?.total_average_count /
+      singleProduct?.total_rating?.total_rating_count) *
+    100;
 
-const poorRating =
-  (singleProduct?.total_rating?.total_poor_count /
-    singleProduct?.total_rating?.total_rating_count) *
-  100;
+  const poorRating =
+    (singleProduct?.total_rating?.total_poor_count /
+      singleProduct?.total_rating?.total_rating_count) *
+    100;
 
   const { basePrice, price, discountInfo } = calculateFinalPrice(
     singleProduct,
@@ -464,6 +493,10 @@ const poorRating =
             ))}
           </div>
         )}
+
+        <div>
+          <ReviewSection reviewsData={reviews} />
+        </div>
 
         <p className="text-[#000000] text-[19px] border-t pt-5 mt-5">
           More from the store
