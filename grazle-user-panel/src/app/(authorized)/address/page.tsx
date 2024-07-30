@@ -19,7 +19,7 @@ import { AiOutlineDelete } from "react-icons/ai";
 import React, { useEffect, useState } from "react";
 import { MdOutlineAddToPhotos } from "react-icons/md";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import Auth from "@/components/Auth";
+
 
 export default function AddressPage() {
   const [addressId, setAddressId] = useState("");
@@ -112,7 +112,7 @@ export default function AddressPage() {
 
   return (
     <>
-      <Auth>
+      <>
         <div className="lg:my-[80px] flex items-center justify-center  my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[20px] md:mx-[30px]">
           <div className="rounded-3xl lg:w-[77%] w-[100%] min-h-[454px] max-h-auto">
             <div className="flex items-center gap-2 mb-4">
@@ -339,7 +339,7 @@ export default function AddressPage() {
             ) : null}
           </div>
         </div>
-      </Auth>
+      </>
     </>
   );
 }

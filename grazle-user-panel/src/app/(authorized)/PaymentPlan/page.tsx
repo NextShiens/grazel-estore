@@ -2,11 +2,11 @@ import React from "react";
 import Image from "next/image";
 import logo from "@/assets/Grazle Logo.png";
 import Pay from "@/assets/Group 1820550001.png";
-import Auth from "@/components/Auth";
+
 
 export default function PaymentPlan() {
   return (
-    <Auth>
+    <>
     <div className="flex flex-col  items-center justify-center">
       <Image
         src={logo}
@@ -110,6 +110,6 @@ export default function PaymentPlan() {
         </div>
       </div>
     </div>
-    </Auth>
+    </>
   );
 }

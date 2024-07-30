@@ -1,15 +1,9 @@
-import Auth from "@/components/Auth";
+import ProtectedRoute from '@/components/ProtectedRoute';
 
-export default function RootLayout({
+export default function AuthorizedLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en">
-      <body>
-        <Auth>{children}</Auth>
-      </body>
-    </html>
-  );
+}: {
+  children: React.ReactNode
+}) {
+  return <ProtectedRoute>{children}</ProtectedRoute>;
 }

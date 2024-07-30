@@ -30,7 +30,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import MyorderCard from "@/components/MyorderCard";
 import { BiCopy, BiLoader } from "react-icons/bi";
-import Auth from "@/components/Auth";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import { useSelector } from "react-redux";
 
@@ -301,7 +300,7 @@ export default function MyAccount() {
   };
 
   return (
-    <Auth>
+    <>
       <div className="lg:my-[20px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[20px] sm:mx-[20px] md:mx-[30px]">
         <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-start gap-6 h-auto">
           <div
@@ -517,7 +516,7 @@ export default function MyAccount() {
               </div>
             </CustomModal>
             {activeSection === "Orders" && (
-              <Auth>
+              <>
                 <div className="">
                   <div
                     style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
@@ -612,7 +611,7 @@ export default function MyAccount() {
                     </>
                   )}
                 </div>
-              </Auth>
+              </>
             )}
 
             {activeSection === "Manage Address" && (
@@ -876,6 +875,6 @@ export default function MyAccount() {
           </div>
         </div>
       </div>
-    </Auth>
+    </>
   );
 }

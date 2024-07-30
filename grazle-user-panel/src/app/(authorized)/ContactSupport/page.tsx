@@ -11,7 +11,7 @@ import { AiFillInstagram } from "react-icons/ai";
 import Insta from "@/assets/Group 1820550000.png";
 import Google from "@/assets/Group 1820549999.png";
 import { FaFacebookF, FaPinterestP, FaTwitter } from "react-icons/fa";
-import Auth from "@/components/Auth";
+
 
 export default function ContactSupport() {
   const [name, setName] = useState("");
@@ -57,7 +57,7 @@ export default function ContactSupport() {
   };
 
   return (
-    <Auth>
+    <>
       <div className="mx-4 md:mx-8 lg:mx-[150px] my-8 md:my-[80px]">
         <div className="flex flex-col md:flex-row items-stretch gap-6">
           <div
@@ -232,6 +232,6 @@ export default function ContactSupport() {
           </div>
         </div>
       </div>
-    </Auth>
+    </>
   );
 }
