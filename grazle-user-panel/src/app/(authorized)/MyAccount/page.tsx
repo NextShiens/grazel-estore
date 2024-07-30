@@ -1030,18 +1030,31 @@ export default function MyAccount() {
             )}
             {activeSection === "Logout" && (
               <>
-                <CustomModal showModal={showSendModel}>
-                  <form action={onLogout} className=" w-[400px] p-6">
-                    <p className="text-[40px] text-center font-bold text-[#191919]">
+                <CustomModal
+                  showModal={showSendModel}
+                  onClose={() => setShowSendModel(false)}
+                >
+                  <form
+                    action={onLogout}
+                    className="w-full max-w-[400px] p-4 sm:p-6"
+                  >
+                    <p className="text-2xl sm:text-3xl md:text-4xl text-center font-bold text-[#191919]">
                       Logout
                     </p>
-                    <p className="text-center font-medium text-[#777777] mt-[16px]">
+                    <p className="text-center font-medium text-[#777777] mt-4 sm:mt-6 text-sm sm:text-base">
                       Are you sure you want to log out?
                     </p>
-                    <div className="flex justify-center">
+                    <div className="flex flex-col sm:flex-row justify-center items-center mt-6 sm:mt-8 space-y-3 sm:space-y-0 sm:space-x-4">
+                      <button
+                        type="button"
+                        onClick={() => setShowSendModel(false)}
+                        className="bg-gray-200 hover:bg-gray-300 rounded-full h-12 w-full sm:w-[130px] text-base sm:text-lg font-medium text-[#191919] transition duration-300"
+                      >
+                        Cancel
+                      </button>
                       <button
                         type="submit"
-                        className=" bg-[#F70000]  rounded-full h-[50px] mt-[24px] w-[275px] text-[18px] font-medium text-white"
+                        className="bg-[#F70000] hover:bg-[#d60000] rounded-full h-12 w-full sm:w-[130px] text-base sm:text-lg font-medium text-white transition duration-300"
                       >
                         Yes, Logout
                       </button>
