@@ -12,7 +12,7 @@ import MenuIcon from "@/assets/VectorMenu.png";
 import ProductCard from "@/components/ProductCard";
 import { useSelector } from "react-redux";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000/api";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://api.grazle.co.in/api";
 
 export default function StoreProductPage() {
   const router = useRouter();

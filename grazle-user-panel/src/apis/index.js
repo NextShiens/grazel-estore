@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-axios.defaults.baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_BASE_URL  || "https://api.grazle.co.in/api";
 let token = "";
 
 if (typeof window !== "undefined") {

@@ -40,7 +40,7 @@ import { MdExpandMore } from "react-icons/md";
 import { calculateFinalPrice } from "@/utils/priceCalculation";
 import LikeButton from "@/components/LikeButton";
 const BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000/api";
+  process.env.NEXT_PUBLIC_BASE_URL || "https://api.grazle.co.in/api";
 
 export default function ProductDetail() {
   const dispatch = useDispatch();
