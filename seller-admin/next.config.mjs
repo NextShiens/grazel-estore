@@ -3,7 +3,7 @@ const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const nextConfig = {
   images: {
     // domains: [API_URL],
-    domains: ["ecommerce-backend-api-production-84b3.up.railway.app"],
+    domains: ["api.grazle.co.in"],
   },
   swcMinify: true,
   productionBrowserSourceMaps: false,
