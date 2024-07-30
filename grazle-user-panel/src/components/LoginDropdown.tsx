@@ -20,7 +20,7 @@ const LoginDropdown = () => {
     if (role === "user") {
       router.push('/signIn');
     } else if (role === "seller") {
-      window.location.href = "https://grazle-seller-green.vercel.app/";
+      window.location.href = "https://seller.grazle.co.in/";
     }
   };
 
