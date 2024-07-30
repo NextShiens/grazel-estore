@@ -1,26 +1,22 @@
+// middleware.js
 import { NextResponse } from "next/server";
 
-export default async function middleware(request) {
-  console.log("target =========> ");
-  const authToken = request.cookies.get("session");
+export function middleware(request) {
+  const path = request.nextUrl.pathname;
+  const isAuthPage = ["/signIn", "/registration"].includes(path);
 
-  const isAuthPage =
-    "/signIn" === request.nextUrl.pathname ||
-    "/registration" === request.nextUrl.pathname
-      ? // "/RegisterSeller" === request.nextUrl.pathname
-        true
-      : false;
-
-  if (!authToken && !isAuthPage) {
-    return NextResponse.redirect(new URL("/signIn", request.url));
-  }
-  if (authToken && isAuthPage) {
-    return NextResponse.redirect(new URL("/", request.url));
+  // We can't check localStorage here, so we'll handle auth checks on the client side
+  // This middleware will only prevent authenticated users from accessing auth pages
+  if (isAuthPage) {
+    return NextResponse.next();
   }
 
+  // For all other routes, we'll let the request through and handle auth in the components
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/signIn", "/registration"],
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
 };

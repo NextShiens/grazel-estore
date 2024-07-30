@@ -1,8 +1,10 @@
 import React from "react";
 import { Rating } from "@mui/material";
+import Auth from "@/components/Auth";
 
 export default function Review() {
   return (
+    <Auth>
     <div className="lg:my-[50px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[20px] sm:mx-[20px] md:mx-[30px] flex flex-wrap lg:flex-nowrap sm:flex-wrap md:flex-wrap  items-start gap-8">
       <div
         style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
@@ -124,5 +126,6 @@ export default function Review() {
         </div>
       </div>
     </div>
+    </Auth>
   );
 }

@@ -5,11 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { IoMdClose } from "react-icons/io";
 import { FaPlus, FaMinus } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
-import { Checkbox, Rating, Slider } from "@mui/material";
+import { Checkbox, Rating, Slider, Select, MenuItem } from "@mui/material";
 import axios from "axios";
 import Baner from "@/assets/mainBag.png";
 import MenuIcon from "@/assets/VectorMenu.png";
 import ProductCard from "@/components/ProductCard";
+import { useSelector } from "react-redux";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000/api";
 
@@ -19,14 +20,19 @@ export default function StoreProductPage() {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [products, setProducts] = useState([]);
   const [brands, setBrands] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const catredux = useSelector((state) => state.catagories);
+  const [categories, setCategories] = useState(catredux);
   const [filters, setFilters] = useState({
     keyword: searchParams.get("keyword") || "",
     brand_id: "",
-    category_id: "",
+    category_id: searchParams.get("category") || "",
     rating: "",
     min_price: 0,
     max_price: 100000,
+    latest_arrival: "",
+    price: "",
+    top_rated: "",
+    popular: "",
   });
 
   const [openSections, setOpenSections] = useState({
@@ -34,18 +40,18 @@ export default function StoreProductPage() {
     brands: false,
     price: false,
     rating: false,
+    sort: false,
   });
 
   useEffect(() => {
     fetchProducts();
     fetchBrands();
-    fetchCategories();
   }, []);
 
   useEffect(() => {
-    const keyword = searchParams.get("keyword");
-    if (keyword) {
-      setFilters(prev => ({ ...prev, keyword }));
+    const category = searchParams.get("category");
+    if (category) {
+      setFilters(prev => ({ ...prev, category_id: category }));
     }
   }, [searchParams]);
 
@@ -65,41 +71,54 @@ export default function StoreProductPage() {
 
   const fetchBrands = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/brands`);
+      const response = await axios.get(`${BASE_URL}/global/brands`);
       setBrands(response.data.brands);
     } catch (error) {
       console.error("Error fetching brands:", error);
     }
   };
-
   const fetchCategories = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/global/categories`);
-      setCategories(response.data.categories);
+      // setCategories(response.data.categories);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
   };
 
   const handleFilterChange = (key, value) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+    setFilters((prev) => {
+      const newValue = prev[key] === value ? "" : value;
+      return { ...prev, [key]: newValue };
+    });
   };
 
   const applyFilters = () => {
     fetchProducts();
     setIsFilterVisible(false);
+
+    const newSearchParams = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) newSearchParams.set(key, value);
+    });
+
+    router.push(`/search?${newSearchParams.toString()}`, { scroll: false });
   };
 
   const clearFilters = () => {
     setFilters({
-      keyword: searchParams.get("keyword") || "",
+      keyword: searchParams.get("keyword") || "i",
       brand_id: "",
       category_id: "",
       rating: "",
       min_price: 0,
       max_price: 100000,
+      latest_arrival: "",
+      price: "",
+      top_rated: "",
+      popular: "",
     });
-    fetchProducts();
+    router.push("/search", { scroll: false });
   };
 
   const toggleSection = (section) => {
@@ -172,8 +191,8 @@ export default function StoreProductPage() {
               max={100000}
             />
             <div className="flex justify-between mt-2 text-sm text-gray-600">
-              <span>${filters.min_price}</span>
-              <span>${filters.max_price}</span>
+              <span>₹{filters.min_price}</span>
+              <span>₹{filters.max_price}</span>
             </div>
           </div>
         )}
@@ -192,6 +211,58 @@ export default function StoreProductPage() {
               precision={1}
               value={Number(filters.rating)}
             />
+          </div>
+        )}
+      </div>
+
+      <div className="border-b border-gray-200">
+        <div className="px-3 py-2 flex justify-between items-center cursor-pointer" onClick={() => toggleSection("sort")}>
+          <p className="text-gray-600 text-lg font-medium">Sort By</p>
+          {openSections.sort ? <FaMinus className="text-[#F70000]" /> : <FaPlus className="text-[#F70000]" />}
+        </div>
+        {openSections.sort && (
+          <div className="px-3 py-2">
+            <Select
+              value={filters.latest_arrival}
+              onChange={(e) => handleFilterChange("latest_arrival", e.target.value)}
+              displayEmpty
+              fullWidth
+              className="mb-2"
+            >
+              <MenuItem value="">Latest Arrival</MenuItem>
+              <MenuItem value="desc">Newest First</MenuItem>
+              <MenuItem value="asc">Oldest First</MenuItem>
+            </Select>
+            <Select
+              value={filters.price}
+              onChange={(e) => handleFilterChange("price", e.target.value)}
+              displayEmpty
+              fullWidth
+              className="mb-2"
+            >
+              <MenuItem value="">Price</MenuItem>
+              <MenuItem value="highest">Highest to Lowest</MenuItem>
+              <MenuItem value="lowest">Lowest to Highest</MenuItem>
+            </Select>
+            <Select
+              value={filters.top_rated}
+              onChange={(e) => handleFilterChange("top_rated", e.target.value)}
+              displayEmpty
+              fullWidth
+              className="mb-2"
+            >
+              <MenuItem value="">Top Rated</MenuItem>
+              <MenuItem value="top">Top Rated First</MenuItem>
+            </Select>
+            <Select
+              value={filters.popular}
+              onChange={(e) => handleFilterChange("popular", e.target.value)}
+              displayEmpty
+              fullWidth
+            >
+              <MenuItem value="">Popularity</MenuItem>
+              <MenuItem value="popular">Most Popular First</MenuItem>
+            </Select>
           </div>
         )}
       </div>

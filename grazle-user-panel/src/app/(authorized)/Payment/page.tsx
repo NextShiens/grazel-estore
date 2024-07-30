@@ -8,6 +8,7 @@ import Pay from "@/assets/Group 1820550001.png";
 import Dots from "@/assets/Group 1820549907.png";
 import { FaCircleCheck } from "react-icons/fa6";
 import CustomModal from "@/components/CustomModel";
+import Auth from "@/components/Auth";
 
 export default function Payment() {
   const [showSendModel, setShowSendModel] = useState(false);
@@ -22,6 +23,7 @@ export default function Payment() {
 
   return (
     <>
+    <Auth>
       <div className="flex mt-[40px] lg:mx-0 mx-2 sm:mx-2 md:mx-4 justify-center">
         <div className="h-[614px] w-[640px] text-center">
           <p className="text-[32px] font-bold">Select Payment</p>
@@ -133,6 +135,7 @@ export default function Payment() {
           </div>
         </CustomModal>
       </div>
+      </Auth>
     </>
   );
 }

@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { Button, Menu, MenuItem } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -14,27 +15,25 @@ const LoginDropdown = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   const handleLoginAs = (role: any) => {
     handleClose();
     if (role === "user") {
-      router.push("/signIn"); // Replace with your actual login route
+      router.push('/signIn');
     } else if (role === "seller") {
-      window.location.href = "https://grazle-seller-green.vercel.app/"; // Replace with your actual login route
+      window.location.href = "https://grazle-seller-green.vercel.app/";
     }
   };
 
   return (
     <div>
-      <Button
+      <button
         aria-controls="login-menu"
         aria-haspopup="true"
         onClick={handleClick}
-        variant="contained"
         className="bg-[#F70000] py-2 px-6 rounded-md text-white hover:bg-[#F75050] ml-2"
       >
-        Login
-      </Button>
+        LOGIN
+      </button>
       <Menu
         id="login-menu"
         anchorEl={anchorEl}

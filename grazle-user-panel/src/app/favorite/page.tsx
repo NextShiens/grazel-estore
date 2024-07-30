@@ -26,8 +26,8 @@ const Favorite = () => {
   }, []);
 
   //   if (id && allProducts?.length > 0) {
-  //     // const { data } = await getOfferProductsApi();
-  //     // console.log(data);
+  //     const { data } = await getOfferProductsApi();
+  //     console.log(data);
   //     const currentOfferProds = allProducts.filter(
   //       (item: any) => item?.offer?.id?.toString() === id.toString()
   //     );
