@@ -4,7 +4,7 @@ import Image from "next/image";
 import airpod from "@/assets/airpod.png";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { getTopReferralApi } from "@/apis";
-import Auth from "@/components/Auth";
+
 
 export default function ReferralRanking() {
   const [topUser, setTopUser] = useState([]);
@@ -19,7 +19,7 @@ export default function ReferralRanking() {
   }, []);
 
   return (
-    <Auth>
+    <>
     <div className=" lg:my-[50px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[20px] sm:mx-[20px] md:mx-[30px]">
       {/* <p className="text-[24px] font-semibold text-black">Your referral link</p>
       <input className="lg:h-[70px] h-[50px] sm:h-[50px] w-[100%] border-[1px] border-[#0000000D] mt-3 rounded-xl relative pr-10 p-3 focus:outline-none" /> */}
@@ -103,6 +103,6 @@ export default function ReferralRanking() {
           );
         })}
     </div>
-    </Auth>
+    </>
   );
 }

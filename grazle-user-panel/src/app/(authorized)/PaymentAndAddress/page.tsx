@@ -27,7 +27,7 @@ import Delivery from "@/assets/Group 1820549945.png";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter, useSearchParams } from "next/navigation";
 import { MdKeyboardArrowRight, MdKeyboardArrowLeft } from "react-icons/md";
-import Auth from "@/components/Auth";
+
 
 export default function PaymentAndAddress() {
   const router = useRouter();
@@ -232,7 +232,7 @@ export default function PaymentAndAddress() {
   }
 
   return (
-    <Auth>
+    <>
       <div className="lg:my-[50px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[10px] sm:mx-[10px] md:mx-[30px] flex  flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-start gap-8">
         <div className="lg:w-[70%] w-[100%] sm:w-[100%] md:w-[100%] rounded-3xl p-[20px] ">
           <form
@@ -749,6 +749,6 @@ export default function PaymentAndAddress() {
           </div>
         </CustomModal>
       </div>
-    </Auth>
+    </>
   );
 }

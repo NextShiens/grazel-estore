@@ -52,7 +52,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import MyorderCard from "@/components/MyorderCard";
 import { BiCopy, BiLoader } from "react-icons/bi";
-import Auth from "@/components/Auth";
+
 
 export default function MyAccount() {
   const [showSendModel, setShowSendModel] = useState(false);
@@ -360,7 +360,7 @@ export default function MyAccount() {
   console.log(currentUser);
 
   return (
-    <Auth>
+    <>
       <div className="lg:my-[20px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[20px] sm:mx-[20px] md:mx-[30px]">
         <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-start gap-6 h-auto">
           <div
@@ -1066,6 +1066,6 @@ export default function MyAccount() {
           </div>
         </div>
       </div>
-    </Auth>
+    </>
   );
 }
