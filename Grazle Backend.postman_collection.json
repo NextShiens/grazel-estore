@@ -20,7 +20,7 @@
 							"formdata": [
 								{
 									"key": "email",
-									"value": "seller@test.com",
+									"value": "seller@store0.com",
 									"description": "required",
 									"type": "text"
 								},
@@ -55,13 +55,13 @@
 							"formdata": [
 								{
 									"key": "username",
-									"value": "seller",
+									"value": "Grazle",
 									"description": "required",
 									"type": "text"
 								},
 								{
 									"key": "email",
-									"value": "seller@test.com",
+									"value": "grazlehomeware@gmail.com",
 									"description": "required",
 									"type": "text"
 								},
@@ -93,6 +93,123 @@
 							"path": [
 								"auth",
 								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Seller",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "seller",
+									"description": "required",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "seller@store0.com",
+									"description": "required",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "12345678",
+									"description": "required",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "12345678",
+									"description": "required",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "Islamabad",
+									"type": "text"
+								},
+								{
+									"key": "state",
+									"value": "Islamabad",
+									"type": "text"
+								},
+								{
+									"key": "pin_code",
+									"value": "0000",
+									"type": "text"
+								},
+								{
+									"key": "store_about",
+									"value": "No About",
+									"type": "text"
+								},
+								{
+									"key": "store_name",
+									"value": "Store",
+									"type": "text"
+								},
+								{
+									"key": "gst",
+									"value": "111",
+									"type": "text"
+								},
+								{
+									"key": "pan",
+									"value": "000",
+									"type": "text"
+								},
+								{
+									"key": "store_description",
+									"value": "Lorem Ipsum",
+									"type": "text"
+								},
+								{
+									"key": "store_url",
+									"value": "www.example.com",
+									"type": "text"
+								},
+								{
+									"key": "account_name",
+									"value": "Store Account",
+									"type": "text"
+								},
+								{
+									"key": "account_number",
+									"value": "12345678",
+									"type": "text"
+								},
+								{
+									"key": "bank_code",
+									"value": "Alflah",
+									"type": "text"
+								},
+								{
+									"key": "bank_name",
+									"value": "111",
+									"type": "text"
+								},
+								{
+									"key": "store_image",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/register-seller",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"register-seller"
 							]
 						}
 					},
@@ -1706,6 +1823,16 @@
 						{
 							"name": "Get Seller with store profile",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjMzODE2MywiZXhwIjoxNzIyNTk3MzYzfQ.uU7OPgpQkZN8CeZTAuS9TJVlpR0D3Xt1ggbXpVWSpcM",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
@@ -1723,6 +1850,16 @@
 						{
 							"name": "Seller approval | disapproval",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjMzODE2MywiZXhwIjoxNzIyNTk3MzYzfQ.uU7OPgpQkZN8CeZTAuS9TJVlpR0D3Xt1ggbXpVWSpcM",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
@@ -1738,7 +1875,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "8"
 										}
 									]
 								}
@@ -2218,7 +2355,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTg0MjgwOTMsImV4cCI6MTcxODUxNDQ5M30.oorX-ElUFtIANQ1B0Vm6IJyKEUadSyZPgV8xGaXNzkg",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjMzNTgzNCwiZXhwIjoxNzIyNTk1MDM0fQ.wdOZt8rgbZywBbSHNWTC483dkvX8-dMYbTuFvgz0yrE",
 											"type": "string"
 										}
 									]
@@ -2294,7 +2431,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTgyNTY0MjEsImV4cCI6MTcxODM0MjgyMX0.M06vbdM7OzBM36FOeCkRNp4h81n-3PbmhyMtLs1oisw",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjMzNTgzNCwiZXhwIjoxNzIyNTk1MDM0fQ.wdOZt8rgbZywBbSHNWTC483dkvX8-dMYbTuFvgz0yrE",
 											"type": "string"
 										}
 									]
@@ -2306,18 +2443,18 @@
 									"formdata": [
 										{
 											"key": "name",
-											"value": "",
+											"value": "Home Appliancesss",
 											"type": "text"
 										},
 										{
 											"key": "description",
-											"value": "",
+											"value": "Lorem ipsum",
 											"type": "text"
 										},
 										{
 											"key": "image",
-											"value": "",
-											"type": "text"
+											"type": "file",
+											"src": "/C:/Users/Ubaid Computers/Downloads/address-removebg-preview.png"
 										}
 									]
 								},
@@ -7040,7 +7177,7 @@
 	"variable": [
 		{
 			"key": "BASE_URL",
-			"value": "https://ecommerce-backend-api-production-84b3.up.railway.app/api",
+			"value": "https://api.grazle.co.in/api",
 			"type": "string"
 		},
 		{
