@@ -33,7 +33,6 @@ const Settings = () => {
         });
         
         setProfile(data?.user);
-        toast.success("Profile data fetched successfully!");
       } catch (error) {
         console.error("Error fetching profile data:", error);
         toast.error("Failed to fetch profile data.");
