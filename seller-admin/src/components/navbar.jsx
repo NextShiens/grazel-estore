@@ -6,6 +6,7 @@ import profile from "../assets/profile.jpeg";
 import useLocalStorage from "../hooks/use-local-storage";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { useSelector } from "react-redux";
+
 const Navbar = () => {
   const user = useSelector((state) => state.user);
   const [isMounted, setIsMounted] = useState(false);
@@ -15,9 +16,14 @@ const Navbar = () => {
     setIsMounted(true);
   }, []);
 
+  const handleNotificationClick = () => {
+    // alert("Notification clicked!");
+  };
+
   if (!isMounted) {
     return null;
   }
+
   return (
     <div className="bg-white h-[70px] shadow-sm flex items-center justify-between">
       <div className="md:w-[240px] flex justify-center items-center px-5 md:ps-0">
@@ -30,11 +36,14 @@ const Navbar = () => {
             {user?.username?.toUpperCase() || name?.toUpperCase()}
           </p>
           <p className="text-[13px] font-[400] leading-[19.5px] text-[#777777]">
-            Welcome Back
+            Welcome Back 
           </p>
         </div>
         <div className="flex justify-center items-center gap-2 sm:gap-5">
-          <IoIosNotificationsOutline className="bg-gray-200 rounded-[5px] h-[23px] w-[23px] p-1" />
+          <IoIosNotificationsOutline 
+            className="bg-gray-200 rounded-[5px] h-[23px] w-[23px] p-1 cursor-pointer"
+            onClick={handleNotificationClick}
+          />
           <p className="text-[14px] font-[500]">
             {user?.username?.toUpperCase() || name?.toUpperCase()}
           </p>

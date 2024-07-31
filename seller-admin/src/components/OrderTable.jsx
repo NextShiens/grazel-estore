@@ -84,7 +84,29 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
           )}
           <td>{order?.date}</td>
           <td className="w-[130px]">
-            {orderTracking?.status_history?.slice(-1)[0]?.status}
+            <span
+              style={{
+                display: "inline-block",
+                padding: "5px 10px",
+                borderRadius: "12px",
+                fontSize: "12px",
+                fontWeight: "bold",
+                color: "white",
+                backgroundColor:
+                  orderTracking?.status_history?.slice(-1)[0]?.status ===
+                  "pending"
+                    ? "orange"
+                    : orderTracking?.status_history?.slice(-1)[0]?.status ===
+                      "completed"
+                    ? "green"
+                    : orderTracking?.status_history?.slice(-1)[0]?.status ===
+                      "canceled"
+                    ? "red"
+                    : "gray",
+              }}
+            >
+              {orderTracking?.status_history?.slice(-1)[0]?.status}
+            </span>
           </td>
 
           {action && (
@@ -133,7 +155,29 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
               )}
             </td>
             <td className="w-[130px]">
-              {orderTracking?.status_history?.slice(-1)[0]?.status}
+              <span
+                style={{
+                  display: "inline-block",
+                  padding: "5px 10px",
+                  borderRadius: "12px",
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                  color: "white",
+                  backgroundColor:
+                    orderTracking?.status_history?.slice(-1)[0]?.status ===
+                    "pending"
+                      ? "orange"
+                      : orderTracking?.status_history?.slice(-1)[0]?.status ===
+                        "completed"
+                      ? "green"
+                      : orderTracking?.status_history?.slice(-1)[0]?.status ===
+                        "canceled"
+                      ? "red"
+                      : "gray",
+                }}
+              >
+                {orderTracking?.status_history?.slice(-1)[0]?.status}
+              </span>
             </td>
 
             <td className="px-[17px] relative">
