@@ -98,8 +98,6 @@ export default function Navbar() {
       console.error("Failed to fetch user profile:", error);
     }
   };
-  
-
 
   useEffect(() => {
     (async () => {
@@ -180,6 +178,7 @@ export default function Navbar() {
         <ShoppingLoader />
       </div>
     );
+    return <ShoppingLoader />;
   }
 
   const handleBecomeSeller = (e) => {
@@ -290,50 +289,63 @@ export default function Navbar() {
               {isOpenSearch || searchResult?.length ? (
                 <div className="fixed inset-0 z-50 opacity-100 bg-[rgba(0,0,0,0.2);] top-[90px]">
                   <div className="absolute bg-white opacity-100 right-[34%] w-[400px] z-10 p-4 px-6 shadow-lg border border-[#D2D4DA] rounded-xl">
-                    {searchResult?.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center gap-3 my-3 cursor-pointer"
-                        onClick={() => onClickDetail(item)}
-                      >
-                        <Image
-                          src={Search}
-                          alt="Search"
-                          className="w-[36px] h-[36px]"
-                        />
-                        <div className="w-full">
-                          <p className="text-black text-[14px] font-normal">
-                            {item.title}
-                          </p>
-                          <hr />
+                    {searchResult && searchResult.length > 0 ? (
+                      searchResult.map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex items-center gap-3 my-3 cursor-pointer"
+                          onClick={() => onClickDetail(item)}
+                        >
+                          <Image
+                            src={Search}
+                            alt="Search"
+                            className="w-[36px] h-[36px]"
+                          />
+                          <div className="w-full">
+                            <p className="text-black text-[14px] font-normal">
+                              {item.title}
+                            </p>
+                            <hr />
+                          </div>
                         </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className="text-gray-500">No product available</p>
                       </div>
-                    ))}
-                    <div className="flex gap-3 items-center">
-                      <PiClockCountdownThin className="text-black text-[#777777]" />
-                      <p className="text-black text-[16px] font-semibold">
-                        Recent Searches
-                      </p>
-                    </div>
-                    <div className="rounded-xl mt-3 bg-[#F8F8F8] p-3 w-[80%]">
-                      {recentSearches.map((search, index) => (
-                        <div key={index} className="flex gap-3 mt-3">
-                          <Link
-                            href={`/search?keyword=${encodeURIComponent(
-                              search
-                            )}`}
-                            className="text-black text-[14px] font-normal"
-                          >
-                            {search}
-                          </Link>
+                    )}
+
+                    {recentSearches.length > 0 && (
+                      <>
+                        <div className="flex gap-3 items-center">
+                          <PiClockCountdownThin className="text-black text-[#777777]" />
+                          <p className="text-black text-[16px] font-semibold">
+                            Recent Searches
+                          </p>
                         </div>
-                      ))}
-                    </div>
+                        <div className="rounded-xl mt-3 bg-[#F8F8F8] p-3 w-[80%]">
+                          {recentSearches.map((search, index) => (
+                            <div key={index} className="flex gap-3 mt-3">
+                              <Link
+                                href={`/search?keyword=${encodeURIComponent(
+                                  search
+                                )}`}
+                                className="text-black text-[14px] font-normal"
+                              >
+                                {search}
+                              </Link>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
+
                     <div className="rounded-xl mt-3 bg-[#F8F8F8] p-3 w-[80%]">
                       <p className="text-black text-[16px] font-semibold">
                         Popular Searches
                       </p>
-                      {Array.isArray(popularSearches) ? (
+                      {Array.isArray(popularSearches) &&
+                      popularSearches.length > 0 ? (
                         popularSearches.map((search, index) => (
                           <div key={index} className="flex gap-3 mt-3">
                             <Link
