@@ -19,28 +19,31 @@ const Settings = () => {
   const [profile, setProfile] = useState({});
   const [currentTab, setCurrentTab] = useState("general");
   const formRef = useRef(null);
+
   useEffect(() => {
     dispatch(updatePageLoader(false));
     dispatch(updatePageNavigation("settings"));
   }, [dispatch]);
-  useEffect(() => {
-    async function onGetProfile() {
-      try {
-        const { data } = await axiosPrivate.get(`/profile`, {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        });
-        
-        setProfile(data?.user);
-      } catch (error) {
-        console.error("Error fetching profile data:", error);
-        toast.error("Failed to fetch profile data.");
-      }
+
+  const fetchProfileData = async () => {
+    try {
+      const { data } = await axiosPrivate.get(`/profile`, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+      setProfile(data?.user);
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+      toast.error("Failed to fetch profile data.");
     }
-    onGetProfile();
+  };
+
+  useEffect(() => {
+    fetchProfileData();
   }, []);
-  async function onEditProfit(formdata) {
+
+  async function onEditProfile(formdata) {
     try {
       setPending(true);
       const userId = localStorage.getItem("userId");
@@ -50,6 +53,7 @@ const Settings = () => {
         },
       });
       toast.success("Profile has been Updated");
+      await fetchProfileData(); // Refetch the profile data
     } catch (err) {
       toast.error("Something went wrong");
     } finally {
@@ -59,13 +63,14 @@ const Settings = () => {
       }, 1000);
     }
   }
+
   async function onPasswordChange(formdata) {
     try {
       const newPassword = formdata.get("new_password");
       const confirmPassword = formdata.get("confirm_password");
       setPending(true);
       if (newPassword !== confirmPassword) {
-        return toast.error("New and confirm password did'nt match");
+        return toast.error("New and confirm password didn't match");
       }
       await axiosPrivate.post("/profile/reset-password", formdata, {
         headers: {
@@ -75,7 +80,6 @@ const Settings = () => {
       toast.success("Password has been changed");
     } catch (error) {
       if (error?.request?.status === 400) {
-        //error.data.message
         return toast.error("Invalid old password");
       }
       toast.error("Something went wrong");
@@ -85,7 +89,7 @@ const Settings = () => {
       }, 1000);
     }
   }
-  console.log(profile,"profile")
+
   return (
     <>
       <Loading />
@@ -95,7 +99,7 @@ const Settings = () => {
           <Sidebar />
           <div className="grid lg:grid-cols-2 flex-1">
             <form
-              action={onEditProfit}
+              action={onEditProfile}
               ref={formRef}
               className="mt-[30px] px-[22px] w-full"
             >
@@ -106,7 +110,7 @@ const Settings = () => {
                     <div className="flex flex-col gap-1">
                       <label className="text-[#777777]">Your Name</label>
                       <input
-                        placeholder="John Due"
+                        placeholder="John Doe"
                         name="first_name"
                         defaultValue={profile?.profile?.first_name}
                         required
@@ -116,7 +120,7 @@ const Settings = () => {
                     <div className="flex flex-col gap-1">
                       <label className="text-[#777777]">Email Address</label>
                       <input
-                        placeholder="john_due@gmail.com"
+                        placeholder="john_doe@gmail.com"
                         name="email"
                         defaultValue={profile?.email}
                         required
@@ -165,25 +169,6 @@ const Settings = () => {
                         className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
                       />
                     </div>
-                    {/* <div className="flex flex-col gap-1">
-                  <label className="text-[#777777]">Pin Code</label>
-                  <input
-                    placeholder="Pin Code"
-                    name="pin"
-                    defaultValue={profile?.profile?.address}
-                    required
-                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
-                  />
-                </div> */}
-                    {/* <div className="flex flex-col gap-1">
-                  <label className="text-[#777777]">About</label>
-                  <textarea
-                    placeholder="Write Here"
-                    name="description"
-                    required
-                    className="focus:outline-none py-2 border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[100px] text-[15px]"
-                  />
-                </div> */}
                   </div>
                 </div>
                 <div className="flex gap-3 sm:gap-10 mt-[10px]">
