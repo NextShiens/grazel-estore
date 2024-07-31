@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { loginApi,editPasswordApi, forgetPasswordApi } from "@/apis";
+import { loginApi, editPasswordApi, forgetPasswordApi } from "@/apis";
 import { loginAction } from "@/lib";
 import login from "@/assets/login.png";
 import { toast } from "react-toastify";
@@ -40,6 +40,8 @@ const Login = () => {
       const { data } = await loginApi(formdata);
       dispatch(updateUser(data?.user));
       if (typeof window !== "undefined") {
+        // console.log(JSON.stringify(data?.user))
+        localStorage.setItem('theUser', JSON.stringify(data?.user))
         localStorage.setItem("token", data?.token);
         localStorage.setItem("name", data?.user?.username);
         localStorage.setItem("image", data?.user?.profile?.image);
@@ -57,7 +59,7 @@ const Login = () => {
   const handleForgetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await forgetPasswordApi( forgetPasswordEmail );
+      await forgetPasswordApi(forgetPasswordEmail);
       toast.info("Password reset link sent to your email");
       setShowForgetPassword(false);
     } catch (error) {
@@ -131,7 +133,7 @@ const Login = () => {
                 </p>
               </div>
 
-              <p 
+              <p
                 className="text-[#F70000] font-medium text-[16px] cursor-pointer"
                 onClick={() => setShowForgetPassword(true)}
               >

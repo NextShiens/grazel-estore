@@ -52,6 +52,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import MyorderCard from "@/components/MyorderCard";
 import { BiCopy, BiLoader } from "react-icons/bi";
+import { useSelector } from "react-redux";
 
 
 export default function MyAccount() {
@@ -77,30 +78,50 @@ export default function MyAccount() {
   const [userOrders, setUserOrders] = useState([]);
   const [referralLink, setReferralLink] = useState("");
   const [hasOrderCanceled, setHasOrderCanceled] = useState(false);
+  const userRedux = useSelector((state) => state.user);
   const router = useRouter();
 
-  const [profileData, setProfileData] = useState({
-    first_name: "",
-    last_name: "",
-    address: "",
-    phone: "",
-    gender: "",
-    image: "",
-  });
+
 
   const profileDataHandler = (e) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
   };
   const [pending, startTransition] = useTransition();
 
+  // useEffect(() => {
+  //   (async () => {
+  //     const { data } = await getProfileApi();
+
+  //     setCurrentUser(data?.user);
+  //   })();
+  // }, []);
+  const [profileData, setProfileData] = useState({
+    first_name: "",
+    last_name: "",
+    phone: "",
+    country: "",
+    city: "",
+    state: "",
+    address: "",
+    image: "",
+  });
+
   useEffect(() => {
-    (async () => {
-      const { data } = await getProfileApi();
-
-      setCurrentUser(data?.user);
-    })();
-  }, []);
-
+    const user = JSON.parse(localStorage.getItem("theUser"));
+    if (user && user.profile) {
+      setCurrentUser(user);
+      setProfileData({
+        first_name: user.profile.first_name || "",
+        last_name: user.profile.last_name || "",
+        phone: user.profile.phone || "",
+        country: user.profile.country || "",
+        city: user.profile.city || "",
+        state: user.profile.state || "",
+        address: user.profile.address || "",
+        image: user.profile.image || "",
+      });
+    }
+  }, [userRedux]);
   useEffect(() => {
     (async () => {
       const res = await getAddressApi();
@@ -326,17 +347,20 @@ export default function MyAccount() {
   async function onEditProfile(e) {
     e.preventDefault();
     const formdata = new FormData();
-    formdata.append("first_name", profileData.first_name);
-    formdata.append("last_name", profileData.last_name);
-    formdata.append("address", profileData.address);
-    formdata.append("phone", profileData.phone);
-    formdata.append("gender", profileData.gender);
-    formdata.append("image", profileData.image);
+    Object.keys(profileData).forEach(key => {
+      formdata.append(key, profileData[key]);
+    });
+
     try {
       setPending(true);
       if (!currentUser.id) return null;
       const { data } = await editProfileApi(formdata, currentUser.id);
 
+      // Update the local storage with the new data
+      const updatedUser = { ...currentUser, profile: data.profile };
+      // localStorage.setItem("theUser", JSON.stringify(updatedUser));
+
+      setCurrentUser(updatedUser);
       toast.success("Profile has been updated");
     } catch (error) {
       toast.error("Something went wrong");
@@ -357,7 +381,6 @@ export default function MyAccount() {
         console.error("Failed to copy text: ", err);
       });
   };
-  console.log(currentUser);
 
   return (
     <>
@@ -369,31 +392,28 @@ export default function MyAccount() {
           >
             <div
               onClick={() => handleSectionChange("Personal Info")}
-              className={`cursor-pointer pl-5 text-[14px] font-medium cursor-pointer ${
-                activeSection === "Personal Info"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "Personal Info"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Personal Information
             </div>
             <div
               onClick={() => handleSectionChange("Orders")}
-              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${
-                activeSection === "Orders"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B]"
-              }`}
+              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${activeSection === "Orders"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B]"
+                }`}
             >
               My Orders
             </div>
             <div
               onClick={() => handleSectionChange("Manage Address")}
-              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${
-                activeSection === "Manage Address"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${activeSection === "Manage Address"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Manage Address
             </div>
@@ -409,33 +429,30 @@ export default function MyAccount() {
           </div> */}
             <div
               onClick={() => handleSectionChange("Password Manager")}
-              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
-                activeSection === "Password Manager"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "Password Manager"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Password Manager
             </div>
 
             <div
               onClick={() => handleSectionChange("referral")}
-              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
-                activeSection === "referral"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "referral"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Referrals
             </div>
 
             <div
               onClick={handelLogout}
-              className={`cursor-pointer  mt-[40px] pl-5  text-[14px] font-medium cursor-pointer   ${
-                activeSection === "Logouts"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer  mt-[40px] pl-5  text-[14px] font-medium cursor-pointer   ${activeSection === "Logouts"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Logouts
             </div>
@@ -456,18 +473,15 @@ export default function MyAccount() {
                   onChange={handleFileChange}
                 />
                 <div className="relative w-[120px] h-[120px] rounded-full border-zinc-400 border-2">
-                  {profileImg ||
-                    (currentUser?.profile?.image && (
-                      <Image
-                        alt="profile"
-                        width={120}
-                        height={120}
-                        src={
-                          profileImg ? profileImg : currentUser?.profile?.image
-                        }
-                        className="rounded-full w-[100%] h-[100%] absolute top-0 right-0"
-                      />
-                    ))}
+                  {profileImg || (profileData.image && (
+                    <Image
+                      alt="profile"
+                      width={120}
+                      height={120}
+                      src={profileImg ? profileImg : profileData.image}
+                      className="rounded-full w-[100%] h-[100%] absolute top-0 right-0"
+                    />
+                  ))}
                   <label htmlFor="profile">
                     <FaCamera
                       className="absolute cursor-pointer text-black/65 top-[50%] right-[50%] translate-x-[50%] translate-y-[-50%]"
@@ -475,29 +489,67 @@ export default function MyAccount() {
                     />
                   </label>
                 </div>
-                {/* <Avatar className="w-[80px] h-[80px]" /> */}
-                <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center gap-4  ">
+                <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center gap-4">
                   <div className="flex-col mt-[30px] lg:w-[50%] w-[100%] sm:w-[100%] md:w-[100%]">
-                    <label className="text-[16px] font-semibold">
-                      First Name *
-                    </label>
+                    <label className="text-[16px] font-semibold">First Name *</label>
                     <input
                       onChange={profileDataHandler}
-                      placeholder="Enter Name "
+                      placeholder="Enter First Name"
                       name="first_name"
-                      defaultValue={currentUser?.profile?.first_name}
+                      value={profileData.first_name}
                       className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
                     />
                   </div>
                   <div className="flex-col mt-[30px] lg:w-[50%] w-[100%] sm:w-[100%] md:w-[100%]">
-                    <label className="text-[16px] font-semibold">
-                      Last Name *
-                    </label>
+                    <label className="text-[16px] font-semibold">Last Name *</label>
                     <input
                       onChange={profileDataHandler}
-                      placeholder="Enter Name "
+                      placeholder="Enter Last Name"
                       name="last_name"
-                      defaultValue={currentUser?.profile?.last_name}
+                      value={profileData.last_name}
+                      className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                    />
+                  </div>
+                </div>
+                <div className="flex-col mt-[30px]">
+                  <label className="text-[16px] font-semibold">Phone Number *</label>
+                  <input
+                    onChange={profileDataHandler}
+                    placeholder="Enter Phone Number"
+                    type="tel"
+                    name="phone"
+                    value={profileData.phone}
+                    className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                  />
+                </div>
+                <div className="flex-col mt-[30px]">
+                  <label className="text-[16px] font-semibold">Country</label>
+                  <input
+                    onChange={profileDataHandler}
+                    placeholder="Enter Country"
+                    name="country"
+                    value={profileData.country}
+                    className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                  />
+                </div>
+                <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center gap-4">
+                  <div className="flex-col mt-[30px] lg:w-[50%] w-[100%] sm:w-[100%] md:w-[100%]">
+                    <label className="text-[16px] font-semibold">City</label>
+                    <input
+                      onChange={profileDataHandler}
+                      placeholder="Enter City"
+                      name="city"
+                      value={profileData.city}
+                      className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                    />
+                  </div>
+                  <div className="flex-col mt-[30px] lg:w-[50%] w-[100%] sm:w-[100%] md:w-[100%]">
+                    <label className="text-[16px] font-semibold">State</label>
+                    <input
+                      onChange={profileDataHandler}
+                      placeholder="Enter State"
+                      name="state"
+                      value={profileData.state}
                       className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
                     />
                   </div>
@@ -508,41 +560,17 @@ export default function MyAccount() {
                     onChange={profileDataHandler}
                     placeholder="Enter Address"
                     name="address"
-                    defaultValue={currentUser?.profile?.address}
+                    value={profileData.address}
                     className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
                   />
-                </div>
-                <div className="flex-col mt-[30px]">
-                  <label className="text-[16px] font-semibold">
-                    Phone Number *
-                  </label>
-                  <input
-                    onChange={profileDataHandler}
-                    placeholder="Enter Phone Number"
-                    type="tel"
-                    name="phone"
-                    defaultValue={currentUser?.profile?.phone}
-                    className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                  />
-                </div>
-                <div className="flex-col mt-[30px]">
-                  <label className="text-[16px] font-semibold"> Gender *</label>
-                  <select
-                    name="gender"
-                    onChange={profileDataHandler}
-                    className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                  >
-                    <option value={"Male"}>Male</option>
-                    <option value={"FeMale"}>FeMale</option>
-                  </select>
                 </div>
                 <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center justify-between mt-[30px]">
                   <button
                     type="submit"
                     disabled={isPending}
-                    className=" bg-[#F70000] disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none rounded-2xl h-[50px]  lg:w-[181px] w-[100%] text-[18px] font-medium text-white"
+                    className="bg-[#F70000] disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none rounded-2xl h-[50px]  lg:w-[181px] w-[100%] text-[18px] font-medium text-white"
                   >
-                    Update Change
+                    Update Profile
                   </button>
                   <div className="flex items-center lg:mt-0  mt-3 sm:mt-3">
                     <MdOutlineDeleteOutline
@@ -665,18 +693,17 @@ export default function MyAccount() {
                             className="w-[18px] h-[23px] mr-2"
                           />
                           <p className="text-[14px] font-medium text-[#777777] ">
-                            New, York
+                            {currentUser.profile?.city}
                           </p>
                         </div>
                         <div className="flex items-center ">
                           <div className="flex items-center justify-center border-[1px] border-[#BABABA] rounded-md w-[55px] h-[35px] mr-3">
                             {editEnabled !== item?.id ? (
                               <FiEdit
-                                className={`${
-                                  editEnabled === item?.id
-                                    ? "text-[#F70000]"
-                                    : "text-[#BABABA]"
-                                } h-[20px] w-[20px]  cursor-pointer`}
+                                className={`${editEnabled === item?.id
+                                  ? "text-[#F70000]"
+                                  : "text-[#BABABA]"
+                                  } h-[20px] w-[20px]  cursor-pointer`}
                                 onClick={() => setEditEnabled(item?.id)}
                               />
                             ) : (

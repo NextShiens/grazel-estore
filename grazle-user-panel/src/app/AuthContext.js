@@ -5,7 +5,7 @@ import { getProfileApi } from "@/apis";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
         try {
           const { data } = await getProfileApi();
           setUser(data.user);
+          localStorage.setItem('theUser', JSON.stringify(data.user));
         } catch (error) {
           console.error("Failed to load user", error);
           localStorage.removeItem('token');

@@ -37,9 +37,12 @@ import LoginDropdown from "./LoginDropdown";
 import { useAuth } from "@/app/AuthContext";
 import { ShoppingLoader } from "vibrant-loaders";
 
+
+
 export default function Navbar() {
   const cartLength = useSelector((state) => state.cartLength);
   const cartProducts = useSelector((state) => state.cartProducts);
+  const userRedux = useSelector((state) => state.user);
   const [recentSearches, setRecentSearches] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenSearch, setIsOpenSearch] = useState(false);
@@ -53,7 +56,7 @@ export default function Navbar() {
   const searchRef = useRef(null);
   const dispatch = useDispatch();
   const router = useRouter();
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState();
   const [loading, setLoading] = useState(false);
   const { user: authUser, loading: authLoading, login, logout } = useAuth();
 
@@ -99,14 +102,25 @@ export default function Navbar() {
     }
   };
 
+
+
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       const { data } = await getProfileApi();
+  //       setUser(data.user);
+  //     } catch (error) { }
+  //   })();
+  // }, []);
   useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await getProfileApi();
-        setUser(data.user);
-      } catch (error) {}
-    })();
-  }, []);
+    const user = JSON.parse(localStorage.getItem("theUser"));
+    console.log(user)
+    if (user) {
+      setUser(user);
+    }
+  }
+    , [userRedux]);
+  console.log(userRedux, 'userRedux', user, 'user')
 
   const handleToggleMenu = () => setIsMenuBar((prev) => !prev);
   const handleMenuclose = () => setIsMenuBar(false);
@@ -166,13 +180,13 @@ export default function Navbar() {
   }
   if (loading) {
     return (
-      <div style={{ 
-        position: "fixed", 
-        width: "100%", 
-        height: "100%", 
-        left: 0, 
-        top: 0, 
-        overflow: "hidden" ,
+      <div style={{
+        position: "fixed",
+        width: "100%",
+        height: "100%",
+        left: 0,
+        top: 0,
+        overflow: "hidden",
         zIndex: 100000000000000
       }}>
         <ShoppingLoader />
@@ -206,13 +220,13 @@ export default function Navbar() {
 
   if (authLoading) {
     return (
-      <div style={{ 
-        position: "fixed", 
-        width: "100%", 
-        height: "100%", 
-        left: 0, 
-        top: 0, 
-        overflow: "hidden" ,
+      <div style={{
+        position: "fixed",
+        width: "100%",
+        height: "100%",
+        left: 0,
+        top: 0,
+        overflow: "hidden",
         zIndex: 100000000000
       }}>
         <ShoppingLoader />
@@ -345,7 +359,7 @@ export default function Navbar() {
                         Popular Searches
                       </p>
                       {Array.isArray(popularSearches) &&
-                      popularSearches.length > 0 ? (
+                        popularSearches.length > 0 ? (
                         popularSearches.map((search, index) => (
                           <div key={index} className="flex gap-3 mt-3">
                             <Link
@@ -383,18 +397,18 @@ export default function Navbar() {
               <span className="text-sm">Become Seller</span>
             </Link>
             <div ref={containerRef} className="relative">
-              {authUser ? (
+              {user ? (
                 <div
                   className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer"
                   onClick={handleToggle}
                 >
-                  {authUser.profile?.image ? (
+                  {user?.profile?.image ? (
                     <Image
-                      src={authUser.profile.image}
+                      src={user?.profile?.image}
                       alt="User"
                       width={32}
                       height={32}
-                      className="rounded-full"
+                      className="w-8 h-8 rounded-full"
                     />
                   ) : (
                     <BiUser className="text-gray-600" />
@@ -409,52 +423,57 @@ export default function Navbar() {
                     href="/MyAccount"
                     className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
                   >
-                    <Image src={user} alt="User" className="w-5 h-5" />
+                    {user?.profile?.image ? (
+                      <Image src={user.profile.image} alt="User" width={16}
+                        height={16} className="w-5 h-5 rounded-full" />
+                    ) : (
+                      <div className="w-5 h-5 bg-gray-200" />
+                    )}
                     <span className="text-sm">Your Account</span>
                   </Link>
-                  <Link
-                    href="/MyOrders"
-                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  <div
+                    onClick={() => router.push('/MyOrders')}
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
                   >
-                    <Image src={order} alt="" className="w-[18px] h-[18px]" />
+                    <Image src={order} alt="" width={18} height={18} />
                     <span className="text-sm">My Orders</span>
-                  </Link>
-                  <Link
-                    href="/favorite"
-                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  </div>
+                  <div
+                    onClick={() => router.push('/favorite')}
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
                   >
-                    <Image src={Fav} alt="Favorites" className="w-5 h-5" />
+                    <Image src={Fav} alt="Favorites" width={20} height={20} />
                     <span className="text-sm">Favorites</span>
-                  </Link>
-                  <Link
-                    href="/CreditLimit"
-                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  </div>
+                  <div
+                    onClick={() => router.push('/CreditLimit')}
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
                   >
-                    <Image src={card} alt="Credit" className="w-5 h-5" />
+                    <Image src={card} alt="Credit" width={20} height={20} />
                     <span className="text-sm">Credit Limit</span>
-                  </Link>
-                  <Link
-                    href="/ReferralRanking"
-                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  </div>
+                  <div
+                    onClick={() => router.push('/ReferralRanking')}
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
                   >
-                    <Image src={bulid} alt="Referral" className="w-5 h-5" />
+                    <Image src={bulid} alt="Referral" width={20} height={20} />
                     <span className="text-sm">Referral Ranking</span>
-                  </Link>
+                  </div>
                   <div className="border-t my-2"></div>
-                  <Link
-                    href="/FAQs"
-                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  <div
+                    onClick={() => router.push('/FAQs')}
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
                   >
-                    <Image src={FAQ} alt="FAQ" className="w-5 h-5" />
+                    <Image src={FAQ} alt="FAQ" width={20} height={20} />
                     <span className="text-sm">FAQs</span>
-                  </Link>
-                  <Link
-                    href="/privacy-policy"
-                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  </div>
+                  <div
+                    onClick={() => router.push('/privacy-policy')}
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
                   >
-                    <Image src={Privcy} alt="Privacy" className="w-5 h-5" />
+                    <Image src={Privcy} alt="Privacy" width={20} height={20} />
                     <span className="text-sm">Privacy Policy</span>
-                  </Link>
+                  </div>
                   <button
                     onClick={handleLogout}
                     className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded w-full text-left"
@@ -493,13 +512,35 @@ export default function Navbar() {
       {/* Mobile menu drawer */}
       <Drawer open={menuBar} onClose={handleToggleMenu} anchor="left">
         <div className="w-64 p-4">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold bg-custom-red">Hi.Log In</h2>
-            <IoClose
-              className="w-6 h-6 cursor-pointer"
-              onClick={handleMenuclose}
-            />
-          </div>
+          {user && (
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <div
+                  className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer"
+                  onClick={handleToggle}
+                >
+                  {user.profile?.image ? (
+                    <Image
+                      src={localStorage.getItem("image")}
+                      alt="User"
+                      width={32}
+                      height={32}
+                      className="rounded-full"
+                    />
+                  ) : (
+                    <BiUser className="text-gray-600" />
+                  )}
+                </div>
+                <h2 className="ml-4 text-xl font-semibold bg-custom-red">
+                  {user.username}
+                </h2>
+              </div>
+              <IoClose
+                className="w-6 h-6 cursor-pointer"
+                onClick={handleMenuclose}
+              />
+            </div>
+          )}
           <div className="space-y-4">
             {/* <Link
               href="/"
@@ -530,7 +571,7 @@ export default function Navbar() {
               Become a Seller
             </Link>
             <hr className="my-4" /> */}
-            {authUser ? (
+            {user ? (
               <>
                 <Link
                   href="/MyAccount"
