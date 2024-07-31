@@ -351,7 +351,7 @@ export default function ProductDetail() {
                 >
                   Get Started
                 </button>
-                <div className="flex justify-center mt-[20px] items-center rounded-full bg-[#F8F8F8] h-[52px] w-[52px]">
+                {/* <div className="flex justify-center mt-[20px] items-center rounded-full bg-[#F8F8F8] h-[52px] w-[52px]">
                   <IconButton
                     size="medium"
                     onClick={(e) => onLiked(e, singleProduct?.id)}
@@ -362,7 +362,7 @@ export default function ProductDetail() {
                       <Image src={heart} alt="like" />
                     )}
                   </IconButton>
-                </div>
+                </div> */}
                 <div className="mt-[20px] flex justify-center items-center rounded-full h-[52px] w-[52px]">
                   <LikeButton productId={singleProduct?.id} />
                 </div>
