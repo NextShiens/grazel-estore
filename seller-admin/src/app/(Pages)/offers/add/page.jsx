@@ -62,7 +62,7 @@ const AddOffers = () => {
       <div className="flex-1 flex">
         <Sidebar />
         <div className="flex-1 mt-[30px] px-[22px]">
-          <SearchOnTop />
+          {/* <SearchOnTop /> */}
           <form
             action={onCreateOffer}
             className="my-[20px] px-[20px] py-[30px] bg-white rounded-[8px] shadow-sm"

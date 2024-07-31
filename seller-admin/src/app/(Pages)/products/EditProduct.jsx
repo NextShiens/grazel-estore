@@ -1,166 +1,136 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updatePageNavigation } from "../../../features/features";
 import { WithContext as ReactTags } from "react-tag-input";
+
+import Navbar from "../../../components/navbar";
+import Sidebar from "../../../components/sidebar";
+
 import { FaCamera } from "react-icons/fa6";
 import { toast } from "react-toastify";
+
 import { MdCancel } from "react-icons/md";
 import Image from "next/image";
 import { axiosPrivate } from "../../../axios/index";
 import { LuLoader2 } from "react-icons/lu";
 
-const EditProduct = ({ product }) => {
+const EditProduct = ({ product, setSelectedTab }) => {
   const [isPending, setPending] = useState(false);
   const [allCategories, setAllCategories] = useState([]);
   const [allBrands, setAllBrands] = useState([]);
   const [productImage, setProductImage] = useState([]);
   const [galleryImage, setGalleryImage] = useState([]);
-  const [tags, setTags] = useState(
-    (product?.tags?.split(',') || []).map(tag => ({ id: tag, text: tag }))
-  );
-  const [formData, setFormData] = useState({
-    title: product?.title || '',
-    description: product?.description || '',
-    color: product?.color || '',
-    category_id: product?.category_id || '',
-    brand_id: product?.brand_id || '',
-    price: product?.price || '',
-    discount: product?.discount || '',
-  });
-
+  const [tags, setTags] = useState([]);
   const dispatch = useDispatch();
-  const API_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://api.grazle.co.in/api";
 
   useEffect(() => {
     dispatch(updatePageNavigation("products"));
-    fetchCategories();
-    fetchBrands();
   }, [dispatch]);
-
-  const fetchCategories = useCallback(async () => {
-    try {
+  useEffect(() => {
+    const getAllCategories = async () => {
       const { data } = await axiosPrivate.get("/global/categories", {
-        headers: { Authorization: "Bearer " + localStorage.getItem("token") },
-      });
-      setAllCategories(data?.categories);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  }, []);
-
-  const fetchBrands = useCallback(async () => {
-    try {
-      const { data } = await axiosPrivate.get("/global/brands", {
-        headers: { Authorization: "Bearer " + localStorage.getItem("token") },
-      });
-      setAllBrands(data?.brands);
-    } catch (error) {
-      console.error("Error fetching brands:", error);
-    }
-  }, []);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevData => ({ ...prevData, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      setPending(true);
-      const formDataToSend = new FormData();
-
-      // Append form fields
-      Object.keys(formData).forEach(key => {
-        formDataToSend.append(key, formData[key]);
-      });
-
-      // Append tags
-      formDataToSend.append('tags', tags.map(tag => tag.text).join(','));
-
-      // Append images
-      if (productImage.length) {
-        formDataToSend.append('featured_image', productImage[0]);
-      }
-      galleryImage.forEach((image, index) => {
-        formDataToSend.append(`gallery_images[${index}]`, image);
-      });
-
-      await axiosPrivate.put(`/vendor/products/${product?.id}`, formDataToSend, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
-          'Content-Type': 'multipart/form-data',
+        },
+      });
+      !allCategories.length && setAllCategories(data?.categories); // to show data on web
+    };
+    getAllCategories();
+  }, []);
+  useEffect(() => {
+    const getAllBrands = async () => {
+      const { data } = await axiosPrivate.get("/global/brands", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+      !allBrands.length && setAllBrands(data?.brands); // to show data on web
+    };
+    getAllBrands();
+  }, []);
+  async function onEditProduct(formdata) {
+    try {
+      setPending(true);
+
+      for (let key in galleryImage) {
+        formdata.append("gallery_images", galleryImage[key]);
+      }
+      await axiosPrivate.put(`/vendor/products/${product?.id}`, formdata, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
       toast.success("Product has been updated");
+      setSelectedTab('manage')
     } catch (error) {
-      console.error("Error updating product:", error);
       toast.error("Something went wrong");
     } finally {
-      setPending(false);
+      setTimeout(() => {
+        setPending(false);
+      }, 1000);
     }
-  };
-
-  const onRemoveImg = (index) => {
-    setGalleryImage(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const onRemoveFeatureImg = () => {
+  }
+  function onRemoveImg(index) {
+    const tempArr = [...galleryImage];
+    tempArr.splice(index, 1);
+    setGalleryImage(tempArr);
+  }
+  function onRemoveFeatureImg() {
     setProductImage([]);
-  };
+  }
 
   const handleDelete = (i) => {
-    setTags(tags.filter((_, index) => index !== i));
+    setTags(tags.filter((tag, index) => index !== i));
   };
 
   const handleAddition = (tag) => {
     setTags([...tags, tag]);
   };
-
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex-1 flex">
         <div className="flex-1 mt-[30px] px-[22px]">
-          <form onSubmit={handleSubmit} className="bg-white rounded-[8px] shadow-sm px-[20px] py-[25px]">
+          <form
+            action={onEditProduct}
+            className="bg-white rounded-[8px] shadow-sm px-[20px] py-[25px]"
+          >
             <p className="text-[20px] font-[600]">Edit Product</p>
-            <p className="text-[18px] font-[600] pt-[20px]">General Information</p>
-            
-            <div className="flex flex-col gap-1 my-[15px]">
-              <label className="text-[#777777]">Name</label>
-              <input
-                placeholder="Product Name"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                required
-                className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
-              />
-            </div>
-
-            <div className="flex flex-col gap-1 my-[15px]">
-              <label className="text-[#777777]">Tags</label>
-              <ReactTags
-                tags={tags}
-                handleDelete={handleDelete}
-                handleAddition={handleAddition}
-                delimiters={[188, 13]}
-                inputFieldPosition="top"
-                autocomplete
-              />
-            </div>
-
-            <div className="flex flex-col gap-1 my-[15px]">
-              <label className="text-[#777777]">Description</label>
-              <textarea
-                placeholder="Write about product"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                required
-                className="focus:outline-none border-[2px] border-gray-200 py-2 rounded-[8px] px-[15px] h-[110px] text-[15px]"
-              />
+            <p className="text-[18px] font-[600] pt-[20px]">
+              General Information
+            </p>
+            <div>
+              <div className="flex flex-col gap-1 my-[15px]">
+                <label className="text-[#777777]">Name</label>
+                <input
+                  placeholder="Product Name"
+                  name="title"
+                  defaultValue={product?.title}
+                  required
+                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                />
+              </div>
+              <div className="flex flex-col gap-1 my-[15px]">
+                <label className="text-[#777777]">Tags</label>
+                <input
+                  placeholder="Tags"
+                  name="tags"
+                  defaultValue={product?.tags}
+                  required
+                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                />
+              </div>
+              <div className="flex flex-col gap-1 my-[15px]">
+                <label className="text-[#777777]">Description</label>
+                <textarea
+                  placeholder="Write about product"
+                  name="description"
+                  defaultValue={product?.description}
+                  required
+                  className="focus:outline-none border-[2px] border-gray-200 py-2 rounded-[8px] px-[15px] h-[110px] text-[15px]"
+                />
+              </div>
             </div>
 
             <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
@@ -169,22 +139,36 @@ const EditProduct = ({ product }) => {
                 <input
                   placeholder="Color"
                   name="color"
-                  value={formData.color}
-                  onChange={handleInputChange}
+                  defaultValue={product?.color}
                   required
                   className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
                 />
               </div>
               <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
+                <label className="text-[#777777]">Variants</label>
+
+                <div className="ReactTags__tags">
+                  <ReactTags
+                    tags={tags}
+                    handleDelete={handleDelete}
+                    handleAddition={handleAddition}
+                    delimiters={[188, 13]} // Comma and Enter keys
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
+              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
                 <label className="text-[#777777]">Category</label>
                 <select
                   name="category_id"
-                  value={formData.category_id}
-                  onChange={handleInputChange}
+                  defaultValue={product?.category_id}
                   required
                   className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px] text-[var(--text-color-body)]"
                 >
-                  <option value="" disabled>Select an option</option>
+                  <option selected disabled>
+                    Select an option
+                  </option>
                   {allCategories?.map((item) => (
                     <option key={item?.id} value={item?.id}>
                       {item.name}
@@ -192,19 +176,17 @@ const EditProduct = ({ product }) => {
                   ))}
                 </select>
               </div>
-            </div>
-
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
               <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
                 <label className="text-[#777777]">Brand</label>
                 <select
                   name="brand_id"
-                  value={formData.brand_id}
-                  onChange={handleInputChange}
                   required
+                  defaultValue={product?.brand}
                   className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px] text-[var(--text-color-body)]"
                 >
-                  <option value="" disabled>Select an option</option>
+                  <option selected disabled>
+                    Select an option
+                  </option>
                   {allBrands?.map((item) => (
                     <option key={item?.id} value={item?.id}>
                       {item.name}
@@ -213,16 +195,14 @@ const EditProduct = ({ product }) => {
                 </select>
               </div>
             </div>
-
             <p className="text-[18px] font-[600] pt-[20px]">Pricing</p>
             <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
               <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
                 <label className="text-[#777777]">Price</label>
                 <input
                   placeholder="₹"
+                  defaultValue={product?.price}
                   name="price"
-                  value={formData.price}
-                  onChange={handleInputChange}
                   required
                   className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
                 />
@@ -231,109 +211,132 @@ const EditProduct = ({ product }) => {
                 <label className="text-[#777777]">Discount</label>
                 <input
                   placeholder="%"
+                  defaultValue={product?.discount}
                   name="discount"
-                  value={formData.discount}
-                  onChange={handleInputChange}
                   className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
                 />
               </div>
             </div>
-
-            <p className="text-[18px] font-[600] pt-[20px]">Images</p>
             <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
               <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Feature Image</label>
-                <input
-                  type="file"
-                  id="uploadPic"
-                  className="hidden"
-                  onChange={(e) => setProductImage([e.target.files[0]])}
-                />
-                <label
-                  htmlFor="uploadPic"
-                  className="cursor-pointer h-[180px] rounded-[10px] border-[2px] border-dashed border-blue-100 bg-[#F8F8FF] flex items-center justify-center flex-col"
-                >
-                  <FaCamera className="h-[40px] w-[45px] text-[var(--text-color-body)] mb-4" />
-                  <p className="font-[500] text-[13px] text-center">
-                    Drag & drop files or Browse
-                  </p>
-                  <p className="text-[11px] text-[var(--text-color-body)] text-center mt-1">
-                    Supported formats: JPEG, PNG
-                  </p>
-                </label>
-                {productImage.length > 0 && (
-                  <div className="mt-2 relative inline-block">
-                    <Image
-                      width={120}
-                      height={120}
-                      src={URL.createObjectURL(productImage[0])}
-                      alt="Feature Image"
+                <p className="text-[18px] font-[600] pt-[20px]">
+                  Feature Image
+                </p>
+                <div className="my-[15px] ">
+                  <label className="text-[#777777]">Feature Image</label>
+                  <div className="flex gap-5  my-[15px]  xl:flex-row">
+                    <input
+                      type="file"
+                      id="uploadPic"
+                      className="hidden"
+                      name="featured_image"
+                      // multiple
+                      onChange={(e) => {
+                        setProductImage([e.target.files[0]]);
+                      }}
                     />
-                    <button
-                      type="button"
-                      onClick={onRemoveFeatureImg}
-                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                    >
-                      <MdCancel size={20} />
-                    </button>
+                    <div className="flex flex-col gap-2 mt-3">
+                      <label
+                        htmlFor="uploadPic"
+                        className="min-w-[230px] cursor-pointer h-[180px] rounded-[10px] border-[2px] border-dashed border-blue-100 bg-[#F8F8FF] flex items-center justify-center flex-col"
+                      >
+                        <FaCamera className="h-[40px] w-[45px] text-[var(--text-color-body)] mb-4" />
+                        <p className="font-[500] text-[13px] text-center">
+                          Drag & drop files or Browse
+                        </p>
+                        <p className="text-[11px] text-[var(--text-color-body)] text-center mt-1">
+                          Supported formats: JPEG, PNG
+                        </p>
+                      </label>
+                      <div className="flex flex-row gap-3">
+                        {productImage?.map((item, index) => (
+                          <div key={index} className="relative">
+                            <Image
+                              width={120}
+                              height={120}
+                              src={URL.createObjectURL(item)}
+                              alt=""
+                            />
+                            <span
+                              onClick={() => onRemoveFeatureImg(index)}
+                              className="absolute top-0 right-0 cursor-pointer"
+                            >
+                              <MdCancel className="text-white" size={20} />
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
               <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Gallery Images</label>
-                <input
-                  type="file"
-                  id="uploadGalleryPic"
-                  className="hidden"
-                  multiple
-                  onChange={(e) => {
-                    const filesArray = Array.from(e.target.files);
-                    setGalleryImage(prev => [...prev, ...filesArray]);
-                  }}
-                />
-                <label
-                  htmlFor="uploadGalleryPic"
-                  className="cursor-pointer h-[180px] rounded-[10px] border-[2px] border-dashed border-blue-100 bg-[#F8F8FF] flex items-center justify-center flex-col"
-                >
-                  <FaCamera className="h-[40px] w-[45px] text-[var(--text-color-body)] mb-4" />
-                  <p className="font-[500] text-[13px] text-center">
-                    Drag & drop files or Browse
-                  </p>
-                  <p className="text-[11px] text-[var(--text-color-body)] text-center mt-1">
-                    Supported formats: JPEG, PNG
-                  </p>
-                </label>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {galleryImage.map((image, index) => (
-                    <div key={index} className="relative inline-block">
-                      <Image
-                        width={120}
-                        height={120}
-                        src={URL.createObjectURL(image)}
-                        alt={`Gallery Image ${index + 1}`}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => onRemoveImg(index)}
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                <p className="text-[18px] font-[600] pt-[20px]">
+                  Gallery Images
+                </p>
+                <div className="my-[15px]">
+                  <label className="text-[#777777]">Gallery Image</label>
+                  <div className="flex gap-5 justify-between my-[15px] flex-col xl:flex-row">
+                    <input
+                      type="file"
+                      id="uploadGalleryPic"
+                      className="hidden"
+                      // name="featured_image"
+                      required
+                      multiple
+                      onChange={(e) => {
+                        const filesArray = Array.from(e.target.files); // Convert FileList to Array
+                        setGalleryImage([...galleryImage, ...filesArray]);
+                      }}
+                    />
+                    <div className="flex flex-col gap-2 mt-3">
+                      <label
+                        htmlFor="uploadGalleryPic"
+                        className="min-w-[230px] cursor-pointer h-[180px] rounded-[10px] border-[2px] border-dashed border-blue-100 bg-[#F8F8FF] flex items-center justify-center flex-col"
                       >
-                        <MdCancel size={20} />
-                      </button>
+                        <FaCamera className="h-[40px] w-[45px] text-[var(--text-color-body)] mb-4" />
+                        <p className="font-[500] text-[13px] text-center">
+                          Drag & drop files or Browse
+                        </p>
+                        <p className="text-[11px] text-[var(--text-color-body)] text-center mt-1">
+                          Supported formats: JPEG, PNG
+                        </p>
+                      </label>
+
+                      <div className="flex flex-row gap-3">
+                        {galleryImage?.map((item, index) => (
+                          <div key={index} className="relative">
+                            <Image
+                              width={120}
+                              height={120}
+                              src={URL.createObjectURL(item)}
+                              alt=""
+                            />
+                            <span
+                              onClick={() => onRemoveImg(index)}
+                              className="absolute top-0 right-0 cursor-pointer"
+                            >
+                              <MdCancel className="text-white" size={20} />
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
+                  </div>
                 </div>
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={isPending}
-              className="h-[50px] rounded-[8px] bg-[#FE4242] text-white font-[500] w-[200px] mt-10 disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none"
-            >
-              <div className="w-full h-full flex items-center justify-center">
-                {isPending ? <LuLoader2 className="animate-spin" /> : "Update Product"}
-              </div>
-            </button>
+            <div className="flex flex-col gap-10 pb-8">
+              <button
+                disabled={isPending}
+                className="h-[50px] rounded-[8px] bg-[#FE4242]  text-white font-[500] w-[200px] mt-10 disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none"
+              >
+                <div className="w-full h-full flex items-center justify-center">
+                  {isPending ? <LuLoader2 /> : "Update Product"}
+                </div>
+              </button>
+            </div>
           </form>
         </div>
       </div>

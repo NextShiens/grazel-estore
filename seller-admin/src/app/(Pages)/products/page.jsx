@@ -38,7 +38,7 @@ const Products = () => {
       }
     };
     getAllProducts();
-  }, [product]);
+  }, [product, selectedTab]);
 
   useEffect(() => {
     dispatch(updatePageLoader(false));
@@ -98,7 +98,12 @@ const Products = () => {
             ) : selectedTab === "createNew" ? (
               <CreateNew setSelectedTab={setSelectedTab} />
             ) : (
-              selectedTab === "edit" && <EditProduct product={product} />
+              selectedTab === "edit" && (
+                <EditProduct
+                  product={product}
+                  setSelectedTab={setSelectedTab}
+                />
+              )
             )}
           </div>
         </div>
