@@ -165,6 +165,19 @@ export default function Navbar() {
     }
   }
   if (loading) {
+    return (
+      <div style={{ 
+        position: "fixed", 
+        width: "100%", 
+        height: "100%", 
+        left: 0, 
+        top: 0, 
+        overflow: "hidden" ,
+        zIndex: 100000000000000
+      }}>
+        <ShoppingLoader />
+      </div>
+    );
     return <ShoppingLoader />;
   }
 
@@ -192,7 +205,19 @@ export default function Navbar() {
   };
 
   if (authLoading) {
-    return <ShoppingLoader />;
+    return (
+      <div style={{ 
+        position: "fixed", 
+        width: "100%", 
+        height: "100%", 
+        left: 0, 
+        top: 0, 
+        overflow: "hidden" ,
+        zIndex: 100000000000
+      }}>
+        <ShoppingLoader />
+      </div>
+    );
   }
 
   return (

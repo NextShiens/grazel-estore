@@ -37,6 +37,7 @@ import {
 import { Bar } from "react-chartjs-2";
 import { axiosPrivate } from "../../../axios/index";
 import { cn } from "../../../lib/utils";
+import { toast } from "react-toastify";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -104,27 +105,39 @@ const Dashboard = () => {
   // total sales
   useEffect(() => {
     (async () => {
-      const { data } = await axiosPrivate.get("/seller/statistics/sales", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-      setSales(data);
-    })();
-  }, []);
-
-  // total current month orders
-  useEffect(() => {
-    (async () => {
-      const { data } = await axiosPrivate.get(
-        "/seller/statistics/orders-stats",
-        {
+      try {
+        const { data } = await axiosPrivate.get("/seller/statistics/sales", {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
-        }
-      );
-      setTotalOrdersCount(data);
+        });
+        setSales(data);
+        console.log(data, "sellerData");
+        toast.success("Sales data fetched successfully!");
+      } catch (error) {
+        console.error("Error fetching sales data:", error);
+        toast.error("Failed to fetch sales data.");
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await axiosPrivate.get(
+          "/seller/statistics/orders-stats",
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          }
+        );
+        setTotalOrdersCount(data);
+        toast.success("Order statistics fetched successfully!");
+      } catch (error) {
+        console.error("Error fetching order statistics:", error);
+        toast.error("Failed to fetch order statistics.");
+      }
     })();
   }, []);
 

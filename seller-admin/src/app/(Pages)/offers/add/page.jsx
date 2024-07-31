@@ -7,6 +7,7 @@ import Image from "next/image";
 import Navbar from "../../../../components/navbar";
 import Sidebar from "../../../../components/sidebar";
 import SearchOnTop from "../../../../components/SearchOnTop";
+import { useRouter } from "next/navigation";
 
 import cancel from "../../../../assets/svgs/cancel.svg";
 import submit from "../../../../assets/svgs/submit.svg";
@@ -16,6 +17,7 @@ import { toast } from "react-toastify";
 import { LuLoader2 } from "react-icons/lu";
 
 const AddOffers = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [allCategories, setAllCategories] = useState([]);
   const [value, setValue] = useState("");
@@ -48,6 +50,7 @@ const AddOffers = () => {
         },
       });
       toast.success("Offer has been created");
+      router.push("/offers");
     } catch (error) {
       toast.error("something went wrong");
     } finally {
