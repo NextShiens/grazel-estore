@@ -46,11 +46,11 @@ const LikeButton = ({ productId }) => {
     <div>
       {isLiked ? (
         <button onClick={onUnlike}>
-          <FaHeart className="text-red-500" />
+          <FaHeart className="text-red-500 size-6" />
         </button>
       ) : (
         <button className="" onClick={onLike}>
-          <FaHeart className="text-gray-400" />
+          <FaHeart className="text-gray-400 size-6" />
         </button>
       )}
     </div>
