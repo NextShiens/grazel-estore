@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-axios.defaults.baseURL = process.env.NEXT_PUBLIC_BASE_URL  || "https://api.grazle.co.in/api";
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_BASE_URL || "https://api.grazle.co.in/api";
 let token = "";
 
 if (typeof window !== "undefined") {
@@ -24,7 +24,7 @@ export const debounce = function debounce(fn, delay = 700) {
 export const registerApi = async (data) =>
   await axios.post("/auth/register", data);
 export const registerApiStore = async (data) =>
-  await axios.put("/store-profile", data);
+  await axios.post("/auth/register-seller", data);
 export const loginApi = async (data) => await axios.post("/auth/login", data);
 
 export const getAllCategoriesApi = async () =>

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { toast } from "react-toastify";
 import React, { useState, useEffect, FormEvent, ChangeEvent } from "react";
-import { registerApi, registerApiStore } from "@/apis/index";
+import { registerApiStore } from "@/apis/index";
 import logo from "@/assets/Grazle Logo.png";
 import { useRouter } from "next/navigation";
 import CustomStepper from "@/components/Stepper";
@@ -21,18 +21,17 @@ interface FormValues {
   password?: string;
   state?: string;
   city?: string;
-  address?: string;
-  pinCode?: string;
-  about?: string;
-  storeName?: string;
-  storeUrl?: string;
+  pin_code?: string;
+  store_about?: string;
+  store_name?: string;
+  store_url?: string;
   gst?: string;
-  panNo?: string;
-  description?: string;
-  accountNumber?: string;
-  accountName?: string;
-  bankCode?: string;
-  bankName?: string;
+  pan?: string;
+  store_description?: string;
+  account_number?: string;
+  account_name?: string;
+  bank_code?: string;
+  bank_name?: string;
 }
 
 const steps = [
@@ -50,6 +49,7 @@ export default function RegisterSeller() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [states, setStates] = useState<IState[]>([]);
   const [cities, setCities] = useState<ICity[]>([]);
+  const [storeImage, setStoreImage] = useState<File | null>(null);
 
   useEffect(() => {
     setStates(State.getStatesOfCountry("IN"));
@@ -65,6 +65,12 @@ export default function RegisterSeller() {
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setFormValues({ ...formValues, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setStoreImage(e.target.files[0]);
+    }
   };
 
   const handleNext = () => {
@@ -92,19 +98,33 @@ export default function RegisterSeller() {
       if (screenName !== "Bank Details") {
         handleNext();
       } else {
-        const newFormData = new FormData();
+        const formData = new FormData();
         Object.entries(formValues).forEach(([key, value]) => {
-          if (value) newFormData.append(key, value);
+          if (value) formData.append(key, value);
         });
-        console.log(formValues, "formValues");
+        if (storeImage) {
+          formData.append('store_image', storeImage);
+        }
 
-        await registerApiStore(newFormData);
-        toast.success("Account created successfully");
+        const response = await registerApiStore(formData);
+        toast.success("Account created successfully Please wait for Admin to approve your Seller Account");
         router.push("/");
       }
     } catch (err: any) {
       console.error(err);
-      toast.error(err?.response?.data?.message || "An error occurred");
+      if (err.response && err.response.data) {
+        const { message, errors } = err.response.data;
+        toast.error(message || "An error occurred during registration");
+        if (errors) {
+          Object.entries(errors).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+              value.forEach((error) => toast.error(`${key}: ${error}`));
+            }
+          });
+        }
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -233,23 +253,16 @@ export default function RegisterSeller() {
                 </div>
                 <input
                   className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
-                  placeholder="Address"
-                  name="address"
-                  value={formValues.address || ""}
-                  onChange={handleInputChange}
-                />
-                <input
-                  className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
                   placeholder="Pin Code"
-                  name="pinCode"
-                  value={formValues.pinCode || ""}
+                  name="pin_code"
+                  value={formValues.pin_code || ""}
                   onChange={handleInputChange}
                 />
                 <textarea
                   className="bg-[#F5F7F9] w-full rounded-md h-[100px] resize-none p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
                   placeholder="About"
-                  name="about"
-                  value={formValues.about || ""}
+                  name="store_about"
+                  value={formValues.store_about || ""}
                   onChange={handleInputChange}
                 />
                 <div className="flex items-center mt-4">
@@ -277,39 +290,49 @@ export default function RegisterSeller() {
                 <input
                   className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
                   placeholder="Store Name"
-                  name="storeName"
-                  value={formValues.storeName || ""}
+                  name="store_name"
+                  required
+                  value={formValues.store_name || ""}
                   onChange={handleInputChange}
                 />
                 <input
                   className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
                   placeholder="Store Url"
-                  name="storeUrl"
-                  value={formValues.storeUrl || ""}
+                  name="store_url"
+                  value={formValues.store_url || ""}
                   onChange={handleInputChange}
                 />
                 <div className="flex flex-wrap lg:flex-nowrap items-center gap-6">
                   <input
                     className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
-                    placeholder="GST no. (optional)"
+                    placeholder="GST no."
                     name="gst"
+                    required
                     value={formValues.gst || ""}
                     onChange={handleInputChange}
                   />
                   <input
                     className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
-                    placeholder="PAN no. (optional)"
-                    name="panNo"
-                    value={formValues.panNo || ""}
+                    placeholder="PAN no."
+                    name="pan"
+                    required
+                    value={formValues.pan || ""}
                     onChange={handleInputChange}
                   />
                 </div>
                 <textarea
                   className="bg-[#F5F7F9] w-full rounded-md h-[100px] resize-none p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
                   placeholder="Description"
-                  name="description"
-                  value={formValues.description || ""}
+                  name="store_description"
+                  required
+                  value={formValues.store_description || ""}
                   onChange={handleInputChange}
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="mt-[20px]"
                 />
               </div>
             )}
@@ -317,39 +340,42 @@ export default function RegisterSeller() {
               <div className="mt-10">
                 <input
                   className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
-                  placeholder="Account Number (optional)"
-                  name="accountNumber"
-                  value={formValues.accountNumber || ""}
+                  placeholder="Account Number"
+                  name="account_number"
+                  required
+                  value={formValues.account_number || ""}
                   onChange={handleInputChange}
                 />
                 <input
                   className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
-                  placeholder="Account Name (optional)"
-                  name="accountName"
-                  value={formValues.accountName || ""}
+                  placeholder="Account Name"
+                  name="account_name"
+                  required
+                  value={formValues.account_name || ""}
                   onChange={handleInputChange}
                 />
                 <input
                   className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
-                  placeholder="Bank Code (optional)"
-                  name="bankCode"
-                  value={formValues.bankCode || ""}
+                  placeholder="Bank Code"
+                  name="bank_code"
+                  required
+                  value={formValues.bank_code || ""}
                   onChange={handleInputChange}
                 />
                 <input
                   className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
-                  placeholder="Bank Name (optional)"
-                  name="bankName"
-                  value={formValues.bankName || ""}
+                  placeholder="Bank Name"
+                  name="bank_name"
+                  required
+                  value={formValues.bank_name || ""}
                   onChange={handleInputChange}
                 />
               </div>
             )}
 
             <button
-              className={`${
-                !isChecked && "opacity-50"
-              } bg-[#F70000] mb-4 rounded-xl h-[50px] mt-[50px] w-full text-[18px] font-medium text-white flex justify-center items-center`}
+              className={`${!isChecked && "opacity-50"
+                } bg-[#F70000] mb-4 rounded-xl h-[50px] mt-[50px] w-full text-[18px] font-medium text-white flex justify-center items-center`}
               type="submit"
               disabled={!isChecked || isLoading}
             >
