@@ -11,7 +11,7 @@ import Image from "next/image";
 import { axiosPrivate } from "../../../axios/index";
 import { LuLoader2 } from "react-icons/lu";
 
-const AddProduct = () => {
+const AddProduct = ({ setSelectedTab }) => {
   const [isPending, setPending] = useState(false);
   const [allCategories, setAllCategories] = useState([]);
   const [allBrands, setAllBrands] = useState([]);
@@ -91,6 +91,7 @@ const AddProduct = () => {
         },
       });
       toast.success("Product has been created");
+      setSelectedTab("manage");
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
