@@ -25,12 +25,19 @@ const Settings = () => {
   }, [dispatch]);
   useEffect(() => {
     async function onGetProfile() {
-      const { data } = await axiosPrivate.get(`/profile`, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-      setProfile(data?.user);
+      try {
+        const { data } = await axiosPrivate.get(`/profile`, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+        
+        setProfile(data?.user);
+        toast.success("Profile data fetched successfully!");
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+        toast.error("Failed to fetch profile data.");
+      }
     }
     onGetProfile();
   }, []);
@@ -43,7 +50,7 @@ const Settings = () => {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
-      toast.success("Profile has been edited");
+      toast.success("Profile has been Updated");
     } catch (err) {
       toast.error("Something went wrong");
     } finally {
@@ -61,7 +68,7 @@ const Settings = () => {
       if (newPassword !== confirmPassword) {
         return toast.error("New and confirm password did'nt match");
       }
-      await axiosPrivate.post("/profile/change-password", formdata, {
+      await axiosPrivate.post("/profile/reset-password", formdata, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
@@ -79,6 +86,7 @@ const Settings = () => {
       }, 1000);
     }
   }
+  console.log(profile,"profile")
   return (
     <>
       <Loading />
