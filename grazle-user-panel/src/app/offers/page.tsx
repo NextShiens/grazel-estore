@@ -34,19 +34,19 @@ const Offers = () => {
     })();
   }, []);
 
-  // useEffect(() => {
-  //   if (id && allProducts?.length > 0) {
-  //     // const { data } = await getOfferProductsApi();
-  //     // console.log(data);
-  //     const currentOfferProds = allProducts.filter(
-  //       (item: any) => item?.offer?.id?.toString() === id.toString()
-  //     );
-  //     console.log("cr", allProducts);
-  //     setAllProducts(currentOfferProds);
-  //     // const { data } = await getOfferProductsApi();
-  //     // console.log(data);
-  //   }
-  // }, [id]);
+//   useEffect(() => {
+//     if (id && allProducts?.length > 0) {
+//       // const { data } = await getOfferProductsApi();
+//       // console.log(data);
+//       const currentOfferProds = .
+//         (item: any) => item?.offer?.id?.toString() === id.toString()
+//       );
+// console.log("cr", allProducts);
+// setAllProducts(currentOfferProds);
+//       // const { data } = await getOfferProductsApi();
+//       // console.log(data);
+//     }
+//   }, [id]);
 
 
   // const goToCreditLimit = () => {
