@@ -196,7 +196,12 @@ const OrderDetails = () => {
                         alt=""
                         width={75}
                         height={75}
-                        src={`/` + item.featured_image}
+                        // src={`/` + item.featured_image}
+                        src={item?.featured_image || 'https://via.placeholder.com/75x75?text=No+Image+Available'}
+                        onError={(e) => {
+                          console.error('Image failed to load:', e);
+                          e.target.src = 'https://via.placeholder.com/75x75?text=No+Image+Available';
+                        }}
                         className="w-[75px] h-[75px] rounded-[9px]"
                       />
                       <div>

@@ -79,7 +79,7 @@ const General = () => {
               className="w-full h-full rounded-full"
               width={50}
               height={50}
-              src={URL.createObjectURL(storeLogo)}
+              src={URL?.createObjectURL(storeLogo)}
               alt="Store Logo"
             />
           ) : storeProfile.store_image ? (
@@ -87,7 +87,11 @@ const General = () => {
               className="w-full h-full rounded-full"
               width={50}
               height={50}
-              src={storeProfile.store_image}
+              src={storeProfile?.store_image || "https://via.placeholder.com/50x50?text=No+Image+Available"}
+              onError={(e) => {
+                console.error("Image failed to load:", e);
+                e.target.src = "https://via.placeholder.com/50x50?text=No+Image+Available";
+              }}
               alt="Store Logo"
             />
           ) : (

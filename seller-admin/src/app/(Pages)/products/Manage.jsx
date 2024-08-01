@@ -35,7 +35,11 @@ const Manage = ({ allProducts, setSelectedTab, setProduct, searchTerm }) => {
               alt={item.title}
               width={290}
               height={290}
-              src={"https://api.grazle.co.in/" + item?.featured_image || 'https://via.placeholder.com/290x290?text=No+Image+Available'}
+              src={item?.featured_image || 'https://via.placeholder.com/290x290?text=No+Image+Available'}
+              onError={(e) => {
+                console.error('Image failed to load:', e);
+                e.target.src = 'https://via.placeholder.com/290x290?text=No+Image+Available';
+              }}
               className="h-[290px] rounded-[8px] object-contain"
             />
           </div>

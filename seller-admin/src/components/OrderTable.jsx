@@ -61,7 +61,11 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
               height={26}
               alt=""
               // src={order?.products[0]?.featured_image}
-              src={"https://api.grazle.co.in/" + order?.products[0]?.featured_image || 'https://via.placeholder.com/290x290?text=No+Image+Available'}
+              src={order?.products[0]?.featured_image || 'https://via.placeholder.com/26x26?text=No+Image+Available'}
+              onError={(e) => {
+                console.error('Image failed to load:', e);
+                e.target.src = 'https://via.placeholder.com/26x26?text=No+Image+Available';
+              }}
               className="h-[26px] w-[26px]"
             />
             {order?.products?.map(
@@ -135,7 +139,11 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
                 width={26}
                 height={26}
                 // src={"/" + order.customer.image}
-                src={"https://api.grazle.co.in/" + order.customer.image || 'https://via.placeholder.com/26x26?text=No+Image+Available'}
+                src={ order?.customer?.image || 'https://via.placeholder.com/26x26?text=No+Image+Available'}
+                onError={(e) => {
+                  console.error('Image failed to load:', e);
+                  e.target.src = 'https://via.placeholder.com/26x26?text=No+Image+Available';
+                }}
                 className="h-[26px] w-[26px] rounded-[5px]"
               />
               {order?.customer?.username}
@@ -149,7 +157,11 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
                 height={26}
                 alt=""
                 // src={"/" + order.products[0].featured_image}
-                src={"https://api.grazle.co.in/" + order.products[0].featured_image || 'https://via.placeholder.com/290x290?text=No+Image+Available'}
+                src={ order?.products[0]?.featured_image || 'https://via.placeholder.com/26x26?text=No+Image+Available'}
+                onError={(e) => {
+                  console.error('Image failed to load:', e);
+                  e.target.src = 'https://via.placeholder.com/26x26?text=No+Image+Available';
+                }}
                 className="h-[26px] w-[26px]"
               />
               {order?.products?.map(
