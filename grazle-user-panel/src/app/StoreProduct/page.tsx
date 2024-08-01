@@ -28,7 +28,6 @@ export default function StoreProduct() {
   const [currentStore, setCurrentStore] = useState({});
   const [storeProduct, setStoreProduct] = useState([]);
   const [sortCriteria, setSortCriteria] = useState("name");
-  const [sortedProducts, setSortedProducts] = useState([...storeProduct]);
 
   const toggleCard = () => {
     setIsOpen((prevState) => !prevState);
@@ -62,7 +61,6 @@ export default function StoreProduct() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
-  // console.log(currentStore);
 
   useEffect(() => {
     const sortProducts = () => {
@@ -80,6 +78,17 @@ export default function StoreProduct() {
         case "rating":
           sortedArray.sort((a, b) => b.rating - a.rating);
           break;
+        case "discount":
+          sortedArray.sort((a, b) => b.discount - a.discount);
+          break;
+        case "latestArrival":
+          sortedArray.sort(
+            (a, b) => new Date(b.arrivalDate) - new Date(a.arrivalDate)
+          );
+          break;
+        case "topRated":
+          sortedArray.sort((a, b) => b.rating - a.rating);
+          break;
         default:
           break;
       }
@@ -92,27 +101,29 @@ export default function StoreProduct() {
   return (
     <div className="lg:my-[50px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[20px] sm:mx-[20px] md:mx-[30px]">
       <div className="relative w-[100%] h-[250px]">
-        {currentStore.store_image && (
-          <Image
-            width={800}
-            height={600}
-            src={"/" + currentStore?.store_image}
-            alt="Main"
-            className="w-full h-full"
-          />
-        )}
+        {/* <div className="w-[1190px] bg-white h-[200px] flex justify-center items-center rounded-2xl border-[.5px] border-[#F70000]">
+            {currentStore.image && (
+              <Image
+                width={500}
+                height={500}
+                src={currentStore.image}
+                alt="Logo"
+                className="w-full h-full"
+              />
+            )}
+          </div> */}
         <div
           className="absolute left-1/2 transform -translate-x-1/2"
           style={{ top: "calc(50% - -50px)" }}
         >
-          <div className="w-[190px] bg-white h-[200px] flex justify-center items-center rounded-2xl border-[2px] border-[#F70000]">
-            {currentStore.store_image && (
+          <div className="w-[190px] bg-white h-[190px] flex justify-center items-center rounded-2xl border-[.5px] border-[#F70000]">
+            {currentStore.image && (
               <Image
-                width={185}
-                height={100}
-                src={"/" + currentStore?.store_image}
+                width={190}
+                height={190}
+                src={currentStore.image}
                 alt="Logo"
-                className="w-[185px] h-[100px]"
+                className="w-[190px] h-[190px] object-contain rounded-2xl"
               />
             )}
           </div>
@@ -184,7 +195,6 @@ export default function StoreProduct() {
                   Name
                 </div>
               </div>
-
               <div className="flex items-center gap-2">
                 <div
                   className="px-3 py-2  text-[13px] font-[500] flex items-center gap-2 cursor-pointer"
@@ -200,7 +210,6 @@ export default function StoreProduct() {
                   </p>
                 </div>
               </div>
-
               <div className="flex items-center gap-2">
                 <div
                   className="px-3 py-2  text-[13px] font-[500] flex items-center gap-2 cursor-pointer"
@@ -216,11 +225,50 @@ export default function StoreProduct() {
                   </p>
                 </div>
               </div>
+              <div className="flex items-center gap-2">
+                <div
+                  className="px-3 py-2 text-[13px] font-[500] flex items-center gap-2 cursor-pointer"
+                  onClick={() => setSortCriteria("discount")}
+                >
+                  {sortCriteria === "discount" ? (
+                    <ImCheckboxChecked className="w-[20px] h-[20px] text-[red]" />
+                  ) : (
+                    <ImCheckboxUnchecked className="w-[20px] h-[20px] text-gray-400" />
+                  )}
+                  Discount
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div
+                  className="px-3 py-2 text-[13px] font-[500] flex items-center gap-2 cursor-pointer"
+                  onClick={() => setSortCriteria("latestArrival")}
+                >
+                  {sortCriteria === "latestArrival" ? (
+                    <ImCheckboxChecked className="w-[20px] h-[20px] text-[red]" />
+                  ) : (
+                    <ImCheckboxUnchecked className="w-[20px] h-[20px] text-gray-400" />
+                  )}
+                  Latest Arrival
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div
+                  className="px-3 py-2 text-[13px] font-[500] flex items-center gap-2 cursor-pointer"
+                  onClick={() => setSortCriteria("topRated")}
+                >
+                  {sortCriteria === "topRated" ? (
+                    <ImCheckboxChecked className="w-[20px] h-[20px] text-[red]" />
+                  ) : (
+                    <ImCheckboxUnchecked className="w-[20px] h-[20px] text-gray-400" />
+                  )}
+                  Top Rated
+                </div>
+              </div>
             </div>
           )}
         </div>
       </div>
-      <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap justify-between items-start gap-2 mt-5 ">
+      <div className="p-6 lg:p-10 overflow-x-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8">
         {storeProduct?.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

@@ -34,33 +34,33 @@ const Offers = () => {
     })();
   }, []);
 
-  // useEffect(() => {
-  //   if (id && allProducts?.length > 0) {
-  //     // const { data } = await getOfferProductsApi();
-  //     // console.log(data);
-  //     const currentOfferProds = allProducts.filter(
-  //       (item: any) => item?.offer?.id?.toString() === id.toString()
-  //     );
-  //     console.log("cr", allProducts);
-  //     setAllProducts(currentOfferProds);
-  //     // const { data } = await getOfferProductsApi();
-  //     // console.log(data);
-  //   }
-  // }, [id]);
+//   useEffect(() => {
+//     if (id && allProducts?.length > 0) {
+//       const { data } = await getOfferProductsApi();
+//       console.log(data);
+//       const currentOfferProds = .
+//         (item: any) => item?.offer?.id?.toString() === id.toString()
+//       );
+// console.log("cr", allProducts);
+// setAllProducts(currentOfferProds);
+//       // const { data } = await getOfferProductsApi();
+//       // console.log(data);
+//     }
+//   }, [id]);
 
 
-  // const goToCreditLimit = () => {
-  //   router.push("/CreditLimit");
-  // };
+  const goToCreditLimit = () => {
+    router.push("/CreditLimit");
+  };
   return (
 <>
   <div className="lg:mx-[150px] md:mx-[60px] lg:px-0 md:px-3">
     <MainSlider banners={positionOneBanners} />
   </div>
-  <div className="flex flex-wrap md:h-[450px] sm:flex-wrap md:flex-wrap lg:flex-nowrap justify-between items-start gap-2">
+  <div className="p-6 lg:p-10 overflow-x-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8">
     {allProducts?.map((product: any) => (
       <ProductCard
-      width="25"
+        width="25"
         key={product.id}
         offerId={id || ''}
         product={product}

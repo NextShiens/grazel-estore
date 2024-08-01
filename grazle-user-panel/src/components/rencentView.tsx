@@ -84,7 +84,7 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
 
   async function onLiked(e: any, productId: any) {
     e.stopPropagation();
-    if (isPending) return; //purpose : to avoid user from calling multiple api
+    if (isPending) return;
 
     try {
       setPending(true);
@@ -101,7 +101,7 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
       }
       await favoriteProductApi(formdata);
     } catch (error) {
-      console.log("error in liking product");
+      console.log("error in liking product", error);
     } finally {
       setTimeout(() => {
         setPending(false);
@@ -127,10 +127,12 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
           Array(4)
             .fill(0)
             .map((_, index) => <SkeletonLoader key={index} />)
-        ) : Data?.length <= 0 ? (
+        ) : !Data || Data.length <= 0 ? (
           <div>No Product Found!</div>
         ) : (
           Data.map((item: any, index: any) => {
+            console.log('Item:', item);
+            console.log('Featured Image:', item?.featured_image);
             const { basePrice, price, discountInfo } = calculateFinalPrice(
               item,
               null
@@ -144,29 +146,27 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
                   onClick={() => router.push(`/detailProduct/${item.id}`)}
                   className="cursor-pointer"
                 >
-                  <Image
-                    alt="Product Image"
-                    width={203}
-                    height={203}
-                    src={"/" + item.featured_image}
-                    className="w-full h-[203px] object-cover rounded-2xl cursor-pointer"
-                  />
+                  {item?.featured_image ? (
+                    <Image
+                      alt="Product Image"
+                      width={203}
+                      height={203}
+                      src={item.featured_image}
+                      className="w-full h-[203px] object-cover rounded-2xl cursor-pointer"
+                      onError={(e: any) => {
+                        console.error('Image failed to load:', e);
+                        e.target.src = '/path/to/fallback-image.jpg';
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-[203px] bg-gray-200 rounded-2xl"></div>
+                  )}
 
                   <div className="flex w-full justify-between items-center absolute px-[16px] top-[10px]">
-                    <button className="md:text-[8px] text-[9px] rounded-3xl text-white bg-[#F70000] md:py-2 py-1 md:px-3">
+                    {/* <button className="md:text-[8px] text-[9px] rounded-3xl text-white bg-[#F70000] md:py-2 py-1 md:px-3">
                       {discountInfo?.toUpperCase()}
-                    </button>
+                    </button> */}
 
-                    {/* <IconButton
-                      size="medium"
-                      onClick={(e) => onLiked(e, item.id)}
-                    >
-                      {favoriteProducts?.includes(item.id) ? (
-                        <FaHeart className="text-[#F70000]" />
-                      ) : (
-                        <Image src={heart} alt="like" />
-                      )}
-                    </IconButton> */}
                     <LikeButton productId={item?.id} />
                   </div>
 

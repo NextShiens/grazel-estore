@@ -261,10 +261,10 @@ export default function Footer() {
       <div className="flex flex-col sm:flex-col lg:hidden mx-[20px]">
         <Image src={logo} alt="" className="w-[120px] h-[70px] " />
 
-        <p className="mt-3 text-[14px] font-normal text-[#4E4E4E]">
+        {/* <p className="mt-3 text-[14px] font-normal text-[#4E4E4E]">
           Lorem ipsum dolor sit amet cons ectet ur. Nunc sed erat tristique sed
           magna. Eget condimentum.
-        </p>
+        </p> */}
 
         <p className="mt-3 text-[16px] font-semibold text-[#4E4E4E]">
           Follow Us
