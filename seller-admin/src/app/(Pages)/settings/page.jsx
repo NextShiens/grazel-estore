@@ -142,7 +142,7 @@ const Settings = () => {
                     <div className="flex flex-col gap-1">
                       <label className="text-[#777777]">City</label>
                       <input
-                        placeholder="Select an option"
+                        placeholder="Enter city name"
                         name="city"
                         defaultValue={profile?.profile?.city}
                         required
@@ -152,7 +152,7 @@ const Settings = () => {
                     <div className="flex flex-col gap-1">
                       <label className="text-[#777777]">State</label>
                       <input
-                        placeholder="Select an option"
+                        placeholder="Enter state name"
                         defaultValue={profile?.profile?.state}
                         name="state"
                         required

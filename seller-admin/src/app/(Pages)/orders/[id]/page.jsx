@@ -123,11 +123,11 @@ const OrderDetails = () => {
                   Order Summary
                 </p>
                 <div className="flex gap-10 xl:gap-3">
-                  <Image
+                  {/* <Image
                     alt=""
                     src={img}
                     className="w-[100px] h-[100px] rounded-full"
-                  />
+                  /> */}
                   <div className="flex flex-col justify-center gap-2">
                     <div className="text-[var(--text-color-body)] font-[400] flex items-center gap-2 capitalize">
                       <BiSolidEditAlt className="h-[22px] w-[22px]" />
@@ -191,13 +191,13 @@ const OrderDetails = () => {
               <div className="flex flex-col gap-5">
                 {order?.orderProducts?.map((item, index) => (
                   <div key={index} className="flex justify-between">
-                    <div className="flex gap-7 items-center">
+                    {/* <div className="flex gap-7 items-center">
                       <Image
                         alt=""
                         width={75}
                         height={75}
                         // src={`/` + item.featured_image}
-                        src={item?.featured_image || 'https://via.placeholder.com/75x75?text=No+Image+Available'}
+                        src={"https://api.grazle.co.in/"+item?.featured_image || 'https://via.placeholder.com/75x75?text=No+Image+Available'}
                         onError={(e) => {
                           console.error('Image failed to load:', e);
                           e.target.src = 'https://via.placeholder.com/75x75?text=No+Image+Available';
@@ -207,7 +207,7 @@ const OrderDetails = () => {
                       <div>
                         <p className="text-[18px] font-[500]">{item?.title}</p>
                       </div>
-                    </div>
+                    </div> */}
                     <div>
                       <p className="text-[24px] font-[500]">
                         ₹{item?.discount ? item?.discounted_price : item?.price}

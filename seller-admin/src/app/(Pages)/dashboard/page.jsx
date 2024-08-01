@@ -133,10 +133,10 @@ const Dashboard = () => {
           }
         );
         setTotalOrdersCount(data);
-        toast.success("Order statistics fetched successfully!");
+        // toast.success("Order statistics fetched successfully!");
       } catch (error) {
         console.error("Error fetching order statistics:", error);
-        toast.error("Failed to fetch order statistics.");
+        // toast.error("Failed to fetch order statistics.");
       }
     })();
   }, []);

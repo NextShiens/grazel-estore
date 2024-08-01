@@ -60,8 +60,7 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
               width={26}
               height={26}
               alt=""
-              // src={order?.products[0]?.featured_image}
-              src={order?.products[0]?.featured_image || 'https://via.placeholder.com/26x26?text=No+Image+Available'}
+              src={order?.products[0]?.featured_image ? `https://api.grazle.co.in/${order.products[0].featured_image}` : 'https://via.placeholder.com/26x26?text=No+Image+Available'}
               onError={(e) => {
                 console.error('Image failed to load:', e);
                 e.target.src = 'https://via.placeholder.com/26x26?text=No+Image+Available';
@@ -138,8 +137,7 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
                 alt=""
                 width={26}
                 height={26}
-                // src={"/" + order.customer.image}
-                src={ order?.customer?.image || 'https://via.placeholder.com/26x26?text=No+Image+Available'}
+                src={order?.customer?.image ? `https://api.grazle.co.in/${order.customer.image}` : 'https://via.placeholder.com/26x26?text=No+Image+Available'}
                 onError={(e) => {
                   console.error('Image failed to load:', e);
                   e.target.src = 'https://via.placeholder.com/26x26?text=No+Image+Available';
@@ -156,8 +154,7 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
                 width={26}
                 height={26}
                 alt=""
-                // src={"/" + order.products[0].featured_image}
-                src={ order?.products[0]?.featured_image || 'https://via.placeholder.com/26x26?text=No+Image+Available'}
+                src={order?.products[0]?.featured_image ? `https://api.grazle.co.in/${order.products[0].featured_image}` : 'https://via.placeholder.com/26x26?text=No+Image+Available'}
                 onError={(e) => {
                   console.error('Image failed to load:', e);
                   e.target.src = 'https://via.placeholder.com/26x26?text=No+Image+Available';
