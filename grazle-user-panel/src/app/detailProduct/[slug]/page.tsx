@@ -501,7 +501,7 @@ export default function ProductDetail() {
         <p className="text-[#000000] text-[19px] border-t pt-5 mt-5">
           More from the store
         </p>
-        <div className="flex flex-wrap md:h-[450px] sm:flex-wrap md:flex-wrap lg:flex-nowrap justify-between items-start gap-2  ">
+        <div className="p-6 lg:p-10 overflow-x-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8 ">
           {storeProductsDetails.slice(0, 4).map((item) => (
             <ProductCard width="25" key={item.id} product={item} />
           ))}
