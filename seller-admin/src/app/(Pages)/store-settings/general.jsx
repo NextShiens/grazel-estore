@@ -70,10 +70,7 @@ const General = () => {
     <div className="mt-[20px]">
       <p className="text-[20px] font-[500]">Logo</p>
       <div className="my-[30px] flex gap-10 items-center flex-col sm:flex-row">
-        <div
-          onClick={openInputFile}
-          className="w-[110px] h-[110px] bg-[#d9dff3] border border-[#D6D6D6] rounded-full flex justify-center items-center"
-        >
+        <div className="w-[110px] h-[110px] bg-[#d9dff3] border border-[#D6D6D6] rounded-full flex justify-center items-center">
           {storeLogo ? (
             <Image
               className="w-full h-full rounded-full"
@@ -94,6 +91,12 @@ const General = () => {
             <IoMdCamera className="text-gray-500 text-[40px]" />
           )}
         </div>
+        <button
+          onClick={openInputFile}
+          className="px-4 py-2 bg-[#FE4242] text-white rounded-md hover:bg-[#e63b3b] transition-colors"
+        >
+          Upload Image
+        </button>
         <input
           onChange={(e) => {
             const filesArray = Array.from(e.target.files);
