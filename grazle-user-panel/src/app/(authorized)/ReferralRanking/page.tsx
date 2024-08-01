@@ -5,7 +5,6 @@ import airpod from "@/assets/airpod.png";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { getTopReferralApi } from "@/apis";
 
-
 export default function ReferralRanking() {
   const [topUser, setTopUser] = useState([]);
   useEffect(() => {

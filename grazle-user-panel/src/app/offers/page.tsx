@@ -36,8 +36,8 @@ const Offers = () => {
 
 //   useEffect(() => {
 //     if (id && allProducts?.length > 0) {
-//       // const { data } = await getOfferProductsApi();
-//       // console.log(data);
+//       const { data } = await getOfferProductsApi();
+//       console.log(data);
 //       const currentOfferProds = .
 //         (item: any) => item?.offer?.id?.toString() === id.toString()
 //       );
@@ -49,9 +49,9 @@ const Offers = () => {
 //   }, [id]);
 
 
-  // const goToCreditLimit = () => {
-  //   router.push("/CreditLimit");
-  // };
+  const goToCreditLimit = () => {
+    router.push("/CreditLimit");
+  };
   return (
 <>
   <div className="lg:mx-[150px] md:mx-[60px] lg:px-0 md:px-3">

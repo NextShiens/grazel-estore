@@ -103,6 +103,28 @@ export default function Navbar() {
   };
 
 
+  const openSearch = () => {
+    setIsOpenSearch(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  // Function to close search and enable scroll
+  const closeSearch = () => {
+    setIsOpenSearch(false);
+    document.body.style.overflow = 'visible';
+  };
+
+
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.body.style.overflow = 'visible';
+    };
+  }, []);
+
+
 
   // useEffect(() => {
   //   (async () => {
@@ -125,9 +147,23 @@ export default function Navbar() {
   const handleToggleMenu = () => setIsMenuBar((prev) => !prev);
   const handleMenuclose = () => setIsMenuBar(false);
   const handleToggle = () => setIsOpen((prev) => !prev);
-  const handleToggleSearch = () => setIsOpenSearch((prev) => !prev);
+  const handleToggleSearch = () => {
+    setIsOpenSearch((prev) => {
+      if (!prev) {
+        // If opening the search, disable scroll
+        document.body.style.overflow = 'hidden';
+      } else {
+        // If closing the search, enable scroll
+        document.body.style.overflow = 'visible';
+      }
+      return !prev;
+    });
+  };
 
   const handleClickOutside = (event) => {
+    if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+      closeSearch();
+    }
     if (MenubarRef.current && !MenubarRef.current.contains(event.target)) {
       setIsMenuBar(false);
     }
@@ -217,6 +253,13 @@ export default function Navbar() {
       setIsMenuBar(false);
     }
   };
+  const clearSearch = () => {
+    setSearchValue("");
+    if (searchRef.current) {
+      searchRef.current.value = "";
+    }
+    onSearchProduct(""); // Clear search results
+  };
 
   if (authLoading) {
     return (
@@ -287,12 +330,14 @@ export default function Navbar() {
             <div ref={searchContainerRef} className="relative w-[380px]">
               <input
                 placeholder="Search"
-                className="w-full lg:w-[380px] sm:w-[300px] h-[52px] rounded-full pl-[50px] focus:outline-none border-[1px] border-[#D2D4DA]"
-                onClick={handleToggleSearch}
+                className="w-full lg:w-[380px] sm:w-[300px] h-[52px] rounded-full pl-[50px] pr-[40px] focus:outline-none border-[1px] border-[#D2D4DA]"
+                onClick={openSearch}
                 onChange={(e) => {
-                  onSearchProduct(e.target.value);
-                  setSearchValue(e.target.value);
+                  const value = e.target.value;
+                  setSearchValue(value);
+                  onSearchProduct(value);
                 }}
+                value={searchValue}
                 ref={searchRef}
               />
               <Image
@@ -300,9 +345,22 @@ export default function Navbar() {
                 alt="Search"
                 className="w-[36px] h-[36px] absolute top-[50%] left-[10px] transform -translate-y-1/2"
               />
-              {isOpenSearch || searchResult?.length ? (
-                <div className="fixed inset-0 z-50 opacity-100 bg-[rgba(0,0,0,0.2);] top-[90px]">
-                  <div className="absolute bg-white opacity-100 right-[34%] w-[400px] z-10 p-4 px-6 shadow-lg border border-[#D2D4DA] rounded-xl">
+              {searchValue && (
+                <button
+                  className="absolute top-1/2 right-[10px] transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  onClick={clearSearch}
+                >
+                  <IoClose size={24} />
+                </button>
+              )}
+              {isOpenSearch && (
+                <div className="fixed inset-0 z-50 opacity-100 bg-[rgba(0,0,0,0.2)] top-[90px]">
+                  <div className="absolute bg-white opacity-100 right-[35%] w-[400px] z-10 p-4 px-6 shadow-lg border border-[#D2D4DA] rounded-xl">
+                    <IoClose
+                      className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 cursor-pointer"
+                      size={24}
+                      onClick={closeSearch}
+                    />
                     {searchResult && searchResult.length > 0 ? (
                       searchResult.map((item) => (
                         <div
@@ -331,7 +389,7 @@ export default function Navbar() {
 
                     {recentSearches.length > 0 && (
                       <>
-                        <div className="flex gap-3 items-center">
+                        <div className="flex gap-3 items-center mt-4">
                           <PiClockCountdownThin className="text-black text-[#777777]" />
                           <p className="text-black text-[16px] font-semibold">
                             Recent Searches
@@ -363,7 +421,7 @@ export default function Navbar() {
                         popularSearches.map((search, index) => (
                           <div key={index} className="flex gap-3 mt-3">
                             <Link
-                              href="/StoreprouctPage"
+                              href={`/search?keyword=${encodeURIComponent(search)}`}
                               className="text-black text-[14px] font-normal"
                             >
                               {search}
@@ -378,7 +436,7 @@ export default function Navbar() {
                     </div>
                   </div>
                 </div>
-              ) : null}
+              )}
             </div>
           </div>
 
@@ -494,46 +552,50 @@ export default function Navbar() {
           <input
             type="text"
             placeholder="Search products..."
-            className="w-full h-10 pl-10 pr-4 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
-            onClick={handleToggleSearch}
+            className="w-full h-10 pl-10 pr-10 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
+            onClick={openSearch}
             onChange={(e) => {
               onSearchProduct(e.target.value);
               setSearchValue(e.target.value);
             }}
+            value={searchValue}
+            ref={searchRef}
           />
           <Image
             src={Search}
             alt="Search"
             className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2"
           />
+          {searchValue && (
+            <IoClose
+              className="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+              onClick={clearSearch}
+            />
+          )}
         </div>
       </div>
 
       {/* Mobile menu drawer */}
+
       <Drawer open={menuBar} onClose={handleToggleMenu} anchor="left">
         <div className="w-64 p-4">
           {user && (
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
-                <div
-                  className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer"
-                  onClick={handleToggle}
-                >
-                  {user.profile?.image ? (
+                <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer">
+                  {user?.profile?.image ? (
                     <Image
-                      src={localStorage.getItem("image")}
+                      src={user.profile.image}
                       alt="User"
                       width={32}
                       height={32}
-                      className="rounded-full"
+                      className="w-8 h-8 rounded-full"
                     />
                   ) : (
                     <BiUser className="text-gray-600" />
                   )}
                 </div>
-                <h2 className="ml-4 text-xl font-semibold bg-custom-red">
-                  {user.username}
-                </h2>
+                <h2 className="ml-4 text-xl font-semibold">{user.username}</h2>
               </div>
               <IoClose
                 className="w-6 h-6 cursor-pointer"
@@ -542,47 +604,45 @@ export default function Navbar() {
             </div>
           )}
           <div className="space-y-4">
-            {/* <Link
+            <Link
               href="/"
-              className="block py-2 hover:text-red-600"
+              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
               onClick={handleMenuclose}
             >
-              Home
-            </Link> */}
-            {/* <Link
+              <Image src={MenuIcon} alt="Home" className="w-5 h-5" />
+              <span className="text-sm">Home</span>
+            </Link>
+            <Link
               href="/offers"
-              className="block py-2 hover:text-red-600"
+              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
               onClick={handleMenuclose}
             >
-              Offers
+              <Image src={Seller} alt="Offers" className="w-5 h-5" />
+              <span className="text-sm">Offers</span>
             </Link>
             <Link
               href="/CartPage"
-              className="block py-2 hover:text-red-600"
+              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
               onClick={handleMenuclose}
             >
-              Cart
+              <Image src={Cart} alt="Cart" className="w-5 h-5" />
+              <span className="text-sm">Cart</span>
             </Link>
             <Link
               href="/RegisterSeller"
-              className="block py-2 hover:text-red-600"
+              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
               onClick={handleBecomeSeller}
             >
-              Become a Seller
+              <Image src={Seller} alt="Become Seller" className="w-5 h-5" />
+              <span className="text-sm">Become a Seller</span>
             </Link>
-            <hr className="my-4" /> */}
+            <hr className="my-4" />
             {user ? (
               <>
                 <Link
-                  href="/MyAccount"
-                  className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
-                >
-                  <Image src={user} alt="User" className="w-5 h-5" />
-                  <span className="text-sm">Your Account</span>
-                </Link>
-                <Link
                   href="/MyOrders"
                   className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  onClick={handleMenuclose}
                 >
                   <Image src={order} alt="" className="w-[18px] h-[18px]" />
                   <span className="text-sm">My Orders</span>
@@ -590,6 +650,7 @@ export default function Navbar() {
                 <Link
                   href="/favorite"
                   className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  onClick={handleMenuclose}
                 >
                   <Image src={Fav} alt="Favorites" className="w-5 h-5" />
                   <span className="text-sm">Favorites</span>
@@ -597,6 +658,7 @@ export default function Navbar() {
                 <Link
                   href="/CreditLimit"
                   className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  onClick={handleMenuclose}
                 >
                   <Image src={card} alt="Credit" className="w-5 h-5" />
                   <span className="text-sm">Credit Limit</span>
@@ -604,46 +666,48 @@ export default function Navbar() {
                 <Link
                   href="/ReferralRanking"
                   className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  onClick={handleMenuclose}
                 >
                   <Image src={bulid} alt="Referral" className="w-5 h-5" />
                   <span className="text-sm">Referral Ranking</span>
                 </Link>
+                <hr className="my-4" />
+                <Link
+                  href="/FAQs"
+                  className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  onClick={handleMenuclose}
+                >
+                  <Image src={FAQ} alt="FAQ" className="w-5 h-5" />
+                  <span className="text-sm">FAQs</span>
+                </Link>
+                <Link
+                  href="/privacy-policy"
+                  className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  onClick={handleMenuclose}
+                >
+                  <Image src={Privcy} alt="Privacy" className="w-5 h-5" />
+                  <span className="text-sm">Privacy Policy</span>
+                </Link>
+                <button
+                  className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded w-full text-left"
+                  onClick={() => {
+                    handleLogout();
+                    handleMenuclose();
+                  }}
+                >
+                  <BiLogOut className="w-5 h-5" />
+                  <span className="text-sm">Logout</span>
+                </button>
               </>
             ) : (
               <Link
                 href="/signIn"
-                className="block py-2 hover:text-red-600"
+                className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
                 onClick={handleMenuclose}
               >
-                Sign In
+                <FaUser className="w-5 h-5" />
+                <span className="text-sm">Sign In</span>
               </Link>
-            )}
-            <hr className="my-4" />
-            <Link
-              href="/FAQs"
-              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
-            >
-              <Image src={FAQ} alt="FAQ" className="w-5 h-5" />
-              <span className="text-sm">FAQs</span>
-            </Link>
-            <Link
-              href="/privacy-policy"
-              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
-            >
-              <Image src={Privcy} alt="Privacy" className="w-5 h-5" />
-              <span className="text-sm">Privacy Policy</span>
-            </Link>
-            {authUser && (
-              <button
-                className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded w-full text-left"
-                onClick={() => {
-                  handleLogout();
-                  handleMenuclose();
-                }}
-              >
-                <BiLogOut className="w-5 h-5" />
-                <span className="text-sm">Logout</span>
-              </button>
             )}
           </div>
         </div>
