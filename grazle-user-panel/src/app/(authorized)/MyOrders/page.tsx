@@ -68,6 +68,7 @@ export default function MyAccount() {
     image: "",
   });
   const [meta, setMeta] = useState({});
+  const user = localStorage.getItem("theUser");
   const [orders, setOrders] = useState([]);
   const [activeSections, setActiveSections] = useState<string>("Active");
   const handleSectionChanges = (section: string) => {
@@ -143,16 +144,25 @@ export default function MyAccount() {
     handleSectionChange("Logout");
     setShowSendModel(true);
   };
-
   const deleteuser = async () => {
     try {
-      let formdata: any = [];
       setPending(true);
-      await deleteuserApi(formdata);
-      toast.success("User has been deleted");
-      router.push("/signIn");
+      const formdata = new FormData();
+      formdata.append('message', 'User requested account deletion'); // Add a default message
+  
+      const response = await deleteuserApi(formdata);
+      
+      if (response.data && response.data.success) {
+        localStorage.clear();
+        toast.success("User has been deleted");
+        window.location.href = "/signIn";
+        router.push("/signIn");
+      } else {
+        toast.error(response.data?.message || "Failed to delete user. Please try again.");
+      }
     } catch (error) {
-      toast.error("Something went wrong");
+      console.error("Delete user error:", error);
+      toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
       setTimeout(() => {
         setPending(false);

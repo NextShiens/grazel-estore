@@ -208,15 +208,24 @@ export default function MyAccount() {
   };
 
   const deleteuser = async () => {
-    console.log("delete user");
     try {
-      let formdata: any = [];
       setPending(true);
-      await deleteuserApi(formdata);
-      toast.success("User has been deleted");
-      router.push("/signIn");
+      const formdata = new FormData();
+      formdata.append('message', 'User requested account deletion'); // Add a default message
+  
+      const response = await deleteuserApi(formdata);
+      
+      if (response.data && response.data.success) {
+        localStorage.clear();
+        toast.success("User has been deleted");
+        window.location.href = "/signIn";
+        router.push("/signIn");
+      } else {
+        toast.error(response.data?.message || "Failed to delete user. Please try again.");
+      }
     } catch (error) {
-      toast.error("Something went wrong");
+      console.error("Delete user error:", error);
+      toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
       setTimeout(() => {
         setPending(false);
@@ -455,6 +464,16 @@ export default function MyAccount() {
                 }`}
             >
               Logouts
+            </div>
+            <div
+              onClick={() => router.push("/")}
+              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
+                activeSection === "nothing"
+                  ? "border-l-[4px] border-[#F70000] pl-2"
+                  : "text-[#8B8B8B] "
+              }`}
+            >
+              Go Back
             </div>
           </div>
           <div className="rounded-3xl  lg:w-[77%] w-[100%] min-h-[454px] max-h-auto">

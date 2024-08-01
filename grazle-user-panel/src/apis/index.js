@@ -212,4 +212,8 @@ export const forgetPasswordApi = async (email) => {
 };
 
 export const deleteuserApi = async (formdata) =>
-  await axios.delete(`/profile/delete-account`, formdata);
+  await axios.post(`/profile/delete-account`, formdata, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });

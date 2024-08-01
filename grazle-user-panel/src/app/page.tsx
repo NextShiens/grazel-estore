@@ -780,11 +780,11 @@ export default function Home() {
         >
           <div className="relative h-[203px]">
             <Image
-              alt=""
+              alt="Product Image"
               width={203}
               height={203}
               src={seventyFivePercentSaleProducts[0]?.featured_image}
-              className="w-full h-full object-cover outline-none	rounded-2xl cursor-pointer"
+              className="w-full h-full object-cover outline-none	rounded-2xl cursor-pointer border"
             />
 
             <div className="flex absolute w-full justify-between items-center absolute px-[16px] top-[10px]">
@@ -1021,6 +1021,10 @@ export default function Home() {
           />
         </div>
       </div>
+      {/* banner */}
+      {/* <div className="lg:mx-[150px] md:mx-[60px] mx-0">
+        <Image src={banner} alt="banner" />
+      </div> */}
     </>
   );
 }
