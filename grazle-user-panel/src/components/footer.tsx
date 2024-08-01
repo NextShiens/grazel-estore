@@ -59,7 +59,7 @@ export default function Footer() {
 
   return (
     <>
-      <div className="lg:px-[150px] md:px-[60px] px-[16px] py-[63px] bg-[#F8F8F8]  lg:flex sm:hidden hidden  items-start lg:items-start justify-between">
+        <div className="lg:px-[150px] md:px-[60px] px-[16px] py-[63px] bg-[#F8F8F8]  lg:flex sm:hidden hidden  items-start lg:items-start justify-between">
         <div className="w-full lg:w-[196px] mb-[32px] lg:mb-0 text-center lg:text-left">
           <Image
             src={logo}
@@ -68,26 +68,26 @@ export default function Footer() {
           />
 
           <div className="flex items-center gap-2 justify-center lg:justify-start mt-[40px]">
-            <Image
-              src={Instagram}
-              alt=""
-              className="w-[32px] h-[32px] mx-2 lg:mx-0"
-            />
-            <Image
-              src={Dribbble}
-              alt=""
-              className="w-[32px] h-[32px] mx-2 lg:mx-0"
-            />
-            <Image
-              src={Twitter}
-              alt=""
-              className="w-[32px] h-[32px] mx-2 lg:mx-0"
-            />
-            <Image
-              src={Youtube}
-              alt=""
-              className="w-[32px] h-[32px] mx-2 lg:mx-0"
-            />
+            <Link href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA==" target="_blank" rel="noopener noreferrer">
+              <Image
+                src={Instagram}
+                alt=""
+                className="w-[32px] h-[32px] mx-2 lg:mx-0"
+              />
+            </Link>
+            <Link href="https://www.linkedin.com/company/grazle" target="_blank" rel="noopener noreferrer">
+              <SiLinkedin className="w-[32px] h-[32px] mx-2 lg:mx-0" />
+            </Link>
+            <Link href="https://x.com/GrazleHomeware" target="_blank" rel="noopener noreferrer">
+              <Image
+                src={Twitter}
+                alt=""
+                className="w-[32px] h-[32px] mx-2 lg:mx-0"
+              />
+            </Link>
+            <Link href="https://www.facebook.com/grazlefb/" target="_blank" rel="noopener noreferrer">
+              <FaFacebook className="w-[32px] h-[32px] mx-2 lg:mx-0" />
+            </Link>
           </div>
         </div>
 

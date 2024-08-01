@@ -12,7 +12,6 @@ import Insta from "@/assets/Group 1820550000.png";
 import Google from "@/assets/Group 1820549999.png";
 import { FaFacebookF, FaPinterestP, FaTwitter } from "react-icons/fa";
 
-
 export default function ContactSupport() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -45,7 +44,9 @@ export default function ContactSupport() {
     try {
       const { data } = await contactSupportApi(formdata);
       console.log(data);
-      setSuccess("Message sent successfully! our team will get back to you soon.");
+      setSuccess(
+        "Message sent successfully! our team will get back to you soon."
+      );
       setName("");
       setEmail("");
       setMessage("");
@@ -73,38 +74,79 @@ export default function ContactSupport() {
               <p className="text-[18px] font-normal">Contact Support</p>
             </div>
 
-            <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
-              <Image src={web} alt="" className="w-[18px] h-[18px] mr-[10px]" />
-              <p className="text-[18px] font-normal">Website</p>
-            </div>
+            <a
+              href="https://www.grazle.co.in/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
+                <Image
+                  src={web}
+                  alt=""
+                  className="w-[18px] h-[18px] mr-[10px]"
+                />
+                <p className="text-[18px] font-normal">Website</p>
+              </div>
+            </a>
+            <a
+              href="https://www.facebook.com/grazlefb/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
+                <Image
+                  src={fb}
+                  alt=""
+                  className="w-[18px] h-[18px] mr-[10px]"
+                />
+                <p className="text-[18px] font-normal">Facebook</p>
+              </div>
+            </a>
 
-            <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
-              <Image src={fb} alt="" className="w-[18px] h-[18px] mr-[10px]" />
-              <p className="text-[18px] font-normal">Facebook</p>
-            </div>
+            <a
+              href="https://www.grazle.co.in/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
+                <Image
+                  src={Google}
+                  alt=""
+                  className="w-[18px] h-[18px] mr-[10px]"
+                />
+                <p className="text-[18px] font-normal">Google</p>
+              </div>
+            </a>
 
-            <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
-              <Image
-                src={Google}
-                alt=""
-                className="w-[18px] h-[18px] mr-[10px]"
-              />
-              <p className="text-[18px] font-normal">Google</p>
-            </div>
+            <a
+              href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA=="
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
+                <Image
+                  src={Insta}
+                  alt=""
+                  className="w-[18px] h-[18px] mr-[10px]"
+                />
+                <p className="text-[18px] font-normal">Instagram</p>
+              </div>
+            </a>
 
-            <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
-              <Image src={Insta} alt="" className="w-[18px] h-[18px] mr-[10px]" />
-              <p className="text-[18px] font-normal">Instagram</p>
-            </div>
-
-            <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
-              <Image
-                src={Tiwtter}
-                alt=""
-                className="w-[18px] h-[18px] mr-[10px]"
-              />
-              <p className="text-[18px] font-normal">Twitter</p>
-            </div>
+            <a
+              href="https://x.com/GrazleHomeware"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
+                <Image
+                  src={Tiwtter}
+                  alt=""
+                  className="w-[18px] h-[18px] mr-[10px]"
+                />
+                <p className="text-[18px] font-normal">Twitter</p>
+              </div>
+            </a>
 
             <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center">
               <Image
@@ -123,14 +165,20 @@ export default function ContactSupport() {
           >
             <h2 className="text-2xl font-bold mb-4">Get in Touch</h2>
             <p className="text-base font-normal mb-6 text-[#777777]">
-              Your email address will not be published. Required fields are marked*
+              Your email address will not be published. Required fields are
+              marked*
             </p>
 
             {error && <p className="text-red-500 mb-4">{error}</p>}
             {success && <p className="text-green-500 mb-4">{success}</p>}
 
             <div className="mb-4">
-              <label htmlFor="name" className="block text-base font-semibold mb-2">Name *</label>
+              <label
+                htmlFor="name"
+                className="block text-base font-semibold mb-2"
+              >
+                Name *
+              </label>
               <input
                 id="name"
                 value={name}
@@ -141,7 +189,12 @@ export default function ContactSupport() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="email" className="block text-base font-semibold mb-2">Email *</label>
+              <label
+                htmlFor="email"
+                className="block text-base font-semibold mb-2"
+              >
+                Email *
+              </label>
               <input
                 id="email"
                 type="email"
@@ -153,7 +206,12 @@ export default function ContactSupport() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="subject" className="block text-base font-semibold mb-2">Subject *</label>
+              <label
+                htmlFor="subject"
+                className="block text-base font-semibold mb-2"
+              >
+                Subject *
+              </label>
               <input
                 id="subject"
                 value={subject}
@@ -164,7 +222,12 @@ export default function ContactSupport() {
             </div>
 
             <div className="mb-6">
-              <label htmlFor="message" className="block text-base font-semibold mb-2">Message *</label>
+              <label
+                htmlFor="message"
+                className="block text-base font-semibold mb-2"
+              >
+                Message *
+              </label>
               <textarea
                 id="message"
                 placeholder="Message"
@@ -189,18 +252,15 @@ export default function ContactSupport() {
             <div className="mb-6">
               <h3 className="text-2xl font-semibold mb-3">Address</h3>
               <p className="text-base font-medium">
-                8567 Preston Rd. Inglewood, Maine 9875
+                S/O Mr. RISHI PAL S/O SH. RISHI PAL MHP NO. 5306 K-819 G/F
+                MAHIPALPUR EXTN OPP. -APRAVTO MARUTI SHOWROOM, NEW DELHI 1 10037
               </p>
             </div>
 
             <div className="mb-6">
               <h3 className="text-2xl font-semibold mb-3">Contact</h3>
-              <p className="text-base font-medium mb-2">
-                Phone : +0876-776-887
-              </p>
-              <p className="text-base font-medium">
-                Email : user888@gmail.com
-              </p>
+              <p className="text-base font-medium mb-2">Phone : +9108202334</p>
+              <p className="text-base font-medium">Email : www@Grazle.com</p>
             </div>
 
             <div className="mb-6">
@@ -216,18 +276,42 @@ export default function ContactSupport() {
             <h3 className="text-2xl font-semibold mb-4">Social Media</h3>
 
             <div className="flex items-center gap-4">
-              <div className="h-[46px] w-[46px] rounded-full bg-[#F70000] flex items-center justify-center">
-                <FaFacebookF className="text-[20px]" />
-              </div>
-              <div className="h-[46px] w-[46px] rounded-full bg-[#F70000] flex items-center justify-center">
-                <FaTwitter className="text-[20px]" />
-              </div>
-              <div className="h-[46px] w-[46px] rounded-full bg-[#F70000] flex items-center justify-center">
-                <AiFillInstagram className="text-[20px]" />
-              </div>
-              <div className="h-[46px] w-[46px] rounded-full bg-[#F70000] flex items-center justify-center">
-                <FaPinterestP className="text-[20px]" />
-              </div>
+              <a
+                href="https://www.facebook.com/grazlefb/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="h-[46px] w-[46px] rounded-full bg-[#F70000] flex items-center justify-center">
+                  <FaFacebookF className="text-[20px]" />
+                </div>
+              </a>
+              <a
+                href="https://x.com/GrazleHomeware"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="h-[46px] w-[46px] rounded-full bg-[#F70000] flex items-center justify-center">
+                  <FaTwitter className="text-[20px]" />
+                </div>
+              </a>
+              <a
+                href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA=="
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="h-[46px] w-[46px] rounded-full bg-[#F70000] flex items-center justify-center">
+                  <AiFillInstagram className="text-[20px]" />
+                </div>
+              </a>
+              <a
+                href="https://www.linkedin.com/company/grazle"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="h-[46px] w-[46px] rounded-full bg-[#F70000] flex items-center justify-center">
+                  <FaPinterestP className="text-[20px]" />
+                </div>
+              </a>
             </div>
           </div>
         </div>

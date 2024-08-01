@@ -54,7 +54,6 @@ import MyorderCard from "@/components/MyorderCard";
 import { BiCopy, BiLoader } from "react-icons/bi";
 import { useSelector } from "react-redux";
 
-
 export default function MyAccount() {
   const [showSendModel, setShowSendModel] = useState(false);
   const [showModelDelete, setShowModelDelete] = useState(false);
@@ -80,8 +79,6 @@ export default function MyAccount() {
   const [hasOrderCanceled, setHasOrderCanceled] = useState(false);
   const userRedux = useSelector((state) => state.user);
   const router = useRouter();
-
-
 
   const profileDataHandler = (e) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
@@ -211,17 +208,19 @@ export default function MyAccount() {
     try {
       setPending(true);
       const formdata = new FormData();
-      formdata.append('message', 'User requested account deletion'); // Add a default message
-  
+      formdata.append("message", "User requested account deletion"); // Add a default message
+
       const response = await deleteuserApi(formdata);
-      
+
       if (response.data && response.data.success) {
         localStorage.clear();
         toast.success("User has been deleted");
         window.location.href = "/signIn";
         router.push("/signIn");
       } else {
-        toast.error(response.data?.message || "Failed to delete user. Please try again.");
+        toast.error(
+          response.data?.message || "Failed to delete user. Please try again."
+        );
       }
     } catch (error) {
       console.error("Delete user error:", error);
@@ -356,7 +355,7 @@ export default function MyAccount() {
   async function onEditProfile(e) {
     e.preventDefault();
     const formdata = new FormData();
-    Object.keys(profileData).forEach(key => {
+    Object.keys(profileData).forEach((key) => {
       formdata.append(key, profileData[key]);
     });
 
@@ -401,28 +400,31 @@ export default function MyAccount() {
           >
             <div
               onClick={() => handleSectionChange("Personal Info")}
-              className={`cursor-pointer pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "Personal Info"
-                ? "border-l-[4px] border-[#F70000] pl-2"
-                : "text-[#8B8B8B] "
-                }`}
+              className={`cursor-pointer pl-5 text-[14px] font-medium cursor-pointer ${
+                activeSection === "Personal Info"
+                  ? "border-l-[4px] border-[#F70000] pl-2"
+                  : "text-[#8B8B8B] "
+              }`}
             >
               Personal Information
             </div>
             <div
               onClick={() => handleSectionChange("Orders")}
-              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${activeSection === "Orders"
-                ? "border-l-[4px] border-[#F70000] pl-2"
-                : "text-[#8B8B8B]"
-                }`}
+              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${
+                activeSection === "Orders"
+                  ? "border-l-[4px] border-[#F70000] pl-2"
+                  : "text-[#8B8B8B]"
+              }`}
             >
               My Orders
             </div>
             <div
               onClick={() => handleSectionChange("Manage Address")}
-              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${activeSection === "Manage Address"
-                ? "border-l-[4px] border-[#F70000] pl-2"
-                : "text-[#8B8B8B] "
-                }`}
+              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${
+                activeSection === "Manage Address"
+                  ? "border-l-[4px] border-[#F70000] pl-2"
+                  : "text-[#8B8B8B] "
+              }`}
             >
               Manage Address
             </div>
@@ -438,30 +440,33 @@ export default function MyAccount() {
           </div> */}
             <div
               onClick={() => handleSectionChange("Password Manager")}
-              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "Password Manager"
-                ? "border-l-[4px] border-[#F70000] pl-2"
-                : "text-[#8B8B8B] "
-                }`}
+              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
+                activeSection === "Password Manager"
+                  ? "border-l-[4px] border-[#F70000] pl-2"
+                  : "text-[#8B8B8B] "
+              }`}
             >
               Password Manager
             </div>
 
             <div
               onClick={() => handleSectionChange("referral")}
-              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "referral"
-                ? "border-l-[4px] border-[#F70000] pl-2"
-                : "text-[#8B8B8B] "
-                }`}
+              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
+                activeSection === "referral"
+                  ? "border-l-[4px] border-[#F70000] pl-2"
+                  : "text-[#8B8B8B] "
+              }`}
             >
               Referrals
             </div>
 
             <div
               onClick={handelLogout}
-              className={`cursor-pointer  mt-[40px] pl-5  text-[14px] font-medium cursor-pointer   ${activeSection === "Logouts"
-                ? "border-l-[4px] border-[#F70000] pl-2"
-                : "text-[#8B8B8B] "
-                }`}
+              className={`cursor-pointer  mt-[40px] pl-5  text-[14px] font-medium cursor-pointer   ${
+                activeSection === "Logouts"
+                  ? "border-l-[4px] border-[#F70000] pl-2"
+                  : "text-[#8B8B8B] "
+              }`}
             >
               Logouts
             </div>
@@ -492,15 +497,16 @@ export default function MyAccount() {
                   onChange={handleFileChange}
                 />
                 <div className="relative w-[120px] h-[120px] rounded-full border-zinc-400 border-2">
-                  {profileImg || (profileData.image && (
-                    <Image
-                      alt="profile"
-                      width={120}
-                      height={120}
-                      src={profileImg ? profileImg : profileData.image}
-                      className="rounded-full w-[100%] h-[100%] absolute top-0 right-0"
-                    />
-                  ))}
+                  {profileImg ||
+                    (profileData.image && (
+                      <Image
+                        alt="profile"
+                        width={120}
+                        height={120}
+                        src={profileImg ? profileImg : profileData.image}
+                        className="rounded-full w-[100%] h-[100%] absolute top-0 right-0"
+                      />
+                    ))}
                   <label htmlFor="profile">
                     <FaCamera
                       className="absolute cursor-pointer text-black/65 top-[50%] right-[50%] translate-x-[50%] translate-y-[-50%]"
@@ -510,7 +516,9 @@ export default function MyAccount() {
                 </div>
                 <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center gap-4">
                   <div className="flex-col mt-[30px] lg:w-[50%] w-[100%] sm:w-[100%] md:w-[100%]">
-                    <label className="text-[16px] font-semibold">First Name *</label>
+                    <label className="text-[16px] font-semibold">
+                      First Name *
+                    </label>
                     <input
                       onChange={profileDataHandler}
                       placeholder="Enter First Name"
@@ -520,7 +528,9 @@ export default function MyAccount() {
                     />
                   </div>
                   <div className="flex-col mt-[30px] lg:w-[50%] w-[100%] sm:w-[100%] md:w-[100%]">
-                    <label className="text-[16px] font-semibold">Last Name *</label>
+                    <label className="text-[16px] font-semibold">
+                      Last Name *
+                    </label>
                     <input
                       onChange={profileDataHandler}
                       placeholder="Enter Last Name"
@@ -531,7 +541,9 @@ export default function MyAccount() {
                   </div>
                 </div>
                 <div className="flex-col mt-[30px]">
-                  <label className="text-[16px] font-semibold">Phone Number *</label>
+                  <label className="text-[16px] font-semibold">
+                    Phone Number *
+                  </label>
                   <input
                     onChange={profileDataHandler}
                     placeholder="Enter Phone Number"
@@ -591,12 +603,15 @@ export default function MyAccount() {
                   >
                     Update Profile
                   </button>
-                  <div className="flex items-center lg:mt-0  mt-3 sm:mt-3">
+                  <div className="flex items-center lg:mt-0 mt-3 sm:mt-3">
                     <MdOutlineDeleteOutline
-                      className="text-[#F70000] lg:text-[28px] text-[20px] sm:text-[20px]  mr-[16px]"
+                      className="text-[#F70000] lg:text-[28px] text-[20px] sm:text-[20px] mr-[16px]"
                       onClick={handleOpenModelDelete}
                     />
-                    <p className="cursor-pointer text-[#F70000] lg:text-[16px] text-[12px] sm:text-[14px] font-semibold mr-[16px]">
+                    <p
+                      className="cursor-pointer text-[#F70000] lg:text-[16px] text-[12px] sm:text-[14px] font-semibold mr-[16px]"
+                      onClick={handleOpenModelDelete}
+                    >
                       Delete Account
                     </p>
                   </div>
@@ -719,10 +734,11 @@ export default function MyAccount() {
                           <div className="flex items-center justify-center border-[1px] border-[#BABABA] rounded-md w-[55px] h-[35px] mr-3">
                             {editEnabled !== item?.id ? (
                               <FiEdit
-                                className={`${editEnabled === item?.id
-                                  ? "text-[#F70000]"
-                                  : "text-[#BABABA]"
-                                  } h-[20px] w-[20px]  cursor-pointer`}
+                                className={`${
+                                  editEnabled === item?.id
+                                    ? "text-[#F70000]"
+                                    : "text-[#BABABA]"
+                                } h-[20px] w-[20px]  cursor-pointer`}
                                 onClick={() => setEditEnabled(item?.id)}
                               />
                             ) : (

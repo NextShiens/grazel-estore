@@ -3,18 +3,11 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { FaHeart, FaStar } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 import { calculateFinalPrice } from "@/utils/priceCalculation";
 import { updateCart } from "@/features/features";
 import { toast } from "react-toastify";
 import Cart from "@/assets/CartVector.png";
-import { IconButton } from "@mui/material";
-import {
-  favoriteProductApi,
-  addRecenetViewedApi,
-  getAllFavoriteProductApi,
-} from "@/apis";
-import heart from "@/assets/like.png";
 import LikeButton from "./LikeButton";
 
 interface ProductCardProps {
@@ -30,8 +23,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [favoriteProducts, setFavoriteProducts] = useState<number[]>([]);
   const [isPending, setPending] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
   const { item, basePrice, price, discountInfo } = calculateFinalPrice(
     product,
@@ -55,39 +48,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
     toast.success("Item has been added to cart!");
   };
 
-  async function onLiked(e: any, productId: any) {
-    e.stopPropagation();
-    if (isPending) return; //purpose : to avoid user from calling multiple api
+  const handleTouchStart = () => {
+    setIsActive(true);
+  };
 
-    try {
-      setPending(true);
-      const formdata = new FormData();
-      formdata.append("product_id", productId);
-      const favoriteProductIds = [...favoriteProducts];
-      if (favoriteProductIds.includes(productId)) {
-        let filterArray = favoriteProductIds.filter(
-          (itemId) => itemId !== productId
-        );
-        setFavoriteProducts(filterArray);
-      } else {
-        setFavoriteProducts([...favoriteProductIds, productId]);
-      }
-      await favoriteProductApi(formdata);
-    } catch (error) {
-      console.log("error in liking product");
-    } finally {
-      setTimeout(() => {
-        setPending(false);
-      }, 200);
-    }
-  }
+  const handleTouchEnd = () => {
+    setIsActive(false);
+  };
 
   if (offerId && offerId !== product?.offer_id) return null;
 
   return (
     <div
       onClick={goToDetail}
-      className="group lg:w-[98%] w-[95%] border mb-1 mt-2 lg:mt-[24px] rounded-2xl hover:border-[1px] border-[#b9b5b5] relative"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      className={`group lg:w-[98%] w-[95%] border mb-1 mt-2 lg:mt-[20px] rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${isActive ? 'active' : ''}`}
     >
       <div className="cursor-pointer">
         <Image
@@ -95,72 +71,57 @@ const ProductCard: React.FC<ProductCardProps> = ({
           width={203}
           height={203}
           src={product.featured_image}
-          className="w-full h-[203px] object-cover rounded-2xl cursor-pointer"
+          className="w-full h-[110px] sm:h-[140px] md:h-[160px] object-cover rounded-2xl cursor-pointer"
           onError={(e: any) => {
             console.error("Image failed to load:", e);
             e.target.src = "/path/to/fallback-image.jpg";
           }}
         />
 
-        <div className="flex w-full justify-between items-center absolute px-[16px] top-[10px]">
-          {/* <button className="md:text-[8px] text-[9px] rounded-3xl text-white bg-[#F70000] md:py-2 py-1 md:px-3">
-        {discountInfo?.toUpperCase()}
-      </button> */}
-
-          {/* <IconButton
-          size="medium"
-          onClick={(e) => onLiked(e, product.id)}
-        >
-          {favoriteProducts?.includes(product.id) ? (
-            <FaHeart className="text-[#F70000]" />
-          ) : (
-            <Image src={heart} alt="like" />
-          )}
-        </IconButton> */}
+        <div className="flex w-full justify-between items-center absolute px-[12px] top-[8px]">
+          <div></div>
           <LikeButton productId={item?.id} />
         </div>
 
-        <div className="p-3">
-          <p className="text-[16px] w-[80%] font-semibold line-clamp-2 flex mr-2">
+        <div className="p-1 sm:p-2">
+          <p className="text-[13px] sm:text-[15px] w-[80%] font-semibold line-clamp-2 flex mr-2">
             {product.title}
           </p>
-          <div className="flex items-center md:mt-[16px] mt-[8px] gap-1">
-            <span className="md:text-sm text-[9px] text-[#F69B26]">
+          <div className="flex items-center mt-[3px] sm:mt-[6px] md:mt-[12px] gap-1">
+            <span className="text-[8px] sm:text-[9px] md:text-sm text-[#F69B26]">
               {product.rating} ({product.reviews})
             </span>
-            <FaStar size={12} color="#F69B26" />
+            <FaStar size={9} color="#F69B26" />
           </div>
 
-          <p className="md:text-[20px] text-[14px] text-[#FC3030] font-semibold md:mt-[16px] mt-[8px]">
+          <p className="text-[11px] sm:text-[13px] md:text-[18px] text-[#FC3030] font-semibold mt-[3px] sm:mt-[6px] md:mt-[12px]">
             ₹{typeof price === "number" ? price.toFixed(2) : price}
           </p>
 
-          <div className="flex items-center md:mt-[16px] mt-[8px]">
-            <p className="md:text-[16px] text-[10px] text-[#909198] line-through font-normal">
+          <div className="flex items-center mt-[3px] sm:mt-[6px] md:mt-[12px]">
+            <p className="text-[7px] sm:text-[9px] md:text-[14px] text-[#909198] line-through font-normal">
               ₹
               {typeof basePrice === "number" ? basePrice.toFixed(2) : basePrice}
             </p>
 
-            <p className="md:text-[16px] text-[10px] text-[#4FAD2E] ml-[24px] font-semibold">
+            <p className="text-[7px] sm:text-[9px] md:text-[14px] text-[#4FAD2E] ml-[10px] sm:ml-[20px] font-semibold">
               {discountInfo}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="hidden mb-3 flex justify-center opacity-0 group-hover:opacity-100 group-hover:flex w-full">
+      <div className="mb-1 sm:mb-2 flex justify-center w-full h-0 overflow-hidden transition-all duration-300 group-hover:h-[28px] sm:group-hover:h-[36px] group-[.active]:h-[28px] sm:group-[.active]:h-[36px]">
         <button
-          className="text-[#F70000] w-[90%] h-[40px] border-[1px] border-[#F70001] rounded-lg"
-          onClick={(e) =>
-            onAddingCart(e, product, price, basePrice, discountInfo)
-          }
+          className="text-[#F70000] w-[90%] border-[1px] border-[#F70001] rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-[.active]:opacity-100"
+          onClick={(e) => onAddingCart(e)}
         >
           <div className="flex items-center justify-center">
-            <p className="font-semibold text-[14px]">Add to cart</p>
+            <p className="font-semibold text-[11px] sm:text-[13px]">Add to cart</p>
             <Image
               alt="cart"
               src={Cart}
-              className="w-[20px] h-[20px] ml-[12px]"
+              className="w-[14px] h-[14px] sm:w-[18px] sm:h-[18px] ml-[6px] sm:ml-[10px]"
             />
           </div>
         </button>

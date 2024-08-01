@@ -23,6 +23,14 @@ const ReviewCard = ({ reviewData }) => {
 
   const reviews = getReviewsArray(reviewData);
 
+  if (reviews.length === 0) {
+    return (
+      <div className="p-4 sm:p-6 text-center text-gray-500">
+        No Reviews Found...
+      </div>
+    );
+  }
+
   return (
     <>
       {reviews.map((review) => (
