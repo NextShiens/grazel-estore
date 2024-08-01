@@ -7,9 +7,13 @@ import { useEffect } from 'react';
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const token = localStorage.getItem("token")
 
   useEffect(() => {
-    if (!loading && !user) {
+    // if (!loading && !user) {
+    //   router.push('/signIn');
+    // }
+    if (!token) {
       router.push('/signIn');
     }
   }, [user, loading, router]);
