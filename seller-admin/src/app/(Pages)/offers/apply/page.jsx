@@ -160,7 +160,9 @@ const ApplyOffer = () => {
                               alt=""
                               width={26}
                               height={26}
-                              src={"/" + product?.featured_image}
+                              // src={"/" + product?.featured_image}
+                              src={"https://api.grazle.co.in/" + product?.featured_image || 'https://via.placeholder.com/26x26?text=No+Image+Available'}
+
                               className="h-[26px] w-[26px]"
                             />
                           )}

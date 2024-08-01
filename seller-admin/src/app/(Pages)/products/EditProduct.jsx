@@ -254,7 +254,7 @@ const EditProduct = ({ product, setSelectedTab }) => {
                             <Image
                               width={120}
                               height={120}
-                              src={URL.createObjectURL(item)}
+                              src={URL?.createObjectURL(item)}
                               alt=""
                             />
                             <span

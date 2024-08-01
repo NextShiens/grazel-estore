@@ -57,8 +57,11 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
           <td>{order?.id}</td>
           <td className="flex items-center gap-1.5 h-[50px] capitalize">
             <Image
+              width={26}
+              height={26}
               alt=""
-              src={order?.products[0]?.image}
+              // src={order?.products[0]?.featured_image}
+              src={"https://api.grazle.co.in/" + order?.products[0]?.featured_image || 'https://via.placeholder.com/290x290?text=No+Image+Available'}
               className="h-[26px] w-[26px]"
             />
             {order?.products?.map(
@@ -94,15 +97,15 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
                 color: "white",
                 backgroundColor:
                   orderTracking?.status_history?.slice(-1)[0]?.status ===
-                  "pending"
+                    "pending"
                     ? "orange"
                     : orderTracking?.status_history?.slice(-1)[0]?.status ===
                       "completed"
-                    ? "green"
-                    : orderTracking?.status_history?.slice(-1)[0]?.status ===
-                      "canceled"
-                    ? "red"
-                    : "gray",
+                      ? "green"
+                      : orderTracking?.status_history?.slice(-1)[0]?.status ===
+                        "canceled"
+                        ? "red"
+                        : "gray",
               }}
             >
               {orderTracking?.status_history?.slice(-1)[0]?.status}
@@ -131,7 +134,8 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
                 alt=""
                 width={26}
                 height={26}
-                src={"/" + order.customer.image}
+                // src={"/" + order.customer.image}
+                src={"https://api.grazle.co.in/" + order.customer.image || 'https://via.placeholder.com/26x26?text=No+Image+Available'}
                 className="h-[26px] w-[26px] rounded-[5px]"
               />
               {order?.customer?.username}
@@ -144,13 +148,13 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
                 width={26}
                 height={26}
                 alt=""
-                src={"/" + order.products[0].featured_image}
+                // src={"/" + order.products[0].featured_image}
+                src={"https://api.grazle.co.in/" + order.products[0].featured_image || 'https://via.placeholder.com/290x290?text=No+Image+Available'}
                 className="h-[26px] w-[26px]"
               />
               {order?.products?.map(
                 (pro, index) =>
-                  `${pro?.title}${
-                    index < order.products.length - 1 ? ", " : ""
+                  `${pro?.title}${index < order.products.length - 1 ? ", " : ""
                   }`
               )}
             </td>
@@ -165,15 +169,15 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
                   color: "white",
                   backgroundColor:
                     orderTracking?.status_history?.slice(-1)[0]?.status ===
-                    "pending"
+                      "pending"
                       ? "orange"
                       : orderTracking?.status_history?.slice(-1)[0]?.status ===
                         "completed"
-                      ? "green"
-                      : orderTracking?.status_history?.slice(-1)[0]?.status ===
-                        "canceled"
-                      ? "red"
-                      : "gray",
+                        ? "green"
+                        : orderTracking?.status_history?.slice(-1)[0]?.status ===
+                          "canceled"
+                          ? "red"
+                          : "gray",
                 }}
               >
                 {orderTracking?.status_history?.slice(-1)[0]?.status}
