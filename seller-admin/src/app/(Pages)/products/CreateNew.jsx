@@ -42,16 +42,24 @@ const AddProduct = ({ setSelectedTab }) => {
 
   useEffect(() => {
     const getAllBrands = async () => {
-      const { data } = await axiosPrivate.get("/global/brands", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-      !allBrands.length && setAllBrands(data?.brands);
+      try {
+        const { data } = await axiosPrivate.get("/global/brands", {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+        if (data && !allBrands.length) {
+
+          setAllBrands(data?.brands);
+        }
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+       
+      }
     };
     getAllBrands();
   }, []);
-
+const randomId =  Math.floor(Math.random() * 1000);
   async function onAddProduct(e) {
     e.preventDefault();
     try {
@@ -59,7 +67,7 @@ const AddProduct = ({ setSelectedTab }) => {
 
       const formData = new FormData();
       formData.append("category_id", e.target.category_id.value);
-      formData.append("brand_id", e.target.brand_id.value);
+      formData.append("brand_id", randomId);
       formData.append("title", e.target.title.value);
       formData.append("price", e.target.price.value);
       formData.append("featured_image", productImage[0]);
@@ -268,7 +276,7 @@ const AddProduct = ({ setSelectedTab }) => {
                     Select an option
                   </option>
                   {allBrands?.map((item) => (
-                    <option key={item?.id} value={item?.id}>
+                    <option key={item?.id} value={item?.id||randomId}>
                       {item.name}
                     </option>
                   ))}
