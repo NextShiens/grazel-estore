@@ -51,7 +51,7 @@ const General = () => {
     Object.keys(storeProfile).forEach((key) => {
       formData.append(key, storeProfile[key]);
     });
-
+  
     try {
       const { data } = await axiosPrivate.put("/store-profile", formData, {
         headers: {
@@ -60,7 +60,16 @@ const General = () => {
       });
       if (data?.success) toast.success("Profile updated successfully");
     } catch (error) {
-      toast.error("Failed to update profile");
+      if (error.response && error.response.status === 400) {
+        const errorMessage = error.response.data.message;
+        if (errorMessage.includes("Invalid file type")) {
+          toast.error("Invalid file type. Only JPEG, PNG, and PDF files are allowed.");
+        } else {
+          toast.error(errorMessage);
+        }
+      } else {
+        toast.error("Failed to update profile");
+      }
     } finally {
       setLoading(false);
     }
@@ -84,7 +93,7 @@ const General = () => {
               className="w-full h-full rounded-full"
               width={50}
               height={50}
-              src={storeProfile?.store_image || "https://via.placeholder.com/50x50?text=No+Image+Available"}
+              src={ storeProfile?.store_image || "https://via.placeholder.com/50x50?text=No+Image+Available"}
               onError={(e) => {
                 console.error("Image failed to load:", e);
                 e.target.src = "https://via.placeholder.com/50x50?text=No+Image+Available";

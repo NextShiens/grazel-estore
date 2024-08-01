@@ -45,12 +45,11 @@ const Payment = () => {
       if (data?.user?.store_profile) {
         const profile = data.user.store_profile;
         setBankDetails({
-          account_number: profile.account_number || "",
-          account_name: profile.account_name || "",
-          bank_name: profile.bank_name || "",
-          bank_code: profile.bank_code || "",
+          account_number: profile?.account_number ?? "",
+          account_name: profile?.account_name ?? "",
+          bank_name: profile?.bank_name ?? "",
+          bank_code: profile?.bank_code ?? "",
         });
-        // Store file names or URLs
         setFiles({
           business_license: profile.business_license || null,
           tax_id: profile.tax_id || null,
@@ -61,7 +60,6 @@ const Payment = () => {
       toast.error("Failed to fetch store profile");
     }
   };
-
   const extractFileName = (fileOrUrl) => {
     if (!fileOrUrl) return "No file chosen";
     if (fileOrUrl instanceof File) return fileOrUrl.name;
@@ -125,24 +123,28 @@ const Payment = () => {
           name="account_name"
           value={bankDetails.account_name}
           onChange={changeHandler}
+          placeholder="Enter account name"
         />
         <InputField
           label="Account Number"
           name="account_number"
           value={bankDetails.account_number}
           onChange={changeHandler}
+          placeholder="Enter account number"
         />
         <InputField
           label="Bank Name"
           name="bank_name"
           value={bankDetails.bank_name}
           onChange={changeHandler}
+          placeholder="Enter bank name"
         />
         <InputField
           label="Bank Code"
           name="bank_code"
           value={bankDetails.bank_code}
           onChange={changeHandler}
+          placeholder="Enter bank code"
         />
         <FileInputField
           label="Business License"
@@ -178,14 +180,14 @@ const Payment = () => {
   );
 };
 
-const InputField = ({ label, name, value, onChange }) => (
+const InputField = ({ label, name, value, onChange, placeholder }) => (
   <div className="flex flex-col gap-1">
     <label className="text-[#777777]">{label}</label>
     <input
       name={name}
       value={value}
       onChange={onChange}
-      placeholder={label}
+      placeholder={placeholder}
       className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
     />
   </div>

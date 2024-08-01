@@ -279,7 +279,7 @@ const OfferBox = ({ item, onDelete, router }) => {
       className="border border-gray-200 rounded-[8px] px-[30px] py-[20px]"
     >
       <p className="text-[19px] sm:text-[23px] font-[500]">
-        {item?.description}
+        {item?.name}
       </p>
       <p className="text-[15px] sm:text-[19px] mt-1">
         Up to {item?.discount_type === "fixed" && "₹"}
