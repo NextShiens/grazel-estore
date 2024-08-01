@@ -56,7 +56,6 @@ const responsive = {
 
 const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
   const { Data } = props;
-  console.log("Data received:", Data);
   const router = useRouter();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);

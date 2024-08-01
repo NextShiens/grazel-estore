@@ -52,6 +52,7 @@ import {
   getSecondTrendingCategoryApi,
   getAllProductsApi,
   getSingleCategoryProductsApi,
+  getOfferProductsApi,
 } from "@/apis";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import {
@@ -60,6 +61,7 @@ import {
 } from "@/utils/priceCalculation";
 import Link from "next/link";
 import { updateCategories } from "@/features/features";
+import OfferViewSlider from "@/components/offersSilder";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -74,6 +76,7 @@ export default function Home() {
   const [dynamicViewProducts, setDynamicViewProducts] = useState([]);
   const [positionThreeBanners, setPositionThreeBanners] = useState([]);
   const [selectedCategoryProducts, setSelectedCategoryProducts] = useState([]);
+  const [offerProducts, setOfferProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState<any>();
   const [seventyFiveTimeLeft, setSeventyFiveTimeLeft] = useState<any>();
@@ -110,6 +113,13 @@ export default function Home() {
       setAllProducts(data.products);
     })();
   }, []);
+  useEffect(() => {
+    (async () => {
+      const { data } = await getOfferProductsApi();
+      setOfferProducts(data.offers);
+    })();
+  }, []);
+
 
   // dynamic view products
   useEffect(() => {
@@ -172,15 +182,15 @@ export default function Home() {
   // console.log(allProducts);
 
   // /+++++++++++++++++++++++++++++++falsh sale products++++++++++++++++++++++++++++++++++++++++++
-  const flashSaleProducts:any = allProducts.filter(
-    (product:any) =>
-      product?.offer?.name?.toLowerCase() === "flash sale".toLowerCase()
-  );
-  const endDate = new Date(flashSaleProducts[0]?.offer?.end_date);
+  // const flashSaleProducts:any = allProducts.filter(
+  //   (product:any) =>
+  //     product?.offer?.name?.toLowerCase() === "flash sale".toLowerCase()
+  // );
+  const endDate = new Date(offerProducts[0]?.offer?.end_date);
   useEffect(() => {
     const timer = setTimeout(() => {
-      const endDate = flashSaleProducts[0]?.offer?.end_date;
-      const leftTime:any = calculateTimeLeft(endDate);
+      const endDate = offerProducts[0]?.offer?.end_date;
+      const leftTime: any = calculateTimeLeft(endDate);
       setTimeLeft(leftTime);
     }, 1000);
     return () => clearTimeout(timer);
@@ -188,13 +198,13 @@ export default function Home() {
 
   // ++++++++++++++++++++++++75% off products++++++++++++++++++++++++++++++++++++++++++
   // /category sale 75% off
-  const seventyFivePercentSaleProducts:any = allProducts.filter(
-    (product:any) =>
+  const seventyFivePercentSaleProducts: any = allProducts.filter(
+    (product: any) =>
       product?.offer?.discount_type?.toLowerCase() ===
       "percentage".toLowerCase() &&
       product?.offer?.discount_value?.toLowerCase() === "75.00".toLowerCase()
   );
-  const seventyFiveEndDate:any = new Date(
+  const seventyFiveEndDate: any = new Date(
     seventyFivePercentSaleProducts[0]?.offer?.end_date
   );
 
@@ -213,8 +223,8 @@ export default function Home() {
   // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   // +++++++++++++++++++++++++++++++++++++++++50% off products ++++++++++++++++++++++++++++++++++++++++++
-  const fiftyPercentSaleProducts:any = allProducts.filter(
-    (product:any) =>
+  const fiftyPercentSaleProducts: any = allProducts.filter(
+    (product: any) =>
       product?.offer?.discount_type?.toLowerCase() ===
       "percentage".toLowerCase() &&
       product?.offer?.discount_value?.toLowerCase() === "50.00".toLowerCase()
@@ -329,16 +339,16 @@ export default function Home() {
             </div>
           </div>
           <button
-      className="text-[#F70000] text-[10px] lg:text-xl font-semibold bg-white rounded-lg lg:h-[45px] h-[35px] lg:w-[300px] sm:h-[40px] lg:h-[50px] px-10 lg:px-10 flex items-center justify-center"
-      onClick={goToCreditLimit}
-      disabled={loading}
-    >
-      {loading ? (
-        <CircularProgress size={24} color="inherit" />
-      ) : (
-        "Get Now"
-      )}
-    </button>
+            className="text-[#F70000] text-[10px] lg:text-xl font-semibold bg-white rounded-lg lg:h-[45px] h-[35px] lg:w-[300px] sm:h-[40px] lg:h-[50px] px-10 lg:px-10 flex items-center justify-center"
+            onClick={goToCreditLimit}
+            disabled={loading}
+          >
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Get Now"
+            )}
+          </button>
         </div>
       </div>
 
@@ -475,7 +485,7 @@ export default function Home() {
           className="flex items-center gap-3 border border-[#FC3030] text-[#FC3030] text-sm rounded-lg py-2 px-4"
           onClick={async () => {
             setIsLoading(true);
-            await router.push(`/offers?id=${flashSaleProducts[0]?.offer?.id}`);
+            await router.push(`/offers?id=${offerProducts[0]?.offer?.id}`);
             setIsLoading(false);
           }}
           disabled={isLoading}
@@ -540,9 +550,9 @@ export default function Home() {
           ) : null}
         </div> */}
 
-        {flashSaleProducts?.length > 0 ? (
+        {offerProducts?.length > 0 ? (
           <div>
-            <RecentViewSlider Data={flashSaleProducts} ref={sliderRef6} />
+            <OfferViewSlider Data={offerProducts} ref={sliderRef6} />
           </div>
         ) : (
           <>
@@ -569,14 +579,14 @@ export default function Home() {
         style={{ scrollbarWidth: "none" }}
         className="lg:mx-[150px] md:mx-[60px] mx-[14px] pb-2 md:my-[24px] mt-5 flex items-center  overflow-x-auto lg:justify-between gap-3"
       >
-        {allCategories.map((item:any, index:any) => (
+        {allCategories.map((item: any, index: any) => (
           <button
             disabled={click?.name === item?.name || loading}
             key={index}
             onClick={() => handleClickCategory(item)}
             className={`${item?.name === click?.name
-                ? "border border-[#FC3030] text-[#FC3030]"
-                : "bg-[#F8F8F8]"
+              ? "border border-[#FC3030] text-[#FC3030]"
+              : "bg-[#F8F8F8]"
               } lg:text-sm text-xs py-2 px-3 rounded-md whitespace-nowrap`}
           >
             {item?.name?.toUpperCase()}
