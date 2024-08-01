@@ -372,18 +372,18 @@ export default function ProductDetail() {
                 <div className="flex justify-between items-center pb-3 border-b-[1px] border-[#0000000D]">
                   <div className="flex gap-4 items-center">
                     <div className="flex justify-center items-center rounded-full bg-[#F8F8F8] h-[52px] w-[52px]">
-                      {currentStore?.store_image && (
+                      {singleProduct?.store?.image && (
                         <Image
-                          alt="Store logo"
-                          width={30}
-                          height={20}
-                          src={"/" + currentStore?.store_image}
-                          className="w-[30px] h-[20px]"
-                        />
+                        src={singleProduct?.store?.image}
+                        alt={`${singleProduct?.store?.image}'s profile`}
+                        width={48}
+                        height={48}
+                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
+                      />
                       )}
                     </div>
                     <p className="text-[14px] text-[#000000] font-semibold">
-                      {currentStore?.store_name}
+                      {singleProduct?.store?.store_name}
                     </p>
                   </div>
                   <button
@@ -393,7 +393,7 @@ export default function ProductDetail() {
                     view shop
                   </button>
                 </div>
-                <div className="flex items-center justify-evenly mt-5">
+                {/* <div className="flex items-center justify-evenly mt-5">
                   <div>
                     <div className="flex items-center gap-2 justify-center">
                       <FaStar className="text-[#FFB33E] text-[16px]" />
@@ -419,7 +419,7 @@ export default function ProductDetail() {
                       products
                     </p>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
