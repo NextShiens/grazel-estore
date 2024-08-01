@@ -28,55 +28,87 @@ const EditProduct = ({ product, setSelectedTab }) => {
   useEffect(() => {
     dispatch(updatePageNavigation("products"));
   }, [dispatch]);
+
   useEffect(() => {
     const getAllCategories = async () => {
-      const { data } = await axiosPrivate.get("/global/categories", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-      !allCategories.length && setAllCategories(data?.categories); // to show data on web
+      try {
+        const { data } = await axiosPrivate.get("/global/categories", {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+        if (data?.categories && !allCategories.length) {
+          setAllCategories(data.categories);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast.error("Failed to fetch categories");
+      }
     };
     getAllCategories();
   }, []);
+
   useEffect(() => {
     const getAllBrands = async () => {
-      const { data } = await axiosPrivate.get("/global/brands", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-      !allBrands.length && setAllBrands(data?.brands); // to show data on web
+      try {
+        const { data } = await axiosPrivate.get("/global/brands", {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+        if (data?.brands && !allBrands.length) {
+          setAllBrands(data.brands);
+        }
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+        toast.error("Failed to fetch brands");
+      }
     };
     getAllBrands();
   }, []);
-  async function onEditProduct(formdata) {
+
+  async function onEditProduct(formData) {
     try {
       setPending(true);
 
-      for (let key in galleryImage) {
-        formdata.append("gallery_images", galleryImage[key]);
+      // Append gallery images to formData
+      galleryImage.forEach((image, index) => {
+        formData.append(`gallery_images[${index}]`, image);
+      });
+
+      // Append featured image if it exists
+      if (productImage.length > 0) {
+        formData.append("featured_image", productImage[0]);
       }
-      await axiosPrivate.put(`/vendor/products/${product?.id}`, formdata, {
+
+      // Append tags
+      formData.append("tags", JSON.stringify(tags.map(tag => tag.text)));
+
+      const response = await axiosPrivate.put(`/vendor/products/${product?.id}`, formData, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
+          "Content-Type": "multipart/form-data",
         },
       });
-      toast.success("Product has been updated");
-      setSelectedTab('manage')
+
+      if (response.status === 200) {
+        toast.success("Product has been updated successfully");
+        setSelectedTab('manage');
+      } else {
+        throw new Error("Failed to update product");
+      }
     } catch (error) {
-      toast.error("Something went wrong");
+      console.error("Error updating product:", error);
+      toast.error(error.response?.data?.message || "Failed to update product");
     } finally {
-      setTimeout(() => {
-        setPending(false);
-      }, 1000);
+      setPending(false);
     }
   }
+
   function onRemoveImg(index) {
-    const tempArr = [...galleryImage];
-    tempArr.splice(index, 1);
-    setGalleryImage(tempArr);
+    setGalleryImage(prevImages => prevImages.filter((_, i) => i !== index));
   }
+
   function onRemoveFeatureImg() {
     setProductImage([]);
   }
@@ -88,12 +120,17 @@ const EditProduct = ({ product, setSelectedTab }) => {
   const handleAddition = (tag) => {
     setTags([...tags, tag]);
   };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex-1 flex">
         <div className="flex-1 mt-[30px] px-[22px]">
           <form
-            action={onEditProduct}
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target);
+              onEditProduct(formData);
+            }}
             className="bg-white rounded-[8px] shadow-sm px-[20px] py-[25px]"
           >
             <p className="text-[20px] font-[600]">Edit Product</p>
@@ -113,12 +150,20 @@ const EditProduct = ({ product, setSelectedTab }) => {
               </div>
               <div className="flex flex-col gap-1 my-[15px]">
                 <label className="text-[#777777]">Tags</label>
-                <input
-                  placeholder="Tags"
-                  name="tags"
-                  defaultValue={product?.tags}
-                  required
-                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                <ReactTags
+                  tags={tags}
+                  handleDelete={handleDelete}
+                  handleAddition={handleAddition}
+                  delimiters={[188, 13]} // Comma and Enter keys
+                  placeholder="Add tags"
+                  classNames={{
+                    tags: 'focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] min-h-[50px] text-[15px]',
+                    tagInput: 'inline-block',
+                    tagInputField: 'focus:outline-none text-[15px]',
+                    selected: 'inline',
+                    tag: 'inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2',
+                    remove: 'ml-2 text-gray-500 hover:text-gray-700 cursor-pointer',
+                  }}
                 />
               </div>
               <div className="flex flex-col gap-1 my-[15px]">
@@ -146,15 +191,12 @@ const EditProduct = ({ product, setSelectedTab }) => {
               </div>
               <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
                 <label className="text-[#777777]">Variants</label>
-
-                <div className="ReactTags__tags">
-                  <ReactTags
-                    tags={tags}
-                    handleDelete={handleDelete}
-                    handleAddition={handleAddition}
-                    delimiters={[188, 13]} // Comma and Enter keys
-                  />
-                </div>
+                <input
+                  placeholder="Variants (comma-separated)"
+                  name="variants"
+                  defaultValue={product?.variants?.join(', ')}
+                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                />
               </div>
             </div>
             <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
@@ -166,9 +208,7 @@ const EditProduct = ({ product, setSelectedTab }) => {
                   required
                   className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px] text-[var(--text-color-body)]"
                 >
-                  <option selected disabled>
-                    Select an option
-                  </option>
+                  <option value="" disabled>Select an option</option>
                   {allCategories?.map((item) => (
                     <option key={item?.id} value={item?.id}>
                       {item.name}
@@ -180,13 +220,10 @@ const EditProduct = ({ product, setSelectedTab }) => {
                 <label className="text-[#777777]">Brand</label>
                 <select
                   name="brand_id"
-                  required
-                  defaultValue={product?.brand}
+                  defaultValue={product?.brand_id}
                   className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px] text-[var(--text-color-body)]"
                 >
-                  <option selected disabled>
-                    Select an option
-                  </option>
+                  <option value="" disabled>Select an option</option>
                   {allBrands?.map((item) => (
                     <option key={item?.id} value={item?.id}>
                       {item.name}
@@ -203,6 +240,9 @@ const EditProduct = ({ product, setSelectedTab }) => {
                   placeholder="₹"
                   defaultValue={product?.price}
                   name="price"
+                  type="number"
+                  step="0.01"
+                  min="0"
                   required
                   className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
                 />
@@ -213,6 +253,9 @@ const EditProduct = ({ product, setSelectedTab }) => {
                   placeholder="%"
                   defaultValue={product?.discount}
                   name="discount"
+                  type="number"
+                  min="0"
+                  max="100"
                   className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
                 />
               </div>
@@ -230,7 +273,6 @@ const EditProduct = ({ product, setSelectedTab }) => {
                       id="uploadPic"
                       className="hidden"
                       name="featured_image"
-                      // multiple
                       onChange={(e) => {
                         setProductImage([e.target.files[0]]);
                       }}
@@ -281,12 +323,10 @@ const EditProduct = ({ product, setSelectedTab }) => {
                       type="file"
                       id="uploadGalleryPic"
                       className="hidden"
-                      // name="featured_image"
-                      required
                       multiple
                       onChange={(e) => {
-                        const filesArray = Array.from(e.target.files); // Convert FileList to Array
-                        setGalleryImage([...galleryImage, ...filesArray]);
+                        const filesArray = Array.from(e.target.files);
+                        setGalleryImage(prevImages => [...prevImages, ...filesArray]);
                       }}
                     />
                     <div className="flex flex-col gap-2 mt-3">
@@ -303,7 +343,7 @@ const EditProduct = ({ product, setSelectedTab }) => {
                         </p>
                       </label>
 
-                      <div className="flex flex-row gap-3">
+                      <div className="flex flex-row gap-3 flex-wrap">
                         {galleryImage?.map((item, index) => (
                           <div key={index} className="relative">
                             <Image
@@ -329,11 +369,12 @@ const EditProduct = ({ product, setSelectedTab }) => {
 
             <div className="flex flex-col gap-10 pb-8">
               <button
+                type="submit"
                 disabled={isPending}
-                className="h-[50px] rounded-[8px] bg-[#FE4242]  text-white font-[500] w-[200px] mt-10 disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none"
+                className="h-[50px] rounded-[8px] bg-[#FE4242] text-white font-[500] w-[200px] mt-10 disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none"
               >
                 <div className="w-full h-full flex items-center justify-center">
-                  {isPending ? <LuLoader2 /> : "Update Product"}
+                  {isPending ? <LuLoader2 className="animate-spin" /> : "Update Product"}
                 </div>
               </button>
             </div>
