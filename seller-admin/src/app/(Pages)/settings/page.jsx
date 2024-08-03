@@ -2,23 +2,22 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-  updatePageLoader,
-  updatePageNavigation,
-} from "../../../features/features";
+import { updatePageLoader, updatePageNavigation, updateUser } from "../../../features/features";
 import Navbar from "../../../components/navbar";
 import Sidebar from "../../../components/sidebar";
-
 import { toast } from "react-toastify";
 import { axiosPrivate } from "../../../axios/index.js";
 import Loading from "../../../components/loading.jsx";
+import Image from "next/image";
+import { IoMdCamera } from "react-icons/io";
 
 const Settings = () => {
   const dispatch = useDispatch();
   const [isPending, setPending] = useState(false);
   const [profile, setProfile] = useState({});
-  const [currentTab, setCurrentTab] = useState("general");
+  const [profileImage, setProfileImage] = useState(null);
   const formRef = useRef(null);
+  const fileInput = useRef(null);
 
   useEffect(() => {
     dispatch(updatePageLoader(false));
@@ -33,6 +32,7 @@ const Settings = () => {
         },
       });
       setProfile(data?.user);
+      updateLocalStorage(data?.user);
     } catch (error) {
       console.error("Error fetching profile data:", error);
       toast.error("Failed to fetch profile data.");
@@ -43,17 +43,36 @@ const Settings = () => {
     fetchProfileData();
   }, []);
 
+  const updateLocalStorage = (userData) => {
+    localStorage.setItem("name", userData.username || "");
+    localStorage.setItem("image", userData.profile?.image || "");
+    dispatch(updateUser(userData));
+  };
+
+  const openInputFile = () => {
+    fileInput.current.click();
+  };
+
   async function onEditProfile(formdata) {
     try {
       setPending(true);
       const userId = localStorage.getItem("userId");
-      await axiosPrivate.put(`/profile/${userId}/edit`, formdata, {
+      const updatedFormData = new FormData();
+      for (let [key, value] of formdata.entries()) {
+        updatedFormData.append(key, value);
+      }
+
+      if (profileImage) {
+        updatedFormData.append("image", profileImage);
+      }
+      const response = await axiosPrivate.put(`/profile/${userId}/edit`, updatedFormData, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
+          "Content-Type": "multipart/form-data",
         },
       });
       toast.success("Profile has been Updated");
-      await fetchProfileData(); // Refetch the profile data
+      await fetchProfileData(); // Refetch the profile data and update localStorage
     } catch (err) {
       toast.error("Something went wrong");
     } finally {
@@ -63,7 +82,6 @@ const Settings = () => {
       }, 1000);
     }
   }
-
   async function onPasswordChange(formdata) {
     try {
       const newPassword = formdata.get("new_password");
@@ -106,13 +124,53 @@ const Settings = () => {
               <div className="bg-white rounded-[8px] shadow-sm p-[20px]">
                 <div className="border-[2px] border-gray-200 rounded-[8px] p-[20px]">
                   <p className="text-[20px] font-[500]">Profile</p>
+                  <div className="my-[30px] flex gap-10 items-center flex-col sm:flex-row">
+                    <div className="w-[110px] h-[110px] bg-[#d9dff3] border border-[#D6D6D6] rounded-full flex justify-center items-center">
+                      {profileImage ? (
+                        <Image
+                          className="w-full h-full rounded-full object-cover"
+                          width={110}
+                          height={110}
+                          src={URL.createObjectURL(profileImage)}
+                          alt="Profile"
+                        />
+                      ) : profile?.profile?.image ? (
+                        <Image
+                          className="w-full h-full rounded-full object-cover"
+                          width={110}
+                          height={110}
+                          src={profile?.profile?.image}
+                          alt="Profile"
+                          onError={(e) => {
+                            e.target.src = "https://via.placeholder.com/110x110?text=No+Image";
+                          }}
+                        />
+                      ) : (
+                        <IoMdCamera className="text-gray-500 text-[40px]" />
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={openInputFile}
+                      className="px-4 py-2 bg-[#FE4242] text-white rounded-md hover:bg-[#e63b3b] transition-colors"
+                    >
+                      Upload Image
+                    </button>
+                    <input
+                      ref={fileInput}
+                      type="file"
+                      className="hidden"
+                      onChange={(e) => setProfileImage(e.target.files[0])}
+                      accept="image/*"
+                    />
+                  </div>
                   <div className="flex flex-col gap-5 pb-2 mt-5">
                     <div className="flex flex-col gap-1">
                       <label className="text-[#777777]">Your Name</label>
                       <input
                         placeholder="John Doe"
-                        name="first_name"
-                        defaultValue={profile?.profile?.first_name}
+                        name="username"
+                        defaultValue={profile?.username}
                         required
                         className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
                       />
