@@ -72,9 +72,9 @@ const EditProduct = ({ product, setSelectedTab }) => {
       setPending(true);
 
       // Append gallery images to formData
-      galleryImage.forEach((image, index) => {
-        formData.append(`gallery_images[${index}]`, image);
-      });
+      // galleryImage.forEach((image, index) => {
+      //   formData.append(`gallery_images[${index}]`, image);
+      // });
 
       // Append featured image if it exists
       if (productImage.length > 0) {
