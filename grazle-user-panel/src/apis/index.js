@@ -143,6 +143,9 @@ export const getBuyerOrdersApi = async () => await axios.get(`/buyer/orders`);
 export const addReviewApi = async (data) => await axios.post(`/reviews`, data);
 export const getOfferProductsByIDApi = async (id) =>
   await axios.get(`/global/products-by-offer/${id}`);
+
+export const fiftyPercentSaleProductsApi = async () =>
+  await axios.get(`/global/product-by-percentage-offers/seventy`);
 export const getOfferProductsApi = async (data) =>
   await axios.get(`/global/product-offers`);
 

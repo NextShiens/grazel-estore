@@ -43,6 +43,7 @@ export default function Navbar() {
   const cartLength = useSelector((state) => state.cartLength);
   const cartProducts = useSelector((state) => state.cartProducts);
   const userRedux = useSelector((state) => state.user);
+  const [isLoading, setIsLoading] = useState(false);
   const [recentSearches, setRecentSearches] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenSearch, setIsOpenSearch] = useState(false);
@@ -198,7 +199,27 @@ export default function Navbar() {
     }
   }, 300);
 
-  function onClickDetail(item) {
+  const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
+  const mobileSearchRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (mobileSearchRef.current && !mobileSearchRef.current.contains(event.target)) {
+        setIsMobileSearchActive(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  function onClickDetail(item, event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     const newSearch = item.title;
     setRecentSearches((prevSearches) => {
       const updatedSearches = [
@@ -207,13 +228,19 @@ export default function Navbar() {
       ].slice(0, 5);
       return updatedSearches;
     });
-    router.push(`/search?keyword=${encodeURIComponent(newSearch)}`);
-    setIsOpenSearch(false);
-    setSearchResult([]);
-    if (searchRef.current) {
-      searchRef.current.value = "";
-    }
+    router.push(`/search?keyword=${encodeURIComponent(newSearch)}`)
+      setIsLoading(false);
+      setIsMobileSearchActive(false);
+      setIsOpenSearch(false);
+      setSearchResult([]);
+      setSearchValue("");
+      if (searchRef.current) {
+        searchRef.current.value = "";
+      }
+    
+      
   }
+
   if (loading) {
     return (
       <div style={{
@@ -253,6 +280,13 @@ export default function Navbar() {
       setIsMenuBar(false);
     }
   };
+
+  const handleSearchMobile = (e) => {
+    const value = e.target.value;
+    setSearchValue(value);
+    onSearchProduct(value);
+    setIsOpenSearch(true);
+  }
   const clearSearch = () => {
     setSearchValue("");
     if (searchRef.current) {
@@ -262,6 +296,22 @@ export default function Navbar() {
   };
 
   if (authLoading) {
+    return (
+      <div style={{
+        position: "fixed",
+        width: "100%",
+        height: "100%",
+        left: 0,
+        top: 0,
+        overflow: "hidden",
+        zIndex: 100000000000
+      }}>
+        <ShoppingLoader />
+      </div>
+    );
+  }
+
+  if (isLoading) {
     return (
       <div style={{
         position: "fixed",
@@ -547,17 +597,13 @@ export default function Navbar() {
       </div>
 
       {/* Mobile search bar */}
-      <div className="lg:hidden px-4 pb-3">
+      <div className="lg:hidden px-4 pb-3 relative" ref={mobileSearchRef}>
         <div className="relative">
           <input
             type="text"
             placeholder="Search products..."
             className="w-full h-10 pl-10 pr-10 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
-            onClick={openSearch}
-            onChange={(e) => {
-              onSearchProduct(e.target.value);
-              setSearchValue(e.target.value);
-            }}
+            onChange={handleSearchMobile}
             value={searchValue}
             ref={searchRef}
           />
@@ -573,7 +619,29 @@ export default function Navbar() {
             />
           )}
         </div>
+        {searchValue && searchResult && searchResult.length > 0 && (
+          <div className="absolute left-0 right-0 bg-white z-50 mt-2 shadow-lg border border-gray-200 rounded-b-lg max-h-60 overflow-y-auto">
+            {searchResult.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-100 border-b border-gray-200"
+                onClick={(e) => {
+                  console.log("Search result clicked:", item);
+                  onClickDetail(item, e);
+                }}
+              >
+                <Image
+                  src={Search}
+                  alt="Search"
+                  className="w-5 h-5"
+                />
+                <p className="text-black text-sm font-normal">{item.title}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+
 
       {/* Mobile menu drawer */}
 

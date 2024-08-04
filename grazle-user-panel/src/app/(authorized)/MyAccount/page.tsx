@@ -727,7 +727,7 @@ export default function MyAccount() {
                             className="w-[18px] h-[23px] mr-2"
                           />
                           <p className="text-[14px] font-medium text-[#777777] ">
-                            {currentUser.profile?.city}
+                            {currentUser.profile?.city || "No City Added"}
                           </p>
                         </div>
                         <div className="flex items-center ">
