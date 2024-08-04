@@ -10,7 +10,13 @@ import { toast } from "react-toastify";
 import Cart from "@/assets/CartVector.png";
 import LikeButton from "./LikeButton";
 
-const ProductCard = ({ product }) => {
+interface ProductCardProps {
+  product: any;
+  offerId?: string;
+  width?: string;
+}
+
+const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [touchedProductId, setTouchedProductId] = useState(null);
@@ -57,10 +63,6 @@ const ProductCard = ({ product }) => {
           <div className="w-full h-[160px] md:h-[170px] bg-gray-200 rounded-2xl"></div>
         )}
 
-        <div className="flex w-full justify-between items-center absolute px-[16px] top-[10px]">
-          <div></div>
-          <LikeButton productId={product?.id} />
-        </div>
 
         <div className="p-2">
           <p className="text-[14px] md:text-[15px] w-[80%] font-semibold">
@@ -88,7 +90,10 @@ const ProductCard = ({ product }) => {
           </div>
         </div>
       </div>
-
+      <div className="flex w-full justify-between items-center absolute px-[16px] top-[10px]">
+          <div></div>
+          <LikeButton productId={product?.id} />
+        </div>
       <div className="h-[40px] flex items-center justify-center">
         <button
           className="text-[#F70000] w-[90%] h-[32px] border-[1px] border-[#F70001] rounded-lg bg-white opacity-0 group-hover:opacity-100 group-[.active]:opacity-100 transition-opacity duration-300"
