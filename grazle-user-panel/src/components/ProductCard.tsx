@@ -10,15 +10,10 @@ import { toast } from "react-toastify";
 import Cart from "@/assets/CartVector.png";
 import LikeButton from "./LikeButton";
 
-interface ProductCardProps {
-  product: any;
-  offerId?: string;
-}
-
-const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
+const ProductCard = ({ product }) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [touchedProductId, setTouchedProductId] = useState<number | null>(null);
+  const [touchedProductId, setTouchedProductId] = useState(null);
 
   const { basePrice, price, discountInfo } = calculateFinalPrice(product, null);
 
@@ -26,7 +21,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
     router.push(`/detailProduct/${product.id}`);
   };
 
-  const onAddingCart = (e: React.MouseEvent) => {
+  const onAddingCart = (e) => {
     e.stopPropagation();
     const updateProduct = {
       ...product,
@@ -39,19 +34,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
     toast.success("Item has been added to cart!");
   };
 
-  if (offerId && offerId !== product?.offer_id) return null;
-
   return (
     <div
-      className={`group lg:w-[98%] w-[95%] border mb-1 mt-1 lg:mt-[16px] rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${
-        touchedProductId === product.id ? 'active' : ''
-      }`}
+      className={`group lg:w-[98%] w-[95%] border mb-1 mt-1 lg:mt-[16px] rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${touchedProductId === product.id ? 'active' : ''
+        }`}
       onClick={() => setTouchedProductId(product.id)}
     >
-      <div
-        onClick={goToDetail}
-        className="cursor-pointer"
-      >
+      <div onClick={goToDetail} className="cursor-pointer">
         {product?.featured_image ? (
           <Image
             alt="Product Image"
@@ -59,7 +48,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
             height={203}
             src={product.featured_image}
             className="w-full h-[160px] md:h-[170px] object-cover rounded-2xl cursor-pointer"
-            onError={(e: any) => {
+            onError={(e) => {
               console.error('Image failed to load:', e);
               e.target.src = '/path/to/fallback-image.jpg';
             }}

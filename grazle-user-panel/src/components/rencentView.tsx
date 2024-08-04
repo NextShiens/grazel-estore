@@ -132,8 +132,6 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
           <div>No Product Found!</div>
         ) : (
           Data.map((item: any, index: any) => {
-            console.log('Item:', item);
-            console.log('Featured Image:', item?.featured_image);
             const { basePrice, price, discountInfo } = calculateFinalPrice(
               item,
               null
@@ -141,9 +139,8 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
             return (
               <div
                 key={index}
-                className={`group lg:w-[98%] w-[95%] border mb-1 mt-1 lg:mt-[16px] rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${
-                  touchedProductId === item.id ? 'active' : ''
-                }`}
+                className={`group lg:w-[98%] w-[95%] border mb-1 mt-1 lg:mt-[16px] rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${touchedProductId === item.id ? 'active' : ''
+                  }`}
                 onClick={() => setTouchedProductId(item.id)}
               >
                 <div

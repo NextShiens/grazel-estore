@@ -1,39 +1,85 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { getAllProductsApi, getBannersApi } from "@/apis";
-import ProductCard from "@/components/ProductCard";
 import { useSearchParams } from "next/navigation";
+import { getOfferProductsByIDApi, getBannersApi } from "@/apis";
+import ProductCard from "@/components/ProductCard";
 import MainSlider from "@/components/mianSlider";
+import { FaSpinner } from 'react-icons/fa';
+
 
 const Offers = () => {
   const [positionOneBanners, setPositionOneBanners] = useState([]);
-  const id = useSearchParams().get("id");
-  const [allProducts, setAllProducts] = useState<any>([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
 
   useEffect(() => {
-    (async () => {
-      const { data } = await getAllProductsApi();
-      setAllProducts(data.products);
-    })();
+    const fetchOfferProducts = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const { data } = await getOfferProductsByIDApi(id);
+        console.log("Fetched products:", data.products);
+        setAllProducts(data.products);
+      } catch (error) {
+        console.error("Error fetching offer products:", error);
+        setError("Failed to fetch products");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchBanners = async () => {
+      try {
+        const response = await getBannersApi(1);
+        setPositionOneBanners(response.data.banners);
+      } catch (error) {
+        console.error("Error fetching banners:", error);
+      }
+    };
+
+    fetchOfferProducts();
+    fetchBanners();
   }, [id]);
 
-  useEffect(() => {
-    (async () => {
-      const positionOneBanners = await getBannersApi(1);
-      setPositionOneBanners(positionOneBanners.data.banners);
-    })();
-  }, []);
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="flex items-center space-x-2">
+          <FaSpinner className="animate-spin text-orange-500 text-4xl" />
+          <span className="text-orange-500 text-xl">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="bg-orange-100 border border-orange-400 text-orange-700 px-4 py-3 rounded relative" role="alert">
+          <strong className="font-bold">Error:</strong>
+          <span className="block sm:inline">{error}</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
       <div className="lg:mx-[150px] md:mx-[60px] lg:px-0 md:px-3">
         <MainSlider banners={positionOneBanners} />
       </div>
-      <h2 className="text-2xl font-bold text-center my-4">Offer's for you</h2>
+      <h2 className="text-2xl font-bold text-center my-4">Offers for you</h2>
       <div className="p-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {allProducts?.map((product: any) => (
-          <ProductCard key={product.id} offerId={id || ""} product={product} />
-        ))}
+        {allProducts.length === 0 ? (
+          <div>No products found</div>
+        ) : (
+          allProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))
+        )}
       </div>
     </>
   );
