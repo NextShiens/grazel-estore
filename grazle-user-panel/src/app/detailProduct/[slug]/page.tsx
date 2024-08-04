@@ -58,7 +58,6 @@ export default function ProductDetail() {
   const [showPopup, setShowPopup] = useState(false);
   const [reviews, setReviews] = useState([]);
 
-
   const router = useRouter();
   const { slug } = useParams();
 
@@ -369,17 +368,17 @@ export default function ProductDetail() {
               </div>
 
               <div className="rounded-2xl mt-4 border-[1px] border-[#E6E6E6] px-4 py-2">
-                <div className="flex justify-between items-center pb-3 border-b-[1px] border-[#0000000D]">
+                <div className="flex justify-between items-center pb-3">
                   <div className="flex gap-4 items-center">
                     <div className="flex justify-center items-center rounded-full bg-[#F8F8F8] h-[52px] w-[52px]">
                       {singleProduct?.store?.image && (
                         <Image
-                        src={singleProduct?.store?.image}
-                        alt={`${singleProduct?.store?.image}'s profile`}
-                        width={48}
-                        height={48}
-                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
-                      />
+                          src={singleProduct?.store?.image}
+                          alt={`${singleProduct?.store?.image}'s profile`}
+                          width={48}
+                          height={48}
+                          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
+                        />
                       )}
                     </div>
                     <p className="text-[14px] text-[#000000] font-semibold">
