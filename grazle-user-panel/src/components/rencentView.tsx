@@ -163,10 +163,10 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
                     <div className="w-full h-[160px] md:h-[170px] bg-gray-200 rounded-2xl"></div>
                   )}
 
-                  <div className="flex w-full justify-between items-center absolute px-[16px] top-[10px]">
+                  {/* <div className="flex w-full justify-between items-center absolute px-[16px] top-[10px]">
                     <div></div>
                     <LikeButton productId={item?.id} />
-                  </div>
+                  </div> */}
 
                   <div className="p-2">
                     <p className="text-[14px] md:text-[15px] w-[80%] font-semibold">
@@ -194,6 +194,10 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
                     </div>
                   </div>
                 </div>
+                <div className="flex w-full justify-between items-center absolute px-[16px] top-[10px]">
+                    <div></div>
+                    <LikeButton productId={item?.id} />
+                  </div>
 
                 <div className="mb-2 flex justify-center w-full opacity-0 group-hover:opacity-100 group-[.active]:opacity-100">
                   <button

@@ -116,7 +116,8 @@ export const getAddressByIdApi = async (id) =>
   await axios.get("/addresses/" + id);
 
 export const editAddressApi = async (formdata, id) =>
-  await axios.put("/addresses/" + id, formdata);
+  await axios.put(`/addresses/${id}`, formdata);
+
 export const setPrimaryAddressApi = async (id) =>
   await axios.put(`/addresses/${id}/setPrimary`);
 
@@ -220,3 +221,7 @@ export const deleteuserApi = async (formdata) =>
       'Content-Type': 'multipart/form-data'
     }
   });
+
+  export const deactivateAccountApi = async () =>
+    await axios.post('/profile/deactivate-account', {
+        });
