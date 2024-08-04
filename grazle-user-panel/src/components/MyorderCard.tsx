@@ -90,7 +90,7 @@ const MyorderCard = ({
     formData.append("rating", String(rating));
     formData.append("product_id", productId);
     const { data } = await addReviewApi(formData);
-    if (data.succuss) {
+    if (data.success) {
       handleRevModal();
       toast.success("review has been added");
     }

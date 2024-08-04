@@ -481,50 +481,53 @@ export default function MyAccount() {
                   >
                     Update Change
                   </button>
-                  <div className="flex items-center lg:mt-0  mt-3 sm:mt-3">
-                    <MdOutlineDeleteOutline
-                      className="text-[#F70000] lg:text-[28px] text-[20px] sm:text-[20px]  mr-[16px]"
-                      onClick={handleOpenModelDelete}
-                    />
-                    <p className="cursor-pointer text-[#F70000] lg:text-[16px] text-[12px] sm:text-[14px] font-semibold mr-[16px]">
-                      Delete Account
-                    </p>
-                  </div>
+                  <div className="flex items-center lg:mt-0 mt-3 sm:mt-3">
+        <MdOutlineDeleteOutline
+          className="text-[#F70000] lg:text-[28px] text-[20px] sm:text-[20px] mr-[16px]"
+          onClick={handleOpenModelDelete}
+        />
+        <p
+          className="cursor-pointer text-[#F70000] lg:text-[16px] text-[12px] sm:text-[14px] font-semibold mr-[16px]"
+          onClick={handleOpenModelDelete}
+        >
+          Delete Account
+        </p>
+      </div>
                 </div>
               </form>
             )}
             <CustomModal
-              showModal={showModelDelete}
-              onClose={handleCloseModelDelete}
-            >
-              <div className="p-4 sm:p-6 relative w-full max-w-[100%] sm:max-w-md mx-auto sm:rounded-lg">
-                <h2 className="text-xl sm:text-2xl text-center font-bold text-gray-800 mb-3 sm:mb-4">
-                  Delete Account
-                </h2>
-                <p className="text-sm sm:text-base text-center text-gray-600 mb-3 sm:mb-4">
-                  Deleting your account will remove all your information from
-                  our database. This action cannot be undone.
-                </p>
-                <input
-                  className="border border-gray-300 w-full sm:rounded-md h-10 sm:h-12 px-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent mb-3 sm:mb-4"
-                  placeholder="Type 'Delete' to confirm"
-                />
-                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
-                  <button
-                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 sm:rounded-md h-10 sm:h-12 w-full text-sm sm:text-base font-medium transition-colors"
-                    onClick={handleCloseModelDelete}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="bg-red-500 hover:bg-red-600 sm:rounded-md h-10 sm:h-12 w-full text-sm sm:text-base font-medium text-white transition-colors"
-                    onClick={deleteuser}
-                  >
-                    Delete Account
-                  </button>
-                </div>
-              </div>
-            </CustomModal>
+  showModal={showModelDelete}
+  onClose={handleCloseModelDelete}
+>
+  <div className="p-3 sm:p-6 relative w-full max-w-[100%] sm:max-w-md mx-auto rounded-md sm:rounded-lg">
+    <h2 className="text-lg sm:text-2xl text-center font-bold text-gray-800 mb-2 sm:mb-4">
+      Delete Account
+    </h2>
+    <p className="text-xs sm:text-base text-center text-gray-600 mb-2 sm:mb-4">
+      Deleting your account will remove all your information from
+      our database. This action cannot be undone.
+    </p>
+    <input
+      className=" w-full h-8 sm:h-12 px-3 text-xs sm:text-base focus:outline-none focus:ring-2 focus:ring-red-500 mb-2 sm:mb-4"
+      placeholder="Type 'Delete' to confirm"
+    />
+    <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+      <button
+        className="bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md h-8 sm:h-12 w-full text-xs sm:text-base font-medium transition-colors"
+        onClick={handleCloseModelDelete}
+      >
+        Cancel
+      </button>
+      <button
+        className="bg-red-500 hover:bg-red-600 rounded-md h-8 sm:h-12 w-full text-xs sm:text-base font-medium text-white transition-colors"
+        onClick={deleteuser}
+      >
+        Delete Account
+      </button>
+    </div>
+  </div>
+</CustomModal>
             {activeSection === "Orders" && (
               <>
                 <div className="">

@@ -101,7 +101,7 @@ export default function StoreProduct() {
   return (
     <div className="lg:my-[50px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[20px] sm:mx-[20px] md:mx-[30px]">
       <div className="relative w-[100%] h-[250px]">
-        {/* <div className="w-[1190px] bg-white h-[200px] flex justify-center items-center rounded-2xl border-[.5px] border-[#F70000]">
+        <div className="w-[1000px] bg-white h-[300px] flex justify-center items-center rounded-2xl border-[.5px] ">
             {currentStore.image && (
               <Image
                 width={500}
@@ -111,7 +111,7 @@ export default function StoreProduct() {
                 className="w-full h-full"
               />
             )}
-          </div> */}
+          </div>
         <div
           className="absolute left-1/2 transform -translate-x-1/2"
           style={{ top: "calc(50% - -50px)" }}
@@ -150,8 +150,8 @@ export default function StoreProduct() {
           <div className="border-l-[2px] border-[#777777] h-[30px]"></div>
           <div>
             <div className="flex  items-center gap-2">
-              <FaStar className="text-[16px] text-[#FF7A00]" />
-              <p className="text-[20px] font-semibold">
+              {/* <FaStar className="text-[16px] text-[#FF7A00]" /> */}
+              <p className="text-[20px] font-semibold align-baseline">
                 {currentStore.store_products}
               </p>
             </div>
