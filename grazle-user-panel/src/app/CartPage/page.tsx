@@ -92,11 +92,15 @@ export default function Cartpage() {
                       <div className="flex items-center">
                         <CiSquareCheck className="text-[#F70000] lg:block sm:hidden hidden text-[32px] mr-3" />
                         <Image
-                          src={item.featured_image}
+                          alt="Product Image"
                           width={100}
                           height={100}
-                          alt="Product Image"
+                          src={item.featured_image}
                           className="rounded-2xl lg:w-[90px] w-[60px] h-[60px] lg:h-[90px] lg:mr-7 mr-3 "
+                          onError={(e: any) => {
+                            console.error("Image failed to load:", e);
+                            e.target.src = "/path/to/fallback-image.jpg";
+                          }}
                         />
 
                         <div>
@@ -152,9 +156,9 @@ export default function Cartpage() {
                         </div>
 
                         <div className="flex justify-end mt-4 gap-4">
-                          <div className="lg:w-[43px] lg:h-[43px] h-[30px] w-[30px]  bg-[#5EF7000A] rounded-md flex items-center justify-center">
-                                {/* <FaRegEdit className="lg:text-[24px] text-[18px] text-[#00F763]" /> */}
-                              </div>
+                          {/* <div className="lg:w-[43px] lg:h-[43px] h-[30px] w-[30px]  bg-[#5EF7000A] rounded-md flex items-center justify-center">
+                            <FaRegEdit className="lg:text-[24px] text-[18px] text-[#00F763]" />
+                          </div> */}
 
                           <div
                             onClick={() => onDeleteProduct(item?.id)}
@@ -225,7 +229,9 @@ export default function Cartpage() {
 
                 <button
                   className=" bg-[#F70000] rounded-full h-[45px] mt-8  w-[100%] text-[18px] font-medium text-white"
-                  onClick={() =>{goToShippingAddress()}}
+                  onClick={() => {
+                    goToShippingAddress();
+                  }}
                 >
                   Continue Checkout
                 </button>

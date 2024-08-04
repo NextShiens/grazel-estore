@@ -712,41 +712,33 @@ export default function PaymentAndAddress() {
           </div>
         </div>
 
-        <CustomModal showModal={showSendModel}>
-          <div className="flex-col justify-center w-[900px]">
-            <div className="mx-[150px]  my-[100px]">
-              <div className="flex justify-center mb-[22px]">
-                <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
+<CustomModal showModal={showSendModel}>
+  <div className="flex flex-col justify-center items-center w-full h-full">
+    <div className="flex flex-col justify-center items-center w-full max-w-[400px] h-auto p-4 bg-white rounded-lg sm:max-h-[90vh] sm:overflow-y-auto">
+      <div className="flex justify-center mb-[22px]">
+        <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
+        <FaCircleCheck className="text-[#E24C4B] h-[105px] mx-[16px] w-[105px] sm:h-[80px] sm:w-[80px]" />
+        <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
+      </div>
 
-                <FaCircleCheck className="text-[#E24C4B] h-[105px] mx-[16px] w-[105px]" />
-                <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
-              </div>
+      <p className="mt-5 text-[32px] text-center font-semibold text-[#434343] sm:text-[24px]">
+        Your order has been successfully placed
+      </p>
+      <p className="mt-3 text-[16px] text-center font-semibold text-[#434343] sm:text-[14px]">
+        We will be sending you an email confirmation to your email shortly
+      </p>
 
-              <p className="mt-5 text-[32px] text-center font-semibold text-[#434343]">
-                Your order has been successfully placed
-              </p>
-              <p className=" mt-3 text-[16px] text-center font-semibold text-[#434343]">
-                We will be sending you an email confirmation to your email shortly
-              </p>
-
-              <div className="flex mt-[30px] mb-[100px] gap-4 justify-center">
-                {/* <button
-                className=" bg-[#F70000] rounded-lg h-[50px] w-[275px] text-white font-medium"
-                onClick={handleReviewpage}
-              >
-                Leave a Review
-              </button> */}
-
-                <button
-                  className=" bg-[#F69B26] rounded-lg h-[50px] w-[275px] text-white font-medium"
-                  onClick={handleCloseModel}
-                >
-                  Back to Home
-                </button>
-              </div>
-            </div>
-          </div>
-        </CustomModal>
+      <div className="flex mt-[30px] gap-4 justify-center">
+        <button
+          className="bg-[#F69B26] rounded-lg h-[50px] w-[300px] text-white font-medium sm:h-[40px] sm:w-full"
+          onClick={handleCloseModel}
+        >
+          Back to Home
+        </button>
+      </div>
+    </div>
+  </div>
+</CustomModal>
       </div>
     </>
   );

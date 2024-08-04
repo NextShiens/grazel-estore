@@ -1,10 +1,133 @@
 import React from "react";
-import { Rating } from "@mui/material";
+import {
+  Rating,
+  Box,
+  Typography,
+  LinearProgress,
+  Divider,
+} from "@mui/material";
 import Image from "next/image";
 import { timeAgo } from "@/utils";
 
+const RatingsOverview = ({ reviewsData }) => {
+  const reviews = Array.isArray(reviewsData)
+    ? reviewsData
+    : reviewsData.reviews || [];
+  const totalReviews = reviews.length;
+  const averageRating =
+    reviews.reduce((acc, review) => acc + Number(review.rating), 0) /
+      totalReviews || 0;
+
+  const ratingCounts = [0, 0, 0, 0, 0];
+  reviews.forEach((review) => {
+    ratingCounts[Math.floor(Number(review.rating)) - 1]++;
+  });
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
+        alignItems: "flex-start",
+        gap: 4,
+        p: 4,
+        borderBottom: "1px solid #e0e0e0",
+      }}
+    >
+      <Box sx={{ textAlign: "center", minWidth: 120 }}>
+        <Typography
+          variant="body1"
+          fontWeight="bold"
+          sx={{
+            backgroundColor: "#F69B26",
+            color: "white",
+            padding: "4px 8px",
+            borderRadius: "4px",
+            marginBottom: 1,
+          }}
+        >
+          {averageRating < 2
+            ? "very Bad"
+            : averageRating < 3
+            ? "bad"
+            : averageRating < 4
+            ? "Very Good"
+            : averageRating < 5
+            ? "Excellent"
+            : "Excellent"}
+        </Typography>
+        <Typography variant="h3" component="div" fontWeight="bold">
+          {averageRating.toFixed(1)}
+        </Typography>
+        <Rating
+          value={averageRating}
+          readOnly
+          precision={0.1}
+          size="small"
+          sx={{
+            "& .MuiRating-iconFilled": {
+              color: "#F69B26",
+            },
+            "& .MuiRating-iconHover": {
+              color: "#F69B26",
+            },
+          }}
+        />
+        <Typography variant="body2" color="text.secondary">
+          {totalReviews} {totalReviews === 1 ? "Review" : "Rating"}
+        </Typography>
+      </Box>
+      <Divider
+        orientation="vertical"
+        flexItem
+        sx={{ display: { xs: "none", sm: "block" } }}
+      />
+      <Box
+        sx={{
+          flexGrow: 1,
+          width: "100%",
+          maxWidth: { sm: "70%", md: "60%", lg: "50%" },
+        }}
+      >
+        {[5, 4, 3, 2, 1].map((star) => (
+          <Box key={star} sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", minWidth: 70 }}>
+              <Rating
+                value={star}
+                readOnly
+                size="small"
+                sx={{
+                  "& .MuiRating-iconFilled": {
+                    color: "#F69B26",
+                  },
+                }}
+              />
+            </Box>
+            <LinearProgress
+              variant="determinate"
+              value={(ratingCounts[star - 1] / totalReviews) * 100}
+              sx={{
+                flexGrow: 1,
+                mx: 1,
+                height: 8,
+                borderRadius: 4,
+                 backgroundColor: '#e0e0e0',
+                "& .MuiLinearProgress-bar": {
+                  backgroundColor: "#F69B26",
+                },
+              }}
+            />
+            <Typography variant="body2" sx={{ minWidth: 30 }}>
+              {ratingCounts[star - 1]}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+};
+
 const ReviewCard = ({ reviewData }) => {
-  // Function to extract the reviews array from the data
   const getReviewsArray = (data) => {
     if (Array.isArray(data)) {
       return data;
@@ -14,7 +137,6 @@ const ReviewCard = ({ reviewData }) => {
       } else if (Array.isArray(data.reviews)) {
         return data.reviews;
       } else if (data.rating) {
-        // If it's a single review object
         return [data];
       }
     }
@@ -22,6 +144,14 @@ const ReviewCard = ({ reviewData }) => {
   };
 
   const reviews = getReviewsArray(reviewData);
+
+  if (reviews.length === 0) {
+    return (
+      <div className="p-4 sm:p-6 text-center text-gray-500">
+        No Reviews Found...
+      </div>
+    );
+  }
 
   return (
     <>
@@ -61,7 +191,7 @@ const ReviewCard = ({ reviewData }) => {
               sx={{
                 "& .MuiSvgIcon-root": {
                   fontSize: { xs: 16, sm: 20 },
-                  color: "#FFA41C",
+                  color: "#F69B26",
                 },
               }}
             />
@@ -101,6 +231,7 @@ const ReviewSection = ({ reviewsData }) => {
       <h2 className="text-xl sm:text-2xl font-bold text-gray-800 bg-gray-50 p-4 sm:p-6 border-b border-gray-200">
         Ratings & Reviews
       </h2>
+      <RatingsOverview reviewsData={reviewsData} />
       <div>
         <ReviewCard reviewData={reviewsData} />
       </div>

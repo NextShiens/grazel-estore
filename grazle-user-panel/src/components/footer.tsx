@@ -21,6 +21,7 @@ import { FaChevronDown } from "react-icons/fa6";
 import Location from "@/assets/location-icon.png";
 import { FaFacebook, FaPinterest, FaTwitter } from "react-icons/fa";
 import { getAllCategoriesApi } from "@/apis";
+
 interface FAQData {
   header: string;
 }
@@ -34,19 +35,12 @@ export default function Footer() {
       setAllCategories(data?.categories || []);
     })();
   }, []);
+
   const accordionData: FAQData[] = [
-    {
-      header: "Product",
-    },
-    {
-      header: "Company",
-    },
-    {
-      header: "Support",
-    },
-    {
-      header: "Legal",
-    },
+    { header: "Product" },
+    { header: "Company" },
+    { header: "Support" },
+    { header: "Legal" },
   ];
 
   const [expanded, setExpanded] = useState<number | null>(null);
@@ -59,7 +53,7 @@ export default function Footer() {
 
   return (
     <>
-      <div className="lg:px-[150px] md:px-[60px] px-[16px] py-[63px] bg-[#F8F8F8]  lg:flex sm:hidden hidden  items-start lg:items-start justify-between">
+      <div className="lg:px-[150px] md:px-[60px] px-[16px] py-[63px] bg-[#F8F8F8] lg:flex sm:hidden hidden items-start lg:items-start justify-between">
         <div className="w-full lg:w-[196px] mb-[32px] lg:mb-0 text-center lg:text-left">
           <Image
             src={logo}
@@ -68,54 +62,42 @@ export default function Footer() {
           />
 
           <div className="flex items-center gap-2 justify-center lg:justify-start mt-[40px]">
-            <Image
-              src={Instagram}
-              alt=""
-              className="w-[32px] h-[32px] mx-2 lg:mx-0"
-            />
-            <Image
-              src={Dribbble}
-              alt=""
-              className="w-[32px] h-[32px] mx-2 lg:mx-0"
-            />
-            <Image
-              src={Twitter}
-              alt=""
-              className="w-[32px] h-[32px] mx-2 lg:mx-0"
-            />
-            <Image
-              src={Youtube}
-              alt=""
-              className="w-[32px] h-[32px] mx-2 lg:mx-0"
-            />
+            <Link href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA==" target="_blank" rel="noopener noreferrer">
+              <Image
+                src={Instagram}
+                alt=""
+                className="w-[32px] h-[32px] mx-2 lg:mx-0"
+              />
+            </Link>
+            <Link href="https://www.linkedin.com/company/grazle" target="_blank" rel="noopener noreferrer">
+              <SiLinkedin className="w-[32px] h-[32px] mx-2 lg:mx-0" />
+            </Link>
+            <Link href="https://x.com/GrazleHomeware" target="_blank" rel="noopener noreferrer">
+              <Image
+                src={Twitter}
+                alt=""
+                className="w-[32px] h-[32px] mx-2 lg:mx-0"
+              />
+            </Link>
+            <Link href="https://www.facebook.com/grazlefb/" target="_blank" rel="noopener noreferrer">
+              <FaFacebook className="w-[32px] h-[32px] mx-2 lg:mx-0" />
+            </Link>
           </div>
         </div>
 
         <div className="w-full lg:w-[130px] text-[#393A44] mb-[32px] lg:mb-0 text-center lg:text-left">
           <p className="text-[20px] font-bold">Categories</p>
           {allCategories?.slice(0, 5)?.map((category) => (
-            <>
+            <React.Fragment key={category?.id}>
               <Link
-                key={category?.id}
                 href={`/search?category=${category?.id}`}
                 className="text-[14px] font-normal mt-[12px] w-full"
               >
                 {category?.name}
               </Link>
               <br />
-            </>
+            </React.Fragment>
           ))}
-
-          {/* <div className="flex items-center justify-center lg:justify-start mt-[12px]">
-            <p className="text-[14px] font-normal">Features</p>
-            <p className="text-[14px] font-bold ml-[12px] text-[#2EC5CE]">
-              New
-            </p>
-          </div> */}
-
-          {/* <p className="text-[14px] font-normal mt-[12px]">Tutorials</p>
-          <p className="text-[14px] font-normal mt-[12px]">Pricing</p>
-          <p className="text-[14px] font-normal mt-[12px]">Releases</p> */}
         </div>
 
         <div className="w-full lg:w-[130px] text-[#393A44] mb-[32px] lg:mb-0 text-center lg:text-left">
@@ -151,25 +133,10 @@ export default function Footer() {
             Safety Center
           </Link>
           <br />
-          {/* <Link
-            href={"/Terms&Conditions"}
-            className="text-[14px] font-normal mt-[12px]"
-          >
-            Legal
-          </Link>
-
-          <Link
-            href={"/Terms&Conditions"}
-            className="text-[14px] font-normal mt-[12px]"
-          >
-            Privacy policy
-          </Link> */}
-          {/* <p className="text-[14px] font-normal mt-[12px]">Status</p> */}
         </div>
 
         <div className="w-full lg:w-[130px] text-[#393A44] mb-[32px] lg:mb-0 text-center lg:text-left">
           <p className="text-[20px] font-bold">Legal</p>
-          {/* <Link href={'/Terms&Conditions'} className="text-[14px] font-normal mt-[16px]">Cookies Policy</Link> */}
           <Link
             href={"/privacy-policy"}
             className="text-[14px] font-normal mt-[12px]"
@@ -183,7 +150,6 @@ export default function Footer() {
           >
             Terms of Service
           </Link>
-
           <br />
           <Link
             href={"/cancellation-policy"}
@@ -191,7 +157,6 @@ export default function Footer() {
           >
             Cancellation
           </Link>
-
           <br />
           <Link
             href={"/refund-policy"}
@@ -206,12 +171,12 @@ export default function Footer() {
 
           <div className="flex items-center justify-center lg:justify-start mt-[26px]">
             <Image src={Email} alt="" className="w-[32px] h-[32px] mr-[8px]" />
-            <p className="text-[14px] font-normal">ww@Grazle.com</p>
+            <p className="text-base font-medium">www@Grazle.com</p>
           </div>
 
           <div className="flex items-center justify-center lg:justify-start mt-[26px]">
             <Image src={Phone} alt="" className="w-[32px] h-[32px] mr-[8px]" />
-            <p className="text-[14px] font-normal">+91 98765 43210</p>
+            <p className="text-base font-medium"> +9108202334</p>
           </div>
 
           <div className="flex items-center justify-center lg:justify-start mt-[26px]">
@@ -220,22 +185,20 @@ export default function Footer() {
               alt="location"
               className="w-[32px] h-[32px] mr-[8px]"
             />
-            <p className="text-[14px] font-normal">
+            <p className="text-base font-medium">
               772 Lyonwood Ave Walnut, CA 91789
             </p>
           </div>
         </div>
       </div>
 
-      <div
-        className="px-[16px] border-t-2 hidden lg:block lg:px-[150px] bg-[#F8F8F8] 
-        py-6 md:px-[60px] flex-wrap lg:flex sm:flex-wrap items-center justify-between"
-      >
-        <p className="text-[14px]  font-normal lg:text-start text-center">
+      <div className="px-[16px] border-t-2 hidden lg:block lg:px-[150px] bg-[#F8F8F8] 
+        py-6 md:px-[60px] flex-wrap lg:flex sm:flex-wrap items-center justify-between">
+        <p className="text-[14px] font-normal lg:text-start text-center">
           © 2024 Grazzle. All rights reserved
         </p>
 
-        <div className="flex items-center lg:justify-start justify-center  ">
+        <div className="flex items-center lg:justify-start justify-center">
           <Link
             href="/Terms&Conditions"
             className="lg:text-[14px] text-[10px] font-normal"
@@ -250,34 +213,30 @@ export default function Footer() {
           >
             Privacy Policy
           </Link>
-
-          {/* <div className="border-l-[1px] border-[#909198] mx-2 h-2"></div>
-          <p className="lg:text-[14px] text-[10px] font-normal">Sitemap</p>
-          <div className="border-l-[1px] border-[#909198] mx-2 h-2"></div>
-          <p className="lg:text-[14px] text-[10px] font-normal">Disclaimer</p> */}
         </div>
       </div>
 
       <div className="flex flex-col sm:flex-col lg:hidden mx-[20px]">
-        <Image src={logo} alt="" className="w-[120px] h-[70px] " />
+      <Image src={logo} alt="" className="w-[120px] h-[70px] " />
 
-        {/* <p className="mt-3 text-[14px] font-normal text-[#4E4E4E]">
-          Lorem ipsum dolor sit amet cons ectet ur. Nunc sed erat tristique sed
-          magna. Eget condimentum.
-        </p> */}
+<p className="mt-3 text-[16px] font-semibold text-[#4E4E4E]">
+  Follow Us
+</p>
 
-        <p className="mt-3 text-[16px] font-semibold text-[#4E4E4E]">
-          Follow Us
-        </p>
-
-        <div className="flex items-center gap-6  mt-4">
-          <FaTwitter className="text-[24px] text-[#434343]" />
-          <FaFacebook className="text-[24px] text-[#434343]" />
-          <SiLinkedin className="text-[24px] text-[#434343]" />
-          <FaPinterest className="text-[24px] text-[#434343]" />
-          <GrInstagram className="text-[24px] text-[#434343]" />
-        </div>
-
+<div className="flex items-center gap-6 mt-4">
+  <Link href="https://x.com/GrazleHomeware" target="_blank" rel="noopener noreferrer">
+    <FaTwitter className="text-[24px] text-[#434343]" />
+  </Link>
+  <Link href="https://www.facebook.com/grazlefb/" target="_blank" rel="noopener noreferrer">
+    <FaFacebook className="text-[24px] text-[#434343]" />
+  </Link>
+  <Link href="https://www.linkedin.com/company/grazle" target="_blank" rel="noopener noreferrer">
+    <SiLinkedin className="text-[24px] text-[#434343]" />
+  </Link>
+  <Link href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA==" target="_blank" rel="noopener noreferrer">
+    <GrInstagram className="text-[24px] text-[#434343]" />
+  </Link>
+</div>
 
         <div>
           {accordionData.map((data, index) => (
@@ -315,112 +274,92 @@ export default function Footer() {
                 </Typography>
               </AccordionSummary>
 
-              <AccordionDetails
-                style={{
-                  padding: "0px 0px 16px 0px",
-                  textAlign: "start",
-                  textJustify: "none",
-                }}
-              >
-                <Typography
+                <AccordionDetails
                   style={{
-                    backgroundColor: "transparent",
-                    paddingTop: "0px",
+                    padding: "0px 0px 16px 0px",
+                    textAlign: "start",
+                    textJustify: "none",
                   }}
                 >
-                  {index === 0 && (
-                    <>
-                      {allCategories?.slice(0, 5)?.map((category) => (
-                        <Link
-                          key={category?.id}
-                          href={`/search?category=${category?.id}`}
-                          className="text-[14px] font-normal mt-[12px] block"
-                        >
-                          {category?.name}
+                  <Typography
+                    style={{
+                      backgroundColor: "transparent",
+                      paddingTop: "0px",
+                    }}
+                  >
+                    {index === 0 && (
+                      <>
+                        {allCategories?.slice(0, 5)?.map((category) => (
+                          <Link
+                            key={category?.id}
+                            href={`/search?category=${category?.id}`}
+                            className="text-[14px] font-medium block mt-[8px]"
+                          >
+                            {category?.name}
+                          </Link>
+                        ))}
+                      </>
+                    )}
+                    {index === 1 && (
+                      <div>
+                        <Link href="/about" className="text-[14px] font-medium block mt-[8px]">
+                          About
                         </Link>
-                      ))}
-                    </>
-                  )}
-                  {index === 1 && (
-                    <>
-                      <Link href="/Terms&Conditions" className="text-[14px] font-normal mt-[12px] block">
-                        About
-                      </Link>
-                      <Link href="/ContactSupport" className="text-[14px] font-normal mt-[12px] block">
-                        Contact
-                      </Link>
-                    </>
-                  )}
-                  {index === 2 && (
-                    <>
-                      <Link href="/ContactSupport" className="text-[14px] font-normal mt-[12px] block">
-                        Help Center
-                      </Link>
-                      <Link href="/ContactSupport" className="text-[14px] font-normal mt-[12px] block">
-                        Safety Center
-                      </Link>
-                    </>
-                  )}
-                  {index === 3 && (
-                    <>
-                      <Link href="/privacy-policy" className="text-[14px] font-normal mt-[12px] block">
-                        Privacy Policy
-                      </Link>
-                      <Link href="/Terms&Conditions" className="text-[14px] font-normal mt-[12px] block">
-                        Terms of Service
-                      </Link>
-                      <Link href="/cancellation-policy" className="text-[14px] font-normal mt-[12px] block">
-                        Cancellation
-                      </Link>
-                      <Link href="/refund-policy" className="text-[14px] font-normal mt-[12px] block">
-                        Refund Policy
-                      </Link>
-                    </>
-                  )}
-                  {index === 4 && (
-                    <>
-                      <div className="flex items-center mt-[12px]">
-                        <Image src={Email} alt="" className="w-[24px] h-[24px] mr-[8px]" />
-                        <p className="text-[14px] font-normal">ww@Grazle.com</p>
+                        <Link href="/contact" className="text-[14px] font-medium block mt-[8px]">
+                          Contact
+                        </Link>
                       </div>
-                      <div className="flex items-center mt-[12px]">
-                        <Image src={Phone} alt="" className="w-[24px] h-[24px] mr-[8px]" />
-                        <p className="text-[14px] font-normal">+91 98765 43210</p>
-                      </div>
-                      <div className="flex items-center mt-[12px]">
-                        <Image src={Location} alt="location" className="w-[24px] h-[24px] mr-[8px]" />
-                        <p className="text-[14px] font-normal">
-                          772 Lyonwood Ave Walnut, CA 91789
-                        </p>
-                      </div>
-                    </>
-                  )}
-                </Typography>
-              </AccordionDetails>
-            </Accordion>
+                    )}
+                    {index === 2 && (
+                      <>
+                        <Link href="/help-center" className="text-[14px] font-medium block mt-[8px]">
+                          Help Center
+                        </Link>
+                        <Link href="/safety-center" className="text-[14px] font-medium block mt-[8px]">
+                          Safety Center
+                        </Link>
+                      </>
+                    )}
+                    {index === 3 && (
+                      <>
+                        <Link href="/privacy-policy" className="text-[14px] font-medium block mt-[8px]">
+                          Privacy Policy
+                        </Link>
+                        <Link href="/terms-of-service" className="text-[14px] font-medium block mt-[8px]">
+                          Terms of Service
+                        </Link>
+                        <Link href="/cancellation-policy" className="text-[14px] font-medium block mt-[8px]">
+                          Cancellation Policy
+                        </Link>
+                        <Link href="/refund-policy" className="text-[14px] font-medium block mt-[8px]">
+                          Refund Policy
+                        </Link>
+                      </>
+                    )}
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
+            </div>
           ))}
-        </div>
 
-        <p className="text-[16px] font-semibold text-[#4E4E4E] mt-[24px] mb-[16px]">
-          Follow Us
-        </p>
+          <div className="px-[16px] lg:hidden items-center md:px-[60px] my-4">
+            <div className="flex items-center lg:justify-start justify-center">
+              <Link
+                href="/Terms&Conditions"
+                className="lg:text-[14px] text-[11px] font-normal"
+              >
+                Terms of Service
+              </Link>
 
-        <div className="flex items-center gap-6 mb-[24px]">
-          <FaTwitter className="text-[24px] text-[#434343]" />
-          <FaFacebook className="text-[24px] text-[#434343]" />
-          <SiLinkedin className="text-[24px] text-[#434343]" />
-          <FaPinterest className="text-[24px] text-[#434343]" />
-          <GrInstagram className="text-[24px] text-[#434343]" />
-        </div>
-
-        <div className="flex flex-wrap justify-center gap-2 mb-[16px]">
-          <Link href="/Terms&Conditions" className="text-[12px] font-normal">
-            Terms of Service
-          </Link>
-          <Link href="/privacy-policy" className="text-[12px] font-normal">
-            Privacy Policy
-          </Link>
-        </div>
+              <div className="mx-2 h-2"></div>
+              <Link
+                href="/privacy-policy"
+                className="lg:text-[14px] text-[11px] font-normal"
+              >
+                Privacy Policy
+              </Link>
+            </div>
+          </div>
 
         <p className="text-[12px] font-normal text-center text-[#949494]">
           © 2024 Grazle. All rights reserved

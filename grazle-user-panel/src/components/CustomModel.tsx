@@ -10,7 +10,7 @@ const style = {
   // width: 400,
   border: "3px solid white",
   bgcolor: "background.paper",
-  borderRadius: "44px!important",
+  borderRadius: "24px!important",
   boxShadow: 24,
 };
 
