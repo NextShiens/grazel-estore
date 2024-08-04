@@ -552,7 +552,7 @@ export default function Home() {
 
         {offerProducts?.length > 0 ? (
           <div>
-            <RecentViewSlider Data={dynamicViewProducts} ref={sliderRef6} />
+           <OfferViewSlider Data={offerProducts} ref={sliderRef6} />
           </div>
         ) : (
           <>
