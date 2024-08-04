@@ -4,7 +4,7 @@
 		"name": "Grazle Backend",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "30687120",
-		"_collection_link": "https://bold-moon-160036.postman.co/workspace/Grazle-Ecommerce~44344f68-dfe9-40bb-9ae7-857f869ac161/collection/30687120-1aee3190-41da-4029-99bb-7714f5b5d404?action=share&source=collection_link&creator=30687120"
+		"_collection_link": "https://web.postman.co/workspace/Grazle-Ecommerce~44344f68-dfe9-40bb-9ae7-857f869ac161/collection/30687120-1aee3190-41da-4029-99bb-7714f5b5d404?source=collection_link"
 	},
 	"item": [
 		{
@@ -20,7 +20,7 @@
 							"formdata": [
 								{
 									"key": "email",
-									"value": "seller@store0.com",
+									"value": "seller@test.com",
 									"description": "required",
 									"type": "text"
 								},
@@ -55,13 +55,13 @@
 							"formdata": [
 								{
 									"key": "username",
-									"value": "Grazle",
+									"value": "Admin",
 									"description": "required",
 									"type": "text"
 								},
 								{
 									"key": "email",
-									"value": "grazlehomeware@gmail.com",
+									"value": "admin@test.com",
 									"description": "required",
 									"type": "text"
 								},
@@ -79,8 +79,7 @@
 								},
 								{
 									"key": "role",
-									"value": "seller",
-									"description": "role = seller | buyer | admin",
+									"value": "admin",
 									"type": "text"
 								}
 							]
@@ -1204,6 +1203,75 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Products By Offer id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/products-by-offer/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"products-by-offer",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Product With 50% Offer",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/products-by-offer/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"products-by-offer",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Product With 70% Offer",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/product-by-percentage-offers/seventy",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"product-by-percentage-offers",
+										"seventy"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -1592,6 +1660,16 @@
 						{
 							"name": "Change Password",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjQzOTIxMywiZXhwIjoxNzIyNjk4NDEzfQ.OxqV0Zliimz7GG9VmP9AyR0O9lCE9eVA017ognF72Cg",
+											"type": "string"
+										}
+									]
+								},
 								"method": "POST",
 								"header": [],
 								"body": {
@@ -1599,12 +1677,12 @@
 									"formdata": [
 										{
 											"key": "old_password",
-											"value": "",
+											"value": "12345678",
 											"type": "text"
 										},
 										{
 											"key": "new_password",
-											"value": "",
+											"value": "admin$100",
 											"type": "text"
 										}
 									]
@@ -1828,7 +1906,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjMzODE2MywiZXhwIjoxNzIyNTk3MzYzfQ.uU7OPgpQkZN8CeZTAuS9TJVlpR0D3Xt1ggbXpVWSpcM",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjc3NjUyNiwiZXhwIjoxNzIzMDM1NzI2fQ.msQiAxdeSExF7Y-Y5SSFO6D8_LY8c_b7Y6XbEukfgGU",
 											"type": "string"
 										}
 									]
@@ -1855,7 +1933,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjMzODE2MywiZXhwIjoxNzIyNTk3MzYzfQ.uU7OPgpQkZN8CeZTAuS9TJVlpR0D3Xt1ggbXpVWSpcM",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjc3NjUyNiwiZXhwIjoxNzIzMDM1NzI2fQ.msQiAxdeSExF7Y-Y5SSFO6D8_LY8c_b7Y6XbEukfgGU",
 											"type": "string"
 										}
 									]
@@ -1875,7 +1953,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "8"
+											"value": "1"
 										}
 									]
 								}
@@ -2355,7 +2433,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjMzNTgzNCwiZXhwIjoxNzIyNTk1MDM0fQ.wdOZt8rgbZywBbSHNWTC483dkvX8-dMYbTuFvgz0yrE",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjQ5ODcyMCwiZXhwIjoxNzIyNzU3OTIwfQ.W1do6NyQCpoPE-2ZPcQ0IdCFtwvkDWH4wEJ7VBO2-Pg",
 											"type": "string"
 										}
 									]
@@ -2443,18 +2521,18 @@
 									"formdata": [
 										{
 											"key": "name",
-											"value": "Home Appliancesss",
+											"value": "Combo Product",
 											"type": "text"
 										},
 										{
 											"key": "description",
-											"value": "Lorem ipsum",
+											"value": "",
 											"type": "text"
 										},
 										{
 											"key": "image",
 											"type": "file",
-											"src": "/C:/Users/Ubaid Computers/Downloads/address-removebg-preview.png"
+											"src": []
 										}
 									]
 								},
@@ -4190,6 +4268,16 @@
 						{
 							"name": "Change Password",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjI0Mzg3MDYsImV4cCI6MTcyMjY5NzkwNn0.d_wgClIcG85nXwfVysyIu1JBuJJb1IKLYUPfhNrGjbc",
+											"type": "string"
+										}
+									]
+								},
 								"method": "POST",
 								"header": [],
 								"body": {
@@ -4197,12 +4285,12 @@
 									"formdata": [
 										{
 											"key": "old_password",
-											"value": "",
+											"value": "12345678",
 											"type": "text"
 										},
 										{
 											"key": "new_password",
-											"value": "",
+											"value": "fifi@grazle99",
 											"type": "text"
 										}
 									]
@@ -4507,7 +4595,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzE5Mzk3OTgyLCJleHAiOjE3MTk0ODQzODJ9.kEPoEuYtLLJdiEpHqKYQzlYKrm5K0FcoRJhR16-zTxQ",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjI3NzY1NzEsImV4cCI6MTcyMzAzNTc3MX0.PIL-YZcvKq9vA6NQfVsrm1ng2sAiSeXoTy67nucBiME",
 											"type": "string"
 										}
 									]
@@ -4523,13 +4611,8 @@
 											"type": "text"
 										},
 										{
-											"key": "brand_id",
-											"value": "2",
-											"type": "text"
-										},
-										{
 											"key": "title",
-											"value": "Node js ",
+											"value": "Nest js ",
 											"type": "text"
 										},
 										{
@@ -4596,7 +4679,7 @@
 										{
 											"key": "featured_image",
 											"type": "file",
-											"src": []
+											"src": "/C:/Users/Ubaid Computers/OneDrive/Desktop/0_0.jpg"
 										},
 										{
 											"key": "gallery_images",
@@ -5355,7 +5438,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTkxNTQ0MDcsImV4cCI6MTcxOTI0MDgwN30.cPngK1wv6KTXnnpIWRloPGfdz7oDLCp_vmjoZzZIAn4",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInJvbGUiOiJidXllciIsImlhdCI6MTcyMjQ4MjcwNCwiZXhwIjoxNzIyNzQxOTA0fQ.BTVJMcPnT4e3vg7z6yIrfUZOBrWcqemFUH8DsZY24oA",
 											"type": "string"
 										}
 									]
@@ -5377,6 +5460,16 @@
 						{
 							"name": "Edit Profile",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInJvbGUiOiJidXllciIsImlhdCI6MTcyMjQ4MjcwNCwiZXhwIjoxNzIyNzQxOTA0fQ.BTVJMcPnT4e3vg7z6yIrfUZOBrWcqemFUH8DsZY24oA",
+											"type": "string"
+										}
+									]
+								},
 								"method": "PUT",
 								"header": [],
 								"body": {
@@ -5420,7 +5513,7 @@
 										{
 											"key": "image",
 											"type": "file",
-											"src": []
+											"src": "/C:/Users/Ubaid Computers/Downloads/data-removebg-preview.png"
 										}
 									]
 								},
@@ -5437,7 +5530,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "4"
 										}
 									]
 								}
@@ -5447,6 +5540,16 @@
 						{
 							"name": "Change Password",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjQzOTEyNywiZXhwIjoxNzIyNjk4MzI3fQ.Y-b-WRjDWoZ7U3IAu-kdWjrwsQArdXFh6MMI8ZC2kTg",
+											"type": "string"
+										}
+									]
+								},
 								"method": "POST",
 								"header": [],
 								"body": {
@@ -5454,12 +5557,12 @@
 									"formdata": [
 										{
 											"key": "old_password",
-											"value": "",
+											"value": "12345678",
 											"type": "text"
 										},
 										{
 											"key": "new_password",
-											"value": "",
+											"value": "admin$100",
 											"type": "text"
 										}
 									]
@@ -7031,6 +7134,55 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "PhonePe",
+					"item": [
+						{
+							"name": "Intiate Payment",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "user_id",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "amount",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "redirect_url",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "redirect_mode",
+											"value": "",
+											"description": "REDIRECT | POST",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/phonepe/initiate-payment",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"phonepe",
+										"initiate-payment"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},
@@ -7177,12 +7329,12 @@
 	"variable": [
 		{
 			"key": "BASE_URL",
-			"value": "https://api.grazle.co.in/api",
+			"value": "localhost:8000/api",
 			"type": "string"
 		},
 		{
 			"key": "LIVE_URL",
-			"value": "https://ecommerce-backend-api-production-84b3.up.railway.app/api",
+			"value": "https://api.grazle.co.in/api",
 			"type": "string"
 		}
 	]
