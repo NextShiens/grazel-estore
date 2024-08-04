@@ -260,7 +260,7 @@ export default function ContactSupport() {
             <div className="mb-6">
               <h3 className="text-2xl font-semibold mb-3">Contact</h3>
               <p className="text-base font-medium mb-2">Phone : +9108202334</p>
-              <p className="text-base font-medium">Email : www@Grazle.com</p>
+              <p className="text-base font-medium">Email : www.grazle.co.in</p>
             </div>
 
             <div className="mb-6">
