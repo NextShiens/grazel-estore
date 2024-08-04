@@ -6,7 +6,7 @@ const nextConfig = {
   // },
   images: {
     // domains: [API_URL],
-    domains: ["ecommerce-backend-api-production-84b3.up.railway.app"],
+    domains: ["api.grazle.co.in"],
   },
 
   // output: "export",
