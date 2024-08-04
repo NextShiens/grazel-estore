@@ -92,7 +92,7 @@ export default function Cartpage() {
                       <div className="flex items-center">
                         <CiSquareCheck className="text-[#F70000] lg:block sm:hidden hidden text-[32px] mr-3" />
                         <Image
-                          src={"/" + item.featured_image}
+                          src={item.featured_image}
                           width={100}
                           height={100}
                           alt="Product Image"

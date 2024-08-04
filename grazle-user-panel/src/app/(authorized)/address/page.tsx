@@ -27,7 +27,6 @@ export default function AddressPage() {
   const [showAddress, setAddress] = useState(false);
   const [allAddress, setAllAddress] = useState<any>([]);
   const [indexDialog, setDialogIndex] = useState("");
-
   const router = useRouter();
   useEffect(() => {
     (async () => {
@@ -185,15 +184,15 @@ export default function AddressPage() {
 
                   <div className="flex items-center justify-between mt-4">
                     <div className="flex items-center ">
-                      <Image
+                      {/* <Image
                         src={Location}
                         alt=""
                         className="w-[18px] h-[23px] mr-2"
                       />
 
                       <p className="text-[14px] font-medium text-[#777777] ">
-                        New, York
-                      </p>
+                       []
+                      </p> */}
                     </div>
 
                     <div className="flex items-center relative">

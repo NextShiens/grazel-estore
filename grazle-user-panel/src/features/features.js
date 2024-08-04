@@ -160,6 +160,16 @@ export const featuresSlice = createSlice({
         localStorage.setItem("cartItems", JSON.stringify(cartLocalStorage));
       }
     },
+    clearCart: (state) => {
+      state.cartProducts = [];
+      state.cartLocalStorage = [];
+      state.cartLength = 0;
+      state.cartTotal = 0;
+      state.cartDiscount = 0;
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("cartItems");
+      }
+    },
     deleteCartProduct: (state, action) => {
       let cartProducts = state.cartProducts;
       const id = action.payload;
@@ -197,5 +207,6 @@ export const {
   updateCartInitialState,
   onVariantChange,
   updateCategories,
+  clearCart
 } = featuresSlice.actions;
 export const featuresReducer = featuresSlice.reducer;
