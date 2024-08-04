@@ -47,9 +47,9 @@ export default function Footer() {
 
   const handleAccordionChange =
     (panelIndex: number) =>
-    (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
-      setExpanded(isExpanded ? panelIndex : null);
-    };
+      (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
+        setExpanded(isExpanded ? panelIndex : null);
+      };
 
   return (
     <>
@@ -171,7 +171,7 @@ export default function Footer() {
 
           <div className="flex items-center justify-center lg:justify-start mt-[26px]">
             <Image src={Email} alt="" className="w-[32px] h-[32px] mr-[8px]" />
-            <p className="text-base font-medium">www@Grazle.com</p>
+            <p className="text-base font-medium">www.grazle.co.in</p>
           </div>
 
           <div className="flex items-center justify-center lg:justify-start mt-[26px]">
@@ -186,7 +186,7 @@ export default function Footer() {
               className="w-[32px] h-[32px] mr-[8px]"
             />
             <p className="text-base font-medium">
-              772 Lyonwood Ave Walnut, CA 91789
+             MAHIPALPUR EXTN OPP. -APRAVTO MARUTI SHOWROOM, NEW DELHI 110037
             </p>
           </div>
         </div>
@@ -217,157 +217,156 @@ export default function Footer() {
       </div>
 
       <div className="flex flex-col sm:flex-col lg:hidden mx-[20px]">
-      <Image src={logo} alt="" className="w-[120px] h-[70px] " />
+        <Image src={logo} alt="" className="w-[120px] h-[70px] " />
 
-<p className="mt-3 text-[16px] font-semibold text-[#4E4E4E]">
-  Follow Us
-</p>
+        <p className="mt-3 text-[16px] font-semibold text-[#4E4E4E]">
+          Follow Us
+        </p>
 
-<div className="flex items-center gap-6 mt-4">
-  <Link href="https://x.com/GrazleHomeware" target="_blank" rel="noopener noreferrer">
-    <FaTwitter className="text-[24px] text-[#434343]" />
-  </Link>
-  <Link href="https://www.facebook.com/grazlefb/" target="_blank" rel="noopener noreferrer">
-    <FaFacebook className="text-[24px] text-[#434343]" />
-  </Link>
-  <Link href="https://www.linkedin.com/company/grazle" target="_blank" rel="noopener noreferrer">
-    <SiLinkedin className="text-[24px] text-[#434343]" />
-  </Link>
-  <Link href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA==" target="_blank" rel="noopener noreferrer">
-    <GrInstagram className="text-[24px] text-[#434343]" />
-  </Link>
-</div>
+        <div className="flex items-center gap-6 mt-4">
+          <Link href="https://x.com/GrazleHomeware" target="_blank" rel="noopener noreferrer">
+            <FaTwitter className="text-[24px] text-[#434343]" />
+          </Link>
+          <Link href="https://www.facebook.com/grazlefb/" target="_blank" rel="noopener noreferrer">
+            <FaFacebook className="text-[24px] text-[#434343]" />
+          </Link>
+          <Link href="https://www.linkedin.com/company/grazle" target="_blank" rel="noopener noreferrer">
+            <SiLinkedin className="text-[24px] text-[#434343]" />
+          </Link>
+          <Link href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA==" target="_blank" rel="noopener noreferrer">
+            <GrInstagram className="text-[24px] text-[#434343]" />
+          </Link>
+        </div>
 
         <div>
           {accordionData.map((data, index) => (
-            <div key={index}>
-              <Accordion
+            <Accordion
+              key={index}
+              style={{
+                backgroundColor: "transparent",
+                border: "none",
+                boxShadow: "none",
+                borderBottom: "1px solid #0000001A",
+              }}
+              expanded={expanded === index}
+              onChange={handleAccordionChange(index)}
+            >
+              <AccordionSummary
                 style={{
-                  backgroundColor: "transparent",
-                  border: "none",
-                  boxShadow: "none",
-                  borderBottom: "1px solid #0000001A",
+                  padding: "10px 0px",
+                  borderRadius: "0px",
                 }}
-                expanded={expanded === index}
-                onChange={handleAccordionChange(index)}
+                expandIcon={<FaChevronDown style={{ color: "#434343" }} />}
+                aria-controls={`panel${index + 1}-content`}
+                id={`panel${index + 1}-header`}
               >
-                <AccordionSummary
-                  style={{
-                    padding: "10px 0px",
-                    borderRadius: "0px",
-                  }}
-                  expandIcon={<FaChevronDown style={{ color: "#434343" }} />}
-                  aria-controls={`panel${index + 1}-content`}
-                  id={`panel${index + 1}-header`}
-                >
-                  <Typography style={{ fontWeight: "500" }}>
-                    <div>
-                      <p
-                        style={{
-                          textAlign: "start",
-                          color: "#434343",
-                          fontSize: "16px",
-                          fontWeight: "600",
-                        }}
-                      >
-                        {data.header}
-                      </p>
-                    </div>
-                  </Typography>
-                </AccordionSummary>
-
-                <AccordionDetails
-                  style={{
-                    padding: "0px 0px 16px 0px",
-                    textAlign: "start",
-                    textJustify: "none",
-                  }}
-                >
-                  <Typography
+                <Typography style={{ fontWeight: "500" }}>
+                  <p
                     style={{
-                      backgroundColor: "transparent",
-                      paddingTop: "0px",
+                      textAlign: "start",
+                      color: "#434343",
+                      fontSize: "16px",
+                      fontWeight: "600",
                     }}
                   >
-                    {index === 0 && (
-                      <>
-                        {allCategories?.slice(0, 5)?.map((category) => (
-                          <Link
-                            key={category?.id}
-                            href={`/search?category=${category?.id}`}
-                            className="text-[14px] font-medium block mt-[8px]"
-                          >
-                            {category?.name}
-                          </Link>
-                        ))}
-                      </>
-                    )}
-                    {index === 1 && (
-                      <div>
-                        <Link href="/about" className="text-[14px] font-medium block mt-[8px]">
-                          About
+                    {data.header}
+                  </p>
+                </Typography>
+              </AccordionSummary>
+
+              <AccordionDetails
+                style={{
+                  padding: "0px 0px 16px 0px",
+                  textAlign: "start",
+                  textJustify: "none",
+                }}
+              >
+                <Typography
+                  style={{
+                    backgroundColor: "transparent",
+                    paddingTop: "0px",
+                  }}
+                >
+                  {index === 0 && (
+                    <>
+                      {allCategories?.slice(0, 5)?.map((category) => (
+                        <Link
+                          key={category?.id}
+                          href={`/search?category=${category?.id}`}
+                          className="text-[14px] font-medium block mt-[8px]"
+                        >
+                          {category?.name}
                         </Link>
-                        <Link href="/contact" className="text-[14px] font-medium block mt-[8px]">
-                          Contact
-                        </Link>
-                      </div>
-                    )}
-                    {index === 2 && (
-                      <>
-                        <Link href="/help-center" className="text-[14px] font-medium block mt-[8px]">
-                          Help Center
-                        </Link>
-                        <Link href="/safety-center" className="text-[14px] font-medium block mt-[8px]">
-                          Safety Center
-                        </Link>
-                      </>
-                    )}
-                    {index === 3 && (
-                      <>
-                        <Link href="/privacy-policy" className="text-[14px] font-medium block mt-[8px]">
-                          Privacy Policy
-                        </Link>
-                        <Link href="/terms-of-service" className="text-[14px] font-medium block mt-[8px]">
-                          Terms of Service
-                        </Link>
-                        <Link href="/cancellation-policy" className="text-[14px] font-medium block mt-[8px]">
-                          Cancellation Policy
-                        </Link>
-                        <Link href="/refund-policy" className="text-[14px] font-medium block mt-[8px]">
-                          Refund Policy
-                        </Link>
-                      </>
-                    )}
-                  </Typography>
-                </AccordionDetails>
-              </Accordion>
-            </div>
+                      ))}
+                    </>
+                  )}
+                  {index === 1 && (
+                    <div>
+                      <Link href="/about" className="text-[14px] font-medium block mt-[8px]">
+                        About
+                      </Link>
+                      <Link href="/contact" className="text-[14px] font-medium block mt-[8px]">
+                        Contact
+                      </Link>
+                    </div>
+                  )}
+                  {index === 2 && (
+                    <>
+                      <Link href="/help-center" className="text-[14px] font-medium block mt-[8px]">
+                        Help Center
+                      </Link>
+                      <Link href="/safety-center" className="text-[14px] font-medium block mt-[8px]">
+                        Safety Center
+                      </Link>
+                    </>
+                  )}
+                  {index === 3 && (
+                    <>
+                      <Link href="/privacy-policy" className="text-[14px] font-medium block mt-[8px]">
+                        Privacy Policy
+                      </Link>
+                      <Link href="/terms-of-service" className="text-[14px] font-medium block mt-[8px]">
+                        Terms of Service
+                      </Link>
+                      <Link href="/cancellation-policy" className="text-[14px] font-medium block mt-[8px]">
+                        Cancellation Policy
+                      </Link>
+                      <Link href="/refund-policy" className="text-[14px] font-medium block mt-[8px]">
+                        Refund Policy
+                      </Link>
+                    </>
+                  )}
+                </Typography>
+              </AccordionDetails>
+            </Accordion>
+
           ))}
-
-          <div className="px-[16px] lg:hidden items-center md:px-[60px] my-4">
-            <div className="flex items-center lg:justify-start justify-center">
-              <Link
-                href="/Terms&Conditions"
-                className="lg:text-[14px] text-[11px] font-normal"
-              >
-                Terms of Service
-              </Link>
-
-              <div className="mx-2 h-2"></div>
-              <Link
-                href="/privacy-policy"
-                className="lg:text-[14px] text-[11px] font-normal"
-              >
-                Privacy Policy
-              </Link>
-            </div>
-          </div>
-
-          <p className="mb-6 text-[10px] font-normal flex justify-center text-center text-[#949494] ">
-            © 2024 Grazle. All rights reserved
-          </p>
         </div>
-      </div>
+
+
+        <div className="px-[16px] lg:hidden items-center md:px-[60px] my-4">
+          <div className="flex items-center lg:justify-start justify-center">
+            <Link
+              href="/Terms&Conditions"
+              className="lg:text-[14px] text-[11px] font-normal"
+            >
+              Terms of Service
+            </Link>
+
+            <div className="mx-2 h-2"></div>
+            <Link
+              href="/privacy-policy"
+              className="lg:text-[14px] text-[11px] font-normal"
+            >
+              Privacy Policy
+            </Link>
+          </div>
+        </div>
+
+        <p className="text-[12px] font-normal text-center text-[#949494]">
+          © 2024 Grazle. All rights reserved
+        </p>
+      </div >
     </>
   );
 }

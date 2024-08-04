@@ -18,7 +18,7 @@ import visa from "@/assets/pngwing 7.png";
 import { Checkbox, Radio } from "@mui/material";
 import { FaCircleCheck } from "react-icons/fa6";
 import Dots from "@/assets/Group 1820549907.png";
-import { updateCart } from "@/features/features";
+import { updateCart, clearCart } from "@/features/features";
 import card from "@/assets/credit-card (3) 1.png";
 import CustomModal from "@/components/CustomModel";
 import React, { useEffect, useState } from "react";
@@ -160,7 +160,6 @@ export default function PaymentAndAddress() {
         return toast.error(
           "Missing address / payment method / product detail "
         );
-      // const isPaid = paymentMethod === "cod" ? "notpaid" : "paid";
       formdata.append("address_id", addressId);
       formdata.append(
         "payment_type",
@@ -180,21 +179,18 @@ export default function PaymentAndAddress() {
       let userData = await getProfileApi();
 
       if (data.success && paymentMethod === "paypal") {
-        debugger
         const billingData = new FormData();
         billingData.append("order_id", data.order.reference_id);
         billingData.append("name", userData.data.user.username);
         billingData.append("amount", cartTotal);
         billingData.append("address", JSON.stringify(addressDetail));
-        // billingData.append("merchant_id", "2545596");
         billingData.append("currency", "INR");
 
-        // payments test
         const response = await payWithPaypalApi(billingData);
-        // console.log("response", response);
         const resData = new FormData();
         resData.append("enc_resp", response.data.encryptedData);
         const ccavRes = await ccavResponseApi(resData);
+        dispatch(clearCart()); // Add this line
         router.replace(response.data.url);
       }
 
@@ -219,18 +215,21 @@ export default function PaymentAndAddress() {
         resData.append("enc_resp", checkOutResponse.data.encryptedData);
         const ccavRes = await ccavResponseApi(resData);
         console.log("first response", checkOutResponse);
+        dispatch(clearCart()); // Add this line
         router.replace(checkOutResponse.data.url);
       }
+
       setLoading(false);
-      setShowSendModel(paymentMethod === "cod");
+      if (paymentMethod === "cod") {
+        dispatch(clearCart()); // Add this line
+        setShowSendModel(true);
+      }
     } catch (error) {
       setLoading(false);
-
       console.log(error);
       toast.error("Something went wrong");
     }
   }
-
   return (
     <>
       <div className="lg:my-[50px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[10px] sm:mx-[10px] md:mx-[30px] flex  flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-start gap-8">
