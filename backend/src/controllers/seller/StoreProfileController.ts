@@ -73,6 +73,13 @@ export class StoreProfileController {
             business_license: storeProfile.business_license,
             tax_id: storeProfile.tax_id,
             proof_of_address: storeProfile.proof_of_address,
+            city: storeProfile.city,
+            state: storeProfile.state,
+            pin_code: storeProfile.pin_code,
+            store_about: storeProfile.store_about,
+            store_url: storeProfile.store_url,
+            gst: storeProfile.gst,
+            pan: storeProfile.pan,
             created_at: storeProfile.created_at,
             updated_at: storeProfile.updated_at,
           };
@@ -205,6 +212,13 @@ export class StoreProfileController {
         account_number,
         bank_name,
         bank_code,
+        city,
+        state,
+        pin_code,
+        store_about,
+        store_url,
+        gst,
+        pan,
       } = req.body;
 
       const store_image = (req as any).files?.store_image?.[0]?.path.replace(
@@ -244,6 +258,13 @@ export class StoreProfileController {
       store.account_number = account_number;
       store.bank_name = bank_name;
       store.bank_code = bank_code;
+      store.city = city
+      store.state = state
+      store.pin_code = pin_code
+      store.store_about = store_about
+      store.store_url = store_url
+      store.gst = gst
+      store.pan = pan
 
       // Save updated store profile
       const updatedStore = await storeRepo.save(store);

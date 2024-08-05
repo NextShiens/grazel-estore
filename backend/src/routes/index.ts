@@ -13,7 +13,7 @@ import { parsing } from "../config/parseMulter";
 
 const router = Router();
 
-router.use("/auth", parsing, authRoutes);
+router.use("/auth", authRoutes);
 router.use("/global", parsing, publicRoutes);
 router.use("/", adminRoutes);
 router.use("/", buyerRoutes);
@@ -25,7 +25,7 @@ router.use("/", productRoutes);
 
 // For Payment Gateway
 router.use("/payment", paymentRoutes);
-// For Referral Ranking 
+// For Referral Ranking
 router.use("/", referralRoute);
 
 export default router;
