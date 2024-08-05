@@ -188,7 +188,7 @@ export const ccavResponseApi = async (data) => {
 };
 
 export const ccavCheckoutApi = async (data) =>
-  await axios.post("/payment/ccavenue-custom-checkout", data);
+  await axios.post("/payment/ccavenue-iframe-checkout", data);
 
 export const getFirstTrendingCategoryApi = async () =>
   await axios.get(`/trending-products-by-first-category`);
