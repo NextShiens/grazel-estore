@@ -1,11 +1,11 @@
 "use client";
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const LikeButton = ({ productId }) => {
   const [isLiked, setIsLiked] = useState(false);
-  const [isStateChanged, setIsStateCHanged] = useState(false);
+  const [isStateChanged, setIsStateChanged] = useState(false);
   const [favoriteProducts, setFavoriteProducts] = useState([]);
 
   useEffect(() => {
@@ -19,15 +19,14 @@ const LikeButton = ({ productId }) => {
     setIsLiked(checkLiked);
   }, [productId, isStateChanged]);
 
-  //   setIsLiked(isLiked);
-
   const onLike = () => {
     if (!favoriteProducts.includes(productId)) {
       localStorage.setItem(
         "favoriteProducts",
         JSON.stringify([...favoriteProducts, productId])
       );
-      setIsStateCHanged(!isStateChanged);
+      setIsStateChanged(!isStateChanged);
+      toast.success('Product added to favorites!');
     }
   };
 
@@ -37,8 +36,8 @@ const LikeButton = ({ productId }) => {
         (itemId) => itemId !== productId
       );
       localStorage.setItem("favoriteProducts", JSON.stringify(filterArray));
-      // setIsLiked(false);
-      setIsStateCHanged(!isStateChanged);
+      setIsStateChanged(!isStateChanged);
+      toast.success('Product removed from favorites!');
     }
   };
 

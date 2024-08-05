@@ -116,7 +116,8 @@ export const getAddressByIdApi = async (id) =>
   await axios.get("/addresses/" + id);
 
 export const editAddressApi = async (formdata, id) =>
-  await axios.put("/addresses/" + id, formdata);
+  await axios.put(`/addresses/${id}`, formdata);
+
 export const setPrimaryAddressApi = async (id) =>
   await axios.put(`/addresses/${id}/setPrimary`);
 
@@ -224,6 +225,10 @@ export const deleteuserApi = async (formdata) =>
     }
   });
 
+  export const deactivateAccountApi = async () =>
+    await axios.post('/profile/deactivate-account', {
+        });
+
   export const getAllMembershipPlansApi = async () =>
     await axios.get("/membership-plans");
   
@@ -248,3 +253,4 @@ export const deleteuserApi = async (formdata) =>
   
   export const getActiveMembershipPlanApi = async () =>
     await axios.get("/active-membership-plan");
+

@@ -11,7 +11,12 @@ import Appartment from "@/assets/Group444.png";
 import Office from "@/assets/Layer_1.png";
 import { Avatar, Checkbox, Radio } from "@mui/material";
 import CustomModal from "@/components/CustomModel";
-import { MdDelete, MdOutlineDeleteOutline, MdUpdate } from "react-icons/md";
+import {
+  MdDelete,
+  MdOutlineDeleteOutline,
+  MdUpdate,
+  MdOutlineDeleteForever,
+} from "react-icons/md";
 import { LiaUserSlashSolid } from "react-icons/lia";
 import { FiEdit } from "react-icons/fi";
 import { IoLockClosed } from "react-icons/io5";
@@ -45,6 +50,7 @@ import {
   getProfileApi,
   getReferralApi,
   deleteuserApi,
+  deactivateAccountApi,
 } from "@/apis";
 import { toast } from "react-toastify";
 import { logout } from "@/lib";
@@ -79,19 +85,20 @@ export default function MyAccount() {
   const [hasOrderCanceled, setHasOrderCanceled] = useState(false);
   const userRedux = useSelector((state) => state.user);
   const router = useRouter();
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
 
   const profileDataHandler = (e) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
   };
   const [pending, startTransition] = useTransition();
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const { data } = await getProfileApi();
+  useEffect(() => {
+    (async () => {
+      const { data } = await getProfileApi();
 
-  //     setCurrentUser(data?.user);
-  //   })();
-  // }, []);
+      setCurrentUser(data?.user);
+    })();
+  }, []);
   const [profileData, setProfileData] = useState({
     first_name: "",
     last_name: "",
@@ -202,6 +209,32 @@ export default function MyAccount() {
 
   const toggleCancelOrderVisibility = () => {
     setIsCancelOrderVisible(!isCancelOonSelectAddressrderVisible);
+  };
+
+  const handleDeactivateAccount = async () => {
+    try {
+      setPending(true);
+      const response = await deactivateAccountApi();
+
+      if (response.data && response.data.success) {
+        localStorage.clear();
+        toast.success("Your account has been deactivated");
+        window.location.href = "/signIn";
+        router.push("/signIn");
+      } else {
+        toast.error(
+          response.data?.message ||
+            "Failed to deactivate account. Please try again."
+        );
+      }
+    } catch (error) {
+      console.error("Deactivate account error:", error);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setTimeout(() => {
+        setPending(false);
+      }, 500);
+    }
   };
 
   const deleteuser = async () => {
@@ -605,7 +638,7 @@ export default function MyAccount() {
                   </button>
                   <div className="flex items-center lg:mt-0 mt-3 sm:mt-3">
                     <MdOutlineDeleteOutline
-                      className="text-[#F70000] lg:text-[28px] text-[20px] sm:text-[20px] mr-[16px]"
+                      className="text-[#F70000] lg:text-[28px] text-[20px] sm:text-[20px]"
                       onClick={handleOpenModelDelete}
                     />
                     <p
@@ -614,6 +647,18 @@ export default function MyAccount() {
                     >
                       Delete Account
                     </p>
+                    <div className="flex items-center">
+                      <MdOutlineDeleteForever
+                        className="text-[#777777] lg:text-[28px] text-[20px] sm:text-[20px]"
+                        onClick={() => setShowDeactivateModal(true)}
+                      />
+                      <p
+                        className="cursor-pointer text-[#777777] lg:text-[16px] text-[12px] sm:text-[14px] font-semibold"
+                        onClick={() => setShowDeactivateModal(true)}
+                      >
+                        Deactivate Account
+                      </p>
+                    </div>
                   </div>
                 </div>
                 <CustomModal
@@ -644,6 +689,35 @@ export default function MyAccount() {
                         onClick={deleteuser}
                       >
                         Delete Account
+                      </button>
+                    </div>
+                  </div>
+                </CustomModal>
+                <CustomModal
+                  showModal={showDeactivateModal}
+                  onClose={() => setShowDeactivateModal(false)}
+                >
+                  <div className="p-4 sm:p-6 relative w-full max-w-[100%] sm:max-w-md mx-auto sm:rounded-lg">
+                    <h2 className="text-xl sm:text-2xl text-center font-bold text-gray-800 mb-3 sm:mb-4">
+                      Deactivate Account
+                    </h2>
+                    <p className="text-sm sm:text-base text-center text-gray-600 mb-3 sm:mb-4">
+                      Deactivating your account will hide your profile and
+                      content from other users. You can reactivate your account
+                      at any time by logging in.
+                    </p>
+                    <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+                      <button
+                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 sm:rounded-md h-10 sm:h-12 w-full text-sm sm:text-base font-medium transition-colors"
+                        onClick={() => setShowDeactivateModal(false)}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="bg-yellow-500 hover:bg-yellow-600 sm:rounded-md h-10 sm:h-12 w-full text-sm sm:text-base font-medium text-white transition-colors"
+                        onClick={handleDeactivateAccount}
+                      >
+                        Deactivate Account
                       </button>
                     </div>
                   </div>
