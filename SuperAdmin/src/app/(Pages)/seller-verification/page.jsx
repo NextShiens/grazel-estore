@@ -3,34 +3,30 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import { IoEye } from "react-icons/io5";
 
 import SearchOnTop from "@/components/SearchOnTop";
 import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
-import { updatePageLoader, updatePageNavigation } from "@/features/features";
-
-import data from "@/components/customers";
-import electronicLED from "@/assets/Electronic-LED.png";
-import tableAction from "@/assets/svgs/table-action.svg";
-import { useRouter } from "next/navigation";
-import { IoEye } from "react-icons/io5";
 import Loading from "@/components/loading";
+import { updatePageLoader, updatePageNavigation } from "@/features/features";
 import { axiosPrivate } from "@/axios";
+
+import electronicLED from "@/assets/document-image.png";
+import tableAction from "@/assets/svgs/table-action.svg";
 
 const SellerVerification = () => {
   const dispatch = useDispatch();
   const [selectedCustomer, setSelectedCustomer] = useState(0);
   const [allSellers, setAllSellers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
+
   useEffect(() => {
     dispatch(updatePageLoader(false));
     dispatch(updatePageNavigation("seller-verification"));
   }, [dispatch]);
-  const fn_viewDetails = (id) => {
-    if (id === selectedCustomer) {
-      return setSelectedCustomer(0);
-    }
-    setSelectedCustomer(id);
-  };
 
   useEffect(() => {
     const getAllSellers = async () => {
@@ -39,14 +35,87 @@ const SellerVerification = () => {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
-      // setAllSellers([data?.user]) // to show data on web
-      // sellerRef.current=[data?.user] //to made a whole copy of data and can filter it
-      setAllSellers(data?.sellers); // to show data on web
+      setAllSellers(data?.sellers);
       console.log(data);
-      // sellerRef.current = data?.users; //to made a whole copy of data and can filter it
     };
     getAllSellers();
   }, []);
+
+  const fn_viewDetails = (id) => {
+    if (id === selectedCustomer) {
+      return setSelectedCustomer(0);
+    }
+    setSelectedCustomer(id);
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = allSellers.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(allSellers.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const ellipsis = <span className="mx-1">...</span>;
+
+    if (totalPages <= 4) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(
+          <PageButton
+            key={i}
+            page={i}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(i)}
+          />
+        );
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+        pageNumbers.push(ellipsis);
+      } else if (currentPage >= totalPages - 2) {
+        pageNumbers.push(ellipsis);
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+      } else {
+        pageNumbers.push(ellipsis);
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+        pageNumbers.push(ellipsis);
+      }
+    }
+
+    return pageNumbers;
+  };
 
   return (
     <>
@@ -70,23 +139,30 @@ const SellerVerification = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {allSellers?.map((item) => (
+                  {currentItems.map((item) => (
                     <tr key={item.id} className="h-[50px] text-[14px]">
                       <td className="flex items-center gap-1.5 h-[50px]">
-                        {item?.profile?.image && (
-                          <Image
-                            width={26}
-                            height={26}
-                            alt=""
-                            src={item?.profile?.image}
-                            className="h-[26px] w-[26px]"
-                          />
-                        )}
-                        {`${item?.profile?.first_name} ${item?.profile?.last_name}`}
+                        <Image
+                          width={26}
+                          height={26}
+                          alt=""
+                          src={item?.profile?.image || electronicLED}
+                          className="h-[26px] w-[26px] rounded-md"
+                        />
+                        {`${item?.username}`}
                       </td>
                       <td>{item?.email}</td>
                       <td>{item?.profile?.phone}</td>
-                      <td>{item?.store_profile?.store_name}</td>
+                      <td className="flex flex-row gap-1">
+                        <Image
+                          width={26}
+                          height={26}
+                          alt=""
+                          src={item?.store_profile?.store_image || electronicLED}
+                          className="h-[26px] w-[26px] rounded-md"
+                        />
+                        {item?.store_profile?.store_name || "N/A"}
+                      </td>
                       <td className="w-[130px]">
                         <p className="h-[23px] w-[60px] rounded-[5px] bg-[var(--bg-color-delivered)] text-[10px] text-[var(--text-color-delivered)] font-[500] flex items-center justify-center">
                           {item.active ? "Active" : "Inactive"}
@@ -107,7 +183,29 @@ const SellerVerification = () => {
                   ))}
                 </tbody>
               </table>
+              {allSellers.length === 0 && (
+                <h3 className="text-center text-red-500">No sellers found</h3>
+              )}
             </div>
+            {allSellers.length > 0 && (
+              <div className="flex justify-center items-center mt-4">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                {renderPageNumbers()}
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -115,7 +213,17 @@ const SellerVerification = () => {
   );
 };
 
-export default SellerVerification;
+const PageButton = ({ page, currentPage, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`mx-1 px-3 py-1 rounded ${currentPage === page
+        ? "bg-red-500 text-white"
+        : "bg-gray-200 text-gray-700"
+      }`}
+  >
+    {page}
+  </button>
+);
 
 const ViewDetails = ({ id }) => {
   const navigate = useRouter();
@@ -131,3 +239,5 @@ const ViewDetails = ({ id }) => {
     </div>
   );
 };
+
+export default SellerVerification;
