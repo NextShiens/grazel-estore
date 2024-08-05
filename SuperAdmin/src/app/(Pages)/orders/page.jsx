@@ -29,10 +29,17 @@ const Orders = () => {
   const [pendingOrder, setPendingOrder] = useState([]);
   const [completedOrder, setCompletedOrder] = useState([]);
   const orderRef = useRef([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   useEffect(() => {
     dispatch(updatePageLoader(false));
     dispatch(updatePageNavigation("orders"));
   }, [dispatch]);
+
   const fn_viewDetails = (id) => {
     if (id === orderId) {
       return setOrderId(0);
@@ -42,47 +49,129 @@ const Orders = () => {
 
   useEffect(() => {
     const getAllOrders = async () => {
-      const { data } = await axiosPrivate.get("/admin/orders", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
+      setIsLoading(true);
+      try {
+        const { data } = await axiosPrivate.get("/admin/orders", {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
 
-      orderRef.current = data?.orders;
-      setOrders(data?.orders);
+        orderRef.current = data?.orders;
+        setOrders(data?.orders);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
+    
     !allOrders?.length && getAllOrders();
   }, []);
+
   useEffect(() => {
-    console.log(selectedTab);
     const allOrderArr = orderRef?.current;
 
     if (selectedTab === "delivered") {
-      const filterOrder = orderRef?.current?.filter(
-        (item) => item.status === "completed"
-      );
-      setCompletedOrder(filterOrder);
-      // setOrders(filterOrder);
+      setCompletedOrder(allOrderArr.filter((item) => item.status === "completed"));
     } else if (selectedTab === "pending") {
-      const filterOrder = orderRef?.current?.filter(
-        (item) => item.status === "new"
-      );
-      setPendingOrder(filterOrder);
-      // setOrders(filterOrder);
+      setPendingOrder(allOrderArr.filter((item) => item.status === "new" || item.status === "in_progress" || item.status === "shipped"));
     } else if (selectedTab === "cancelled") {
-      const filterOrder = orderRef?.current?.filter(
-        (item) => item.status === "cancelled"
-      );
-
-      setCancelOrder(filterOrder);
-      // setOrders(filterOrder);
+      setCancelOrder(allOrderArr.filter((item) => item.status === "cancelled"));
     } else {
       setOrders(allOrderArr);
     }
 
-    console.log("Filtered orders based on selected tab");
+    setCurrentPage(1);
   }, [selectedTab]);
-  console.log(allOrders);
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  const getCurrentItems = () => {
+    const items = selectedTab === "delivered" ? completedOrder :
+                  selectedTab === "pending" ? pendingOrder :
+                  selectedTab === "cancelled" ? cancelOrder :
+                  allOrders;
+    return items.slice(indexOfFirstItem, indexOfLastItem);
+  };
+
+  const getTotalItems = () => {
+    return selectedTab === "delivered" ? completedOrder.length :
+           selectedTab === "pending" ? pendingOrder.length :
+           selectedTab === "cancelled" ? cancelOrder.length :
+           allOrders.length;
+  };
+
+  const currentItems = getCurrentItems();
+  const totalItems = getTotalItems();
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const ellipsis = <span className="mx-1">...</span>;
+
+    if (totalPages <= 4) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(
+          <PageButton
+            key={i}
+            page={i}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(i)}
+          />
+        );
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+        pageNumbers.push(ellipsis);
+      } else if (currentPage >= totalPages - 2) {
+        pageNumbers.push(ellipsis);
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+      } else {
+        pageNumbers.push(ellipsis);
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+        pageNumbers.push(ellipsis);
+      }
+    }
+
+    return pageNumbers;
+  };
+
   return (
     <>
       <Loading />
@@ -135,62 +224,55 @@ const Orders = () => {
                   Cancelled
                 </p>
               </div>
-              <table className="w-[1000px] xl:w-[100%]">
-                <thead>
-                  <tr className="font-[500] text-[var(--text-color-body)] text-[15px] h-[50px]">
-                    <td>Order No</td>
-                    <td>Product Name</td>
-                    <td>Price</td>
-                    <td>Date</td>
-                    <td>Status</td>
-                    <td>Seller</td>
-                    <td className="w-[80px]">Action</td>
-                  </tr>
-                </thead>
-                {selectedTab === "all" && (
+              {isLoading ? (
+                <p>Loading orders...</p>
+              ) : (
+                <table className="w-[1000px] xl:w-[100%]">
+                  <thead>
+                    <tr className="font-[500] text-[var(--text-color-body)] text-[15px] h-[50px]">
+                      <td>Order No</td>
+                      <td>Product Name</td>
+                      <td>Price</td>
+                      <td>Date</td>
+                      <td>Status</td>
+                      <td>Seller</td>
+                      <td className="w-[80px]">Action</td>
+                    </tr>
+                  </thead>
                   <tbody>
-                    {allOrders?.map((item) => (
-                      <OrderTable type="action" order={item} key={item?.id} />
-                    ))}
-                  </tbody>
-                )}
-                {selectedTab === "cancelled" && (
-                  <tbody>
-                    {allOrders?.map((item) => (
+                    {currentItems.map((item) => (
                       <OrderTable
                         type="action"
-                        status={["cancelled"]}
+                        status={selectedTab === "all" ? undefined : [selectedTab === "delivered" ? "completed" : selectedTab]}
                         order={item}
                         key={item?.id}
                       />
                     ))}
                   </tbody>
-                )}
-                {selectedTab === "pending" && (
-                  <tbody>
-                    {allOrders?.map((item) => (
-                      <OrderTable
-                        status={["new", "in_progress", "shipped"]}
-                        type="action"
-                        order={item}
-                        key={item?.id}
-                      />
-                    ))}
-                  </tbody>
-                )}
-                {selectedTab === "delivered" && (
-                  <tbody>
-                    {allOrders?.map((item) => (
-                      <OrderTable
-                        status={["completed"]}
-                        type="action"
-                        order={item}
-                        key={item?.id}
-                      />
-                    ))}
-                  </tbody>
-                )}
-              </table>
+                </table>
+              )}
+              {!isLoading && currentItems.length === 0 && (
+                <h3 className="text-center text-red-500">No orders found</h3>
+              )}
+              {!isLoading && currentItems.length > 0 && (
+                <div className="flex justify-center items-center mt-4">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+                  >
+                    Previous
+                  </button>
+                  {renderPageNumbers()}
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -198,6 +280,19 @@ const Orders = () => {
     </>
   );
 };
+
+const PageButton = ({ page, currentPage, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`mx-1 px-3 py-1 rounded ${
+      currentPage === page
+        ? "bg-red-500 text-white"
+        : "bg-gray-200 text-gray-700"
+    }`}
+  >
+    {page}
+  </button>
+);
 
 export default Orders;
 
