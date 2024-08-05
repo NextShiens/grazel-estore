@@ -16,11 +16,14 @@ import loginImg from "../assets/login-img.png";
 import grazleLogo from "../assets/grazle-logo.png";
 import emailSvg from "../assets/svgs/email-svg.svg";
 import passwordSvg from "../assets/svgs/password-svg.svg";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [loader, setLoader] = useState(false);
+  const router = useRouter();
+
 
   async function handleLogin(formdata) {
     try {
@@ -37,13 +40,16 @@ export default function Home() {
       toast.error("Invalid Email or Password");
     }
   }
+  const handleForgotPasswordClick = () => {
+    router.push('/forgot-password');
+  };
 
   useEffect(() => {
     dispatch(updatePageLoader(false))
   }, [dispatch])
   return (
     <form
-      action={(e) => {handleLogin(e); setLoader(true)}}
+      action={(e) => { handleLogin(e); setLoader(true) }}
       className="flex min-h-screen flex-col xl:flex-row items-center"
     >
       <div
@@ -106,7 +112,7 @@ export default function Home() {
               <input type="checkbox" />
               <label>Remeber me!</label>
             </div>
-            <p className="text-[var(--text-color)] font-[500]">
+            <p className="text-[var(--text-color)] font-[500] cursor-pointer" onClick={handleForgotPasswordClick}>
               Forgot Password ?
             </p>
           </div>

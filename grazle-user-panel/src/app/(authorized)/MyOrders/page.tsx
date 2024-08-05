@@ -4,7 +4,12 @@ import Location from "@/assets/layer1.png";
 import Home from "@/assets/Vectorhome.png";
 import { Avatar, Checkbox, Radio } from "@mui/material";
 import CustomModal from "@/components/CustomModel";
-import { MdDelete, MdOutlineDeleteOutline, MdUpdate } from "react-icons/md";
+import {
+  MdDelete,
+  MdOutlineDeleteOutline,
+  MdUpdate,
+  MdOutlineDeleteForever,
+} from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import { AiFillCloseCircle, AiOutlineClose } from "react-icons/ai";
 import { FaCircleCheck } from "react-icons/fa6";
@@ -23,6 +28,7 @@ import {
   getOrderByStatusApi,
   getProfileApi,
   deleteuserApi,
+  deactivateAccountApi,
 } from "@/apis";
 import { toast } from "react-toastify";
 import { logout } from "@/lib";
@@ -57,6 +63,7 @@ export default function MyAccount() {
   const [referralLink, setReferralLink] = useState("");
   const [hasOrderCanceled, setHasOrderCanceled] = useState(false);
   const router: any = useRouter();
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const cartProducts = useSelector((state: any) => state.user);
 
   const [profileData, setProfileData] = useState({
@@ -144,21 +151,50 @@ export default function MyAccount() {
     handleSectionChange("Logout");
     setShowSendModel(true);
   };
+
+  const handleDeactivateAccount = async () => {
+    try {
+      setPending(true);
+      const response = await deactivateAccountApi();
+
+      if (response.data && response.data.success) {
+        localStorage.clear();
+        toast.success("Your account has been deactivated");
+        window.location.href = "/signIn";
+        router.push("/signIn");
+      } else {
+        toast.error(
+          response.data?.message ||
+            "Failed to deactivate account. Please try again."
+        );
+      }
+    } catch (error) {
+      console.error("Deactivate account error:", error);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setTimeout(() => {
+        setPending(false);
+      }, 500);
+    }
+  };
+
   const deleteuser = async () => {
     try {
       setPending(true);
       const formdata = new FormData();
-      formdata.append('message', 'User requested account deletion'); // Add a default message
-  
+      formdata.append("message", "User requested account deletion"); // Add a default message
+
       const response = await deleteuserApi(formdata);
-      
+
       if (response.data && response.data.success) {
         localStorage.clear();
         toast.success("User has been deleted");
         window.location.href = "/signIn";
         router.push("/signIn");
       } else {
-        toast.error(response.data?.message || "Failed to delete user. Please try again.");
+        toast.error(
+          response.data?.message || "Failed to delete user. Please try again."
+        );
       }
     } catch (error) {
       console.error("Delete user error:", error);
@@ -192,6 +228,7 @@ export default function MyAccount() {
       }, 500);
     }
   }
+  
   async function onCreateAddress(formdata: any) {
     try {
       setPending(true);
@@ -222,6 +259,7 @@ export default function MyAccount() {
   }
 
   async function onEditAddress(formdata: any) {
+    console.log(addressId);
     try {
       setPending(true);
       const res = await editAddressApi(formdata, addressId);
@@ -482,52 +520,93 @@ export default function MyAccount() {
                     Update Change
                   </button>
                   <div className="flex items-center lg:mt-0 mt-3 sm:mt-3">
-        <MdOutlineDeleteOutline
-          className="text-[#F70000] lg:text-[28px] text-[20px] sm:text-[20px] mr-[16px]"
-          onClick={handleOpenModelDelete}
-        />
-        <p
-          className="cursor-pointer text-[#F70000] lg:text-[16px] text-[12px] sm:text-[14px] font-semibold mr-[16px]"
-          onClick={handleOpenModelDelete}
-        >
-          Delete Account
-        </p>
-      </div>
+                    <MdOutlineDeleteOutline
+                      className="text-[#F70000] lg:text-[28px] text-[20px] sm:text-[20px]"
+                      onClick={handleOpenModelDelete}
+                    />
+                    <p
+                      className="cursor-pointer text-[#F70000] lg:text-[16px] text-[12px] sm:text-[14px] font-semibold mr-[16px]"
+                      onClick={handleOpenModelDelete}
+                    >
+                      Delete Account
+                    </p>
+                    <div className="flex items-center">
+                      <MdOutlineDeleteForever
+                        className="text-[#777777] lg:text-[28px] text-[20px] sm:text-[20px]"
+                        onClick={() => setShowDeactivateModal(true)}
+                      />
+                      <p
+                        className="cursor-pointer text-[#777777] lg:text-[16px] text-[12px] sm:text-[14px] font-semibold"
+                        onClick={() => setShowDeactivateModal(true)}
+                      >
+                        Deactivate Account
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </form>
             )}
             <CustomModal
-  showModal={showModelDelete}
-  onClose={handleCloseModelDelete}
->
-  <div className="p-3 sm:p-6 relative w-full max-w-[100%] sm:max-w-md mx-auto rounded-md sm:rounded-lg">
-    <h2 className="text-lg sm:text-2xl text-center font-bold text-gray-800 mb-2 sm:mb-4">
-      Delete Account
-    </h2>
-    <p className="text-xs sm:text-base text-center text-gray-600 mb-2 sm:mb-4">
-      Deleting your account will remove all your information from
-      our database. This action cannot be undone.
-    </p>
-    <input
-      className=" w-full h-8 sm:h-12 px-3 text-xs sm:text-base focus:outline-none focus:ring-2 focus:ring-red-500 mb-2 sm:mb-4"
-      placeholder="Type 'Delete' to confirm"
-    />
-    <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
-      <button
-        className="bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md h-8 sm:h-12 w-full text-xs sm:text-base font-medium transition-colors"
-        onClick={handleCloseModelDelete}
-      >
-        Cancel
-      </button>
-      <button
-        className="bg-red-500 hover:bg-red-600 rounded-md h-8 sm:h-12 w-full text-xs sm:text-base font-medium text-white transition-colors"
-        onClick={deleteuser}
-      >
-        Delete Account
-      </button>
-    </div>
-  </div>
-</CustomModal>
+              showModal={showModelDelete}
+              onClose={handleCloseModelDelete}
+            >
+              <div className="p-3 sm:p-6 relative w-full max-w-[100%] sm:max-w-md mx-auto rounded-md sm:rounded-lg">
+                <h2 className="text-lg sm:text-2xl text-center font-bold text-gray-800 mb-2 sm:mb-4">
+                  Delete Account
+                </h2>
+                <p className="text-xs sm:text-base text-center text-gray-600 mb-2 sm:mb-4">
+                  Deleting your account will remove all your information from
+                  our database. This action cannot be undone.
+                </p>
+                <input
+                  className=" w-full h-8 sm:h-12 px-3 text-xs sm:text-base focus:outline-none focus:ring-2 focus:ring-red-500 mb-2 sm:mb-4"
+                  placeholder="Type 'Delete' to confirm"
+                />
+                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+                  <button
+                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md h-8 sm:h-12 w-full text-xs sm:text-base font-medium transition-colors"
+                    onClick={handleCloseModelDelete}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-red-500 hover:bg-red-600 rounded-md h-8 sm:h-12 w-full text-xs sm:text-base font-medium text-white transition-colors"
+                    onClick={deleteuser}
+                  >
+                    Delete Account
+                  </button>
+                </div>
+              </div>
+            </CustomModal>
+            <CustomModal
+              showModal={showDeactivateModal}
+              onClose={() => setShowDeactivateModal(false)}
+            >
+              <div className="p-4 sm:p-6 relative w-full max-w-[100%] sm:max-w-md mx-auto sm:rounded-lg">
+                <h2 className="text-xl sm:text-2xl text-center font-bold text-gray-800 mb-3 sm:mb-4">
+                  Deactivate Account
+                </h2>
+                <p className="text-sm sm:text-base text-center text-gray-600 mb-3 sm:mb-4">
+                  Deactivating your account will hide your profile and content
+                  from other users. You can reactivate your account at any time
+                  by logging in.
+                </p>
+                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+                  <button
+                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 sm:rounded-md h-10 sm:h-12 w-full text-sm sm:text-base font-medium transition-colors"
+                    onClick={() => setShowDeactivateModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-yellow-500 hover:bg-yellow-600 sm:rounded-md h-10 sm:h-12 w-full text-sm sm:text-base font-medium text-white transition-colors"
+                    onClick={handleDeactivateAccount}
+                  >
+                    Deactivate Account
+                  </button>
+                </div>
+              </div>
+            </CustomModal>
             {activeSection === "Orders" && (
               <>
                 <div className="">

@@ -156,8 +156,6 @@ export class UserController {
     }
   }
 
- 
-
   // async getSellerDetailWithProductsById(req: Request, res: Response) {
   //   try {
   //     const { id } = req.params;
@@ -419,8 +417,8 @@ export class UserController {
       let totalRating = 0;
       let totalReviews = 0;
 
-      products.forEach(product => {
-        product.reviews.forEach(review => {
+      products.forEach((product) => {
+        product.reviews.forEach((review) => {
           totalRating += review.rating;
         });
         totalReviews += product.reviews.length;
@@ -446,6 +444,13 @@ export class UserController {
             account_number: user.store_profile.account_number,
             bank_name: user.store_profile.bank_name,
             bank_code: user.store_profile.bank_code,
+            city: user.store_profile.city,
+            state: user.store_profile.state,
+            pin_code: user.store_profile.pin_code,
+            store_about: user.store_profile.store_about,
+            store_url: user.store_profile.store_url,
+            gst: user.store_profile.gst,
+            pan: user.store_profile.pan,
             business_license: user.store_profile.business_license
               ? `${BASE_URL}${user.store_profile.business_license}`
               : null,
@@ -523,7 +528,6 @@ export class UserController {
       });
     }
   }
-
 
   async create(req: Request, res: Response) {
     try {

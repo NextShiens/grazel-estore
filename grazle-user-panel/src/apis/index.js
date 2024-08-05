@@ -116,7 +116,8 @@ export const getAddressByIdApi = async (id) =>
   await axios.get("/addresses/" + id);
 
 export const editAddressApi = async (formdata, id) =>
-  await axios.put("/addresses/" + id, formdata);
+  await axios.put(`/addresses/${id}`, formdata);
+
 export const setPrimaryAddressApi = async (id) =>
   await axios.put(`/addresses/${id}/setPrimary`);
 
@@ -187,7 +188,7 @@ export const ccavResponseApi = async (data) => {
 };
 
 export const ccavCheckoutApi = async (data) =>
-  await axios.post("/payment/ccavenue-custom-checkout", data);
+  await axios.post("/payment/ccavenue-iframe-checkout", data);
 
 export const getFirstTrendingCategoryApi = async () =>
   await axios.get(`/trending-products-by-first-category`);
@@ -223,3 +224,33 @@ export const deleteuserApi = async (formdata) =>
       'Content-Type': 'multipart/form-data'
     }
   });
+
+  export const deactivateAccountApi = async () =>
+    await axios.post('/profile/deactivate-account', {
+        });
+
+  export const getAllMembershipPlansApi = async () =>
+    await axios.get("/membership-plans");
+  
+  export const getMembershipPlanByIdApi = async (id) =>
+    await axios.get(`/membership-plans/${id}`);
+  
+  export const purchaseMembershipPlanApi = async (membershipPlanId) => {
+    const formData = new FormData();
+    formData.append("membership_plan_id", membershipPlanId);
+    return await axios.post("/purchase-membership-plan", formData);
+  };
+  
+  export const confirmPlanPaymentApi = async (id, transactionId, paymentStatus) => {
+    const formData = new FormData();
+    formData.append("transaction_id", transactionId);
+    formData.append("payment_status", paymentStatus);
+    return await axios.post(`/confirm-plan-payment/${id}`, formData);
+  };
+  
+  export const getUserMembershipPlansApi = async () =>
+    await axios.get("/user-membership-plan");
+  
+  export const getActiveMembershipPlanApi = async () =>
+    await axios.get("/active-membership-plan");
+

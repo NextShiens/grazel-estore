@@ -1,5 +1,5 @@
 import express from "express";
-import { body, check } from "express-validator";
+import { body } from "express-validator";
 import { ProductController } from "../../controllers/seller/ProductController";
 import { sellerMiddleware } from "../../middleware/sellerMiddleware";
 import { SellerOrderController } from "../../controllers/seller/OrderController";
@@ -10,6 +10,7 @@ import { StoreProfileController } from "../../controllers/seller/StoreProfileCon
 import path from "path";
 import fs from "fs";
 import { UserMembershipController } from "../../controllers/seller/MembershipPurchaseController";
+import { authMiddleware } from "../../middleware/authMiddleware";
 
 const router = express.Router();
 const multer = require("multer");
@@ -22,20 +23,38 @@ if (!fs.existsSync(storeImageDir)) {
   console.log("Store image directory created");
 }
 
-const storeImageUploader = multer({
-  fileFilter: function (req: any, file: any, cb: any) {
-    const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(
-        new Error(
-          "Invalid file type. Only JPEG, PNG, and PDF files are allowed."
-        ),
-        false
-      );
-    }
+// Set up storage configuration
+const storage = multer.diskStorage({
+  destination: function (req: any, file: any, cb: any) {
+    // Set the destination directory for file uploads
+    cb(null, "bucket/store"); // Change 'uploads/' to your desired upload directory
   },
+  filename: function (req: any, file: any, cb: any) {
+    // Set the filename for uploaded files
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" + file.originalname);
+  },
+});
+
+// Set up file filter
+const fileFilter = (req: any, file: any, cb: any) => {
+  const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(
+      new Error(
+        "Invalid file type. Only JPEG, PNG, and PDF files are allowed."
+      ),
+      false
+    );
+  }
+};
+
+// Set up multer with storage and file filter
+const storeImageUploader = multer({
+  storage: storage,
+  fileFilter: fileFilter,
 }).fields([
   { name: "store_image", maxCount: 1 },
   { name: "business_license", maxCount: 1 },
@@ -102,7 +121,7 @@ router.get(
   productController.getProductBySlug
 );
 router.put(
-  "/:id",
+  "/vendor/products/:id",
   sellerMiddleware,
   uploader.fields([
     { name: "featured_image", maxCount: 1 },
@@ -269,18 +288,18 @@ const userMembershipPlanController = new UserMembershipController();
 
 router.get(
   "/membership-plans",
-  sellerMiddleware,
+  authMiddleware,
   userMembershipPlanController.getAll
 );
 router.get(
   "/membership-plans/:id",
-  sellerMiddleware,
+  authMiddleware,
   userMembershipPlanController.getById
 );
 
 router.post(
   "/purchase-membership-plan",
-  sellerMiddleware,
+  authMiddleware,
   parsing,
   [
     body("membership_plan_id")
@@ -292,7 +311,7 @@ router.post(
 );
 router.post(
   "/confirm-plan-payment/:id",
-  sellerMiddleware,
+  authMiddleware,
   parsing,
   [
     body("transaction_id")
@@ -307,20 +326,20 @@ router.post(
 
 router.get(
   "/user-membership-plan",
-  sellerMiddleware,
+  authMiddleware,
   userMembershipPlanController.getUserMemberships
 );
 
 router.get(
   "/active-membership-plan",
-  sellerMiddleware,
+  authMiddleware,
   userMembershipPlanController.getActiveMembershipByUserId
 );
 
 // Apply Membership Plan
 router.post(
   "/apply-membership-discount",
-  sellerMiddleware,
+  authMiddleware,
   parsing,
   [
     body("product_ids")

@@ -46,14 +46,16 @@ const RatingsOverview = ({ reviewsData }) => {
             marginBottom: 1,
           }}
         >
-          {averageRating < 2
-            ? "very Bad"
+          {totalReviews === 0 || averageRating === 0
+            ? "Rating"
+            : averageRating < 2
+            ? "Poor"
             : averageRating < 3
-            ? "bad"
+            ? "Good"
             : averageRating < 4
             ? "Very Good"
             : averageRating < 5
-            ? "Excellent"
+            ? "outstanding"
             : "Excellent"}
         </Typography>
         <Typography variant="h3" component="div" fontWeight="bold">
@@ -111,7 +113,7 @@ const RatingsOverview = ({ reviewsData }) => {
                 mx: 1,
                 height: 8,
                 borderRadius: 4,
-                 backgroundColor: '#e0e0e0',
+                backgroundColor: "#e0e0e0",
                 "& .MuiLinearProgress-bar": {
                   backgroundColor: "#F69B26",
                 },
