@@ -2,21 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import SearchOnTop from "@/components/SearchOnTop";
 import Navbar from "@/components/navbar";
-import Loading from "@/components/loading";
 import Sidebar from "@/components/sidebar";
 import { updatePageLoader, updatePageNavigation } from "@/features/features";
 import { axiosPrivate } from "@/axios";
 import Image from "next/image";
 import { CiLocationOn } from "react-icons/ci";
+import electronicLED from "@/assets/document-image.png";
 import {
   HiOutlineBuildingStorefront,
   HiOutlineCurrencyDollar,
   HiOutlinePhone,
 } from "react-icons/hi2";
-import img from "@/assets/profile.jpeg";
-import documentSvg from "@/assets/svgs/document-svg.svg";
 import { useParams } from "next/navigation";
 import { BiMessage } from "react-icons/bi";
 
@@ -39,10 +36,9 @@ const SellerDetails = () => {
       });
       setCurrentSeller(data);
       console.log(data);
-      // sellerRef.current = data?.users; //to made a whole copy of data and can filter it
     };
     getSingleSeller();
-  }, []);
+  }, [id]);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -61,21 +57,15 @@ const SellerDetails = () => {
                     alt="Profile"
                     width={80}
                     height={80}
-                    src={currentSeller?.user?.profile?.image}
+                    src={currentSeller.user.profile?.image||electronicLED }
                     className="w-[80px] h-[80px] rounded-full col-span-2 md:col-span-1"
                   />
                 ) : (
-                  <Image
-                    alt="Profile"
-                    width={80}
-                    height={80}
-                    src={img}
-                    className="w-[80px] h-[80px] rounded-full col-span-2 md:col-span-1"
-                  />
+                  <div className="w-[80px] h-[80px] rounded-full bg-gray-300"></div>
                 )}
                 <div className="text-[var(--text-color-body)]">
                   <p className="text-[17px] text-center sm:text-start">
-                    {`${currentSeller?.user?.profile?.first_name} ${currentSeller?.user?.profile?.last_name}`}
+                    {`${currentSeller?.user?.profile?.first_name || ''} ${currentSeller?.user?.profile?.last_name || ''}`}
                   </p>
                   <p className="text-[15px] text-center sm:text-start">
                     ID: {currentSeller?.user?.id}
@@ -83,14 +73,12 @@ const SellerDetails = () => {
                 </div>
                 <p
                   className={`${
-                    currentSeller?.user?.store_profile?.active
+                    currentSeller?.user?.active
                       ? "bg-[var(--bg-color-delivered)] text-[var(--text-color-delivered)]"
                       : "bg-red-100 text-red-400"
-                  } absolute right-20 sm:right-auto sm:relative h-[30px] w-[70px] rounded-[5px]  text-[14px]  font-[500] flex items-center justify-center xl:ms-[20px]`}
+                  } absolute right-20 sm:right-auto sm:relative h-[30px] w-[70px] rounded-[5px] text-[14px] font-[500] flex items-center justify-center xl:ms-[20px]`}
                 >
-                  {currentSeller?.user?.store_profile?.active
-                    ? "Active"
-                    : "Inactive"}
+                  {currentSeller?.user?.active ? "Active" : "Inactive"}
                 </p>
               </div>
             </div>
@@ -111,7 +99,7 @@ const SellerDetails = () => {
 
               <p className="text-[var(--text-color-body)] flex items-center gap-3 mt-2 text-[14px] sm:text-[16px]">
                 <CiLocationOn className="h-[20px] w-[20px]" />
-                {currentSeller?.user?.profile?.country}
+                {currentSeller?.user?.profile?.country || 'N/A'}
               </p>
             </div>
 
@@ -126,56 +114,56 @@ const SellerDetails = () => {
               </p>
               <p className="text-[var(--text-color-body)] flex items-center gap-3 mt-2 text-[14px] sm:text-[16px]">
                 <HiOutlineBuildingStorefront className="h-[20px] w-[20px]" />
-                Retail Business
+                {currentSeller?.user?.store_profile?.store_description}
               </p>
 
               <p className="text-[var(--text-color-body)] flex items-center gap-3 mt-2 text-[14px] sm:text-[16px]">
                 <HiOutlineCurrencyDollar className="h-[20px] w-[20px]" />
-                Tax ID TXJDFHSK3
+                Tax ID: {currentSeller?.user?.store_profile?.tax_id || 'N/A'}
               </p>
             </div>
           </div>
 
           <div className="border mt-5 border-gray-200 rounded-[8px] px-[5px] sm:px-[20px] py-[25px] flex flex-col lg:flex-row gap-10  xl:ps-10">
             <div>
-              <p className="text-[18px] sm:text-[20px] font-[500]">Analytics</p>
+              <p className="text-[18px] sm:text-[20px] font-[500]">Store Details</p>
               <p className="text-[var(--text-color-body)] flex items-center gap-3 mt-7 text-[14px] sm:text-[16px]">
                 <CiLocationOn className="h-[20px] w-[20px]" />
-                123 Main Street New York
+                {`${currentSeller?.user?.store_profile?.city || ''}, ${currentSeller?.user?.store_profile?.state || ''} ${currentSeller?.user?.store_profile?.pin_code || ''}`}
               </p>
               <p className="text-[var(--text-color-body)] flex items-center gap-3 mt-2 text-[14px] sm:text-[16px]">
                 <HiOutlineBuildingStorefront className="h-[20px] w-[20px]" />
-                Business Type: Individual
+                Store URL: {currentSeller?.user?.store_profile?.store_url || 'N/A'}
               </p>
             </div>
 
             <div className="border border-gray-100 hidden lg:block"></div>
             <div>
               <p className="text-[18px] sm:text-[20px] font-[500]">
-                Compliance & Docs
+                Legal Information
               </p>
               <p className="text-[var(--text-color-body)] flex items-center gap-3 mt-7 text-[14px] sm:text-[16px]">
                 <CiLocationOn className="h-[20px] w-[20px]" />
-                123 Main Street New York
+                GST: {currentSeller?.user?.store_profile?.gst || 'N/A'}
               </p>
               <p className="text-[var(--text-color-body)] flex items-center gap-3 mt-2 text-[14px] sm:text-[16px]">
                 <HiOutlineBuildingStorefront className="h-[20px] w-[20px]" />
-                Business Type: Individual
+                PAN: {currentSeller?.user?.store_profile?.pan || 'N/A'}
               </p>
             </div>
 
             <div className="border border-gray-100 hidden lg:block"></div>
             <div>
               <p className="text-[18px] sm:text-[20px] font-[500]">
-                Activity Log
+                Bank Details
               </p>
               <p className="text-[var(--text-color-body)] flex items-center gap-3 mt-7 text-[14px] sm:text-[16px]">
                 <CiLocationOn className="h-[20px] w-[20px]" />
-                123 Main Street New York, NY 10001
+                Account Name: {currentSeller?.user?.store_profile?.account_name || 'N/A'}
               </p>
               <p className="text-[var(--text-color-body)] flex items-center gap-3 mt-2 text-[14px] sm:text-[16px]">
                 <HiOutlineBuildingStorefront className="h-[20px] w-[20px]" />
-                Business Type: Individual
+                Bank: {currentSeller?.user?.store_profile?.bank_name || 'N/A'}
               </p>
             </div>
           </div>
@@ -186,36 +174,3 @@ const SellerDetails = () => {
 };
 
 export default SellerDetails;
-const DocumentUploaded = () => {
-  return (
-    <div className="border border-gray-200 rounded-[8px] p-[20px] flex items-center gap-4 sm:gap-10 flex-wrap">
-      <Image alt="" src={documentSvg} className="h-[50px] w-[50px]" />
-      <div className="flex-1 flex items-center justify-between min-w-[max-content]">
-        <div>
-          <p className="text-[18px] font-[500]">Business License</p>
-          <p className="text-[14px] text-[var(--text-color-body)]">
-            05-15-2023
-          </p>
-        </div>
-        <div>
-          <button
-            className={
-              "bg-[#00A1FF] h-[40px] px-[20px] font-[500] rounded-[8px] text-white hover:bg-transparent hover:text-[#00A1FF] transition-all duration-100 outline outline-1 hidden sm:block"
-            }
-          >
-            View
-          </button>
-        </div>
-      </div>
-      <div>
-        <button
-          className={
-            "bg-[#00A1FF] h-[40px] px-[20px] font-[500] rounded-[8px] text-white hover:bg-transparent hover:text-[#00A1FF] transition-all duration-100 outline outline-1 block sm:hidden"
-          }
-        >
-          View
-        </button>
-      </div>
-    </div>
-  );
-};
