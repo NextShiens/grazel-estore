@@ -1,141 +1,152 @@
 "use client";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Radio } from "@mui/material";
-import React, { useState } from "react";
-import ICIC from "@/assets/pngwing 23.png";
-import Avenue from "@/assets/pngwing 22.png";
-import Pay from "@/assets/Group 1820550001.png";
-import Dots from "@/assets/Group 1820549907.png";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Radio, Checkbox } from "@mui/material";
+import { toast } from "react-toastify";
 import { FaCircleCheck } from "react-icons/fa6";
+
+import { ccavCheckoutApi,purchaseMembershipPlanApi,confirmPlanPaymentApi } from "@/apis";
 import CustomModal from "@/components/CustomModel";
 
+import card from "@/assets/credit-card (3) 1.png";
+import Pay from "@/assets/Group 1820550001.png";
+import Dots from "@/assets/Group 1820549907.png";
 
 export default function Payment() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
   const [showSendModel, setShowSendModel] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isPending, setPending] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [agreedTerms, setAgreedTerms] = useState(false);
+  const [paymentData, setPaymentData] = useState(null);
 
-  const handleShowModel = () => {
-    setShowSendModel(true);
-  };
+  useEffect(() => {
+    const encodedData = searchParams.get('data');
+    if (encodedData) {
+      const decodedData = JSON.parse(decodeURIComponent(encodedData));
+      setPaymentData(decodedData);
+      console.log("Payment Data", decodedData);
+    }
+  }, [searchParams]);
 
-  const handleCloseModel = () => {
-    setShowSendModel(false);
+  const onPayment = async (event) => {
+    debugger;
+    event.preventDefault();
+    try {
+      setLoading(true);
+      const billingData = new FormData();
+      const { username, planPrice, planId, membershipId, address } = paymentData;
+
+      billingData.append("order_id", planId);
+      billingData.append("name", username);
+      billingData.append("amount", planPrice);
+      billingData.append("plan_id", planId);
+      billingData.append("address", address);
+      billingData.append("currency", "INR");
+
+      const response = await ccavCheckoutApi(billingData);
+      if (response.data && response.data.url) {
+        window.location.href = response.data.url;
+        const res = await purchaseMembershipPlanApi(planId);
+        if(!res.data || !res.data.membership) {
+          toast.error("Failed to initiate CCAvenue payment");
+          return;
+        }else{
+      // For this example, let's assume we immediately confirm the payment
+      await confirmPlanPaymentApi(res.data.membership.id, "dummy_transaction_id", "paid");
+    }
+      } else {
+        toast.error("Failed to initiate CCAvenue payment");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <>
-    <>
-      <div className="flex mt-[40px] lg:mx-0 mx-2 sm:mx-2 md:mx-4 justify-center">
-        <div className="h-[614px] w-[640px] text-center">
-          <p className="text-[32px] font-bold">Select Payment</p>
+    <div className="flex mt-[40px] lg:mx-0 mx-2 sm:mx-2 md:mx-4 justify-center">
+      <div className="h-[614px] w-[640px] text-center">
+        <p className="text-[32px] font-bold">Select Payment</p>
 
-          <div className="rounded-3xl mt-[20px]  flex items-center p-[35px] hover:border-[1px] border-[#F70000]">
-            <div className="bg-[#FFA31A] rounded-sm flex items-center justify-center  h-[61px] w-[58px]">
+        {paymentData && (
+          <div className="rounded-3xl mt-[20px] flex items-center p-[35px] hover:border-[1px] border-[#F70000]">
+            <div className="bg-[#FFA31A] rounded-sm flex items-center justify-center h-[61px] w-[58px]">
               <Image src={Pay} alt="" className="h-[29px] w-[29px]" />
             </div>
-
             <div className="text-[#777777] text-start ml-[32px]">
-              <p className="text-[24px] font-medium">Monthly</p>
-              <p className="text-[15px] font-medium ">
-                12% Off/ Validity 30 Days
+              <p className="text-[24px] font-medium">{paymentData.planName || "Plan"}</p>
+              <p className="text-[15px] font-medium">
+                {paymentData.planDescription || "Plan details"}
               </p>
             </div>
-
             <p className="text-[24px] font-bold text-[#F70000] ml-auto">
-              $166.00
+              ₹{paymentData.planPrice || ""}
+            </p>
+          </div>
+        )}
+
+        <form
+          onSubmit={onPayment}
+          style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
+          className="w-[100%] rounded-3xl p-[20px] mt-4"
+        >
+          <div className="flex items-center gap-2 mt-2">
+            <Image src={card} alt="Airpod" className="w-[30px] h-[30px] mr-2" />
+            <p className="lg:text-[30px] text-[20px] sm:text-[24px] font-medium">
+              All Payment Options
             </p>
           </div>
 
-          <p className="text-[16px] font-normal mt-[36px] text-start text-[#777777]">
-            Select the Top Up Method you want to use.
-          </p>
-
-          <div className="rounded-3xl mt-[20px] border-[1px]  flex items-center p-[35px] hover:border-[1px] border-[#F70000]">
-            <div className="bg-[#FDF9FA] rounded-sm flex items-center justify-center  h-[61px] w-[58px]">
-              <Image src={Avenue} alt="" className="h-[29px] w-[29px]" />
+          <div
+            className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${
+              paymentMethod === "ccavenue" ? "border-[#F70000]" : "border-[#777777]"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <p className="text-lg text-[#2284b5] font-medium ml-2">CC</p>
+              <p className="font-medium">Avenue</p>
             </div>
-
-            <div className="text-[#777777] text-start ml-[32px]">
-              <p className="text-[24px] font-medium">Avenue</p>
-              <p className="text-[15px] font-medium ">**** 7789 9098 4555</p>
-            </div>
-
-            <div className="ml-auto">
-              <Radio
-                sx={{
-                  color: "#F70000",
-                  "& .MuiSvgIcon-root": {
-                    fontSize: 34,
-                  },
-                  "&.Mui-checked": {
-                    color: "#F70000",
-                  },
-                }}
-              />
-            </div>
+            <Radio
+              sx={{
+                color: "#F70000",
+                "& .MuiSvgIcon-root": { fontSize: 24 },
+                "&.Mui-checked": { color: "#F70000" },
+              }}
+              checked={paymentMethod === "ccavenue"}
+              onChange={() => setPaymentMethod("ccavenue")}
+            />
           </div>
 
-          <div className="rounded-3xl mt-[20px] border-[1px]  flex items-center p-[35px] hover:border-[1px] border-[#F70000]">
-            <div className="bg-[#FFA31A] rounded-sm flex items-center justify-center  h-[61px] w-[58px]">
-              <Image src={ICIC} alt="" className="h-[29px] w-[29px]" />
-            </div>
+          <button
+            type="submit"
+            disabled={isPending || !agreedTerms || paymentMethod === ""}
+            className="mt-10 bg-[#F70000] disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none rounded-md h-[50px] w-[100%] text-[18px] font-medium text-white"
+          >
+            Pay ₹{paymentData ? paymentData.planPrice : "nothing"}
+          </button>
 
-            <div className="text-[#777777] text-start ml-[32px]">
-              <p className="text-[24px] font-medium">ICIC Bank</p>
-              <p className="text-[15px] font-medium ">**** 7789 9098 4555</p>
-            </div>
-
-            <div className="ml-auto">
-              <Radio
-                sx={{
-                  color: "#F70000",
-                  "& .MuiSvgIcon-root": {
-                    fontSize: 34,
-                  },
-                  "&.Mui-checked": {
-                    color: "#F70000",
-                  },
-                }}
-              />
-            </div>
+          <div className="mt-3 flex items-center">
+            <Checkbox
+              sx={{
+                color: "#FF8A1D",
+                "& .MuiSvgIcon-root": { fontSize: 24 },
+                "&.Mui-checked": { color: "#FF8A1D" },
+              }}
+              onChange={(e) => setAgreedTerms(e.target.checked)}
+            />
+            <p className="md:text-base text-sm font-medium ml-2 text-[#777777]">
+              By Clicking this, I agree all Terms & Conditions and Privacy & Policy
+            </p>
           </div>
-        </div>
+        </form>
       </div>
-
-      <div className="flex mt-[30px] mb-[100px] justify-center">
-        <button
-          className=" bg-[#F70000] rounded-lg h-[50px] w-[275px] text-white font-medium"
-          onClick={handleShowModel}
-        >
-          Continue Plan
-        </button>
-
-        <CustomModal showModal={showSendModel}>
-          <div className="flex-col justify-center w-[900px]">
-            <div className="mx-[150px] my-[100px]">
-              <div className="flex justify-center mb-[22px]">
-                <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
-
-                <FaCircleCheck className="text-[#E24C4B] h-[105px] mx-[16px] w-[105px]" />
-                <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
-              </div>
-
-              <p className="text-[32px] text-center font-bold text-[#434343]">
-                You Have Successfully purchased Prime Plan.
-              </p>
-
-              <div className="flex mt-[30px] mb-[100px] justify-center">
-                <button
-                  className=" bg-[#F70000] rounded-lg h-[50px] w-[275px] text-white font-medium"
-                  onClick={handleShowModel}
-                >
-                  Continue
-                </button>
-              </div>
-            </div>
-          </div>
-        </CustomModal>
-      </div>
-      </>
-    </>
+    </div>
   );
 }

@@ -560,6 +560,15 @@ export default function Navbar() {
                     <Image src={card} alt="Credit" width={20} height={20} />
                     <span className="text-sm">Credit Limit</span>
                   </div>
+                  {/* <div className="border-t my-2"> */}
+                  <div
+                    onClick={() => router.push('/PaymentPlan')}
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
+                  >
+                    <Image src={crown} alt="Referral" width={20} height={20} />
+                    <span className="text-sm">Payment Plan</span>
+                    </div>
+                  {/* </div> */}
                   <div
                     onClick={() => router.push('/ReferralRanking')}
                     className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
@@ -730,6 +739,15 @@ export default function Navbar() {
                 >
                   <Image src={card} alt="Credit" className="w-5 h-5" />
                   <span className="text-sm">Credit Limit</span>
+                </Link>
+                <Link
+                  href="/PaymentPlan"
+                  className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+                  onClick={handleMenuclose}
+                >
+                  <Image src={crown} alt
+                  ="Referral" className="w-5 h-5" />
+                  <span className="text-sm">Payment Plan</span>
                 </Link>
                 <Link
                   href="/ReferralRanking"
