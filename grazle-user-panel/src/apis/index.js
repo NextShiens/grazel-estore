@@ -223,3 +223,28 @@ export const deleteuserApi = async (formdata) =>
       'Content-Type': 'multipart/form-data'
     }
   });
+
+  export const getAllMembershipPlansApi = async () =>
+    await axios.get("/membership-plans");
+  
+  export const getMembershipPlanByIdApi = async (id) =>
+    await axios.get(`/membership-plans/${id}`);
+  
+  export const purchaseMembershipPlanApi = async (membershipPlanId) => {
+    const formData = new FormData();
+    formData.append("membership_plan_id", membershipPlanId);
+    return await axios.post("/purchase-membership-plan", formData);
+  };
+  
+  export const confirmPlanPaymentApi = async (id, transactionId, paymentStatus) => {
+    const formData = new FormData();
+    formData.append("transaction_id", transactionId);
+    formData.append("payment_status", paymentStatus);
+    return await axios.post(`/confirm-plan-payment/${id}`, formData);
+  };
+  
+  export const getUserMembershipPlansApi = async () =>
+    await axios.get("/user-membership-plan");
+  
+  export const getActiveMembershipPlanApi = async () =>
+    await axios.get("/active-membership-plan");

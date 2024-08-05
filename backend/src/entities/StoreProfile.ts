@@ -44,6 +44,27 @@ export class StoreProfile {
   @Column({ nullable: true })
   proof_of_address: string;
 
+  @Column({ nullable: true })
+  city: string;
+
+  @Column({ nullable: true })
+  state: string;
+
+  @Column({ nullable: true })
+  pin_code: string;
+
+  @Column({ nullable: true })
+  store_about: string;
+
+  @Column({ nullable: true })
+  store_url: string;
+
+  @Column({ nullable: true })
+  gst: string;
+
+  @Column({ nullable: true })
+  pan: string;
+
   @Column({ type: "boolean", default: false })
   active: boolean;
 

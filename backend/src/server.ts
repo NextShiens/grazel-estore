@@ -6,8 +6,10 @@ import "./cron/schedule";
 
 const port = 8000;
 
+const bucketPath = path.join(__dirname, "../bucket");
+
 // Serve static files from the 'bucket' directory
-app.use("/bucket", express.static(path.join(__dirname, "bucket")));
+app.use("/bucket", express.static(bucketPath));
 
 app.use("/", (req: any, res: any) => {
   res.send({ message: "Hi Node!" });

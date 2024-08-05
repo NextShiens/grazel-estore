@@ -16,11 +16,13 @@ import { toast } from "react-toastify";
 import Link from "next/link";
 import { useState } from "react";
 import { axiosPrivate } from "../axios/index";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const dispatch = useDispatch();
   const [loader, setLoader] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   async function onLogin(formdata) {
     try {
@@ -44,6 +46,9 @@ export default function Home() {
       toast.error(err?.response?.data?.message);
     }
   }
+  const handleForgotPasswordClick = () => {
+    router.push('/forgot-password');
+  };
 
   return (
     <form
@@ -110,9 +115,9 @@ export default function Home() {
               <input type="checkbox" />
               <label>Remeber me!</label>
             </div>
-            <p className="text-[var(--text-color)] font-[500]">
-              Forgot Password ?
-            </p>
+            <p className="text-[var(--text-color)] font-[500] cursor-pointer" onClick={handleForgotPasswordClick}>
+      Forgot Password ?
+    </p>
           </div>
           {!loader ? (
             <input
