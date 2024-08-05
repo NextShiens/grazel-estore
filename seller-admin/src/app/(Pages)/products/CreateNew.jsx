@@ -6,7 +6,7 @@ import { updatePageNavigation } from "../../../features/features";
 import { FaCamera } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import { WithContext as ReactTags } from "react-tag-input";
-import { MdCancel } from "react-icons/md";
+import { MdCancel, MdDelete } from "react-icons/md";
 import Image from "next/image";
 import { axiosPrivate } from "../../../axios/index";
 import { LuLoader2 } from "react-icons/lu";
@@ -49,17 +49,17 @@ const AddProduct = ({ setSelectedTab }) => {
           },
         });
         if (data && !allBrands.length) {
-
           setAllBrands(data?.brands);
         }
       } catch (error) {
         console.error("Error fetching brands:", error);
-       
       }
     };
     getAllBrands();
   }, []);
-const randomId =  Math.floor(Math.random() * 1000);
+
+  const randomId = Math.floor(Math.random() * 1000);
+
   async function onAddProduct(e) {
     e.preventDefault();
     try {
@@ -149,6 +149,11 @@ const randomId =  Math.floor(Math.random() * 1000);
     }
   };
 
+  const handleRemoveFaq = (index) => {
+    const newFaqs = faqs.filter((_, i) => i !== index);
+    setFaqs(newFaqs);
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex-1 flex">
@@ -157,30 +162,31 @@ const randomId =  Math.floor(Math.random() * 1000);
             onSubmit={onAddProduct}
             className="bg-white rounded-[8px] shadow-sm px-[20px] py-[25px]"
           >
-            <p className="text-[20px] font-[600]">Create New Product</p>
-            <p className="text-[18px] font-[600] pt-[20px]">
-              General Information
-            </p>
-            <div>
-              <div className="flex flex-col gap-1 my-[15px]">
-                <label className="text-[#777777]">Name</label>
-                <input
-                  placeholder="Product Name"
-                  name="title"
-                  required
-                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
-                />
+            <h1 className="text-[24px] font-[600] mb-[20px]">Create New Product</h1>
+            
+            <section className="mb-[30px]">
+              <h2 className="text-[20px] font-[600] mb-[15px]">General Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Name</label>
+                  <input
+                    placeholder="Product Name"
+                    name="title"
+                    required
+                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Tags</label>
+                  <input
+                    placeholder="Tags"
+                    name="tags"
+                    required
+                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                  />
+                </div>
               </div>
-              <div className="flex flex-col gap-1 my-[15px]">
-                <label className="text-[#777777]">Tags</label>
-                <input
-                  placeholder="Tags"
-                  name="tags"
-                  required
-                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
-                />
-              </div>
-              <div className="flex flex-col gap-1 my-[15px]">
+              <div className="flex flex-col gap-1 mt-4">
                 <label className="text-[#777777]">Description</label>
                 <textarea
                   placeholder="Write about product"
@@ -189,128 +195,155 @@ const randomId =  Math.floor(Math.random() * 1000);
                   className="focus:outline-none border-[2px] border-gray-200 py-2 rounded-[8px] px-[15px] h-[110px] text-[15px]"
                 />
               </div>
-            </div>
+            </section>
 
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Product Info</label>
-                <input
-                  placeholder="Product Info"
-                  name="product_info"
-                  required
-                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
-                />
+            <section className="mb-[30px]">
+              <h2 className="text-[20px] font-[600] mb-[15px]">Product Details</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Product Info</label>
+                  <input
+                    placeholder="Product Info"
+                    name="product_info"
+                    required
+                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Variants</label>
+                  <div className="ReactTags__tags">
+                    <ReactTags
+                      tags={tags}
+                      handleDelete={handleDelete}
+                      handleAddition={handleAddition}
+                      delimiters={[188, 13]}
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Variants</label>
-                <div className="ReactTags__tags">
-                  <ReactTags
-                    tags={tags}
-                    handleDelete={handleDelete}
-                    handleAddition={handleAddition}
-                    delimiters={[188, 13]}
+            </section>
+
+            <section className="mb-[30px]">
+              <h2 className="text-[20px] font-[600] mb-[15px]">FAQs</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Question</label>
+                  <input
+                    type="text"
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                    placeholder="Enter FAQ question"
+                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Answer</label>
+                  <input
+                    type="text"
+                    value={answer}
+                    onChange={(e) => setAnswer(e.target.value)}
+                    placeholder="Enter FAQ answer"
+                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
                   />
                 </div>
               </div>
-            </div>
+              <button
+                type="button"
+                onClick={handleAddFaq}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                Add FAQ
+              </button>
+              
+              {faqs.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="text-[18px] font-[600] mb-2">Added FAQs:</h3>
+                  <ul className="space-y-2">
+                    {faqs.map((faq, index) => (
+                      <li key={index} className="flex items-center justify-between bg-gray-100 p-3 rounded-lg">
+                        <div>
+                          <p className="font-semibold">{faq.question}</p>
+                          <p className="text-gray-600">{faq.answer}</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveFaq(index)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <MdDelete size={20} />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </section>
 
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Add FAQs Question</label>
-                <input
-                  type="text"
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
-                  placeholder="Question"
-                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
-                />
+            <section className="mb-[30px]">
+              <h2 className="text-[20px] font-[600] mb-[15px]">Category and Brand</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Category</label>
+                  <select
+                    name="category_id"
+                    required
+                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px] text-[var(--text-color-body)]"
+                  >
+                    <option selected disabled>Select an option</option>
+                    {allCategories?.map((item) => (
+                      <option key={item?.id} value={item?.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Brand</label>
+                  <select
+                    name="brand_id"
+                    required
+                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px] text-[var(--text-color-body)]"
+                  >
+                    <option selected disabled>Select an option</option>
+                    {allBrands?.map((item) => (
+                      <option key={item?.id} value={item?.id || randomId}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-            </div>
+            </section>
 
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Add FAQs Answer</label>
-                <input
-                  type="text"
-                  value={answer}
-                  onChange={(e) => setAnswer(e.target.value)}
-                  placeholder="Answer"
-                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
-                />
+            <section className="mb-[30px]">
+              <h2 className="text-[20px] font-[600] mb-[15px]">Pricing</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Price</label>
+                  <input
+                    placeholder="₹"
+                    name="price"
+                    required
+                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Discount</label>
+                  <input
+                    placeholder="%"
+                    name="discount"
+                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                  />
+                </div>
               </div>
-            </div>
-            <button
-              type="button"
-              onClick={handleAddFaq}
-              className="p-2 bg-blue-500 text-white rounded-lg"
-            >
-              Add FAQ
-            </button>
+            </section>
 
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Category</label>
-                <select
-                  name="category_id"
-                  required
-                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px] text-[var(--text-color-body)]"
-                >
-                  <option selected disabled>
-                    Select an option
-                  </option>
-                  {allCategories?.map((item) => (
-                    <option key={item?.id} value={item?.id}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Brand</label>
-                <select
-                  name="brand_id"
-                  required
-                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px] text-[var(--text-color-body)]"
-                >
-                  <option selected disabled>
-                    Select an option
-                  </option>
-                  {allBrands?.map((item) => (
-                    <option key={item?.id} value={item?.id||randomId}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <p className="text-[18px] font-[600] pt-[20px]">Pricing</p>
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Price</label>
-                <input
-                  placeholder="₹"
-                  name="price"
-                  required
-                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
-                />
-              </div>
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Discount</label>
-                <input
-                  placeholder="%"
-                  name="discount"
-                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
-                />
-              </div>
-            </div>
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <p className="text-[18px] font-[600] pt-[20px]">
-                  Feature Image
-                </p>
-                <div className="my-[15px] ">
+            <section className="mb-[30px]">
+              <h2 className="text-[20px] font-[600] mb-[15px]">Images</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1">
                   <label className="text-[#777777]">Feature Image</label>
-                  <div className="flex gap-5  my-[15px]  xl:flex-row">
+                  <div className="flex gap-5 my-[15px] flex-col xl:flex-row">
                     <input
                       type="file"
                       id="uploadPic"
@@ -355,13 +388,8 @@ const randomId =  Math.floor(Math.random() * 1000);
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <p className="text-[18px] font-[600] pt-[20px]">
-                  Gallery Images
-                </p>
-                <div className="my-[15px]">
-                  <label className="text-[#777777]">Gallery Image</label>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Gallery Images</label>
                   <div className="flex gap-5 justify-between my-[15px] flex-col xl:flex-row">
                     <input
                       type="file"
@@ -386,7 +414,6 @@ const randomId =  Math.floor(Math.random() * 1000);
                           Supported formats: JPEG, PNG
                         </p>
                       </label>
-
                       <div className="flex flex-row gap-3 flex-wrap">
                         {galleryImage?.map((item, index) => (
                           <div key={index} className="relative">
@@ -409,41 +436,42 @@ const randomId =  Math.floor(Math.random() * 1000);
                   </div>
                 </div>
               </div>
-            </div>
+            </section>
 
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Size</label>
-                <input
-                  placeholder="Size (e.g., XS, S, M, L, XL, XXL)"
-                  name="size"
-                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
-                />
+            <section className="mb-[30px]">
+              <h2 className="text-[20px] font-[600] mb-[15px]">Additional Details</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Size</label>
+                  <input
+                    placeholder="Size (e.g., XS, S, M, L, XL, XXL)"
+                    name="size"
+                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Color</label>
+                  <input
+                    placeholder="Color"
+                    name="color"
+                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                  />
+                </div>
               </div>
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Color</label>
-                <input
-                  placeholder="Color"
-                  name="color"
-                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
-                />
-              </div>
-            </div>
+            </section>
 
-            <div className="flex flex-col gap-10 pb-8">
+            <div className="flex justify-center mt-8">
               <button
                 type="submit"
                 disabled={isPending}
-                className="h-[50px] rounded-[8px] bg-[#FE4242] flex items-center justify-center text-white font-[500] w-full sm:w-[200px] mt-10 disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none"
+                className="h-[50px] rounded-[8px] bg-[#FE4242] flex items-center justify-center text-white font-[500] w-full sm:w-[200px] disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none transition-colors hover:bg-[#E63B3B]"
               >
                 {isPending ? (
-                  <p>
-                    <LuLoader2
-                      size={20}
-                      className="animate-spin mx-auto mt-3"
-                      color={"white"}
-                    />
-                  </p>
+                  <LuLoader2
+                    size={20}
+                    className="animate-spin"
+                    color={"white"}
+                  />
                 ) : (
                   "Add Product"
                 )}

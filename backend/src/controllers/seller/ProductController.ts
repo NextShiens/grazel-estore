@@ -381,95 +381,251 @@ export class ProductController {
   }
 
   // Update Product
+  // async updateProduct(req: Request, res: Response) {
+  //   try {
+  //     const { id } = req.params;
+  //     const { category_id, brand_id, title, price, description, tags } =
+  //       req.body;
+
+  //     const productRepository = appDataSource.getRepository(Product);
+  //     const galleryRepository = appDataSource.getRepository(ProductsGallery);
+
+  //     const product = await productRepository.findOne({
+  //       where: { id: parseInt(id) },
+  //       relations: ["gallery"],
+  //     });
+
+  //     if (!product) {
+  //       return res.status(404).json({
+  //         success: false,
+  //         message: "Product not found",
+  //       });
+  //     }
+
+  //     product.category_id = category_id || product.category_id;
+  //     product.brand_id = brand_id || product.brand_id;
+  //     product.title = title || product.title;
+  //     product.price = price || product.price;
+  //     product.description = description || product.description;
+  //     product.tags = tags || product.tags;
+
+  //     const featured_image = (
+  //       req as any
+  //     ).files?.featured_image?.[0]?.path.replace(/\\/g, "/");
+  //     const gallery_images =
+  //       (req as any).files?.gallery_images?.map((file: any) =>
+  //         file.path.replace(/\\/g, "/")
+  //       ) || [];
+
+  //     if (featured_image) {
+  //       if (product.featured_image) {
+  //         const oldImagePath = path.join(
+  //           __dirname,
+  //           "../../..",
+  //           product.featured_image
+  //         );
+  //         fs.unlink(oldImagePath, (err) => {
+  //           if (err) console.error("Failed to delete old image:", err);
+  //         });
+  //       }
+  //       product.featured_image = featured_image;
+  //     }
+
+  //     await productRepository.save(product);
+
+  //     if (gallery_images.length > 0) {
+  //       const existingGallery = product.gallery || [];
+
+  //       for (const galleryItem of existingGallery) {
+  //         const oldGalleryPath = path.join(
+  //           __dirname,
+  //           "../../..",
+  //           galleryItem.image
+  //         );
+  //         fs.unlink(oldGalleryPath, (err) => {
+  //           if (err) console.error("Failed to delete old gallery image:", err);
+  //         });
+
+  //         await galleryRepository.remove(galleryItem);
+  //       }
+
+  //       const newGalleryEntries = gallery_images.map((image: string) => {
+  //         const galleryEntry = new ProductsGallery();
+  //         galleryEntry.product_id = product.id;
+  //         galleryEntry.image = image;
+  //         return galleryEntry;
+  //       });
+
+  //       await galleryRepository.save(newGalleryEntries);
+  //     }
+
+  //     res.status(200).json({
+  //       product: {
+  //         ...omitProductTimestamps(product),
+  //         gallery: gallery_images.map((image: string) => ({
+  //           id: 0, // Since the gallery entry might not have an id yet
+  //           image: addBaseUrlToImage(image),
+  //         })),
+  //       },
+  //       success: true,
+  //       message: "Product updated successfully!",
+  //     });
+  //   } catch (error: any) {
+  //     res.status(500).json({
+  //       success: false,
+  //       message: "Failed to update product",
+  //       error: error.message,
+  //     });
+  //   }
+  // }
+
   async updateProduct(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const { category_id, brand_id, title, price, description, tags } =
-        req.body;
-
+  
+      const {
+        category_id,
+        brand_id,
+        title,
+        price,
+        discount,
+        description,
+        tags,
+        color,
+        product_info,
+        questions,
+        answers,
+        variants,
+      } = req.body;
+  
       const productRepository = appDataSource.getRepository(Product);
       const galleryRepository = appDataSource.getRepository(ProductsGallery);
-
+      const faqsRepository = appDataSource.getRepository(ProductFaqs);
+      const variantRepository = appDataSource.getRepository(ProductVariant);
+  
       const product = await productRepository.findOne({
         where: { id: parseInt(id) },
-        relations: ["gallery"],
+        relations: ["gallery", "faqs", "variants"],
       });
-
+  
       if (!product) {
         return res.status(404).json({
           success: false,
           message: "Product not found",
         });
       }
-
+  
       product.category_id = category_id || product.category_id;
       product.brand_id = brand_id || product.brand_id;
       product.title = title || product.title;
       product.price = price || product.price;
       product.description = description || product.description;
       product.tags = tags || product.tags;
-
-      const featured_image = (
-        req as any
-      ).files?.featured_image?.[0]?.path.replace(/\\/g, "/");
+      product.color = color || product.color;
+      product.product_info = product_info || product.product_info;
+  
+      if (discount && !isNaN(parseFloat(discount))) {
+        product.discount = parseFloat(discount);
+        const discountAmount = parseFloat(discount) / 100;
+        product.discounted_price = product.price * (1 - discountAmount);
+      } else {
+        product.discount = null;
+        product.discounted_price = product.price;
+      }
+  
+      const featured_image = (req as any).files?.featured_image?.[0]?.path.replace(/\\/g, "/");
       const gallery_images =
         (req as any).files?.gallery_images?.map((file: any) =>
           file.path.replace(/\\/g, "/")
         ) || [];
-
+  
       if (featured_image) {
         if (product.featured_image) {
-          const oldImagePath = path.join(
-            __dirname,
-            "../../..",
-            product.featured_image
-          );
+          const oldImagePath = path.join(__dirname, "../../..", product.featured_image);
           fs.unlink(oldImagePath, (err) => {
             if (err) console.error("Failed to delete old image:", err);
           });
         }
         product.featured_image = featured_image;
       }
-
+  
       await productRepository.save(product);
-
+  
       if (gallery_images.length > 0) {
         const existingGallery = product.gallery || [];
-
+  
         for (const galleryItem of existingGallery) {
-          const oldGalleryPath = path.join(
-            __dirname,
-            "../../..",
-            galleryItem.image
-          );
+          const oldGalleryPath = path.join(__dirname, "../../..", galleryItem.image);
           fs.unlink(oldGalleryPath, (err) => {
             if (err) console.error("Failed to delete old gallery image:", err);
           });
-
+  
           await galleryRepository.remove(galleryItem);
         }
-
+  
         const newGalleryEntries = gallery_images.map((image: string) => {
           const galleryEntry = new ProductsGallery();
           galleryEntry.product_id = product.id;
           galleryEntry.image = image;
           return galleryEntry;
         });
-
+  
         await galleryRepository.save(newGalleryEntries);
       }
-
-      res.status(200).json({
-        product: {
-          ...omitProductTimestamps(product),
-          gallery: gallery_images.map((image: string) => ({
-            id: 0, // Since the gallery entry might not have an id yet
-            image: addBaseUrlToImage(image),
-          })),
-        },
-        success: true,
-        message: "Product updated successfully!",
+  
+      // Updating FAQs
+      if (questions && answers && questions.length === answers.length) {
+        const existingFaqs = product.faqs || [];
+  
+        await faqsRepository.remove(existingFaqs);
+  
+        const faqEntries = questions.map((question: string, index: number) => {
+          const faqEntry = new ProductFaqs();
+          faqEntry.product = product;
+          faqEntry.question = question;
+          faqEntry.answer = answers[index];
+          return faqEntry;
+        });
+  
+        await faqsRepository.save(faqEntries);
+      }
+  
+      // Updating Variants
+      if (variants && Array.isArray(variants) && variants.length > 0) {
+        const existingVariants = product.variants || [];
+  
+        await variantRepository.remove(existingVariants);
+  
+        const variantEntries = variants.map((variant: any) => {
+          const productVariant = new ProductVariant();
+          productVariant.variant = variant.variant;
+          productVariant.price = variant.price;
+          productVariant.color = variant.color;
+          productVariant.measurements = variant.measurements;
+          productVariant.product = product;
+          return productVariant;
+        });
+  
+        await variantRepository.save(variantEntries);
+      }
+  
+      const updatedProduct = await productRepository.findOne({
+        where: { id: product.id },
+        relations: ["gallery", "faqs", "variants"],
       });
+  
+      if (updatedProduct) {
+        res.status(200).json({
+          product: updatedProduct,
+          success: true,
+          message: "Product updated successfully!",
+        });
+      } else {
+        res.status(500).json({
+          success: false,
+          message: "Failed to fetch updated product details",
+        });
+      }
     } catch (error: any) {
       res.status(500).json({
         success: false,
@@ -478,6 +634,7 @@ export class ProductController {
       });
     }
   }
+  
 
   // Delete Product
   async deleteProduct(req: Request, res: Response) {

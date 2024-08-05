@@ -144,6 +144,9 @@ export const getBuyerOrdersApi = async () => await axios.get(`/buyer/orders`);
 export const addReviewApi = async (data) => await axios.post(`/reviews`, data);
 export const getOfferProductsByIDApi = async (id) =>
   await axios.get(`/global/products-by-offer/${id}`);
+
+export const fiftyPercentSaleProductsApi = async () =>
+  await axios.get(`/global/product-by-percentage-offers/seventy`);
 export const getOfferProductsApi = async (data) =>
   await axios.get(`/global/product-offers`);
 
@@ -225,3 +228,29 @@ export const deleteuserApi = async (formdata) =>
   export const deactivateAccountApi = async () =>
     await axios.post('/profile/deactivate-account', {
         });
+
+  export const getAllMembershipPlansApi = async () =>
+    await axios.get("/membership-plans");
+  
+  export const getMembershipPlanByIdApi = async (id) =>
+    await axios.get(`/membership-plans/${id}`);
+  
+  export const purchaseMembershipPlanApi = async (membershipPlanId) => {
+    const formData = new FormData();
+    formData.append("membership_plan_id", membershipPlanId);
+    return await axios.post("/purchase-membership-plan", formData);
+  };
+  
+  export const confirmPlanPaymentApi = async (id, transactionId, paymentStatus) => {
+    const formData = new FormData();
+    formData.append("transaction_id", transactionId);
+    formData.append("payment_status", paymentStatus);
+    return await axios.post(`/confirm-plan-payment/${id}`, formData);
+  };
+  
+  export const getUserMembershipPlansApi = async () =>
+    await axios.get("/user-membership-plan");
+  
+  export const getActiveMembershipPlanApi = async () =>
+    await axios.get("/active-membership-plan");
+
