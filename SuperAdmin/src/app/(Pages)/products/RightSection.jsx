@@ -19,10 +19,17 @@ const RightSection = ({ allProducts }) => {
             </tr>
           </thead>
           <tbody>
-            {allProducts?.map((item, i) => (
+            { allProducts?.length>0 && allProducts?.map((item, i) => (
               <tr className="text-[14px] leading-[35px]" key={i}>
                 <td className="h-[100%] flex gap-1 items-center">
-                  <Image alt="" src={product} />
+                  <Image
+                    alt=""
+                    width={30}
+                    height={30}
+                    src={item?.featured_image || product}
+                    className="rounded-full max-h-7"
+                    layout="fixed"
+                  />
                   <label>{item.title}</label>
                 </td>
                 <td>{item?.user?.username} </td>
@@ -33,7 +40,7 @@ const RightSection = ({ allProducts }) => {
                     } h-[28px] w-[75px] rounded-[5px] text-[10px] text-[var(--text-color-delivered)] font-[500] flex items-center justify-center `}
                   >
                     {item.active ? "In Stock" : "Out of Stock"}
-                  </p>
+                  </p>  
                 </td>
                 <td>₹{item.price}</td>
                 {/* <td>{item?.category?.name}</td> */}
