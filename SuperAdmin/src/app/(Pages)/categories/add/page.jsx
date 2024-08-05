@@ -1,15 +1,12 @@
 "use client";
-
 import React, { useEffect, useState, Suspense } from "react";
 import Image from "next/image";
 import { useDispatch } from "react-redux";
-
 import { updatePageLoader, updatePageNavigation } from "@/features/features";
 import SearchOnTop from "@/components/SearchOnTop";
 import Loading from "@/components/loading";
 import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
-
 import { FaCamera } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -21,7 +18,7 @@ const AddCategories = () => {
   const router = useRouter();
   const [loader, setLoader] = useState(false);
   const [categoryImage, setCategoryImage] = useState([]);
-  const [categoryDetail, setCategory] = useState({});
+  const [categoryDetail, setCategoryDetail] = useState({});
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
 
@@ -29,28 +26,43 @@ const AddCategories = () => {
     dispatch(updatePageLoader(false));
     dispatch(updatePageNavigation("categories"));
   }, [dispatch]);
+
   function onRemoveCategoryImg() {
     setCategoryImage([]);
   }
+
   useEffect(() => {
     const getCategory = async () => {
-      const { data } = await axiosPrivate.get(
-        `/categories/details/${category}`,
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
+      try {
+        const { data } = await axiosPrivate.get(
+          `/categories/details/${category}`,
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          }
+        );
+        setCategoryDetail(data?.category);
+        if (data?.category?.image) {
+          setCategoryImage([data.category.image]);
         }
-      );
-      setCategory(data?.category);
+      } catch (error) {
+        console.error("Error fetching category details:", error);
+        toast.error("Failed to fetch category details");
+      }
     };
-    category && getCategory();
-  }, []);
+    if (category) {
+      getCategory();
+    } else {
+      setCategoryDetail({});
+      setCategoryImage([]);
+    }
+  }, [category]);
 
-  async function onCreate(formdata) {
+  async function onCreate(formData) {
     if (!category && !categoryImage?.length) {
       setLoader(false);
-      return toast.error("Please select image");
+      return toast.error("Please select an image");
     }
     try {
       const url = category ? `/categories/${category}` : "/categories";
@@ -58,19 +70,24 @@ const AddCategories = () => {
       await axiosPrivate({
         url,
         method,
-        data: formdata,
-        headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+        data: formData,
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+          "Content-Type": "multipart/form-data"
+        },
       });
-      let message = category
+      const message = category
         ? "Category has been updated"
         : "Category has been created";
       toast.success(message);
+      setLoader(false);
       router.push("/categories");
       dispatch(updatePageLoader(true));
-      setLoader(false);
     } catch (error) {
+      console.error("Error creating/updating category:", error);
+      toast.error("Something went wrong");
+    } finally {
       setLoader(false);
-      toast.success("Something went wrong");
     }
   }
 
@@ -84,9 +101,11 @@ const AddCategories = () => {
           <div className="flex-1 mt-[30px] px-[10px] sm:px-[22px]">
             <SearchOnTop showButton={true} navigateTo={"/categories/add"} />
             <form
-              action={(e) => {
-                onCreate(e);
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
                 setLoader(true);
+                onCreate(formData);
               }}
               className="mt-[20px] bg-white rounded-[8px] shadow-sm p-[30px]"
             >
@@ -99,8 +118,27 @@ const AddCategories = () => {
                   placeholder="Category Name"
                   name="name"
                   required
-                  defaultValue={categoryDetail?.name}
+                  defaultValue={categoryDetail?.name || ""}
                   className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                />
+              </div>
+              <div className="flex flex-col gap-1 my-[15px]">
+                <label className="text-[#777777]">Slug</label>
+                <input
+                  placeholder="category-slug"
+                  name="slug"
+                  required
+                  defaultValue={categoryDetail?.slug || ""}
+                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                />
+              </div>
+              <div className="flex flex-col gap-1 my-[15px]">
+                <label className="text-[#777777]">Description</label>
+                <textarea
+                  placeholder="Category Description"
+                  name="description"
+                  defaultValue={categoryDetail?.description || ""}
+                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] py-[10px] h-[100px] text-[15px]"
                 />
               </div>
               <div className="my-[15px] ">
@@ -111,7 +149,6 @@ const AddCategories = () => {
                     id="uploadPic"
                     className="hidden"
                     name="image"
-                    value={categoryDetail?.image}
                     onChange={(e) => {
                       setCategoryImage([e.target.files[0]]);
                     }}
@@ -138,11 +175,11 @@ const AddCategories = () => {
                           <Image
                             width={120}
                             height={120}
-                            src={URL.createObjectURL(item)}
+                            src={typeof item === 'string' ? item : URL.createObjectURL(item)}
                             alt=""
                           />
                           <span
-                            onClick={() => onRemoveCategoryImg(index)}
+                            onClick={() => onRemoveCategoryImg()}
                             className="absolute top-0 right-0 cursor-pointer"
                           >
                             <MdCancel
@@ -156,21 +193,14 @@ const AddCategories = () => {
                   </div>
                 </div>
               </div>
-              {!loader ? (
-                <button
-                  type="submit"
-                  className="bg-[#FE4242] disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none rounded-[8px] h-[40px] px-[40px] py-[10px] text-white text-[15px] font-[500] w-[max-content]"
-                >
-                  {category ? "Save Changes" : "Submit"}
-                </button>
-              ) : (
-                <button
-                  disabled
-                  className="bg-red-300 rounded-[8px] h-[40px] px-[40px] py-[10px] text-white text-[15px] font-[500] w-[max-content] cursor-not-allowed"
-                >
-                  Loading...
-                </button>
-              )}
+              <button
+                type="submit"
+                disabled={loader}
+                className={`${loader ? "bg-red-300 cursor-not-allowed" : "bg-[#FE4242]"
+                  } rounded-[8px] h-[40px] px-[40px] py-[10px] text-white text-[15px] font-[500] w-[max-content]`}
+              >
+                {loader ? "Loading..." : category ? "Save Changes" : "Submit"}
+              </button>
             </form>
           </div>
         </div>

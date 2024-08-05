@@ -114,10 +114,15 @@ const Categories = () => {
                   </div>
                   {selectedCategory === item?.id && (
                     <div className="border-t border-gray-200 mt-4 flex flex-col gap-3 text-gray-400 pt-4">
-                      <p className="text-[19px]">Smart Phones</p>
-                      <p className="text-[19px]">Air Conditioner</p>
-                      <p className="text-[19px]">Laptops</p>
-                      <p className="text-[19px]">Washing Machines</p>
+                      <p className="text-[19px]">
+                        <span className="font-bold">Slug:</span> {item?.slug}
+                      </p>
+                      <p className="text-[19px]">
+                        <span className="font-bold">Active:</span> {item?.active ? 'Yes' : 'No'}
+                      </p>
+                      <p className="text-[19px]">
+                        <span className="font-bold">Description:</span> {item?.description}
+                      </p>
                     </div>
                   )}
                 </div>
