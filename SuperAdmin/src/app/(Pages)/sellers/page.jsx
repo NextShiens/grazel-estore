@@ -1,28 +1,28 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { cn } from "@/lib/utils";
 import SearchOnTop from "@/components/SearchOnTop";
 import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 import { updatePageLoader, updatePageNavigation } from "@/features/features";
-
-import electronicLED from "@/assets/Electronic-LED.png";
+import electronicLED from "@/assets/document-image.png";
 import tableAction from "@/assets/svgs/table-action.svg";
 import Image from "next/image";
 import { axiosPrivate } from "@/axios";
 import Loading from "@/components/loading";
 import { IoEye } from "react-icons/io5";
 import { useRouter } from "next/navigation";
-// import { IoEye } from "react-icons/io5";
 
 const Sellers = () => {
   const dispatch = useDispatch();
   const [sellerId, setSellerId] = useState(0);
   const [selectedTab, setSelectedTab] = useState("recent");
   const [allSellers, setAllSellers] = useState([]);
-  const sellerRef = useRef([]);
+  const [filteredSellers, setFilteredSellers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const getAllSellers = async () => {
@@ -31,35 +31,95 @@ const Sellers = () => {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
-      // setAllSellers([data?.user]) // to show data on web
-      // sellerRef.current=[data?.user] //to made a whole copy of data and can filter it
-      setAllSellers(data?.sellers); // to show data on web
-      console.log(data);
-      // sellerRef.current = data?.users; //to made a whole copy of data and can filter it
+      setAllSellers(data?.sellers);
+      setFilteredSellers(data?.sellers);
     };
     getAllSellers();
   }, []);
-
-  const filterData = (value) => {
-    const tempArr = sellerRef?.current;
-    setSelectedTab(value);
-    if (value === "recent") {
-      setAllSellers(sellerRef?.current);
-    } else if (value === "all") {
-      const filterData = tempArr.filter((item) => item.active === true);
-      setAllSellers(filterData);
-    } else {
-      const filterData = tempArr.filter(
-        (item) => item.profile.phone == 12345678
-      );
-      setAllSellers(filterData);
-    }
-  };
 
   useEffect(() => {
     dispatch(updatePageLoader(false));
     dispatch(updatePageNavigation("sellers"));
   }, [dispatch]);
+
+  const filterData = (value) => {
+    setSelectedTab(value);
+    if (value === "recent") {
+      setFilteredSellers([...allSellers].sort((a, b) => b.id - a.id).slice(0, 10));
+    } else if (value === "all") {
+      setFilteredSellers(allSellers);
+    }
+    setCurrentPage(1);
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredSellers.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(filteredSellers.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const ellipsis = <span className="mx-1">...</span>;
+
+    if (totalPages <= 4) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(
+          <PageButton
+            key={i}
+            page={i}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(i)}
+          />
+        );
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+        pageNumbers.push(ellipsis);
+      } else if (currentPage >= totalPages - 2) {
+        pageNumbers.push(ellipsis);
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+      } else {
+        pageNumbers.push(ellipsis);
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+        pageNumbers.push(ellipsis);
+      }
+    }
+
+    return pageNumbers;
+  };
 
   const fn_viewDetails = (id) => {
     if (id === sellerId) {
@@ -67,6 +127,7 @@ const Sellers = () => {
     }
     setSellerId(id);
   };
+
   return (
     <>
       <Loading />
@@ -79,37 +140,23 @@ const Sellers = () => {
             <div className="my-[20px] p-[30px] bg-white rounded-[8px] shadow-sm overflow-x-auto w-[94vw] md:w-[67vw] lg:w-[75vw] xl:w-auto">
               <div className="flex gap-10 mb-[15px] w-[max-content]">
                 <p
-                  className={`cursor-pointer hover:text-[var(--text-color)] font-[500] border-b-[2px] hover:border-[var(--text-color)] ${
-                    selectedTab === "recent"
+                  className={`cursor-pointer hover:text-[var(--text-color)] font-[500] border-b-[2px] hover:border-[var(--text-color)] ${selectedTab === "recent"
                       ? "text-[var(--text-color)] border-[var(--text-color)]"
                       : "text-[var(--text-color-body)] border-transparent"
-                  }`}
-                  // onClick={() => setSelectedTab("recent")}
+                    }`}
                   onClick={() => filterData("recent")}
                 >
                   Recent
                 </p>
                 <p
-                  className={`cursor-pointer hover:text-[var(--text-color)] font-[500] border-b-[2px] hover:border-[var(--text-color)] ${
-                    selectedTab === "all"
+                  className={`cursor-pointer hover:text-[var(--text-color)] font-[500] border-b-[2px] hover:border-[var(--text-color)] ${selectedTab === "all"
                       ? "text-[var(--text-color)] border-[var(--text-color)]"
                       : "text-[var(--text-color-body)] border-transparent"
-                  }`}
-                  // onClick={() => setSelectedTab("all")}
+                    }`}
                   onClick={() => filterData("all")}
                 >
                   All
                 </p>
-                {/* <p
-                  className={`cursor-pointer hover:text-[var(--text-color)] font-[500] border-b-[2px] hover:border-[var(--text-color)] ${
-                    selectedTab === "top"
-                      ? "text-[var(--text-color)] border-[var(--text-color)]"
-                      : "text-[var(--text-color-body)] border-transparent"
-                  }`}
-                  onClick={() => filterData("top")}
-                >
-                  Top
-                </p> */}
               </div>
               <table className="w-[850px] xl:w-[100%]">
                 <thead>
@@ -122,7 +169,7 @@ const Sellers = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {allSellers?.map((item) => (
+                  {currentItems.map((item) => (
                     <tr key={item.id} className="h-[50px] text-[14px]">
                       <td className="flex items-center gap-1.5 h-[50px]">
                         <Image
@@ -134,7 +181,7 @@ const Sellers = () => {
                               ? item.profile?.image
                               : electronicLED
                           }
-                          className="h-[26px] w-[26px]"
+                          className="h-[26px] w-[26px] rounded-[6px]"
                         />
                         {item.username}
                       </td>
@@ -165,6 +212,25 @@ const Sellers = () => {
                   ))}
                 </tbody>
               </table>
+              {filteredSellers.length > 0 && (
+                <div className="flex justify-center items-center mt-4">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+                  >
+                    Previous
+                  </button>
+                  {renderPageNumbers()}
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -172,8 +238,6 @@ const Sellers = () => {
     </>
   );
 };
-
-export default Sellers;
 
 const ViewDetails = ({ id }) => {
   const navigate = useRouter();
@@ -193,3 +257,17 @@ const ViewDetails = ({ id }) => {
     </div>
   );
 };
+
+const PageButton = ({ page, currentPage, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`mx-1 px-3 py-1 rounded ${currentPage === page
+        ? "bg-red-500 text-white"
+        : "bg-gray-200 text-gray-700"
+      }`}
+  >
+    {page}
+  </button>
+);
+
+export default Sellers;

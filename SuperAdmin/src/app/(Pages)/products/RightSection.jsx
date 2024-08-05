@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React, { useState } from "react";
 
-import product from "@/assets/Electronic-LED.png";
+import product from "@/assets/document-image.png";
 
 const RightSection = ({ allProducts }) => {
   const [currentPage, setCurrentPage] = useState(1);
