@@ -1,6 +1,6 @@
 import { axiosPrivate } from "@/axios";
 import { useEffect, useState } from "react";
-import electronicLED from "@/assets/Electronic-LED.png";
+import electronicLED from "@/assets/document-image.png";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import tableAction from "@/assets/svgs/table-action.svg";
@@ -47,8 +47,8 @@ const OrderTable = ({ order, type, status }) => {
             width={26}
             height={26}
             alt=""
-            src={order?.products[0]?.featured_image}
-            className="h-[26px] w-[26px]"
+            src={order?.products[0]?.featured_image || electronicLED}
+            className="h-[26px] w-[26px] rounded-md"
           />
           {order?.products?.map(
             (pro, index) =>
@@ -64,14 +64,12 @@ const OrderTable = ({ order, type, status }) => {
         <td>{order?.date}</td>
         <td className="w-[130px]">
           <p
-            className={`${
-              orderStatus === "cancelled" && "bg-[#FFE5E5] text-red-500"
-            } ${orderStatus === "completed" && "bg-[#F0FDF4] text-green-500"}
-            ${
-              orderStatus !== "completed" &&
+            className={`${orderStatus === "cancelled" && "bg-[#FFE5E5] text-red-500"
+              } ${orderStatus === "completed" && "bg-[#F0FDF4] text-green-500"}
+            ${orderStatus !== "completed" &&
               orderStatus !== "cancelled" &&
               "bg-[#F1F5F9] text-gray-500"
-            }
+              }
              h-[23px] w-[60px] rounded-[5px]  text-[10px] font-[500] flex items-center justify-center px-4 py-2`}
           >
             {orderTracking?.status_history?.slice(-1)[0]?.status}
