@@ -530,16 +530,19 @@ export default function MyAccount() {
                   onChange={handleFileChange}
                 />
                 <div className="relative w-[120px] h-[120px] rounded-full border-zinc-400 border-2">
-                  {profileImg ||
-                    (profileData.image && (
-                      <Image
-                        alt="profile"
-                        width={120}
-                        height={120}
-                        src={profileImg ? profileImg : profileData.image}
-                        className="rounded-full w-[100%] h-[100%] absolute top-0 right-0"
-                      />
-                    ))}
+                  {profileImg || profileData.image ? (
+                    <Image
+                      alt="profile"
+                      width={120}
+                      height={120}
+                      src={profileImg ? profileImg : profileData.image}
+                      className="rounded-full w-[100%] h-[100%] absolute top-0 right-0"
+                    />
+                  ) : (
+                    <div className="rounded-full w-[100%] h-[100%] absolute top-0 right-0 bg-gray-200 flex items-center justify-center">
+                      <span>No Image</span>
+                    </div>
+                  )}
                   <label htmlFor="profile">
                     <FaCamera
                       className="absolute cursor-pointer text-black/65 top-[50%] right-[50%] translate-x-[50%] translate-y-[-50%]"
