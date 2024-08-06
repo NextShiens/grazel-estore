@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { BiLoader } from "react-icons/bi";
 import { TiLockClosed } from "react-icons/ti";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import logo from "@/assets/Grazle Logo.png";
+import logo from "../../assets/grazle-logo.png";
 
 const ResetPassword = () => {
   const router = useRouter();
