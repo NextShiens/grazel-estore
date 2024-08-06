@@ -1,4 +1,3 @@
-"use client";
 import {
   favoriteProductApi,
   addRecenetViewedApi,
@@ -83,32 +82,50 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
     toast.success("Item has been added to cart!");
   };
 
-  async function onLiked(e: any, productId: any) {
+  async function onLiked(e: React.MouseEvent, productId: number) {
     e.stopPropagation();
     if (isPending) return;
 
     try {
       setPending(true);
       const formdata = new FormData();
-      formdata.append("product_id", productId);
-      const favoriteProductIds = [...favoriteProducts];
-      if (favoriteProductIds.includes(productId)) {
-        let filterArray = favoriteProductIds.filter(
-          (itemId) => itemId !== productId
-        );
-        setFavoriteProducts(filterArray);
+      formdata.append("product_id", productId.toString());
+
+      const response = await favoriteProductApi(formdata);
+
+      if (response.data.success) {
+        setFavoriteProducts((prevFavorites = []) => {
+          if (prevFavorites.includes(productId)) {
+            return prevFavorites.filter((id) => id !== productId);
+          } else {
+            return [...prevFavorites, productId];
+          }
+        });
+        toast.success(response.data.message);
       } else {
-        setFavoriteProducts([...favoriteProductIds, productId]);
+        toast.error("Failed to update favorite status");
       }
-      await favoriteProductApi(formdata);
     } catch (error) {
-      console.log("error in liking product", error);
+      console.error("Error in liking product:", error);
+      toast.error("An error occurred while updating favorite status");
     } finally {
-      setTimeout(() => {
-        setPending(false);
-      }, 200);
+      setPending(false);
     }
   }
+
+  useEffect(() => {
+    async function fetchFavoriteProducts() {
+      try {
+        // const response = await getAllFavoriteProductApi();
+        // setFavoriteProducts(response.data.favoriteProducts || []);
+      } catch (error) {
+        console.error("Error fetching favorite products:", error);
+        toast.error("Failed to fetch favorite products");
+        setFavoriteProducts([]); // Set to empty array in case of error
+      }
+    }
+    fetchFavoriteProducts();
+  }, []);
 
   return (
     <div className="parent md:h-[380px] h-[320px]">
@@ -139,8 +156,9 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
             return (
               <div
                 key={index}
-                className={`group lg:w-[98%] w-[95%] border mb-1 mt-1 lg:mt-[16px] rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${touchedProductId === item.id ? 'active' : ''
-                  }`}
+                className={`group lg:w-[98%] w-[95%] border mb-1 mt-1 lg:mt-[16px] rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${
+                  touchedProductId === item.id ? "active" : ""
+                }`}
                 onClick={() => setTouchedProductId(item.id)}
               >
                 <div
@@ -155,8 +173,8 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
                       src={item.featured_image}
                       className="w-full h-[160px] md:h-[170px] object-cover rounded-2xl cursor-pointer"
                       onError={(e: any) => {
-                        console.error('Image failed to load:', e);
-                        e.target.src = '/path/to/fallback-image.jpg';
+                        console.error("Image failed to load:", e);
+                        e.target.src = "/path/to/fallback-image.jpg";
                       }}
                     />
                   ) : (
@@ -180,12 +198,15 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
                     </div>
 
                     <p className="text-[12px] md:text-[18px] text-[#FC3030] font-semibold mt-[4px] md:mt-[8px]">
-                      ₹{typeof price === 'number' ? price.toFixed(2) : price}
+                      ₹{typeof price === "number" ? price.toFixed(2) : price}
                     </p>
 
                     <div className="flex items-center mt-[4px] md:mt-[8px]">
                       <p className="text-[8px] md:text-[14px] text-[#909198] line-through font-normal">
-                        ₹{typeof basePrice === 'number' ? basePrice.toFixed(2) : basePrice}
+                        ₹
+                        {typeof basePrice === "number"
+                          ? basePrice.toFixed(2)
+                          : basePrice}
                       </p>
 
                       <p className="text-[8px] md:text-[14px] text-[#4FAD2E] ml-[12px] md:ml-[20px] font-semibold">
@@ -194,10 +215,20 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
                     </div>
                   </div>
                 </div>
-                <div className="flex w-full justify-between items-center absolute px-[16px] top-[10px]">
-                    <div></div>
-                    <LikeButton productId={item?.id} />
-                  </div>
+                <div className="absolute top-2 right-2 sm:right-4 md:right-6 lg:right-4">
+                  <IconButton
+                    size="small"
+                    onClick={(e) => onLiked(e, item.id)}
+                    disabled={isPending}
+                    className="bg-white bg-opacity-70 hover:bg-opacity-100"
+                  >
+                    {favoriteProducts && favoriteProducts.includes(item.id) ? (
+                      <FaHeart className="text-[#F70000]" />
+                    ) : (
+                      <Image src={heart} alt="like" width={20} height={20} />
+                    )}
+                  </IconButton>
+                </div>
 
                 <div className="mb-2 flex justify-center w-full opacity-0 group-hover:opacity-100 group-[.active]:opacity-100">
                   <button
@@ -207,7 +238,9 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
                     }
                   >
                     <div className="flex items-center justify-center">
-                      <p className="font-semibold text-[12px] md:text-[13px]">Add to cart</p>
+                      <p className="font-semibold text-[12px] md:text-[13px]">
+                        Add to cart
+                      </p>
                       <Image
                         alt="cart"
                         src={Cart}

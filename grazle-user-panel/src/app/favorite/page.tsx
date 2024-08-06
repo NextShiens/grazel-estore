@@ -1,49 +1,62 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { getAllProductsApi, getOfferProductsApi } from "@/apis";
+import { getAllFavoriteProductApi } from "@/apis";
 import ProductCard from "@/components/ProductCard";
 import RecentViewSlider from "@/components/rencentView";
-import { useSearchParams } from "next/navigation";
 
 const Favorite = () => {
-  const [allProducts, setAllProducts] = useState<any>([]);
-  // all products
+  const [favoriteProducts, setFavoriteProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
-    (async () => {
-      const { data } = await getAllProductsApi();
+    const fetchFavoriteProducts = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("No token found. Please log in.");
+        setLoading(false);
+        return;
+      }
 
-      setAllProducts(data.products);
+      try {
+        setLoading(true);
+        const { data } = await getAllFavoriteProductApi();
+        setFavoriteProducts(data.products || []);
+      } catch (err) {
+        console.error("Error fetching favorite products:", err);
+        setError("Failed to load favorite products. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      const favoriteProducts = JSON.parse(
-        localStorage.getItem("favoriteProducts") || "[]"
-      );
-
-      const currentFavoriteProds = data.products.filter((item: any) =>
-        favoriteProducts.includes(item.id)
-      );
-      setAllProducts(currentFavoriteProds);
-    })();
+    fetchFavoriteProducts();
   }, []);
 
-  //   if (id && allProducts?.length > 0) {
-  //     const { data } = await getOfferProductsApi();
-  //     console.log(data);
-  //     const currentOfferProds = allProducts.filter(
-  //       (item: any) => item?.offer?.id?.toString() === id.toString()
-  //     );
-  //     console.log("cr", allProducts);
-  //     setAllProducts(currentOfferProds);
-  //   }
-  // }, [id]);
+  if (loading) {
+    return <div>Loading favorite products...</div>;
+  }
 
-  // const { data } = await getOfferProductsApi();
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
+
   return (
-    <div className="p-6 lg:p-10 overflow-x-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8">
-      {allProducts?.map((product: any) => (
-        <ProductCard width="100" key={product.id} product={product} />
-      ))}
-      {/* <RecentViewSlider Data={allProducts} /> */}
-      <></>
+    <div className="p-4 lg:p-6 overflow-x-auto">
+      {favoriteProducts.length === 0 ? (
+        <div className="text-center text-gray-500">No favorite products found.</div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+          {favoriteProducts.map((product: any) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              className="w-full h-full"
+            />
+          ))}
+        </div>
+      )}
+      {/* <RecentViewSlider Data={favoriteProducts} /> */}
     </div>
   );
 };

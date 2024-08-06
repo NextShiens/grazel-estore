@@ -39,6 +39,7 @@ import Card1 from "@/assets/a5a6296b2158604a47215a2b0a00bde0.png";
 import { MdExpandMore } from "react-icons/md";
 import { calculateFinalPrice } from "@/utils/priceCalculation";
 import LikeButton from "@/components/LikeButton";
+
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL || "https://api.grazle.co.in/api";
 
@@ -57,6 +58,7 @@ export default function ProductDetail() {
   const [selectedTab, setSelectedTab] = useState("description");
   const [showPopup, setShowPopup] = useState(false);
   const [reviews, setReviews] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const router = useRouter();
   const { slug } = useParams();
@@ -96,7 +98,7 @@ export default function ProductDetail() {
         }
 
         const data = await response.json();
-        setReviews(data); // Update state with the fetched reviews
+        setReviews(data);
       } catch (error) {
         console.error("Fetch error:", error);
       }
@@ -132,6 +134,14 @@ export default function ProductDetail() {
 
   const handleClick = () => setShowPopup(true);
   const closePopup = () => setShowPopup(false);
+
+  const handleImageClick = (image) => {
+    setSelectedImage(image);
+  };
+
+  const closeModal = () => {
+    setSelectedImage(null);
+  };
 
   async function onLiked(e, productId) {
     e.stopPropagation();
@@ -234,10 +244,11 @@ export default function ProductDetail() {
                 height={350}
                 width={350}
                 src={singleProduct.featured_image}
-                className="w-full h-[350px] sm:[400px] md:[400px] lg:h-[500px]"
+                className="w-full h-[350px] sm:[400px] md:[400px] lg:h-[500px] cursor-pointer"
+                onClick={() => handleImageClick(singleProduct.featured_image)}
               />
             )}
-            <div className="flex justify-between mt-5 lg:mt-10">
+            <div className="flex justify-between mt-5 lg:mt-10 gap-2">
               {singleProduct.gallery?.map((item, index) => (
                 <Image
                   key={index}
@@ -245,7 +256,8 @@ export default function ProductDetail() {
                   width={90}
                   height={90}
                   src={item?.image}
-                  className="lg:w-[90px] lg:h-[90px] h-[60px] sm:h-[60px] md:h-[60px] w-[60px] sm:w-[60px] md:w-[60px] hover:border-[1px] border-[#F70000]"
+                  className="lg:w-[90px] lg:h-[90px] h-[60px] sm:h-[60px] md:h-[60px] w-[60px] sm:w-[60px] md:w-[60px] hover:border-[1px] border-[#F70000] cursor-pointer"
+                  onClick={() => handleImageClick(item.image)}
                 />
               ))}
             </div>
@@ -350,18 +362,6 @@ export default function ProductDetail() {
                 >
                   Get Started
                 </button>
-                {/* <div className="flex justify-center mt-[20px] items-center rounded-full bg-[#F8F8F8] h-[52px] w-[52px]">
-                  <IconButton
-                    size="medium"
-                    onClick={(e) => onLiked(e, singleProduct?.id)}
-                  >
-                    {favoriteProducts?.includes(singleProduct?.id) ? (
-                      <FaHeart className="text-red-500" />
-                    ) : (
-                      <Image src={heart} alt="like" />
-                    )}
-                  </IconButton>
-                </div> */}
                 <div className="mt-[20px] flex justify-center items-center rounded-full h-[52px] w-[52px]">
                   <LikeButton productId={singleProduct?.id} />
                 </div>
@@ -392,33 +392,6 @@ export default function ProductDetail() {
                     view shop
                   </button>
                 </div>
-                {/* <div className="flex items-center justify-evenly mt-5">
-                  <div>
-                    <div className="flex items-center gap-2 justify-center">
-                      <FaStar className="text-[#FFB33E] text-[16px]" />
-                      <p className="text-[#000000] text-[14px] font-bold">
-                        {currentStore.store_rating || 0}
-                      </p>
-                      <p className="text-[#777777] text-[14px]">
-                        ({currentStore.store_reviews || 0})
-                      </p>
-                    </div>
-                    <p className="text-[#777777] text-center text-[12px]">
-                      Ratings
-                    </p>
-                  </div>
-                  <div className="border-r-[1px] border-[#0000000D] h-[30px]"></div>
-                  <div>
-                    <div className="flex items-center gap-2 justify-center">
-                      <p className="text-[#000000] text-[14px] font-bold">
-                        {currentStore.store_products || 0}
-                      </p>
-                    </div>
-                    <p className="text-[#777777] text-center text-[12px]">
-                      products
-                    </p>
-                  </div>
-                </div> */}
               </div>
             </div>
           </div>
@@ -506,6 +479,32 @@ export default function ProductDetail() {
           ))}
         </div>
       </div>
+
+      {selectedImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={closeModal}
+        >
+          <div className="relative">
+            <Image
+              src={selectedImage}
+              alt="Selected product image"
+              width={800}
+              height={800}
+              className="max-w-[90vw] max-h-[90vh] object-contain"
+            />
+            <button
+              className="absolute top-4 right-4 text-red-500 text-2xl bg-white rounded-full w-8 h-8 flex items-center justify-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                closeModal();
+              }}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
