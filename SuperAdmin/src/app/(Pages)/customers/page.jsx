@@ -29,9 +29,15 @@ const Customers = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [form] = Form.useForm();
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCustomers, setTotalCustomers] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     getAllCustomers();
-  }, []);
+  }, [currentPage]);
 
   useEffect(() => {
     dispatch(updatePageLoader(false));
@@ -39,15 +45,27 @@ const Customers = () => {
   }, [dispatch]);
 
   const getAllCustomers = async () => {
+    setIsLoading(true);
     try {
-      const { data } = await axiosPrivate.get("/users", {
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: itemsPerPage.toString(),
+      });
+
+      const { data } = await axiosPrivate.get(`/users?${params}`, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
-      setAllCustomers(data?.users);
+
+      setAllCustomers(data.users);
+      setTotalPages(data.totalPages);
+      setTotalCustomers(data.total);
+      setItemsPerPage(data.limit);
     } catch (error) {
       console.error("Error fetching customers:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -82,19 +100,16 @@ const Customers = () => {
   const handleSubmit = async (values) => {
     const formData = new FormData();
 
-    // Append user fields
     Object.keys(values).forEach(key => {
       if (key !== 'profile' && key !== 'image') {
         formData.append(key, values[key]);
       }
     });
 
-    // Append profile fields
     Object.keys(values.profile || {}).forEach(key => {
       formData.append(`profile[${key}]`, values.profile[key]);
     });
 
-    // Append image if it exists
     if (values.image && values.image[0]) {
       formData.append('image', values.image[0].originFileObj);
     }
@@ -135,6 +150,101 @@ const Customers = () => {
     }
   };
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const ellipsis = <span className="mx-1">...</span>;
+
+    if (totalPages <= 4) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(
+          <PageButton
+            key={i}
+            page={i}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(i)}
+          />
+        );
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+        pageNumbers.push(ellipsis);
+        pageNumbers.push(
+          <PageButton
+            key={totalPages}
+            page={totalPages}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(totalPages)}
+          />
+        );
+      } else if (currentPage >= totalPages - 2) {
+        pageNumbers.push(
+          <PageButton
+            key={1}
+            page={1}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(1)}
+          />
+        );
+        pageNumbers.push(ellipsis);
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+      } else {
+        pageNumbers.push(
+          <PageButton
+            key={1}
+            page={1}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(1)}
+          />
+        );
+        pageNumbers.push(ellipsis);
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+        pageNumbers.push(ellipsis);
+        pageNumbers.push(
+          <PageButton
+            key={totalPages}
+            page={totalPages}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(totalPages)}
+          />
+        );
+      }
+    }
+
+    return pageNumbers;
+  };
+
   return (
     <>
       <Loading />
@@ -146,62 +256,92 @@ const Customers = () => {
             <SearchOnTop />
             <div className="my-[20px] px-[30px] py-[20px] bg-white rounded-[8px] shadow-sm overflow-x-auto w-[94vw] md:w-[67vw] lg:w-[75vw] xl:w-auto">
               <Button onClick={() => showModal()} className="mb-4">Add New User</Button>
-              <table className={`w-[850px] xl:w-[100%]`}>
-                <thead>
-                  <tr className="font-[500] text-[var(--text-color-body)] text-[15px] h-[50px]">
-                    <td>Name</td>
-                    <td>Email Address</td>
-                    <td>Phone Number</td>
-                    <td>Status</td>
-                    <td className="w-[120px]">Action</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  {allCustomers?.map((item) => (
-                    <tr key={item.id} className="h-[50px] text-[14px]">
-                      <td className="flex items-center gap-1.5 h-[50px]">
-                        <Image
-                          alt=""
-                          width={50}
-                          height={50}
-                          src={item?.profile?.image || electronicLED}
-                          className="h-[26px] w-[26px] rounded-md"
-                        />
-                        {item?.username}
-                      </td>
-                      <td>{item?.email}</td>
-                      <td>{item?.profile?.phone}</td>
-                      <td className="w-[130px]">
-                        <p
-                          className={cn(
-                            "h-[23px] w-[60px] rounded-[5px] flex items-center font-[500] justify-center text-[10px]",
-                            item?.active
-                              ? "bg-[var(--bg-color-delivered)] text-[var(--text-color-delivered)]"
-                              : "bg-[var(--bg-color-pending)] text-[var(--text-color-pending)]"
-                          )}
+              {isLoading ? (
+                <p>Loading customers...</p>
+              ) : (
+                <>
+                  <table className={`w-[850px] xl:w-[100%]`}>
+                    <thead>
+                      <tr className="font-[500] text-[var(--text-color-body)] text-[15px] h-[50px]">
+                        <td>Name</td>
+                        <td>Email Address</td>
+                        <td>Phone Number</td>
+                        <td>Status</td>
+                        <td className="w-[120px]">Action</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {allCustomers?.map((item) => (
+                        <tr key={item.id} className="h-[50px] text-[14px]">
+                          <td className="flex items-center gap-1.5 h-[50px]">
+                            <Image
+                              alt=""
+                              width={50}
+                              height={50}
+                              src={item?.profile?.image || electronicLED}
+                              className="h-[26px] w-[26px] rounded-md"
+                            />
+                            {item?.username}
+                          </td>
+                          <td>{item?.email}</td>
+                          <td>{item?.profile?.phone}</td>
+                          <td className="w-[130px]">
+                            <p
+                              className={cn(
+                                "h-[23px] w-[60px] rounded-[5px] flex items-center font-[500] justify-center text-[10px]",
+                                item?.active
+                                  ? "bg-[var(--bg-color-delivered)] text-[var(--text-color-delivered)]"
+                                  : "bg-[var(--bg-color-pending)] text-[var(--text-color-pending)]"
+                              )}
+                            >
+                              {item?.active ? "Active" : "Pending"}
+                            </p>
+                          </td>
+                          <td className="px-[17px] relative">
+                            <Image
+                              alt=""
+                              src={tableAction}
+                              className="cursor-pointer"
+                              onClick={() => fn_viewDetails(item.id)}
+                            />
+                            {selectedCustomer === item.id && (
+                              <ViewDetails
+                                user={item}
+                                onEdit={() => showModal(item)}
+                                onDelete={() => handleDelete(item.id)}
+                              />
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {allCustomers.length > 0 && (
+                    <div className="flex flex-col items-center mt-4">
+                      <div className="flex justify-center items-center">
+                        <button
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 1}
+                          className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
                         >
-                          {item?.active ? "Active" : "Pending"}
-                        </p>
-                      </td>
-                      <td className="px-[17px] relative">
-                        <Image
-                          alt=""
-                          src={tableAction}
-                          className="cursor-pointer"
-                          onClick={() => fn_viewDetails(item.id)}
-                        />
-                        {selectedCustomer === item.id && (
-                          <ViewDetails
-                            user={item}
-                            onEdit={() => showModal(item)}
-                            onDelete={() => handleDelete(item.id)}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                          Previous
+                        </button>
+                        {renderPageNumbers()}
+                        <button
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage === totalPages}
+                          className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+                        >
+                          Next
+                        </button>
+                      </div>
+                      <div className="mt-2 text-sm text-gray-600">
+                        Page {currentPage} of {totalPages} | Total Customers: {totalCustomers}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -260,12 +400,6 @@ const Customers = () => {
               <Button icon={<UploadOutlined />}>Select Image</Button>
             </Upload>
           </Form.Item>
-          {/* <Form.Item name="created_at" label="Created At">
-            <DatePicker showTime />
-          </Form.Item>
-          <Form.Item name="updated_at" label="Updated At">
-            <DatePicker showTime />
-          </Form.Item> */}
           <Form.Item>
             <Button type="primary" htmlType="submit">
               {editingUser ? "Update" : "Create"}
@@ -276,7 +410,6 @@ const Customers = () => {
     </>
   );
 };
-
 export default Customers;
 const ViewDetails = ({ user, onEdit, onDelete }) => {
   return (
@@ -296,3 +429,16 @@ const ViewDetails = ({ user, onEdit, onDelete }) => {
     </div>
   );
 };
+
+const PageButton = ({ page, currentPage, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`mx-1 px-3 py-1 rounded ${
+      currentPage === page
+        ? "bg-red-500 text-white"
+        : "bg-gray-200 text-gray-700"
+    }`}
+  >
+    {page}
+  </button>
+);
