@@ -100,8 +100,9 @@ const OfferViewSlider = React.forwardRef(({ Data }, ref) => {
   useEffect(() => {
     async function fetchFavoriteProducts() {
       try {
-        const response = await getAllFavoriteProductApi();
-        setFavoriteProducts(response.data.favoriteProducts || []);
+        // const response = await getAllFavoriteProductApi();
+        // setFavoriteProducts(response.data.favoriteProducts || []);
+        setFavoriteProducts([]);
       } catch (error) {
         console.error("Error fetching favorite products:", error);
         toast.error("Failed to fetch favorite products");
