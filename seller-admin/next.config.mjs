@@ -3,7 +3,7 @@ const API_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://api.grazle.co.in/ap
 const nextConfig = {
   images: {
     // domains: [API_URL],
-    domains: ["api.grazle.co.in"],
+    domains: ["api.grazle.co.in","via.placeholder.com"],
   },
   swcMinify: true,
   productionBrowserSourceMaps: false,
