@@ -4,7 +4,7 @@
 		"name": "Grazle Backend",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "30687120",
-		"_collection_link": "https://web.postman.co/workspace/Grazle-Ecommerce~44344f68-dfe9-40bb-9ae7-857f869ac161/collection/30687120-1aee3190-41da-4029-99bb-7714f5b5d404?source=collection_link"
+		"_collection_link": "https://bold-moon-160036.postman.co/workspace/Grazle-Ecommerce~44344f68-dfe9-40bb-9ae7-857f869ac161/collection/30687120-1aee3190-41da-4029-99bb-7714f5b5d404?action=share&source=collection_link&creator=30687120"
 	},
 	"item": [
 		{
@@ -20,7 +20,7 @@
 							"formdata": [
 								{
 									"key": "email",
-									"value": "seller@test.com",
+									"value": "admin@grazle.com",
 									"description": "required",
 									"type": "text"
 								},
@@ -55,13 +55,13 @@
 							"formdata": [
 								{
 									"key": "username",
-									"value": "Admin",
+									"value": "Seller",
 									"description": "required",
 									"type": "text"
 								},
 								{
 									"key": "email",
-									"value": "admin@test.com",
+									"value": "seller@store.com",
 									"description": "required",
 									"type": "text"
 								},
@@ -79,7 +79,7 @@
 								},
 								{
 									"key": "role",
-									"value": "admin",
+									"value": "seller",
 									"type": "text"
 								}
 							]
@@ -4273,7 +4273,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjI0Mzg3MDYsImV4cCI6MTcyMjY5NzkwNn0.d_wgClIcG85nXwfVysyIu1JBuJJb1IKLYUPfhNrGjbc",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInJvbGUiOiJidXllciIsImlhdCI6MTcyMjg1MDQ0OSwiZXhwIjoxNzIzMTA5NjQ5fQ.4MO7ocxYIloYqosDHbTfSLV9Yh_IoEN4ffAe3Oxe9_0",
 											"type": "string"
 										}
 									]
@@ -4290,7 +4290,7 @@
 										},
 										{
 											"key": "new_password",
-											"value": "fifi@grazle99",
+											"value": "123456789",
 											"type": "text"
 										}
 									]
@@ -4595,7 +4595,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjI3NzY1NzEsImV4cCI6MTcyMzAzNTc3MX0.PIL-YZcvKq9vA6NQfVsrm1ng2sAiSeXoTy67nucBiME",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM4LCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzIyOTA1NTQwLCJleHAiOjE3MjMxNjQ3NDB9.6_THQwkxKp_uxZGGuxl2mhgsc9g9tax9MTpt8UTPV60",
 											"type": "string"
 										}
 									]
@@ -4679,7 +4679,7 @@
 										{
 											"key": "featured_image",
 											"type": "file",
-											"src": "/C:/Users/Ubaid Computers/OneDrive/Desktop/0_0.jpg"
+											"src": "/C:/Users/Ubaid Computers/Downloads/data-removebg-preview.png"
 										},
 										{
 											"key": "gallery_images",
@@ -6873,269 +6873,6 @@
 			"name": "Payment Gateway",
 			"item": [
 				{
-					"name": "Billing Page of PG",
-					"item": [
-						{
-							"name": "Billing Page",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "order_id",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "amount",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "name",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "address",
-											"value": "",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/payment/ccavenue-billing-page",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"payment",
-										"ccavenue-billing-page"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Response Handler",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "enc_resp",
-											"value": "onW+nHdapLq1U4IPsOlFDg==:a9bMiCO9mXahOnz0zaCp6oGCQ33eTCKxcV/um0dJe/WhgWnG0nBnoGT42w/zovqDDaJW1VKz5Cv2Y1NyK+k9/iUdhMowCOjwZEnevv5CSJf+57mhZmtjkJUD1r8bMaQtAvTmXsBb3jvSxF2v1IrJBpwzQgZbmhGO2pL8pNAgzsu1pwwtyH99GqXqrezLEP6eW7U7JVviHT2NUaQuZa2yTurN51udQnTuw5ZtfIrcyKrIR5RCGZ3oZNswVSszHY1ZukZtb33DA8adjDe23oAEBw==",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/payment/ccav-response-handler",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"payment",
-										"ccav-response-handler"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "iFrame Checkout Page of PG",
-					"item": [
-						{
-							"name": "iFrame Checkout",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "order_id",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "amount",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "name",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "address",
-											"value": "",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/payment/ccavenue-iframe-checkout",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"payment",
-										"ccavenue-iframe-checkout"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Response Handler",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "enc_resp",
-											"value": "",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/payment/ccav-response-handler",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"payment",
-										"ccav-response-handler"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Custom Checkout",
-					"item": [
-						{
-							"name": "Custom Checkout",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "order_id",
-											"value": "1",
-											"type": "text"
-										},
-										{
-											"key": "name",
-											"value": "John Doe",
-											"type": "text"
-										},
-										{
-											"key": "address",
-											"value": "123 Street, City, State, Country",
-											"type": "text"
-										},
-										{
-											"key": "payment_option",
-											"value": "OPTCRDC",
-											"type": "text"
-										},
-										{
-											"key": "card_type",
-											"value": "VISA",
-											"type": "text"
-										},
-										{
-											"key": "card_name",
-											"value": "JOHN DOE",
-											"type": "text"
-										},
-										{
-											"key": "card_number",
-											"value": "4111111111111111",
-											"type": "text"
-										},
-										{
-											"key": "expiry_month",
-											"value": "12",
-											"type": "text"
-										},
-										{
-											"key": "expiry_year",
-											"value": "2025",
-											"type": "text"
-										},
-										{
-											"key": "cvv_number",
-											"value": "123",
-											"type": "text"
-										},
-										{
-											"key": "amount",
-											"value": "1000",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/payment/ccavenue-custom-checkout",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"payment",
-										"ccavenue-custom-checkout"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Response Handler",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "enc_resp",
-											"value": "qSAnDVluiXc4qJW8dwJ10Q==:Js8VOcyyveI04Ox1vtJu2O3NwLWAip0exxQomIg5dhtOsPu+vjQfze+k2W2dLE1MxJe9It6dtieVQfIUq2qEBjI7WtKR1um68WhppaZsp2sXKQ8xTXydERo6eCUD29Aip7UV7iM87r4Og17EM+qSTtTifJ6vo3uVwsDkgmasHskk4QopMLnOSPOgd0NWyj24LJ5FlvnftR0MtXkMa6zb6/9QpOMClF+UjPi5Ttaj3VOyP08tJ5c1B52eS8HeBvU+inVrVgXNo+HfILmCviCtyh2Xc9W+jzGZ9EZbMbF7WqxgmDyagb8JQGBtU8fqunN0y0cZDV0rPJo8Js8uvzibs4DUFadTwmJ2E5ESafccKjcOP0OtotzQsX3GXP1Gd7cCV26mdIZgBOyC+fmcl+eBSlSOl1QRiGCUH3+qcLX8Hj1LJDLHOTTu5m2CzqvPQlgft/jwYrHe9V1oTfbelxaJH7l7Jbvrk1ka5UKU6uVVx9o=",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/payment/ccav-response-handler",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"payment",
-										"ccav-response-handler"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
 					"name": "PhonePe",
 					"item": [
 						{
@@ -7177,6 +6914,158 @@
 									"path": [
 										"phonepe",
 										"initiate-payment"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "ccAvenue",
+					"item": [
+						{
+							"name": "Initiate Payment",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "order_id",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "currency",
+											"value": "",
+											"description": "INR | USD | EUR",
+											"type": "text"
+										},
+										{
+											"key": "amount",
+											"value": "",
+											"description": "Numeric (12, 2)",
+											"type": "text"
+										},
+										{
+											"key": "redirect_url",
+											"value": "",
+											"description": "Alphanumeric (100)\n\nCharacters allowed:\nAlphabet (A-Z), (a-z),\nNumbers, / (slash),\n_ (underscore)",
+											"type": "text"
+										},
+										{
+											"key": "cancel_url",
+											"value": "",
+											"description": "Alphanumeric (100)\n\nCharacters allowed:\nAlphabet (A-Z), (a-z),\nNumbers, / (slash),\n_ (underscore)",
+											"type": "text"
+										},
+										{
+											"key": "payment_option",
+											"value": "",
+											"description": "OPTCRDC - Credit Card\nOPTDBCRD - Debit Card\nOPTNBK - Net Banking\nOPTCASHC - Cash Card\nOPTMOBP - Mobile Payments\nOPTCHKOT - Checkout\nOPTUPI - Unified Payments",
+											"type": "text"
+										},
+										{
+											"key": "card_type",
+											"value": "",
+											"description": "Type of card used by the customer.\nCRDC - Credit Card\nDBCRD - Debit Card\nNBK - Net Banking\nCASHC - Cash Card\nMOBP - Mobile Payments\nCHKOT - Checkout\nUPI - Unified Payments",
+											"type": "text"
+										},
+										{
+											"key": "card_name",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "card_number",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "expiry_month",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "expiry_year",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "cvv_number",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "issuing_bank",
+											"value": "",
+											"description": "Card issuing bank name",
+											"type": "text"
+										},
+										{
+											"key": "mobile_no",
+											"value": "",
+											"description": "Mobile no (Only in case of Mobile payments.)",
+											"type": "text"
+										},
+										{
+											"key": "mm_id",
+											"value": "",
+											"description": "Mobile Money Identification Number (MMID) is a seven digit number for the bank offering IMPS.",
+											"type": "text"
+										},
+										{
+											"key": "otp",
+											"value": "",
+											"description": "One Time Password to complete an IMPS transaction",
+											"type": "text"
+										},
+										{
+											"key": "virtualAddress",
+											"value": "",
+											"description": "Virtual payment address (VPA) is a user-generated unique identifier for each bank account. All payment addresses are in the format abc @bank, where abc can be chosen by the customer. (Only in case of UPI)",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/ccavenue/initiate-payment",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"ccavenue",
+										"initiate-payment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Handle Payment response",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/ccavenue/handle-payment-response",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"ccavenue",
+										"handle-payment-response"
 									]
 								}
 							},
@@ -7329,7 +7218,7 @@
 	"variable": [
 		{
 			"key": "BASE_URL",
-			"value": "localhost:8000/api",
+			"value": "https://api.grazle.co.in/api",
 			"type": "string"
 		},
 		{
