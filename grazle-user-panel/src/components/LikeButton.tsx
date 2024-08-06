@@ -48,7 +48,7 @@ const LikeButton = ({ productId }) => {
           <FaHeart className="text-red-500 size-6" />
         </button>
       ) : (
-        <button className="" onClick={onLike}>
+        <button onClick={onLike}>
           <FaHeart className="text-gray-400 size-6" />
         </button>
       )}

@@ -89,12 +89,21 @@ const MyorderCard = ({
     formData.append("comment", comment);
     formData.append("rating", String(rating));
     formData.append("product_id", productId);
-    const { data } = await addReviewApi(formData);
-    if (data.success) {
-      handleRevModal();
-      toast.success("review has been added");
+
+    try {
+      const { data } = await addReviewApi(formData);
+      if (data.success) {
+        toast.success("Review has been added");
+        // Close the modal
+        setShowLeave(false);
+        // Reset the form state
+        setRating(0);
+        setComment("");
+        setSelectedImages([]);
+      }
+    } catch (error) {
+      toast.error("Failed to add review");
     }
-    setShowLeave((prev) => !prev);
   };
 
   const handleOrderCancel = async () => {
@@ -244,41 +253,46 @@ const MyorderCard = ({
                     </button>
                     {orderTracking?.status_history?.slice(-1)[0].status !==
                       "completed" && (
-                        <button
-                          className="flex items-center justify-center gap-2 bg-[#FFFAF4] outline-[2px] outline-[#F69B26] outline-dashed rounded-2xl h-[40px] lg:w-[160px] w-fit text-[12px] font-medium text-[#F69B26] px-2"
-                          onClick={handleButtonClick}
-                        >
-                          <span>Order Tracking</span>
-                          {isDivVisible ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                        </button>
-                      )}
+                      <button
+                        className="flex items-center justify-center gap-2 bg-[#FFFAF4] outline-[2px] outline-[#F69B26] outline-dashed rounded-2xl h-[40px] lg:w-[160px] w-fit text-[12px] font-medium text-[#F69B26] px-2"
+                        onClick={handleButtonClick}
+                      >
+                        <span>Order Tracking</span>
+                        {isDivVisible ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                      </button>
+                    )}
 
                     {orderTracking?.status_history?.slice(-1)[0].status ===
                       "completed" && (
-                        <button
-                          className=" bg-[#FFFAF4] lg:mt-3 mt-0 outline-[2px] outline-[#F69B26] outline-dashed rounded-2xl h-[40px] lg:w-[181px] w-[130px] lg:w-[181px] sm:w-[100px]   lg:text-[18px] text-[14px] sm:text-[14px] font-medium text-[#F69B26]"
-                          onClick={() => {
-                            setProductId(prod.id);
-                            handleRevModal();
-                          }}
-                        >
-                          Leave Review
-                        </button>
-                      )}
+                      <button
+                        className=" bg-[#FFFAF4] lg:mt-3 mt-0 outline-[2px] outline-[#F69B26] outline-dashed rounded-2xl h-[40px] lg:w-[181px] w-[130px] lg:w-[181px] sm:w-[100px]   lg:text-[18px] text-[14px] sm:text-[14px] font-medium text-[#F69B26]"
+                        onClick={() => {
+                          setProductId(prod.id);
+                          handleRevModal();
+                        }}
+                      >
+                        Leave Review
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
 
-              <div className="hidden lg:block flex-col mt-3 lg:mt-0 sm:mt-3 md:mt-3  flex">
-                <button className=" bg-[#00F7630F] rounded-2xl h-[40px] outline-[2px] outline-[#26F63B] outline-dashed  lg:w-[160px] w-[300px] text-[15px] font-medium text-[#07D459]">
-                  {orderTracking?.status_history?.slice(-1)[0].status}
+              <div className="hidden lg:block flex-col mt-3 lg:mt-0 sm:mt-3 md:mt-3 flex">
+                <button className="bg-[#be8c8c0f] rounded-2xl h-[40px] outline-[2px] outline-[#F70000] outline-dashed lg:w-[160px] w-[300px] text-[15px] font-medium text-[#F70000]">
+                  {orderTracking?.status_history?.slice(-1)[0].status ===
+                  "cancelled"
+                    ? "Cancelled"
+                    : orderTracking?.status_history?.slice(-1)[0].status}
                 </button>
                 {orderTracking?.status_history?.slice(-1)[0].status !==
-                  "completed" && (
+                  "completed" &&
+                  orderTracking?.status_history?.slice(-1)[0].status !==
+                    "cancelled" && (
                     <button
                       className="flex items-center justify-center gap-2 bg-[#FFFAF4] mt-3 
-                    outline-[2px] outline-[#F69B26] outline-dashed rounded-2xl h-[40px] 
-                    lg:w-[160px] w-[300px]  text-[15px] font-medium text-[#F69B26]"
+      outline-[2px] outline-[#F69B26] outline-dashed rounded-2xl h-[40px] 
+      lg:w-[160px] w-[300px] text-[15px] font-medium text-[#F69B26]"
                       onClick={handleButtonClick}
                     >
                       <span>Order Tracking</span>
@@ -288,17 +302,17 @@ const MyorderCard = ({
 
                 {orderTracking?.status_history?.slice(-1)[0].status ===
                   "completed" && (
-                    <button
-                      className="bg-[#FFFAF4] rounded-2xl h-[40px] outline-[2px] outline-[#F69B26] outline-dashed  lg:w-[160px] w-[300px] text-[15px] font-medium text-[#F69B26] "
-                      style={{ marginLeft: "15px" }}
-                      onClick={() => {
-                        setProductId(prod.id);
-                        handleRevModal();
-                      }}
-                    >
-                      Leave Review
-                    </button>
-                  )}
+                  <button
+                    className="bg-[#FFFAF4] rounded-2xl h-[40px] outline-[2px] outline-[#F69B26] outline-dashed lg:w-[160px] w-[300px] text-[15px] font-medium text-[#F69B26]"
+                    style={{ marginLeft: "15px" }}
+                    onClick={() => {
+                      setProductId(prod.id);
+                      handleRevModal();
+                    }}
+                  >
+                    Leave Review
+                  </button>
+                )}
               </div>
             </div>
 
@@ -351,8 +365,8 @@ const MyorderCard = ({
                       <p className="text-[14px] text-[#909198] font-normal">
                         {inProgressOrder
                           ? new Date(
-                            inProgressOrder.changed_at
-                          ).toLocaleString()
+                              inProgressOrder.changed_at
+                            ).toLocaleString()
                           : "Not available"}
                       </p>
                     </div>
@@ -387,28 +401,34 @@ const MyorderCard = ({
                 <div className="lg:flex  sm:hidden md:hidden hidden items-center  gap-3 mt-5">
                   <FaCheckCircle className="text-[#F70000] h-[24px] w-[24px]" />
                   <div
-                    className={`${inProgressOrder ? "border-[#F70000]" : "border-[#D2D4DA]"
-                      } border-t-[2px] w-[200px] `}
+                    className={`${
+                      inProgressOrder ? "border-[#F70000]" : "border-[#D2D4DA]"
+                    } border-t-[2px] w-[200px] `}
                   />
                   <FaCheckCircle
-                    className={`${inProgressOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
-                      } h-[24px] w-[24px]`}
+                    className={`${
+                      inProgressOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
+                    } h-[24px] w-[24px]`}
                   />
                   <div
-                    className={`${shippedOrder ? "border-[#F70000]" : "border-[#D2D4DA]"
-                      } border-t-[2px] w-[200px] `}
+                    className={`${
+                      shippedOrder ? "border-[#F70000]" : "border-[#D2D4DA]"
+                    } border-t-[2px] w-[200px] `}
                   />
                   <FaCheckCircle
-                    className={`${shippedOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
-                      } h-[24px] w-[24px]`}
+                    className={`${
+                      shippedOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
+                    } h-[24px] w-[24px]`}
                   />
                   <div
-                    className={`${deliveredOrder ? "border-[#F70000]" : "border-[#D2D4DA]"
-                      } border-t-[2px] w-[200px] `}
+                    className={`${
+                      deliveredOrder ? "border-[#F70000]" : "border-[#D2D4DA]"
+                    } border-t-[2px] w-[200px] `}
                   />
                   <FaCheckCircle
-                    className={`${deliveredOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
-                      } h-[24px] w-[24px]`}
+                    className={`${
+                      deliveredOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
+                    } h-[24px] w-[24px]`}
                   />{" "}
                 </div>
 
@@ -418,10 +438,11 @@ const MyorderCard = ({
                       <FaCheckCircle className="text-[#F70000] h-[24px] w-[24px]" />
 
                       <div
-                        className={`${inProgressOrder
-                          ? "border-[#F70000]"
-                          : "border-[#D2D4DA]"
-                          } ml-3 mt-2 border-l-[2px] h-[100px] `}
+                        className={`${
+                          inProgressOrder
+                            ? "border-[#F70000]"
+                            : "border-[#D2D4DA]"
+                        } ml-3 mt-2 border-l-[2px] h-[100px] `}
                       ></div>
                     </div>
                     <div className="flex items-center gap-4 lg:w-auto w-[100%] sm: w-[100%] md: w-[100%]">
@@ -439,12 +460,14 @@ const MyorderCard = ({
                   <div className="flex gap-3 items-start">
                     <div className="mt-2 ">
                       <FaCheckCircle
-                        className={`${inProgressOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
-                          } h-[24px] w-[24px]`}
+                        className={`${
+                          inProgressOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
+                        } h-[24px] w-[24px]`}
                       />{" "}
                       <div
-                        className={`${shippedOrder ? "border-[#F70000]" : "border-[#D2D4DA]"
-                          } ml-3 mt-2 border-l-[2px] h-[100px] `}
+                        className={`${
+                          shippedOrder ? "border-[#F70000]" : "border-[#D2D4DA]"
+                        } ml-3 mt-2 border-l-[2px] h-[100px] `}
                       ></div>{" "}
                     </div>
                     <div className="flex items-center gap-4 lg:w-auto w-[100%] sm: w-[100%] md: w-[100%]">
@@ -456,8 +479,8 @@ const MyorderCard = ({
                         <p className="text-[14px] text-[#909198] font-normal">
                           {inProgressOrder
                             ? new Date(
-                              inProgressOrder.changed_at
-                            ).toLocaleString()
+                                inProgressOrder.changed_at
+                              ).toLocaleString()
                             : "Not available"}
                         </p>
                       </div>
@@ -466,14 +489,16 @@ const MyorderCard = ({
                   <div className="flex gap-3 items-start">
                     <div className="mt-2 ">
                       <FaCheckCircle
-                        className={`${shippedOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
-                          } h-[24px] w-[24px]`}
+                        className={`${
+                          shippedOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
+                        } h-[24px] w-[24px]`}
                       />{" "}
                       <div
-                        className={`${deliveredOrder
-                          ? "border-[#F70000]"
-                          : "border-[#D2D4DA]"
-                          } ml-3 mt-2 border-l-[2px] h-[100px] `}
+                        className={`${
+                          deliveredOrder
+                            ? "border-[#F70000]"
+                            : "border-[#D2D4DA]"
+                        } ml-3 mt-2 border-l-[2px] h-[100px] `}
                       ></div>{" "}
                     </div>
                     <div className="flex items-center gap-4 lg:w-auto w-[100%] sm: w-[100%] md: w-[100%]">
@@ -493,8 +518,9 @@ const MyorderCard = ({
                   <div className="flex gap-3 items-start">
                     <div className="mt-2 ">
                       <FaCheckCircle
-                        className={`${deliveredOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
-                          } h-[24px] w-[24px]`}
+                        className={`${
+                          deliveredOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
+                        } h-[24px] w-[24px]`}
                       />{" "}
                     </div>
                     <div className="flex items-center gap-4 lg:w-auto w-[100%] sm: w-[100%] md: w-[100%]">
@@ -506,8 +532,8 @@ const MyorderCard = ({
                         <p className="text-[14px] text-[#909198] font-normal">
                           {deliveredOrder
                             ? new Date(
-                              deliveredOrder.changed_at
-                            ).toLocaleString()
+                                deliveredOrder.changed_at
+                              ).toLocaleString()
                             : "Not available"}
                         </p>
                       </div>
@@ -550,74 +576,73 @@ const MyorderCard = ({
           </CustomModal>
 
           <CustomModal showModal={showleave}>
-            <div className="flex-col justify-center w-[100%] sm:w-[800px]">
-              <div className="w-[100%] rounded-[20px] sm:rounded-[30px] p-[20px] sm:p-[30px]">
-                <p className="text-[28px] sm:text-[40px] font-medium">
+            <div className="flex-col justify-center w-[400px]">
+              <div className="w-full rounded-[20px] p-[24px] bg-white shadow-lg">
+                <h2 className="text-[24px] font-semibold text-gray-800 mb-4">
                   Write a Review
-                </p>
-                <p className="text-[18px] sm:text-[20px] font-semibold mt-3">
+                </h2>
+                <h3 className="text-[16px] font-medium text-gray-700 mb-2">
                   Rate the Product
-                </p>
+                </h3>
                 <Rating
-                  name="read-only"
-                  mt-3
+                  name="product-rating"
                   defaultValue={5}
                   value={rating}
                   onChange={(_, val) => setRating(val as number)}
                   sx={{
                     "& .MuiSvgIcon-root": {
-                      fontSize: { xs: 40, sm: 50 },
+                      fontSize: 32,
                     },
                   }}
                 />
 
-                <div className="mt-4 sm:mt-5">
-                  <label className="text-[14px] sm:text-[16px] font-semibold text-[#777777]">
-                    Message
+                <div className="mt-4">
+                  <label className="text-[14px] font-medium text-gray-600 block mb-1">
+                    Your Review
                   </label>
                   <textarea
                     onChange={(e) => setComment(e.target.value)}
-                    className="border-[1px] border-[#0000061] resize-none w-full rounded-md h-[80px] sm:h-[100px] p-2 sm:p-3 focus:outline-none placeholder:text-[#777777]"
-                    placeholder="Message"
+                    className="border border-gray-300 w-full rounded-md h-[80px] p-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                    placeholder="Share your thoughts..."
                   />
                 </div>
-                <div className="flex flex-wrap items-center justify-start gap-3 sm:gap-4 mt-4 sm:mt-5">
-                  {selectedImages.length > 0 &&
-                    selectedImages.map((image, index) => (
-                      <Image
-                        width={130}
-                        height={130}
-                        key={index}
-                        src={image}
-                        className="rounded-xl sm:rounded-2xl w-[80px] h-[80px] sm:w-[130px] sm:h-[130px] object-cover"
-                        alt=""
-                      />
-                    ))}
-                  <div className="w-[80px] h-[80px] sm:w-[130px] sm:h-[130px] border-[2px] sm:border-[3px] rounded-xl sm:rounded-2xl border-[#F70000] flex justify-center items-center">
+
+                <div className="flex flex-wrap items-center gap-2 mt-4">
+                  {selectedImages.map((image, index) => (
+                    <Image
+                      key={index}
+                      src={image}
+                      width={60}
+                      height={60}
+                      className="rounded-lg object-cover"
+                      alt={`Review image ${index + 1}`}
+                    />
+                  ))}
+                  <div className="w-[60px] h-[60px] border-2 rounded-lg border-red-500 flex justify-center items-center">
                     <input
                       type="file"
                       ref={fileInputRef}
-                      style={{ display: "none" }}
+                      className="hidden"
                       onChange={handleFileChange}
                       accept="image/*"
                       multiple
                     />
                     <PiCameraThin
-                      className="h-[50px] w-[50px] sm:h-[90px] sm:w-[90px] text-[#F70000]"
+                      className="h-[36px] w-[36px] text-red-500 cursor-pointer"
                       onClick={handleIconClick}
-                      style={{ cursor: "pointer" }}
                     />
                   </div>
                 </div>
-                <div className="flex flex-col sm:flex-row mt-4 sm:mt-5 items-center gap-3 sm:gap-6">
+
+                <div className="flex justify-between mt-6">
                   <button
-                    className="bg-[#F70000] rounded-lg sm:rounded-xl h-[45px] sm:h-[50px] w-full sm:w-[230px] text-[16px] sm:text-[18px] font-medium text-white"
+                    className="bg-red-600 hover:bg-red-700 rounded-lg px-4 py-2 text-[14px] font-medium text-white transition duration-300"
                     onClick={revSubHandler}
                   >
                     Submit Review
                   </button>
                   <button
-                    className="bg-[#F69B26] rounded-lg sm:rounded-xl h-[45px] sm:h-[50px] w-full sm:w-[230px] text-[16px] sm:text-[18px] font-medium text-white"
+                    className="bg-gray-200 hover:bg-gray-300 rounded-lg px-4 py-2 text-[14px] font-medium text-gray-800 transition duration-300"
                     onClick={handleRevModal}
                   >
                     Cancel
