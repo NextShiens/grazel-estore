@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import Navbar from "@/components/navbar";
 import { updatePageLoader, updatePageNavigation } from "@/features/features";
-
 import SearchOnTop from "@/components/SearchOnTop";
 import Sidebar from "@/components/sidebar";
 import LeftSection from "./LeftSection";
@@ -20,46 +19,169 @@ const Products = () => {
   const productRef = useRef([]);
   const sortedProduct = productRef.current?.sort((a, b) => a.price - b.price);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
-    const getAllProducts = async () => {
-      const { data } = await axiosPrivate.get("/admin/products", {
+    dispatch(updatePageLoader(false));
+    dispatch(updatePageNavigation("products"));
+  }, [dispatch]);
+
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
+    fetchBrands();
+  }, [currentPage]);
+
+  const fetchProducts = async () => {
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: itemsPerPage.toString(),
+      });
+
+      const { data } = await axiosPrivate.get(`/admin/products?${params}`, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
-      !allProducts.length && setAllProducts(data?.products); // to show data on web
-      productRef.current = data?.products;
-    };
-    getAllProducts();
-  }, []);
-  useEffect(() => {
-    const getAllCategories = async () => {
+
+      setAllProducts(data.products);
+      setTotalPages(data.totalPages);
+      setTotalProducts(data.total);
+      setItemsPerPage(data.limit);
+      productRef.current = data.products;
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
       const { data } = await axiosPrivate.get("/categories", {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
-      !allCategories.length && setAllCategories(data?.categories); // to show data on web
-      // sellerRef.current=[data?.user] //to made a whole copy of data and can filter it
-    };
-    getAllCategories();
-  }, []);
-  useEffect(() => {
-    const getAllBrands = async () => {
+      setAllCategories(data?.categories);
+    } catch (error) {
+      console.error("Failed to fetch categories:", error);
+    }
+  };
+
+  const fetchBrands = async () => {
+    try {
       const { data } = await axiosPrivate.get("/brands", {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
-      !allBrands.length && setAllBrands(data?.brands); // to show data on web
-      // sellerRef.current=[data?.user] //to made a whole copy of data and can filter it
-    };
-    getAllBrands();
-  }, []);
-  useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("products"));
-  }, [dispatch]);
+      setAllBrands(data?.brands);
+    } catch (error) {
+      console.error("Failed to fetch brands:", error);
+    }
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const ellipsis = <span className="mx-1">...</span>;
+
+    if (totalPages <= 4) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(
+          <PageButton
+            key={i}
+            page={i}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(i)}
+          />
+        );
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+        pageNumbers.push(ellipsis);
+        pageNumbers.push(
+          <PageButton
+            key={totalPages}
+            page={totalPages}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(totalPages)}
+          />
+        );
+      } else if (currentPage >= totalPages - 2) {
+        pageNumbers.push(
+          <PageButton
+            key={1}
+            page={1}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(1)}
+          />
+        );
+        pageNumbers.push(ellipsis);
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+      } else {
+        pageNumbers.push(
+          <PageButton
+            key={1}
+            page={1}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(1)}
+          />
+        );
+        pageNumbers.push(ellipsis);
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+        pageNumbers.push(ellipsis);
+        pageNumbers.push(
+          <PageButton
+            key={totalPages}
+            page={totalPages}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(totalPages)}
+          />
+        );
+      }
+    }
+
+    return pageNumbers;
+  };
 
   function filterProductByDate(category, categoryId, brand, created_at) {
     const today = new Date();
@@ -77,13 +199,12 @@ const Products = () => {
         : created_at < new Date().toISOString();
     }
   }
+
   function onFilterProduct({ category, brand }) {
     let allProducts = productRef.current || [];
     let filteredProduct = [];
     filteredProduct = allProducts.filter((item) => {
-      // const categoryId = item?.category?.id;
       const categoryId = item?.category_id;
-      // const brandId = item?.brand?.id;
       const brandId = item?.brand_id;
       const created_at = item?.created_at;
 
@@ -104,13 +225,13 @@ const Products = () => {
 
     setAllProducts(filteredProduct);
   }
+
   function onChangePrice(priceArray, { category, brand }) {
     let allProducts = productRef.current || [];
     const [lowPrice, highPrice] = priceArray;
 
     const filteredProduct = allProducts.filter((item) => {
       const price = item.price;
-      // const categoryId = item?.category?.id;
       const categoryId = item?.category_id;
       const brandId = item?.brand_id;
       const created_at = item?.created_at;
@@ -132,85 +253,7 @@ const Products = () => {
     });
     setAllProducts(filteredProduct);
   }
-  // function onChangePrice(priceArray, { category, brand }) {
-  //   let allProducts = productRef.current || [];
 
-  //   const [lowPrice, highPrice] = priceArray;
-
-  //   // const filteredProduct = !priceArray.length
-  //   //   ? allProducts
-  //   //   : allProducts.filter(
-  //   //       (item) => item.price >= lowPrice && item.price <= highPrice
-  //   //     );
-  //   const filteredProduct = allProducts.filter((item) => {
-  //     const price = item.price;
-  //     const categoryId = item?.category?.id;
-  //     const brandId = item?.brand?.id;
-  //     if (category && brand) {
-  //       // return typeof brand==="string" ? filterProductByDate():
-  //       return (
-  //         price >= lowPrice &&
-  //         price <= highPrice &&
-  //         categoryId === category &&
-  //         brandId === brand
-  //       );
-  //     } else if (category) {
-  //       return (
-  //         price >= lowPrice &&
-  //         price <= highPrice &&
-  //         categoryId === category &&
-  //         brandId === brand
-  //       );
-  //     } else if (brand) {
-  //     } else {
-  //       return item.price >= lowPrice && item.price <= highPrice;
-  //     }
-  //   });
-  //   setAllProducts(filteredProduct);
-  // }
-  // function onFilterProduct({ category, brand }) {
-  //   let allProducts = productRef.current || [];
-  //   let filteredProduct = [];
-  //   const today = new Date();
-  //   today.setMonth(today.getMonth() + 1);
-  //   const IsoDate = today.toISOString();
-
-  //   filteredProduct = allProducts.filter((item) => {
-  //     const categoryId = item?.category?.id;
-  //     const brandId = item?.brand?.id;
-  //     const created_at = item?.created_at;
-  //     if (!category && !brand) {
-  //       return allProducts;
-  //     } else if (category && brand) {
-  //       if (brand === "new") {
-  //         return (
-  //           categoryId === category &&
-  //           created_at <= IsoDate &&
-  //           created_at >= new Date().toISOString()
-  //         );
-  //       } else if (brand === "old") {
-  //         return (
-  //           categoryId === category && created_at < new Date().toISOString()
-  //         );
-  //       } else {
-  //         return categoryId === category && brandId === brand;
-  //       }
-  //     } else if (category) {
-  //       return categoryId === category;
-  //     } else if (brand) {
-  //       if (brand === "new") {
-  //         return (
-  //           created_at <= IsoDate && created_at >= new Date().toISOString()
-  //         );
-  //       } else if (brand === "old") {
-  //         return created_at < new Date().toISOString();
-  //       } else {
-  //         return brandId === brand;
-  //       }
-  //     }
-  //   });
-  //   setAllProducts(filteredProduct);
-  // }
   return (
     <>
       <Loading />
@@ -234,6 +277,12 @@ const Products = () => {
               <RightSection
                 allProducts={allProducts}
                 allCategories={allCategories}
+                isLoading={isLoading}
+                renderPageNumbers={renderPageNumbers}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalProducts={totalProducts}
+                handlePageChange={handlePageChange}
               />
             </div>
           </div>
@@ -242,5 +291,18 @@ const Products = () => {
     </>
   );
 };
+
+const PageButton = ({ page, currentPage, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`mx-1 px-3 py-1 rounded ${
+      currentPage === page
+        ? "bg-red-500 text-white"
+        : "bg-gray-200 text-gray-700"
+    }`}
+  >
+    {page}
+  </button>
+);
 
 export default Products;

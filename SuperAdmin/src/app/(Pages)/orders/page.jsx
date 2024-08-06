@@ -15,7 +15,9 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     dispatch(updatePageLoader(false));
@@ -23,34 +25,42 @@ const Orders = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    const getOrders = async () => {
-      setIsLoading(true);
-      try {
-        const endpoint = selectedTab === "all" 
-          ? "/admin/orders"
-          : `/admin/orders?status=${selectedTab}`;
-        
-        const { data } = await axiosPrivate.get(endpoint, {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        });
+    fetchOrders();
+  }, [selectedTab, currentPage]);
 
-        setOrders(data?.orders || []);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      } finally {
-        setIsLoading(false);
+  const fetchOrders = async () => {
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: itemsPerPage.toString(),
+      });
+
+      if (selectedTab !== "all") {
+        params.append("status", selectedTab);
       }
-    };
 
-    getOrders();
-  }, [selectedTab]);
+      const { data } = await axiosPrivate.get(`/admin/orders?${params}`, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = orders.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(orders.length / itemsPerPage);
+      setOrders(data.orders);
+      setTotalPages(data.meta.totalPages);
+      setTotalOrders(data.meta.totalItems);
+      setItemsPerPage(data.meta.itemsPerPage);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleTabChange = (tab) => {
+    setSelectedTab(tab);
+    setCurrentPage(1);
+  };
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -84,7 +94,23 @@ const Orders = () => {
           );
         }
         pageNumbers.push(ellipsis);
+        pageNumbers.push(
+          <PageButton
+            key={totalPages}
+            page={totalPages}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(totalPages)}
+          />
+        );
       } else if (currentPage >= totalPages - 2) {
+        pageNumbers.push(
+          <PageButton
+            key={1}
+            page={1}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(1)}
+          />
+        );
         pageNumbers.push(ellipsis);
         for (let i = totalPages - 3; i <= totalPages; i++) {
           pageNumbers.push(
@@ -97,6 +123,14 @@ const Orders = () => {
           );
         }
       } else {
+        pageNumbers.push(
+          <PageButton
+            key={1}
+            page={1}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(1)}
+          />
+        );
         pageNumbers.push(ellipsis);
         for (let i = currentPage - 1; i <= currentPage + 1; i++) {
           pageNumbers.push(
@@ -109,6 +143,14 @@ const Orders = () => {
           );
         }
         pageNumbers.push(ellipsis);
+        pageNumbers.push(
+          <PageButton
+            key={totalPages}
+            page={totalPages}
+            currentPage={currentPage}
+            onClick={() => handlePageChange(totalPages)}
+          />
+        );
       }
     }
 
@@ -134,7 +176,7 @@ const Orders = () => {
                         ? "text-[var(--text-color)] border-[var(--text-color)]"
                         : "text-[var(--text-color-body)] border-transparent"
                     }`}
-                    onClick={() => setSelectedTab(tab)}
+                    onClick={() => handleTabChange(tab)}
                   >
                     {tab.charAt(0).toUpperCase() + tab.slice(1)} Orders
                   </p>
@@ -143,50 +185,57 @@ const Orders = () => {
               {isLoading ? (
                 <p>Loading orders...</p>
               ) : (
-                <table className="w-[1000px] xl:w-[100%]">
-                  <thead>
-                    <tr className="font-[500] text-[var(--text-color-body)] text-[15px] h-[50px]">
-                      <td>Order No</td>
-                      <td>Product Name</td>
-                      <td>Price</td>
-                      <td>Date</td>
-                      <td>Status</td>
-                      <td>Seller</td>
-                      <td className="w-[80px]">Action</td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentItems.map((item) => (
-                      <OrderTable
-                        type="action"
-                        order={item}
-                        key={item?.id}
-                      />
-                    ))}
-                  </tbody>
-                </table>
-              )}
-              {!isLoading && currentItems.length === 0 && (
-                <h3 className="text-center text-red-500">No orders found</h3>
-              )}
-              {!isLoading && currentItems.length > 0 && (
-                <div className="flex justify-center items-center mt-4">
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
-                  >
-                    Previous
-                  </button>
-                  {renderPageNumbers()}
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </div>
+                <>
+                  <table className="w-[1000px] xl:w-[100%]">
+                    <thead>
+                      <tr className="font-[500] text-[var(--text-color-body)] text-[15px] h-[50px]">
+                        <td>Order No</td>
+                        <td>Product Name</td>
+                        <td>Price</td>
+                        <td>Date</td>
+                        <td>Status</td>
+                        <td>Seller</td>
+                        <td className="w-[80px]">Action</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {orders.map((item) => (
+                        <OrderTable
+                          type="action"
+                          order={item}
+                          key={item?.id}
+                        />
+                      ))}
+                    </tbody>
+                  </table>
+                  {orders.length === 0 && (
+                    <h3 className="text-center text-red-500">No orders found</h3>
+                  )}
+                  {orders.length > 0 && (
+                    <div className="flex flex-col items-center mt-4">
+                      <div className="flex justify-center items-center">
+                        <button
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 1}
+                          className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+                        >
+                          Previous
+                        </button>
+                        {renderPageNumbers()}
+                        <button
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage === totalPages}
+                          className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+                        >
+                          Next
+                        </button>
+                      </div>
+                      <div className="mt-2 text-sm text-gray-600">
+                        Page {currentPage} of {totalPages} | Total Orders: {totalOrders}
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
