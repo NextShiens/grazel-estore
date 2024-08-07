@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   favoriteProductApi,
   addRecenetViewedApi,
@@ -16,7 +17,6 @@ import { useRouter } from "next/navigation";
 import "react-multi-carousel/lib/styles.css";
 import { updateCart } from "@/features/features";
 import IconButton from "@mui/material/IconButton";
-import React, { useEffect, useState } from "react";
 import SkeletonLoader from "./SkeletonLoader";
 import { calculateFinalPrice } from "@/utils/priceCalculation";
 import LikeButton from "./LikeButton";
@@ -62,6 +62,7 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
   const [selectedId, setSelectedId] = useState("");
   const [favoriteProducts, setFavoriteProducts] = useState<number[]>([]);
   const [touchedProductId, setTouchedProductId] = useState(null);
+  const [expanded, setExpanded] = useState<number | null>(null);
 
   const onAddingCart = (
     e: any,
@@ -127,6 +128,14 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
     fetchFavoriteProducts();
   }, []);
 
+  const truncateTitle = (title: string, maxLength: number = 50) => {
+    return title.length > maxLength ? `${title.slice(0, maxLength)}...` : title;
+  };
+
+  const handleSeeMore = (id: number) => {
+    setExpanded(expanded === id ? null : id);
+  };
+
   return (
     <div className="parent md:h-[380px] h-[320px]">
       <Carousel
@@ -181,14 +190,22 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
                     <div className="w-full h-[160px] md:h-[170px] bg-gray-200 rounded-2xl"></div>
                   )}
 
-                  {/* <div className="flex w-full justify-between items-center absolute px-[16px] top-[10px]">
-                    <div></div>
-                    <LikeButton productId={item?.id} />
-                  </div> */}
-
                   <div className="p-2">
                     <p className="text-[14px] md:text-[15px] w-[80%] font-semibold">
-                      {item?.title}
+                      {expanded === item.id
+                        ? item?.title
+                        : truncateTitle(item?.title)}
+                      {item?.title.length > 50 && (
+                        <button
+                          className="text-blue-300 ml-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSeeMore(item.id);
+                          }}
+                        >
+                          {expanded === item.id ? "See Less" : "See More"}
+                        </button>
+                      )}
                     </p>
                     <div className="flex items-center mt-[4px] md:mt-[8px] gap-1">
                       <span className="text-[8px] md:text-[10px] text-[#F69B26]">

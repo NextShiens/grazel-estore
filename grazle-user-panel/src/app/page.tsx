@@ -120,7 +120,6 @@ export default function Home() {
     })();
   }, []);
 
-
   // dynamic view products
   useEffect(() => {
     (async () => {
@@ -201,7 +200,7 @@ export default function Home() {
   const seventyFivePercentSaleProducts: any = allProducts.filter(
     (product: any) =>
       product?.offer?.discount_type?.toLowerCase() ===
-      "percentage".toLowerCase() &&
+        "percentage".toLowerCase() &&
       product?.offer?.discount_value?.toLowerCase() === "75.00".toLowerCase()
   );
   const seventyFiveEndDate: any = new Date(
@@ -226,7 +225,7 @@ export default function Home() {
   const fiftyPercentSaleProducts: any = allProducts.filter(
     (product: any) =>
       product?.offer?.discount_type?.toLowerCase() ===
-      "percentage".toLowerCase() &&
+        "percentage".toLowerCase() &&
       product?.offer?.discount_value?.toLowerCase() === "50.00".toLowerCase()
   );
 
@@ -512,8 +511,8 @@ export default function Home() {
             {timeLeft?.days > 0
               ? timeLeft?.days + "d"
               : timeLeft?.hours > 0
-                ? timeLeft?.hours
-                : 0}
+              ? timeLeft?.hours
+              : 0}
           </span>
           <span>:</span>
           <span className="p-2 bg-[#F81F1F] rounded-sm text-white md:text-base text-xs">
@@ -552,7 +551,7 @@ export default function Home() {
 
         {offerProducts?.length > 0 ? (
           <div>
-           <OfferViewSlider Data={offerProducts} ref={sliderRef6} />
+            <OfferViewSlider Data={offerProducts} ref={sliderRef6} />
           </div>
         ) : (
           <>
@@ -584,17 +583,21 @@ export default function Home() {
             disabled={click?.name === item?.name || loading}
             key={index}
             onClick={() => handleClickCategory(item)}
-            className={`${item?.name === click?.name
-              ? "border border-[#FC3030] text-[#FC3030]"
-              : "bg-[#F8F8F8]"
-              } lg:text-sm text-xs py-2 px-3 rounded-md whitespace-nowrap`}
+            className={`${
+              item?.name === click?.name
+                ? "border border-[#FC3030] text-[#FC3030]"
+                : "bg-[#F8F8F8]"
+            } lg:text-sm text-xs py-2 px-3 rounded-md whitespace-nowrap`}
           >
             {item?.name?.toUpperCase()}
           </button>
         ))}
       </div>
 
-      <div className="lg:mx-[150px] md:mx-[60px] md:my-[24px] my-0">
+      <div
+        className="lg:mx-[150px] md:mx-[60px] md:my-[24px] my-0"
+        style={{ padding: "10px" }}
+      >
         {selectedCategoryProducts?.length ? (
           <div>
             <RecentViewSlider
@@ -603,22 +606,25 @@ export default function Home() {
             />
           </div>
         ) : (
-          <>
-            <div className="hidden md:flex items-center justify-between">
+          <div className="flex flex-col items-center justify-center mt-[20px]">
+            <p className="text-lg font-semibold text-gray-600">
+              No items related to this category
+            </p>
+            <div className="hidden md:flex items-center justify-between mt-[20px]">
               {Array(4)
                 .fill(0)
                 .map((_, index) => (
-                  <SkeletonLoader />
+                  <SkeletonLoader key={index} />
                 ))}
             </div>
-            <div className="md:hidden flex items-center justify-between">
+            <div className="md:hidden flex items-center justify-between mt-[20px]">
               {Array(2)
                 .fill(0)
                 .map((_, index) => (
-                  <SkeletonLoader />
+                  <SkeletonLoader key={index} />
                 ))}
             </div>
-          </>
+          </div>
         )}
       </div>
 
@@ -639,12 +645,17 @@ export default function Home() {
 
       {/* !!dynamic view */}
       <div className="lg:mx-[150px] md:mx-[60px] mx-[14px] my-[24px]">
-        <div className="flex items-center justify-between w-full">
-          <p className="md:text-2xl text-lg font-semibold">Dynamic View</p>
+        <div className="flex items-center justify-between w-full mt-[15px] md:mt-0">
+          <p
+            className="md:text-2xl text-lg font-semibold"
+            style={{ margin: "15px 0px" }}
+          >
+            Dynamic View
+          </p>
           {/* <button className="flex items-center gap-3 border border-[#FC3030] text-[#FC3030] text-sm rounded-lg py-2 px-4">
-            <span>View All</span>
-            <FaArrowRightLong />
-          </button> */}
+    <span>View All</span>
+    <FaArrowRightLong />
+  </button> */}
         </div>
 
         {dynamicViewProducts?.length ? (
@@ -712,7 +723,7 @@ export default function Home() {
       )} */}
 
       {/* banner */}
-      <div className="lg:mx-[150px] md:mx-[60px] mx-0">
+      <div className="lg:mx-[150px] md:mx-[60px] mx-0" style={{marginTop: '20px'}}>
         <Image src={banner} alt="banner" />
       </div>
 
@@ -861,8 +872,8 @@ export default function Home() {
               {seventyFiveTimeLeft?.days > 0
                 ? seventyFiveTimeLeft?.days + "d"
                 : seventyFiveTimeLeft?.hours > 0
-                  ? seventyFiveTimeLeft?.hours
-                  : 0}
+                ? seventyFiveTimeLeft?.hours
+                : 0}
             </span>
             <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
               {seventyFiveTimeLeft?.days > 0

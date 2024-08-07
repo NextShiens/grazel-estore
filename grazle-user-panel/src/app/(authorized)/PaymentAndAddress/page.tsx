@@ -28,7 +28,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter, useSearchParams } from "next/navigation";
 import { MdKeyboardArrowRight, MdKeyboardArrowLeft } from "react-icons/md";
 
-
 export default function PaymentAndAddress() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -113,7 +112,7 @@ export default function PaymentAndAddress() {
     }
   }
   const generateRandomTransactionId = () => {
-    return 'trx_' + Math.random().toString(36).substr(2, 9);
+    return "trx_" + Math.random().toString(36).substr(2, 9);
   };
 
   function onChangeFields(e: any) {
@@ -161,11 +160,9 @@ export default function PaymentAndAddress() {
           "Missing address / payment method / product detail "
         );
       formdata.append("address_id", addressId);
-      formdata.append(
-        "payment_type",
-        paymentMethod
-      );
-      const transactionId = otherFields?.transaction_id || generateRandomTransactionId();
+      formdata.append("payment_type", paymentMethod);
+      const transactionId =
+        otherFields?.transaction_id || generateRandomTransactionId();
 
       formdata.append("quantities", productQty);
       formdata.append("coupon_code", otherFields?.coupon_code);
@@ -340,7 +337,11 @@ export default function PaymentAndAddress() {
                   onClick={() => setDelivery(false)}
                   className="flex items-center gap-2 mt-2"
                 >
-                  <Image src={FedEx} alt="Delivery" className="w-auto h-[25px]" />
+                  <Image
+                    src={FedEx}
+                    alt="Delivery"
+                    className="w-auto h-[25px]"
+                  />
                   <p className="md:text-lg text-base font-medium ">
                     FedEx Company
                   </p>
@@ -374,7 +375,11 @@ export default function PaymentAndAddress() {
             className="w-[100%] rounded-3xl p-[20px] mt-4 "
           >
             <div className="flex items-center gap-2 mt-2">
-              <Image src={card} alt="Airpod" className="w-[30px] h-[30px] mr-2" />
+              <Image
+                src={card}
+                alt="Airpod"
+                className="w-[30px] h-[30px] mr-2"
+              />
               <p className="lg:text-[30px] text-[20px] sm:text-[24px] font-medium ">
                 All Payment Options
               </p>
@@ -510,10 +515,11 @@ export default function PaymentAndAddress() {
           </div> */}
 
             <div
-              className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${paymentMethod === "paypal"
-                ? "border-[#F70000]"
-                : "border-[#777777]"
-                }`}
+              className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${
+                paymentMethod === "paypal"
+                  ? "border-[#F70000]"
+                  : "border-[#777777]"
+              }`}
             >
               <div className="flex items-center gap-2">
                 <p className="text-lg text-[#2284b5] font-medium ml-2">CC</p>
@@ -535,8 +541,11 @@ export default function PaymentAndAddress() {
             </div>
 
             <div
-              className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full  ${paymentMethod === "cod" ? "border-[#F70000]" : "border-[#777777]"
-                }`}
+              className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full  ${
+                paymentMethod === "cod"
+                  ? "border-[#F70000]"
+                  : "border-[#777777]"
+              }`}
             >
               <div className="flex items-center">
                 <Radio
@@ -554,14 +563,18 @@ export default function PaymentAndAddress() {
                 />
                 <p className=" ">Cash on Delivery</p>
               </div>
-              <Image src={Cash} alt="visa" className=" w-[43px] h-[30px] mr-2" />
+              <Image
+                src={Cash}
+                alt="visa"
+                className=" w-[43px] h-[30px] mr-2"
+              />
             </div>
 
             <button
               type="submit"
               disabled={isPending || !agreedTerms || paymentMethod === ""}
               className=" mt-10 bg-[#F70000] disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none rounded-md h-[50px]  w-[100%] text-[18px] font-medium text-white"
-            // onClick={handleOpeneMode}
+              // onClick={handleOpeneMode}
             >
               {paymentMethod === "cod" ? (
                 "Place Order"
@@ -639,13 +652,19 @@ export default function PaymentAndAddress() {
             style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
             className="w-full h-full rounded-3xl p-5 mt-5 relative"
           >
-            {cartProducts?.map((item: any) => (
+            {cartProducts?.map((item: any, index: number) => (
               <div
                 key={item.id}
-                className="mt-[0px] flex items-center justify-between"
+                className={`flex items-center justify-between ${
+                  index !== 0 ? "mt-[10px]" : "mt-[0px]"
+                } mb-[20px]`}
               >
-                <div className="relative w-[90px] h-[90px]  mr-2">
-                  <Badge badgeContent={item.qty} color="primary" className="mr-3">
+                <div className="relative w-[90px] h-[90px] mr-2">
+                  <Badge
+                    badgeContent={item.qty}
+                    color="primary"
+                    className="mr-3"
+                  >
                     {item.featured_image ? (
                       <Image
                         src={item.featured_image}
@@ -662,13 +681,10 @@ export default function PaymentAndAddress() {
                   </Badge>
                 </div>
 
-                <div className="flex items-center ">
+                <div className="flex items-center">
                   <p className="text-[16px] font-medium text-black mr-2">
                     {item.title}
                   </p>
-                  {/* <p className="text-[13px] font-medium text-[#777777] mr-2">
-                  White
-                </p> */}
                 </div>
 
                 <p className="text-[16px] font-medium text-[#777777]">
@@ -678,67 +694,68 @@ export default function PaymentAndAddress() {
             ))}
 
             <div className="mt-5 border-b-[1px] border-[#777777]"></div>
-            <p className="text-[24px] font-medium text-black mt-2">Cart Total</p>
+            <p className="text-[24px] font-medium text-black mt-2">
+              Cart Total
+            </p>
             <div className="flex items-center mt-4 justify-between">
-              <p className="text-[18px] font-medium text-[#777777] ">
+              <p className="text-[18px] font-medium text-[#777777]">
                 Cart Subtotal
               </p>
-
-              <p className="text-[18px] font-bold text-[#777777] ">
+              <p className="text-[18px] font-bold text-[#777777]">
                 ₹{Number(cartTotal).toFixed(0)}
               </p>
             </div>
 
             <div className="flex items-center mt-4 justify-between">
-              <p className="text-[18px] font-medium text-[#777777] ">Shipping</p>
-              <p className="text-[18px] font-bold text-black ">Free</p>
+              <p className="text-[18px] font-medium text-[#777777]">Shipping</p>
+              <p className="text-[18px] font-bold text-black">Free</p>
             </div>
 
-            {/* TODO:add images and discount here */}
             <div className="flex items-center mt-4 justify-between">
-              <p className="text-[18px] font-medium text-[#777777] ">Discount</p>
-              <p className="text-[18px] font-bold text-black ">
+              <p className="text-[18px] font-medium text-[#777777]">Discount</p>
+              <p className="text-[18px] font-bold text-black">
                 {Number(cartDiscount).toFixed(0)}
               </p>
             </div>
 
             <div className="my-5 border-b-[1px] border-[#777777]"></div>
             <div className="flex items-center mt-4 justify-between">
-              <p className="text-[18px] font-bold text-black ">Cart Total</p>
-              <p className="text-[18px] font-bold text-[#777777] ">
+              <p className="text-[18px] font-bold text-black">Cart Total</p>
+              <p className="text-[18px] font-bold text-[#777777]">
                 ₹{cartTotal.toFixed(0)}
               </p>
             </div>
           </div>
         </div>
 
-<CustomModal showModal={showSendModel}>
-  <div className="flex flex-col justify-center items-center w-full h-full">
-    <div className="flex flex-col justify-center items-center w-full max-w-[400px] h-auto p-4 bg-white rounded-lg sm:max-h-[90vh] sm:overflow-y-auto">
-      <div className="flex justify-center mb-[22px]">
-        <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
-        <FaCircleCheck className="text-[#E24C4B] h-[105px] mx-[16px] w-[105px] sm:h-[80px] sm:w-[80px]" />
-        <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
-      </div>
+        <CustomModal showModal={showSendModel}>
+          <div className="flex flex-col justify-center items-center w-full h-full">
+            <div className="flex flex-col justify-center items-center w-full max-w-[400px] h-auto p-4 bg-white rounded-lg sm:max-h-[90vh] sm:overflow-y-auto">
+              <div className="flex justify-center mb-[22px]">
+                <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
+                <FaCircleCheck className="text-[#E24C4B] h-[105px] mx-[16px] w-[105px] sm:h-[80px] sm:w-[80px]" />
+                <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
+              </div>
 
-      <p className="mt-5 text-[32px] text-center font-semibold text-[#434343] sm:text-[24px]">
-        Your order has been successfully placed
-      </p>
-      <p className="mt-3 text-[16px] text-center font-semibold text-[#434343] sm:text-[14px]">
-        We will be sending you an email confirmation to your email shortly
-      </p>
+              <p className="mt-5 text-[32px] text-center font-semibold text-[#434343] sm:text-[24px]">
+                Your order has been successfully placed
+              </p>
+              <p className="mt-3 text-[16px] text-center font-semibold text-[#434343] sm:text-[14px]">
+                We will be sending you an email confirmation to your email
+                shortly
+              </p>
 
-      <div className="flex mt-[30px] gap-4 justify-center">
-        <button
-          className="bg-[#F69B26] rounded-lg h-[50px] w-[300px] text-white font-medium sm:h-[40px] sm:w-full"
-          onClick={handleCloseModel}
-        >
-          Back to Home
-        </button>
-      </div>
-    </div>
-  </div>
-</CustomModal>
+              <div className="flex mt-[30px] gap-4 justify-center">
+                <button
+                  className="bg-[#F69B26] rounded-lg h-[50px] w-[300px] text-white font-medium sm:h-[40px] sm:w-full"
+                  onClick={handleCloseModel}
+                >
+                  Back to Home
+                </button>
+              </div>
+            </div>
+          </div>
+        </CustomModal>
       </div>
     </>
   );
