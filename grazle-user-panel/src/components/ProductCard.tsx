@@ -10,17 +10,12 @@ import { updateCart } from "@/features/features";
 import { toast } from "react-toastify";
 import Cart from "@/assets/CartVector.png";
 import { IconButton } from "@mui/material";
-import {
-  favoriteProductApi,
-  addRecenetViewedApi,
-  getAllFavoriteProductApi,
-} from "@/apis";
+import { favoriteProductApi } from "@/apis";
 import heart from "@/assets/like.png";
 
 interface ProductCardProps {
   product: any;
   offerId?: string;
-  width?: string;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
@@ -96,31 +91,33 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
 
   return (
     <div
-      className={`group lg:w-[98%] w-[95%] border mb-1 mt-1 lg:mt-[16px] rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${
+      className={`group w-full max-w-xs mx-auto border mb-4 rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${
         touchedProductId === product.id ? "active" : ""
       }`}
       onClick={() => setTouchedProductId(product.id)}
     >
       <div onClick={goToDetail} className="cursor-pointer">
         {product?.featured_image ? (
-          <Image
-            alt="Product Image"
-            width={203}
-            height={203}
-            src={product.featured_image}
-            className="w-full h-[160px] md:h-[170px] object-cover rounded-2xl cursor-pointer"
-            onError={(e) => {
-              console.error("Image failed to load:", e);
-              (e.target as HTMLImageElement).src =
-                "/path/to/fallback-image.jpg";
-            }}
-          />
+          <div className="w-full h-[200px] md:h-[250px] flex items-center justify-center">
+            <Image
+              alt="Product Image"
+              width={200}
+              height={250}
+              src={product.featured_image}
+              className="w-full h-full object-cover rounded-t-2xl"
+              onError={(e) => {
+                console.error("Image failed to load:", e);
+                (e.target as HTMLImageElement).src =
+                  "/path/to/fallback-image.jpg";
+              }}
+            />
+          </div>
         ) : (
-          <div className="w-full h-[160px] md:h-[170px] bg-gray-200 rounded-2xl"></div>
+          <div className="w-full h-[200px] md:h-[250px] flex items-center justify-center bg-gray-200 rounded-t-2xl"></div>
         )}
 
-        <div className="p-2">
-          <p className="text-[14px] md:text-[15px] w-[80%] font-semibold">
+        <div className="p-3">
+          <p className="text-[14px] md:text-[15px] font-semibold truncate">
             {product?.title}
           </p>
           <div className="flex items-center mt-[4px] md:mt-[8px] gap-1">
