@@ -260,7 +260,7 @@ const EditProduct = ({ product, setSelectedTab }) => {
                 />
               </div>
             </div>
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
+            {/* <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
               <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
                 <p className="text-[18px] font-[600] pt-[20px]">
                   Feature Image
@@ -365,7 +365,7 @@ const EditProduct = ({ product, setSelectedTab }) => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="flex flex-col gap-10 pb-8">
               <button
