@@ -356,12 +356,7 @@ export default function ProductDetail() {
                 >
                   Add to cart
                 </button>
-                <button
-                  className="border-[1px] border-[#F70000] rounded-full h-[50px] mt-[20px] lg:w-[275px] w-[200px] sm:w-[200px] md:w-[200px] font-medium text-[#F70000]"
-                  onClick={() => router.push("/address")}
-                >
-                  Get Started
-                </button>
+                
                 <div className="mt-[20px] flex justify-center items-center rounded-full h-[52px] w-[52px]">
                   <LikeButton productId={singleProduct?.id} />
                 </div>

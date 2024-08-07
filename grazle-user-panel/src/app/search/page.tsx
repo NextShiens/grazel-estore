@@ -12,7 +12,8 @@ import MenuIcon from "@/assets/VectorMenu.png";
 import ProductCard from "@/components/ProductCard";
 import { useSelector } from "react-redux";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://api.grazle.co.in/api";
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL || "https://api.grazle.co.in/api";
 
 export default function StoreProductPage() {
   const router = useRouter();
@@ -51,7 +52,7 @@ export default function StoreProductPage() {
   useEffect(() => {
     const category = searchParams.get("category");
     if (category) {
-      setFilters(prev => ({ ...prev, category_id: category }));
+      setFilters((prev) => ({ ...prev, category_id: category }));
     }
   }, [searchParams]);
 
@@ -75,14 +76,6 @@ export default function StoreProductPage() {
       setBrands(response.data.brands);
     } catch (error) {
       console.error("Error fetching brands:", error);
-    }
-  };
-  const fetchCategories = async () => {
-    try {
-      const response = await axios.get(`${BASE_URL}/global/categories`);
-      // setCategories(response.data.categories);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
     }
   };
 
@@ -125,9 +118,18 @@ export default function StoreProductPage() {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const renderFilterSection = (title, key, items, itemKey = "id", itemLabel = "name") => (
+  const renderFilterSection = (
+    title,
+    key,
+    items,
+    itemKey = "id",
+    itemLabel = "name"
+  ) => (
     <div className="border-b border-gray-200">
-      <div className="px-3 py-2 flex justify-between items-center cursor-pointer" onClick={() => toggleSection(key)}>
+      <div
+        className="px-3 py-2 flex justify-between items-center cursor-pointer"
+        onClick={() => toggleSection(key)}
+      >
         <p className="text-gray-600 text-lg font-medium">{title}</p>
         {openSections[key] ? (
           <FaMinus className="text-[#F70000]" />
@@ -141,7 +143,9 @@ export default function StoreProductPage() {
             <div
               key={item[itemKey]}
               className="flex items-center gap-2 cursor-pointer"
-              onClick={() => handleFilterChange(`${key}_id`, item[itemKey].toString())}
+              onClick={() =>
+                handleFilterChange(`${key}_id`, item[itemKey].toString())
+              }
             >
               <Checkbox
                 checked={filters[`${key}_id`] === item[itemKey].toString()}
@@ -174,9 +178,16 @@ export default function StoreProductPage() {
       {renderFilterSection("Brands", "brand", brands)}
 
       <div className="border-b border-gray-200">
-        <div className="px-3 py-2 flex justify-between items-center cursor-pointer" onClick={() => toggleSection("price")}>
+        <div
+          className="px-3 py-2 flex justify-between items-center cursor-pointer"
+          onClick={() => toggleSection("price")}
+        >
           <p className="text-gray-600 text-lg font-medium">Price</p>
-          {openSections.price ? <FaMinus className="text-[#F70000]" /> : <FaPlus className="text-[#F70000]" />}
+          {openSections.price ? (
+            <FaMinus className="text-[#F70000]" />
+          ) : (
+            <FaPlus className="text-[#F70000]" />
+          )}
         </div>
         {openSections.price && (
           <div className="px-3 py-2">
@@ -199,9 +210,16 @@ export default function StoreProductPage() {
       </div>
 
       <div className="border-b border-gray-200">
-        <div className="px-3 py-2 flex justify-between items-center cursor-pointer" onClick={() => toggleSection("rating")}>
+        <div
+          className="px-3 py-2 flex justify-between items-center cursor-pointer"
+          onClick={() => toggleSection("rating")}
+        >
           <p className="text-gray-600 text-lg font-medium">Rating</p>
-          {openSections.rating ? <FaMinus className="text-[#F70000]" /> : <FaPlus className="text-[#F70000]" />}
+          {openSections.rating ? (
+            <FaMinus className="text-[#F70000]" />
+          ) : (
+            <FaPlus className="text-[#F70000]" />
+          )}
         </div>
         {openSections.rating && (
           <div className="px-3 py-2">
@@ -216,15 +234,24 @@ export default function StoreProductPage() {
       </div>
 
       <div className="border-b border-gray-200">
-        <div className="px-3 py-2 flex justify-between items-center cursor-pointer" onClick={() => toggleSection("sort")}>
+        <div
+          className="px-3 py-2 flex justify-between items-center cursor-pointer"
+          onClick={() => toggleSection("sort")}
+        >
           <p className="text-gray-600 text-lg font-medium">Sort By</p>
-          {openSections.sort ? <FaMinus className="text-[#F70000]" /> : <FaPlus className="text-[#F70000]" />}
+          {openSections.sort ? (
+            <FaMinus className="text-[#F70000]" />
+          ) : (
+            <FaPlus className="text-[#F70000]" />
+          )}
         </div>
         {openSections.sort && (
           <div className="px-3 py-2">
             <Select
               value={filters.latest_arrival}
-              onChange={(e) => handleFilterChange("latest_arrival", e.target.value)}
+              onChange={(e) =>
+                handleFilterChange("latest_arrival", e.target.value)
+              }
               displayEmpty
               fullWidth
               className="mb-2"
@@ -285,8 +312,13 @@ export default function StoreProductPage() {
         <div className="lg:w-1/4 hidden lg:block">
           <div className="bg-white rounded-lg shadow-md border border-gray-200">
             <div className="flex items-center p-4 justify-between border-b border-gray-200">
-              <p className="text-gray-600 text-lg font-medium">Filter Products</p>
-              <button className="text-[#F70000] flex items-center gap-2" onClick={clearFilters}>
+              <p className="text-gray-600 text-lg font-medium">
+                Filter Products
+              </p>
+              <button
+                className="text-[#F70000] flex items-center gap-2"
+                onClick={clearFilters}
+              >
                 <IoMdClose className="text-lg" />
                 <span className="text-base font-medium">Clear</span>
               </button>
@@ -296,13 +328,19 @@ export default function StoreProductPage() {
         </div>
 
         <div className="lg:w-3/4">
-          {/* Banner */}
-          <div className="bg-[#FF9C2A] rounded-lg overflow-hidden mb-8">
+          {/* Banner - hidden on mobile, visible from medium screens up */}
+          <div className="hidden md:block bg-[#FF9C2A] rounded-lg overflow-hidden mb-8">
             <div className="flex flex-col md:flex-row items-center justify-between p-8 lg:p-12">
               <div className="text-center md:text-left mb-6 md:mb-0">
-                <p className="text-white text-xl lg:text-2xl font-semibold mb-2">Special Offer</p>
-                <p className="text-white text-3xl lg:text-5xl xl:text-6xl font-bold mb-2">Super Sale</p>
-                <p className="text-white text-xl lg:text-2xl font-semibold mb-4">Up To 50% Off</p>
+                <p className="text-white text-xl lg:text-2xl font-semibold mb-2">
+                  Special Offer
+                </p>
+                <p className="text-white text-3xl lg:text-5xl xl:text-6xl font-bold mb-2">
+                  Super Sale
+                </p>
+                <p className="text-white text-xl lg:text-2xl font-semibold mb-4">
+                  Up To 50% Off
+                </p>
                 <button className="bg-[#F70000] hover:bg-red-700 text-white font-medium py-3 px-6 rounded-full text-lg transition-colors">
                   Shop Now
                 </button>
@@ -322,7 +360,10 @@ export default function StoreProductPage() {
           {/* Filter toggle for small screens */}
           <div className="flex justify-between items-center mb-4 lg:hidden">
             <p className="text-gray-600 text-lg font-medium">Filter Products</p>
-            <button onClick={() => setIsFilterVisible(!isFilterVisible)} className="text-gray-600">
+            <button
+              onClick={() => setIsFilterVisible(!isFilterVisible)}
+              className="text-gray-600"
+            >
               <Image src={MenuIcon} alt="Menu" width={24} height={24} />
             </button>
           </div>
@@ -332,8 +373,13 @@ export default function StoreProductPage() {
             <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
               <div className="bg-white w-full sm:w-96 h-full overflow-y-auto">
                 <div className="flex items-center justify-between p-4 border-b border-gray-200">
-                  <p className="text-gray-600 text-lg font-medium">Filter Products</p>
-                  <button className="text-[#F70000]" onClick={() => setIsFilterVisible(false)}>
+                  <p className="text-gray-600 text-lg font-medium">
+                    Filter Products
+                  </p>
+                  <button
+                    className="text-[#F70000]"
+                    onClick={() => setIsFilterVisible(false)}
+                  >
                     <IoMdClose className="text-2xl" />
                   </button>
                 </div>
