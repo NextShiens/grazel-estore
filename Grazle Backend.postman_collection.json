@@ -20,7 +20,7 @@
 							"formdata": [
 								{
 									"key": "email",
-									"value": "admin@grazle.com",
+									"value": "seller@test.com",
 									"description": "required",
 									"type": "text"
 								},
@@ -55,13 +55,13 @@
 							"formdata": [
 								{
 									"key": "username",
-									"value": "Seller",
+									"value": "Buyer",
 									"description": "required",
 									"type": "text"
 								},
 								{
 									"key": "email",
-									"value": "seller@store.com",
+									"value": "buyer@test.com",
 									"description": "required",
 									"type": "text"
 								},
@@ -79,7 +79,7 @@
 								},
 								{
 									"key": "role",
-									"value": "seller",
+									"value": "buyer",
 									"type": "text"
 								}
 							]
@@ -224,7 +224,7 @@
 							"formdata": [
 								{
 									"key": "email",
-									"value": "",
+									"value": "arslanzafarr71@gmail.com",
 									"description": "required",
 									"type": "text"
 								}
@@ -273,6 +273,45 @@
 									"key": "token",
 									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImlhdCI6MTcxNjUyNDAwMiwiZXhwIjoxNzE2NTI3NjAyfQ.8vHxOZyWlPG6CdKmACZ3D5kstP2CPGUrWYhVZHVfnXo"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Seller",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "",
+									"description": "required",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/register-seller",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"register-seller"
 							]
 						}
 					},
@@ -1414,19 +1453,24 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/global/banners/:position",
+									"raw": "{{BASE_URL}}/global/banners/:position/:type",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
 										"global",
 										"banners",
-										":position"
+										":position",
+										":type"
 									],
 									"variable": [
 										{
 											"key": "position",
 											"value": "1"
+										},
+										{
+											"key": "type",
+											"value": "mobile"
 										}
 									]
 								}
@@ -1906,7 +1950,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjc3NjUyNiwiZXhwIjoxNzIzMDM1NzI2fQ.msQiAxdeSExF7Y-Y5SSFO6D8_LY8c_b7Y6XbEukfgGU",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzA0NDczNSwiZXhwIjoxNzIzMzAzOTM1fQ.0tY_i-DEVaw1J6JqG8pgiMzz-5tYs8KrBxXNglYsPcA",
 											"type": "string"
 										}
 									]
@@ -1933,7 +1977,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjc3NjUyNiwiZXhwIjoxNzIzMDM1NzI2fQ.msQiAxdeSExF7Y-Y5SSFO6D8_LY8c_b7Y6XbEukfgGU",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzA0NDczNSwiZXhwIjoxNzIzMzAzOTM1fQ.0tY_i-DEVaw1J6JqG8pgiMzz-5tYs8KrBxXNglYsPcA",
 											"type": "string"
 										}
 									]
@@ -1953,7 +1997,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "1"
+											"value": "3"
 										}
 									]
 								}
@@ -2054,7 +2098,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTgxMjA4NTMsImV4cCI6MTcxODIwNzI1M30.Ieap-jqZ7ymKaMERkaEz-4DCDwp-1GbCga_4aHz8nKg",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzAzOTQwNCwiZXhwIjoxNzIzMjk4NjA0fQ.I1ri_3zsiWAbHZHMpPB6hsdZKRc9oscKIz2781vQfXA",
 											"type": "string"
 										}
 									]
@@ -2084,6 +2128,16 @@
 								"disableBodyPruning": true
 							},
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzAzOTQwNCwiZXhwIjoxNzIzMjk4NjA0fQ.I1ri_3zsiWAbHZHMpPB6hsdZKRc9oscKIz2781vQfXA",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"body": {
@@ -2103,7 +2157,7 @@
 									"variable": [
 										{
 											"key": "slug",
-											"value": ""
+											"value": "nest-js-e96bc1"
 										}
 									]
 								}
@@ -2113,6 +2167,16 @@
 						{
 							"name": "Update Product",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzAzOTQwNCwiZXhwIjoxNzIzMjk4NjA0fQ.I1ri_3zsiWAbHZHMpPB6hsdZKRc9oscKIz2781vQfXA",
+											"type": "string"
+										}
+									]
+								},
 								"method": "PUT",
 								"header": [],
 								"body": {
@@ -2120,7 +2184,7 @@
 									"formdata": [
 										{
 											"key": "category_id",
-											"value": "",
+											"value": "1",
 											"description": "required",
 											"type": "text"
 										},
@@ -2132,7 +2196,7 @@
 										},
 										{
 											"key": "title",
-											"value": "",
+											"value": "update",
 											"description": "required",
 											"type": "text"
 										},
@@ -2160,13 +2224,20 @@
 									]
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/admin/products",
+									"raw": "{{BASE_URL}}/admin/products/:id",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
 										"admin",
-										"products"
+										"products",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "7"
+										}
 									]
 								}
 							},
@@ -2304,7 +2375,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJpYXQiOjE3MTc2MTQ5NTAsImV4cCI6MTcxNzcwMTM1MH0.9Ee0hKiJ-ILQmg8D4kJRubOinkAi2C__RnxpRD7fF7s",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzAzOTQwNCwiZXhwIjoxNzIzMjk4NjA0fQ.I1ri_3zsiWAbHZHMpPB6hsdZKRc9oscKIz2781vQfXA",
 											"type": "string"
 										}
 									]
@@ -2368,7 +2439,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "8"
+											"value": "7"
 										}
 									]
 								}
@@ -2419,6 +2490,96 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Delete Product FAQ",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJpYXQiOjE3MTc2MDM4ODIsImV4cCI6MTcxNzY5MDI4Mn0.A2OX3sHKr9kFGxAoOeXiwHjsN8vi0OneuN31jRANWIk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/products-faq/:productId/faqs/:faqId",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"products-faq",
+										":productId",
+										"faqs",
+										":faqId"
+									],
+									"variable": [
+										{
+											"key": "productId",
+											"value": "43"
+										},
+										{
+											"key": "faqId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Product Variant",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJpYXQiOjE3MTc2MDM4ODIsImV4cCI6MTcxNzY5MDI4Mn0.A2OX3sHKr9kFGxAoOeXiwHjsN8vi0OneuN31jRANWIk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/products-variant/:productId/variants/:variantId",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"products-variant",
+										":productId",
+										"variants",
+										":variantId"
+									],
+									"variable": [
+										{
+											"key": "productId",
+											"value": ""
+										},
+										{
+											"key": "variantId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -2433,7 +2594,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjQ5ODcyMCwiZXhwIjoxNzIyNzU3OTIwfQ.W1do6NyQCpoPE-2ZPcQ0IdCFtwvkDWH4wEJ7VBO2-Pg",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzA0NDI3OSwiZXhwIjoxNzIzMzAzNDc5fQ.GiV1iZ11IouBDNVI7CBe6bizKDebBJ-Y9gL-g7Bi_MY",
 											"type": "string"
 										}
 									]
@@ -2509,7 +2670,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMjMzNTgzNCwiZXhwIjoxNzIyNTk1MDM0fQ.wdOZt8rgbZywBbSHNWTC483dkvX8-dMYbTuFvgz0yrE",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzA0NDI3OSwiZXhwIjoxNzIzMzAzNDc5fQ.GiV1iZ11IouBDNVI7CBe6bizKDebBJ-Y9gL-g7Bi_MY",
 											"type": "string"
 										}
 									]
@@ -2705,7 +2866,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTgyNTY4NjMsImV4cCI6MTcxODM0MzI2M30.K9WYBRuNb_mSvzQzAJURBUXSXhuiuzLv1rS0Di0Lnu8",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzA3OTUwMywiZXhwIjoxNzIzMzM4NzAzfQ.vsccsbCytyKpVBhuzbKY4nzro-l9DMU9oMzvCkvIpG0",
 											"type": "string"
 										}
 									]
@@ -3028,7 +3189,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTk2NzEwOTAsImV4cCI6MTcxOTc1NzQ5MH0.nIIVpk7Qh0KBxxWZ9ZBdsef0N4-yKjgDqN7qBjd8oYU",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzA4MTIzMiwiZXhwIjoxNzIzMzQwNDMyfQ.wzZOflA9oyjaf_oMVgaBh5uWWZF91Lk2XnzYKTFmgDk",
 											"type": "string"
 										}
 									]
@@ -3041,7 +3202,7 @@
 										{
 											"key": "banner_image",
 											"type": "file",
-											"src": "/D:/mehwish/2.jpeg"
+											"src": "/C:/Users/Ubaid Computers/OneDrive/Documents/mg-2.jpg"
 										},
 										{
 											"key": "position",
@@ -3057,7 +3218,13 @@
 										{
 											"key": "video",
 											"type": "file",
-											"src": "/C:/Users/Ubaid Computers/Downloads/WhatsApp Video 2024-06-29 at 11.14.01 PM.mp4"
+											"src": []
+										},
+										{
+											"key": "type",
+											"value": "web",
+											"description": "web | mobile",
+											"type": "text"
 										}
 									]
 								},
@@ -3077,24 +3244,51 @@
 						{
 							"name": "Get All Banners",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzA3OTUwMywiZXhwIjoxNzIzMzM4NzAzfQ.vsccsbCytyKpVBhuzbKY4nzro-l9DMU9oMzvCkvIpG0",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/admin/banners",
+									"raw": "{{BASE_URL}}/admin/banners?type=web",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
 										"admin",
 										"banners"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "web",
+											"description": "web | mobile"
+										}
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Get All Banner By Id",
+							"name": "Get All Banner By id",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzA4MTIzMiwiZXhwIjoxNzIzMzQwNDMyfQ.wzZOflA9oyjaf_oMVgaBh5uWWZF91Lk2XnzYKTFmgDk",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
@@ -3110,7 +3304,73 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Banner",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzA3OTUwMywiZXhwIjoxNzIzMzM4NzAzfQ.vsccsbCytyKpVBhuzbKY4nzro-l9DMU9oMzvCkvIpG0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title",
+											"value": "edit",
+											"type": "text"
+										},
+										{
+											"key": "position",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "mobile",
+											"description": "web | mobile",
+											"type": "text"
+										},
+										{
+											"key": "banner_image",
+											"type": "file",
+											"src": "/C:/Users/Ubaid Computers/OneDrive/Documents/mg.jpg"
+										},
+										{
+											"key": "video",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/banners/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"banners",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "2"
 										}
 									]
 								}
@@ -3120,6 +3380,16 @@
 						{
 							"name": "Activate Banner",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzA4MTIzMiwiZXhwIjoxNzIzMzQwNDMyfQ.wzZOflA9oyjaf_oMVgaBh5uWWZF91Lk2XnzYKTFmgDk",
+											"type": "string"
+										}
+									]
+								},
 								"method": "PUT",
 								"header": [],
 								"url": {
@@ -3136,7 +3406,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "2"
 										}
 									]
 								}
@@ -4532,7 +4802,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTg0MjgwOTMsImV4cCI6MTcxODUxNDQ5M30.oorX-ElUFtIANQ1B0Vm6IJyKEUadSyZPgV8xGaXNzkg",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMwNzk5MjAsImV4cCI6MTcyMzMzOTEyMH0.a0kFbOVtJ5JSooOftUX2g5wYdd85Exu2bE4vcpRz1YI",
 											"type": "string"
 										}
 									]
@@ -4560,7 +4830,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTg0MjgwOTMsImV4cCI6MTcxODUxNDQ5M30.oorX-ElUFtIANQ1B0Vm6IJyKEUadSyZPgV8xGaXNzkg",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMwNzkzNzIsImV4cCI6MTcyMzMzODU3Mn0.y4mlQYKqypIXlXV6Tvf25nxG_Q9FY5ge6H0ccATJYkU",
 											"type": "string"
 										}
 									]
@@ -4580,7 +4850,7 @@
 									"variable": [
 										{
 											"key": "slug",
-											"value": ""
+											"value": "nest-js"
 										}
 									]
 								}
@@ -4595,7 +4865,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM4LCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzIyOTA1NTQwLCJleHAiOjE3MjMxNjQ3NDB9.6_THQwkxKp_uxZGGuxl2mhgsc9g9tax9MTpt8UTPV60",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMwODI4NjgsImV4cCI6MTcyMzM0MjA2OH0.Gg_y2El36lljhI7pTy4eXnQl3NtgaHk19Lwf4HLK5hc",
 											"type": "string"
 										}
 									]
@@ -4684,7 +4954,10 @@
 										{
 											"key": "gallery_images",
 											"type": "file",
-											"src": []
+											"src": [
+												"/C:/Users/Ubaid Computers/Downloads/review-removebg-preview.png",
+												"/C:/Users/Ubaid Computers/Downloads/data-removebg-preview.png"
+											]
 										}
 									]
 								},
@@ -4704,8 +4977,61 @@
 						{
 							"name": "Update Product",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMwODA5MDUsImV4cCI6MTcyMzM0MDEwNX0.a3a3w7Z-X5CW-455hxooxuhyKh70ThFh6D5zma4BVr8",
+											"type": "string"
+										}
+									]
+								},
 								"method": "PUT",
 								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "category_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "update",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "200",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "update",
+											"type": "text"
+										},
+										{
+											"key": "tags",
+											"value": "update",
+											"type": "text"
+										},
+										{
+											"key": "featured_image",
+											"type": "file",
+											"src": "/C:/Users/Ubaid Computers/OneDrive/Documents/mg-2.jpg"
+										},
+										{
+											"key": "gallery_images",
+											"type": "file",
+											"src": [
+												"/C:/Users/Ubaid Computers/OneDrive/Documents/mg.jpg",
+												"/C:/Users/Ubaid Computers/OneDrive/Documents/mg-hs-01.jpg"
+											]
+										}
+									]
+								},
 								"url": {
 									"raw": "{{BASE_URL}}/vendor/products/:id",
 									"host": [
@@ -4719,7 +5045,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "10"
 										}
 									]
 								}
@@ -4769,7 +5095,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTg0MjgwOTMsImV4cCI6MTcxODUxNDQ5M30.oorX-ElUFtIANQ1B0Vm6IJyKEUadSyZPgV8xGaXNzkg",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMwMzUwODUsImV4cCI6MTcyMzI5NDI4NX0.5tmzew_RW1_qWHrN_Sx29qPOlBQK3VBIVPvtij2sAjs",
 											"type": "string"
 										}
 									]
@@ -4789,7 +5115,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "6"
 										}
 									]
 								}
@@ -4799,12 +5125,22 @@
 						{
 							"name": "Delete Product Gallery Image",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMwMzUwODUsImV4cCI6MTcyMzI5NDI4NX0.5tmzew_RW1_qWHrN_Sx29qPOlBQK3VBIVPvtij2sAjs",
+											"type": "string"
+										}
+									]
+								},
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}/vendor/products/:productId/gallery/:imageId",
+									"raw": "{{BASE_URL}}/vendor/products/:productId/gallery/:imageId",
 									"host": [
-										"{{BASE_URL}"
+										"{{BASE_URL}}"
 									],
 									"path": [
 										"vendor",
@@ -4816,11 +5152,93 @@
 									"variable": [
 										{
 											"key": "productId",
-											"value": ""
+											"value": "7"
 										},
 										{
 											"key": "imageId",
-											"value": ""
+											"value": "14"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Product FAQ",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMwNDE2NTIsImV4cCI6MTcyMzMwMDg1Mn0.Wl9QQSGYrni7aELXpZ9gS8Ym_mjobVnfXrG7kA4HHKM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/vendor/products-faq/:productId/faqs/:faqId",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"vendor",
+										"products-faq",
+										":productId",
+										"faqs",
+										":faqId"
+									],
+									"variable": [
+										{
+											"key": "productId",
+											"value": "5"
+										},
+										{
+											"key": "faqId",
+											"value": "9"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Product Variant",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMwMzUwODUsImV4cCI6MTcyMzI5NDI4NX0.5tmzew_RW1_qWHrN_Sx29qPOlBQK3VBIVPvtij2sAjs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/vendor/products-variant/:productId/variants/:variantId",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"vendor",
+										"products-variant",
+										":productId",
+										"variants",
+										":variantId"
+									],
+									"variable": [
+										{
+											"key": "productId",
+											"value": "5"
+										},
+										{
+											"key": "variantId",
+											"value": "5"
 										}
 									]
 								}
@@ -5438,7 +5856,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInJvbGUiOiJidXllciIsImlhdCI6MTcyMjQ4MjcwNCwiZXhwIjoxNzIyNzQxOTA0fQ.BTVJMcPnT4e3vg7z6yIrfUZOBrWcqemFUH8DsZY24oA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInJvbGUiOiJidXllciIsImlhdCI6MTcyMzAzODY0OSwiZXhwIjoxNzIzMjk3ODQ5fQ.81HXNq6rHt-FydlE7wp-A2OObIqCzQMdVegIwgCggoE",
 											"type": "string"
 										}
 									]
@@ -5644,7 +6062,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE5LCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTkxOTk2NDksImV4cCI6MTcxOTI4NjA0OX0.MWqeBJdS8XBaLmVGnNFRcy1IeS2jimZv62J1Zs_SBpM",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjY2LCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MjMwMzg3NDUsImV4cCI6MTcyMzI5Nzk0NX0.79gP6tVjKulW8Pmlx33vWSQIGWeDKRKfpqV5TCvu0JU",
 											"type": "string"
 										}
 									]
@@ -6914,6 +7332,31 @@
 									"path": [
 										"phonepe",
 										"initiate-payment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Payment Status",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/phonepe/check-transaction-status/:merchantTransactionId",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"phonepe",
+										"check-transaction-status",
+										":merchantTransactionId"
+									],
+									"variable": [
+										{
+											"key": "merchantTransactionId",
+											"value": ""
+										}
 									]
 								}
 							},
