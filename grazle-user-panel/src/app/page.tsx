@@ -312,7 +312,7 @@ export default function Home() {
     <>
       {/* MianSlider */}
       <div className="lg:mx-[150px] md:mx-[60px] lg:px-0 md:px-3">
-        <MainSlider banners={positionOneBanners} />
+        <MainSlider  />
       </div>
 
       {/* Get Now Banner */}
