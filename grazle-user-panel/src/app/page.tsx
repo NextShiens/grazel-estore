@@ -19,21 +19,10 @@ import Google from "@/assets/Google Play Badge.png";
 import RecentViewSlider from "@/components/rencentView";
 import React, { useState, useEffect, useRef } from "react";
 import { IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
+import { updateCart } from "@/features/features";
 
-import Dami from "@/assets/dami.png";
 import bg from "@/assets/2 copy.png";
-import Rasm2 from "@/assets/rasm2.png";
-import Rasm3 from "@/assets/rasm3.png";
-import Rasm1 from "@/assets/rasm33.png";
-import Rasmaa from "@/assets/rasmcc.png";
-import Rasmbb from "@/assets/rasmbb.png";
-import Rasmcc from "@/assets/rasmaa.png";
-import Fram33 from "@/assets/Frame33.png";
-import Fram11 from "@/assets/Frame 11.png";
-import Fram22 from "@/assets/Frame 22.png";
-import Fram44 from "@/assets/Frame 44.png";
 import ProductCard from "@/components/ProductCard";
-import Arrow from "@/assets/Round Alt Arrow Right.png";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useDispatch } from "react-redux";
 
@@ -53,6 +42,7 @@ import {
   getAllProductsApi,
   getSingleCategoryProductsApi,
   getOfferProductsApi,
+  fiftyPercentSaleProductsApi,
 } from "@/apis";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import {
@@ -62,6 +52,8 @@ import {
 import Link from "next/link";
 import { updateCategories } from "@/features/features";
 import OfferViewSlider from "@/components/offersSilder";
+import { toast } from "react-toastify";
+import { FaHeart } from "react-icons/fa";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -82,6 +74,9 @@ export default function Home() {
   const [seventyFiveTimeLeft, setSeventyFiveTimeLeft] = useState<any>();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [fiftyPercentSaleProducts, setFiftyPercentSaleProducts] = useState([]);
+  const [favoriteProducts, setFavoriteProducts] = useState<number[]>([]);
+  const [isPending, setPending] = useState(false);
 
   const sliderRef1 = useRef<any>(null);
   const sliderRef2 = useRef<any>(null);
@@ -94,15 +89,40 @@ export default function Home() {
   if (typeof window !== "undefined") {
     token = localStorage.getItem("token")!;
   }
+  const onAddingCart = (e: React.MouseEvent, product: any) => {
+    e.stopPropagation();
+    const { basePrice, price, discountInfo } = calculateFinalPrice(
+      product,
+      null
+    );
+    const updateProduct = {
+      ...product,
+      qty: 1,
+      discountPrice: price,
+      originalPrice: basePrice,
+      discountInfo: discountInfo,
+    };
+    dispatch(updateCart({ type: null, product: updateProduct }));
+    toast.success("Item has been added to cart!");
+  };
+  useEffect(() => {
+    async function fetchFavoriteProducts() {
+      try {
+        // const response = await getAllFavoriteProductApi();
+        // setFavoriteProducts(response.data.favoriteProducts || []);
+      } catch (error) {
+        console.error("Error fetching favorite products:", error);
+        toast.error("Failed to fetch favorite products");
+        setFavoriteProducts([]); // Set to empty array in case of error
+      }
+    }
+    fetchFavoriteProducts();
+  }, []);
 
   useEffect(() => {
     (async () => {
       const trendingRes = await trendingProductsApi();
       setTrendingProducts(trendingRes?.data?.products || []);
-
-      // const res = await getSuggestedProductsApi();
-      // const recentRes = await guestRecentProductsApi();
-      // setSuggestedProducts(res?.data?.products || []);
     })();
   }, []);
 
@@ -113,6 +133,7 @@ export default function Home() {
       setAllProducts(data.products);
     })();
   }, []);
+
   useEffect(() => {
     (async () => {
       const { data } = await getOfferProductsApi();
@@ -150,7 +171,6 @@ export default function Home() {
 
   const goToCreditLimit = () => {
     setLoading(true);
-
     router.push("/CreditLimit");
   };
 
@@ -159,11 +179,9 @@ export default function Home() {
   };
 
   const [click, setClick] = useState(allCategories[0]);
-  // console.log(allCategories[0]);
 
   const handleClickCategory = async (cat: any) => {
     setClick(cat);
-
     setLoading(true);
     const { data } = await getSingleCategoryProductsApi(cat.id);
     setSelectedCategoryProducts(data?.products || []);
@@ -178,13 +196,6 @@ export default function Home() {
     })();
   }, [allCategories[0]?.id]);
 
-  // console.log(allProducts);
-
-  // /+++++++++++++++++++++++++++++++falsh sale products++++++++++++++++++++++++++++++++++++++++++
-  // const flashSaleProducts:any = allProducts.filter(
-  //   (product:any) =>
-  //     product?.offer?.name?.toLowerCase() === "flash sale".toLowerCase()
-  // );
   const endDate = new Date(offerProducts[0]?.offer?.end_date);
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -195,8 +206,6 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [endDate, timeLeft]);
 
-  // ++++++++++++++++++++++++75% off products++++++++++++++++++++++++++++++++++++++++++
-  // /category sale 75% off
   const seventyFivePercentSaleProducts: any = allProducts.filter(
     (product: any) =>
       product?.offer?.discount_type?.toLowerCase() ===
@@ -214,99 +223,56 @@ export default function Home() {
     }, 1000);
     return () => clearTimeout(timer);
   }, [seventyFiveEndDate, seventyFiveTimeLeft]);
-  // discount prices for 75% product
+
   const { basePrice, price, discountInfo } = calculateFinalPrice(
     seventyFivePercentSaleProducts[0],
     null
   );
-  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  // +++++++++++++++++++++++++++++++++++++++++50% off products ++++++++++++++++++++++++++++++++++++++++++
-  const fiftyPercentSaleProducts: any = allProducts.filter(
-    (product: any) =>
-      product?.offer?.discount_type?.toLowerCase() ===
-        "percentage".toLowerCase() &&
-      product?.offer?.discount_value?.toLowerCase() === "50.00".toLowerCase()
-  );
+  // Fetch 50% sale products
+  useEffect(() => {
+    async function fetchFiftyPercentSaleProducts() {
+      try {
+        const { data } = await fiftyPercentSaleProductsApi();
+        setFiftyPercentSaleProducts(data.products || []);
+      } catch (error) {
+        console.error("Error fetching 50% sale products:", error);
+      }
+    }
 
-  // ALL COMMENTED CODE BELOW DO NOT REMOVE IT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    fetchFiftyPercentSaleProducts();
+  }, []);
 
-  // recentProducts
-  // useEffect(() => {
-  //   (async () => {
-  //     const recentProd = await getRecentProductsApi();
-  //     setRecentProducts(recentProd?.data?.products || []);
-  //   })();
-  // }, []);
-  // season top
-  // useEffect(() => {
-  //   (async () => {
-  //     const { data } = await getSeasonTop();
-  //     setSeasonTop(data.products);
-  //   })();
-  // }, []);
+  async function onLiked(e: React.MouseEvent, productId: number) {
+    e.stopPropagation();
+    if (isPending) return;
 
-  // first trending category
-  // useEffect(() => {
-  //   (async () => {
-  //     const firstTrendingCategoryRes = await getFirstTrendingCategoryApi();
-  //     setFirstTrendingCategory(firstTrendingCategoryRes);
-  //   })();
-  // }, []);
+    try {
+      setPending(true);
+      const formdata = new FormData();
+      formdata.append("product_id", productId.toString());
 
-  // second trending ctegory
-  // useEffect(() => {
-  //   (async () => {
-  //     const secondTrendingCategoryRes = await getSecondTrendingCategoryApi();
-  //     setSecondTrendingCategory(secondTrendingCategoryRes);
-  //   })();
-  // }, []);
+      const response = await favoriteProductApi(formdata);
 
-  // COMENTED
-  // const handlePrev = (num: any) => {
-  //   if (num == 1) {
-  //     sliderRef1?.current?.previous();
-  //   }
-  //   if (num == 2) {
-  //     sliderRef2?.current?.previous();
-  //   }
-  //   if (num == 3) {
-  //     sliderRef3?.current?.previous();
-  //   }
-
-  //   if (num == 4) {
-  //     sliderRef4?.current?.previous();
-  //   }
-
-  //   if (num == 5) {
-  //     sliderRef5?.current?.previous();
-  //   }
-  //   if (num == 6) {
-  //     sliderRef6?.current?.previous();
-  //   }
-  // };
-
-  // const handleNext = (num: any) => {
-  //   if (num == 1) {
-  //     sliderRef1?.current?.next();
-  //   }
-  //   if (num == 2) {
-  //     sliderRef2?.current?.next();
-  //   }
-  //   if (num == 3) {
-  //     sliderRef3?.current?.next();
-  //   }
-  //   if (num == 4) {
-  //     sliderRef4?.current?.next();
-  //   }
-  //   if (num == 5) {
-  //     sliderRef5?.current?.next();
-  //   }
-  //   if (num == 6) {
-  //     sliderRef6?.current?.next();
-  //   }
-  // };
-  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      if (response.data.success) {
+        setFavoriteProducts((prevFavorites = []) => {
+          if (prevFavorites.includes(productId)) {
+            return prevFavorites.filter((id) => id !== productId);
+          } else {
+            return [...prevFavorites, productId];
+          }
+        });
+        toast.success(response.data.message);
+      } else {
+        toast.error("Failed to update favorite status");
+      }
+    } catch (error) {
+      console.error("Error in liking product:", error);
+      toast.error("An error occurred while updating favorite status");
+    } finally {
+      setPending(false);
+    }
+  }
 
   return (
     <>
@@ -351,21 +317,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* !!categories */}
+      {/* Categories */}
       <div className="hide-scrollbar lg:mx-[150px] gap-2 sm:gap-2 lg:gap-0 mt-3 lg:mt-2 md:mx-auto overflow:-webkit-scrollbar: none; md:overflow-x-auto md:w-[645px] lg:w-auto sm:mx-auto sm:max-w-[calc(100vw - 120px)] flex items-center justify-between overflow-x-auto">
-        {/* <div className="w-[92px] sm:mt-2   md:gap-2 flex flex-col justify-center items-center">
-          <div className=" flex  justify-center items-center lg:w-[92px] lg:h-[92px] w-[70px] h-[70px] sm:w-[70px] sm:h-[70px] rounded-full bg-gradient-to-r from-[#F81F1F] to-[#FFA31A] ">
-            <Image
-              src={Cardmm}
-              alt=""
-              className="lg:w-[40px] lg:h-[40px] w-[30px] h-[30px] sm:h-[30px] sm:w-[30px] "
-            />
-          </div>
-          <p className="color-[#393A44] lg:text-[14px] text-[10px] sm:text-[12px] font-normal mt-[4px]">
-            Categories
-          </p>
-        </div> */}
-
         <div className="w-full flex items-center mx-2 text-center">
           <div className="flex flex-col items-center justify-center">
             <div className="border-[1px] flex justify-center items-center lg:w-[92px] lg:h-[92px] w-[70px] h-[70px] border-[#F70000] rounded-full bg-[#F8F8F8] ">
@@ -390,6 +343,7 @@ export default function Home() {
                   .fill(0)
                   .map((_, index) => (
                     <Skeleton
+                      key={index}
                       animation="wave"
                       variant="circular"
                       className="w-[92px] h-[92px]"
@@ -401,6 +355,7 @@ export default function Home() {
                   .fill(0)
                   .map((_, index) => (
                     <Skeleton
+                      key={index}
                       animation="wave"
                       variant="circular"
                       className="w-[70px] h-[70px]"
@@ -412,70 +367,36 @@ export default function Home() {
         </div>
 
         {allCategories?.map((item: any) => (
-          <>
-            <div
-              key={item?.id}
-              className="w-full flex flex-col justify-center items-center mx-2 text-center"
-              onClick={() => fn_categoryClicked(item)}
-            >
-              <div className="flex justify-center  hover:border border-[#FC3030] items-center lg:w-[92px] lg:h-[92px] w-[70px] h-[70px] sm:w-[70px] sm:h-[70px]  border-[#F70000] rounded-full bg-[#F8F8F8] ">
-                {item?.image !== null ? (
-                  <Image
-                    width={40}
-                    height={40}
-                    src={item?.image}
-                    alt=""
-                    className=" lg:w-[40px] lg:h-[40px] w-[30px] h-[30px] sm:h-[30px] sm:w-[30px] "
-                  />
-                ) : (
-                  <Image
-                    width={40}
-                    height={40}
-                    src={Widget}
-                    alt=""
-                    className=" lg:w-[40px] lg:h-[40px] w-[30px] h-[30px] sm:h-[30px] sm:w-[30px] "
-                  />
-                )}
-              </div>
-              <p className="text-nowrap color-[#393A44] lg:text-[14px] text-[10px] sm:text-[12px] font-normal mt-[4px]">
-                {item?.name}
-              </p>
+          <div
+            key={item?.id}
+            className="w-full flex flex-col justify-center items-center mx-2 text-center"
+            onClick={() => fn_categoryClicked(item)}
+          >
+            <div className="flex justify-center  hover:border border-[#FC3030] items-center lg:w-[92px] lg:h-[92px] w-[70px] h-[70px] sm:w-[70px] sm:h-[70px]  border-[#F70000] rounded-full bg-[#F8F8F8] ">
+              {item?.image !== null ? (
+                <Image
+                  width={40}
+                  height={40}
+                  src={item?.image}
+                  alt=""
+                  className=" lg:w-[40px] lg:h-[40px] w-[30px] h-[30px] sm:h-[30px] sm:w-[30px] "
+                />
+              ) : (
+                <Image
+                  width={40}
+                  height={40}
+                  src={Widget}
+                  alt=""
+                  className=" lg:w-[40px] lg:h-[40px] w-[30px] h-[30px] sm:h-[30px] sm:w-[30px] "
+                />
+              )}
             </div>
-          </>
+            <p className="text-nowrap color-[#393A44] lg:text-[14px] text-[10px] sm:text-[12px] font-normal mt-[4px]">
+              {item?.name}
+            </p>
+          </div>
         ))}
       </div>
-
-      {/* !!Recent Products */}
-      {/* <div className="lg:mx-[150px] md:mx-[60px]  my-[24px]">
-        <div className="flex items-center justify-between lg:px-0 px-2">
-          <p className="text-[24px] font-semibold">Recent Viewed</p>
-          {recentProducts?.length ? (
-            <div className="flex items-center gap-4">
-              <div
-                className="h-[46px] w-[46px] rounded-full bg-[#F5F5F5] flex items-center justify-center  "
-                onClick={() => handlePrev(2)}
-              >
-                <IoMdArrowBack className="text-black h-[24px] w-[24px]" />
-              </div>
-              <div
-                className="h-[46px] w-[46px] rounded-full bg-[#F5F5F5] flex items-center justify-center  "
-                onClick={() => handleNext(2)}
-              >
-                <IoMdArrowForward className="text-black h-[24px] w-[24px]" />
-              </div>
-            </div>
-          ) : null}
-        </div>
-        {recentProducts?.length ? (
-          <div className="mx-[20px] sm:mx-[20px] md:mx-[20px] lg:mx-[0px]">
-            <RecentViewSlider Data={recentProducts} ref={sliderRef1} />
-          </div>
-        ) : typeof recentProducts === "undefined" ? (
-          <h1 className="text-center text-red-500">Loading products.....</h1>
-        ) : (
-          <h1 className="text-center text-red-500">No recent product found</h1>
-        )}
-      </div> */}
 
       {/* Flash sale */}
       <div className="flex justify-between items-center lg:mx-[150px] md:mx-[60px] mx-[14px] md:mt-14 mt-5">
@@ -525,30 +446,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* trending category 1 */}
       <div className="lg:mx-[150px] md:mx-[60px] mx-[5px]">
-        {/* <div className="flex items-center justify-between lg:px-0 px-2">
-          <p className="text-[24px] font-semibold">
-            {firstTrendingCategory?.data.category?.name}
-          </p>
-          {firstTrendingCategory?.data.products?.length ? (
-            <div className="flex items-center gap-4">
-              <div
-                className="h-[46px] w-[46px] rounded-full bg-[#F5F5F5] flex items-center justify-center  "
-                onClick={() => handlePrev(4)}
-              >
-                <IoMdArrowBack className="text-black h-[24px] w-[24px]" />
-              </div>
-              <div
-                className="h-[46px] w-[46px] rounded-full bg-[#F5F5F5] flex items-center justify-center  "
-                onClick={() => handleNext(4)}
-              >
-                <IoMdArrowForward className="text-black h-[24px] w-[24px]" />
-              </div>
-            </div>
-          ) : null}
-        </div> */}
-
         {offerProducts?.length > 0 ? (
           <div>
             <OfferViewSlider Data={offerProducts} ref={sliderRef6} />
@@ -559,14 +457,14 @@ export default function Home() {
               {Array(4)
                 .fill(0)
                 .map((_, index) => (
-                  <SkeletonLoader />
+                  <SkeletonLoader key={index} />
                 ))}
             </div>
             <div className="md:hidden flex items-center justify-between">
               {Array(2)
                 .fill(0)
                 .map((_, index) => (
-                  <SkeletonLoader />
+                  <SkeletonLoader key={index} />
                 ))}
             </div>
           </>
@@ -628,22 +526,7 @@ export default function Home() {
         )}
       </div>
 
-      {/* !!Baner */}
-      {/* <div className="lg:mx-[150px] md:mx-[60px] m-[20px]  my-[16px]">
-        <Image
-          width={100}
-          height={100}
-          src={
-            positionTwoBanners[0]?.imageUrl
-              ? positionTwoBanners[0]?.imageUrl
-              : bg
-          }
-          alt=""
-          className="w-[100%] md:h-[300px] sm:h-[200px] h-[220px] lg:rounded-none rounded-lg sm:rounded-lg lg:h-[417px]"
-        />
-      </div> */}
-
-      {/* !!dynamic view */}
+      {/* Dynamic View */}
       <div className="lg:mx-[150px] md:mx-[60px] mx-[14px] my-[24px]">
         <div className="flex items-center justify-between w-full mt-[15px] md:mt-0">
           <p
@@ -652,10 +535,6 @@ export default function Home() {
           >
             Dynamic View
           </p>
-          {/* <button className="flex items-center gap-3 border border-[#FC3030] text-[#FC3030] text-sm rounded-lg py-2 px-4">
-    <span>View All</span>
-    <FaArrowRightLong />
-  </button> */}
         </div>
 
         {dynamicViewProducts?.length ? (
@@ -668,241 +547,159 @@ export default function Home() {
               {Array(4)
                 .fill(0)
                 .map((_, index) => (
-                  <SkeletonLoader />
+                  <SkeletonLoader key={index} />
                 ))}
             </div>
             <div className="md:hidden flex items-center justify-between">
               {Array(2)
                 .fill(0)
                 .map((_, index) => (
-                  <SkeletonLoader />
+                  <SkeletonLoader key={index} />
                 ))}
             </div>
           </>
         )}
       </div>
-
-      {/* !!Suggested for you */}
-      {/* {token !== null && (
-        <div className="lg:mx-[150px] md:mx-[60px]  my-[24px]">
-          <div className="flex items-center justify-between lg:px-0 px-2">
-            <p className="text-[24px] font-semibold">Suggested for you</p>
-            <button className="flex items-center gap-3 border border-[#FC3030] text-[#FC3030] text-sm rounded-lg py-2 px-4">
-              <span>View All</span>
-              <FaArrowRightLong />
-            </button> */}
-      {/* {suggestedProducts?.length > 0 ? (
-              <div className="flex items-center gap-4">
-                <div
-                  className="h-[46px] w-[46px] rounded-full bg-[#F5F5F5] flex items-center justify-center  "
-                  onClick={() => handlePrev(2)}
-                >
-                  <IoMdArrowBack className="text-black h-[24px] w-[24px]" />
-                </div>
-
-                <div
-                  className="h-[46px] w-[46px] rounded-full bg-[#F5F5F5] flex items-center justify-center  "
-                  onClick={() => handleNext(2)}
-                >
-                  <IoMdArrowForward className="text-black h-[24px] w-[24px]" />
-                </div>
-              </div>
-            ) : null} */}
-      {/* </div>
-
-          {suggestedProducts?.length ? (
-            <div className="mx-[20px] sm:mx-[20px] md:mx-[20px] lg:mx-[0px]">
-              <RecentViewSlider Data={suggestedProducts} ref={sliderRef2} />
-            </div>
-          ) : (
-            <div className="flex items-center justify-center text-center text-red-500 w-full p-10">
-              <span>No Product Found</span>
-            </div>
-          )}
-        </div>
-      )} */}
-
-      {/* banner */}
-      <div className="lg:mx-[150px] md:mx-[60px] mx-0" style={{marginTop: '20px'}}>
+      <div
+        className="lg:mx-[150px] md:mx-[60px] mx-0"
+        style={{ marginTop: "20px" }}
+      >
         <Image src={banner} alt="banner" />
       </div>
-
-      {/* season top product */}
-      {/* <div
-        className="lg:mx-[150px] md:mx-[60px]  my-[24px] p-10"
-        style={{
-          background:
-            "linear-gradient(97.69deg, rgba(247, 0, 0, 0.1) 3.55%, rgba(145, 131, 0, 0.1) 91.28%)",
-        }}
-      >
-        <div className="flex items-center justify-between lg:px-0 px-2">
-          <p className="text-[24px] font-semibold">Season Top Pick</p>
-        </div>
-
-        <div className=" flex flex-col md:flex-row md:gap-0 gap-5">
-          <div className="product w-full md:w-[40%] md:h-[450px]">
-            <ProductCard width="70" product={seasonTop[0]} />
-          </div>
-          <div className="w-full md:w-[70%] relative">
-            <Image
-              className="!relative w-full"
-              alt="banners"
-              fill
-              src={
-                positionTwoBanners[0]?.imageUrl
-                  ? positionTwoBanners[0]?.imageUrl
-                  : bg
-              }
-            />
-          </div>
-        </div>
-      </div> */}
-
-      {/* !!Trending Products */}
-      {/* <div className="lg:mx-[150px] md:mx-[60px]  my-[24px]">
-        <div className="flex items-center justify-between lg:px-0 px-2">
-          <p className="text-[24px] font-semibold">Trending Products</p>
-          {trendingProducts?.length ? (
-            <div className="flex items-center gap-4">
-              <div
-                className="h-[46px] w-[46px] rounded-full bg-[#F5F5F5] flex items-center justify-center  "
-                onClick={() => handlePrev(3)}
-              >
-                <IoMdArrowBack className="text-black h-[24px] w-[24px]" />
-              </div>
-              <div
-                className="h-[46px] w-[46px] rounded-full bg-[#F5F5F5] flex items-center justify-center  "
-                onClick={() => handleNext(3)}
-              >
-                <IoMdArrowForward className="text-black h-[24px] w-[24px]" />
-              </div>
-            </div>
-          ) : null}
-        </div>
-
-        {trendingProducts?.length ? (
-          <div className="mx-[20px] sm:mx-[20px] md:mx-[20px] lg:mx-[0px]">
-            <RecentViewSlider Data={trendingProducts} ref={sliderRef3} />
-          </div>
-        ) : typeof suggestedProducts === "undefined" ? (
-          <h1 className="text-center text-red-500">Loading products.....</h1>
-        ) : (
-          <h1 className="text-center text-red-500">
-            No trending product found
-          </h1>
-        )}
-      </div> */}
-
       {/* sale product */}
       <div className="flex lg:flex-row flex-col lg:mx-[150px] md:mx-[60px] mx-[5px] my-[24px] border border-[#E5E7EB] py-2 lg:px-6 px-1 rounded-md">
-        <Link
-          href={`/detailProduct/${seventyFivePercentSaleProducts[0]?.id}`}
-          className="flex items-center justify-center md:gap-5 gap-2 lg:w-[60%] w-[100%] lg:border-r lg:border-[#77777740]"
-        >
-          <div className="relative h-[203px]">
-            <Image
-              alt="Product Image"
-              width={203}
-              height={203}
-              src={seventyFivePercentSaleProducts[0]?.featured_image}
-              className="w-full h-full object-cover outline-none	rounded-2xl cursor-pointer border"
-            />
-
-            <div className="flex absolute w-full justify-between items-center absolute px-[16px] top-[10px]">
-              <button className="text-[12px] rounded-3xl text-white bg-[#F70000] py-2 px-3">
-                {discountInfo?.toUpperCase()}
-              </button>
-              <IconButton size="medium">
-                <Image src={heart} alt="like" />
-              </IconButton>
-            </div>
-          </div>
-
-          <div className="flex flex-col lg:gap-3 gap-1">
-            <span className="md:text-lg text-base font-semibold">
-              {seventyFivePercentSaleProducts[0]?.title}
-            </span>
-            <div className="flex items-center gap-2">
-              <Rating
-                precision={0.5}
-                name="read-only"
-                readOnly
-                value={Number(seventyFivePercentSaleProducts[0]?.rating)}
-                defaultValue={Number(seventyFivePercentSaleProducts[0]?.rating)}
-                className="lg:text-xl text-sm"
-              />
-
-              <span className="text-sm text-[#434343]">
-                {seventyFivePercentSaleProducts[0]?.reviews}
-              </span>
-            </div>
-
-            <div className="flex gap-4 items-center lg:mt-10">
-              <span className="md:text-lg text-sm text-[#F70000] font-semibold">
-                ₹{price}
-              </span>
-              <span className="text-[#949494] text-sm line-through">
-                ₹{basePrice}
-              </span>
-            </div>
-
-            <button className="lg:hidden text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg">
-              <div className="flex items-center justify-center">
-                <p className="font-semibold text-[14px]">Add to cart</p>
+        {offerProducts[0]?.offer_products?.length > 0 && (
+          <>
+            <Link
+              href={`/detailProduct/${offerProducts[0].offer_products[0].id}`}
+              className="flex items-center justify-center md:gap-5 gap-2 lg:w-[60%] w-[100%] lg:border-r lg:border-[#77777740]"
+            >
+              <div className="relative h-[203px]">
                 <Image
-                  alt="cart"
-                  src={Cart}
-                  className="w-[20px] h-[20px] ml-[12px]"
+                  alt="Product Image"
+                  width={203}
+                  height={203}
+                  src={offerProducts[0].offer_products[0].featured_image}
+                  className="w-full h-full object-cover outline-none	rounded-2xl cursor-pointer border"
                 />
+
+                <div className="flex absolute w-full justify-between items-center absolute px-[16px] top-[10px]">
+                  <button className="text-[12px] rounded-3xl text-white bg-[#F70000] py-2 px-3">
+                    {offerProducts[0].offer.discount_value}% OFF
+                  </button>
+                  <IconButton
+                    size="small"
+                    onClick={(e) =>
+                      onLiked(e, offerProducts[0].offer_products[0].id)
+                    }
+                    disabled={isPending}
+                    className="bg-white bg-opacity-70 hover:bg-opacity-100"
+                  >
+                    {favoriteProducts &&
+                    favoriteProducts.includes(
+                      offerProducts[0].offer_products[0].id
+                    ) ? (
+                      <FaHeart className="text-[#F70000]" />
+                    ) : (
+                      <Image src={heart} alt="like" width={20} height={20} />
+                    )}
+                  </IconButton>
+                </div>
               </div>
-            </button>
-          </div>
-        </Link>
+              <div className="flex flex-col lg:gap-3 gap-1">
+                <span className="md:text-lg text-base font-semibold">
+                  {offerProducts[0].offer_products[0].title}
+                </span>
+                <div className="flex items-center gap-2">
+                  <Rating
+                    precision={0.5}
+                    name="read-only"
+                    readOnly
+                    value={Number(offerProducts[0].offer_products[0].rating)}
+                    defaultValue={Number(
+                      offerProducts[0].offer_products[0].rating
+                    )}
+                    className="lg:text-xl text-sm"
+                  />
 
-        <div className="flex flex-col gap-4 lg:px-10 px-0 justify-center lg:w-[40%] w-[100%]">
-          <div className="flex items-center gap-2 bg-[#F7000014] w-fit rounded-full py-2 px-3 text-[#FC3030]">
-            <Image src={sale} alt="sale" />
-            <span className="uppercase text-sm font-medium">
-              {seventyFivePercentSaleProducts[0]?.offer?.name?.toUpperCase()}
-            </span>
-          </div>
+                  <span className="text-sm text-[#434343]">
+                    {offerProducts[0].offer_products[0].reviewCount} reviews
+                  </span>
+                </div>
+                <div className="flex gap-4 items-center lg:mt-10">
+                  <span className="md:text-lg text-sm text-[#F70000] font-semibold">
+                    ₹{offerProducts[0].offer_products[0].discounted_price}
+                  </span>
+                  <span className="text-[#949494] text-sm line-through">
+                    ₹{offerProducts[0].offer_products[0].price}
+                  </span>
+                </div>
 
-          <div className="flex text-sm items-center gap-2">
-            <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
-              {seventyFiveTimeLeft?.days > 0
-                ? seventyFiveTimeLeft?.days + "d"
-                : seventyFiveTimeLeft?.hours > 0
-                ? seventyFiveTimeLeft?.hours
-                : 0}
-            </span>
-            <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
-              {seventyFiveTimeLeft?.days > 0
-                ? seventyFiveTimeLeft?.hours + "h"
-                : seventyFiveTimeLeft?.minutes}
-            </span>
-            <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
-              {seventyFiveTimeLeft?.days > 0
-                ? seventyFiveTimeLeft?.minutes + "m"
-                : seventyFiveTimeLeft?.seconds}
-            </span>
-            {/* <span>:</span>
-            <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">59</span> */}
-            <span className="mr-2 text-[#949494]">
-              Remains until the end of the offer
-            </span>
-          </div>
+                {/* <button
+                className="text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg"
+                onClick={(e) => onAddingCart(e, offerProducts[0].offer_products[0])}
+              >
+                <div className="flex items-center justify-center">
+                  <p className="font-semibold text-[14px]">Add to cart</p>
+                  <Image
+                    alt="cart"
+                    src={Cart}
+                    className="w-[20px] h-[20px] ml-[12px]"
+                  />
+                </div>
+              </button> */}
+              </div>
+            </Link>
 
-          <button className="hidden md:text-[#F70000] py-3 mt-4 border-[1px] border-[#F70001] rounded-lg">
-            <div className="flex items-center justify-center">
-              <p className="font-semibold text-[14px]">Add to cart</p>
-              <Image
-                alt="cart"
-                src={Cart}
-                className="w-[20px] h-[20px] ml-[12px]"
-              />
+            <div className="flex flex-col gap-4 lg:px-10 px-0 justify-center lg:w-[40%] w-[100%]">
+              <div className="flex items-center gap-2 bg-[#F7000014] w-fit rounded-full py-2 px-3 text-[#FC3030]">
+                <Image src={sale} alt="sale" />
+                <span className="uppercase text-sm font-medium">
+                  {offerProducts[0].offer.name.toUpperCase()}
+                </span>
+              </div>
+
+              <div className="flex text-sm items-center gap-2">
+                <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
+                  {timeLeft?.days > 0
+                    ? timeLeft?.days + "d"
+                    : timeLeft?.hours > 0
+                    ? timeLeft?.hours
+                    : 0}
+                </span>
+                <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
+                  {timeLeft?.days > 0
+                    ? timeLeft?.hours + "h"
+                    : timeLeft?.minutes}
+                </span>
+                <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
+                  {timeLeft?.days > 0
+                    ? timeLeft?.minutes + "m"
+                    : timeLeft?.seconds}
+                </span>
+                <span className="mr-2 text-[#949494]">
+                  Remains until the end of the offer
+                </span>
+              </div>
+
+              <button
+                className="text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg"
+                onClick={(e) =>
+                  onAddingCart(e, offerProducts[0].offer_products[0])
+                }
+              >
+                <div className="flex items-center justify-center">
+                  <p className="font-semibold text-[14px]">Add to cart</p>
+                  <Image
+                    alt="cart"
+                    src={Cart}
+                    className="w-[20px] h-[20px] ml-[12px]"
+                  />
+                </div>
+              </button>
             </div>
-          </button>
-        </div>
+          </>
+        )}
       </div>
 
       {/* 50% off */}
@@ -910,13 +707,13 @@ export default function Home() {
         <div className="flex items-center justify-between lg:px-0 px-2">
           <div className="flex justify-between items-center w-full">
             <p className="hidden md:block text-[24px] font-semibold">
-              Minimum 50% On All Products
+              Up to 70% Off On Selected Products
             </p>
             <p className="md:hidden text-md font-semibold">
-              50% On All Products
+              70% Off On Selected Products
             </p>
             <Link
-              href={`/offers?id=${fiftyPercentSaleProducts[0]?.offer_id}`}
+              href={`/offers?id=${offerProducts[0]?.offer?.id}`}
               passHref
               legacyBehavior
             >
@@ -926,7 +723,7 @@ export default function Home() {
                   e.preventDefault();
                   setIsLoading(true);
                   await router.push(
-                    `/offers?id=${fiftyPercentSaleProducts[0]?.offer_id}`
+                    `/offers?id=${offerProducts[0]?.offer?.id}`
                   );
                   setIsLoading(false);
                 }}
@@ -943,31 +740,11 @@ export default function Home() {
               </button>
             </Link>
           </div>
-
-          {/* {trendingProducts?.length ? (
-            <div className="flex items-center gap-4">
-              <div
-                className="h-[46px] w-[46px] rounded-full bg-[#F5F5F5] flex items-center justify-center  "
-                onClick={() => handlePrev(3)}
-              >
-                <IoMdArrowBack className="text-black h-[24px] w-[24px]" />
-              </div>
-              <div
-                className="h-[46px] w-[46px] rounded-full bg-[#F5F5F5] flex items-center justify-center  "
-                onClick={() => handleNext(3)}
-              >
-                <IoMdArrowForward className="text-black h-[24px] w-[24px]" />
-              </div>
-            </div>
-          ) : null} */}
         </div>
 
-        {fiftyPercentSaleProducts?.length ? (
+        {offerProducts?.length ? (
           <div className="mx-[20px] sm:mx-[20px] md:mx-[20px] lg:mx-[0px]">
-            <RecentViewSlider
-              Data={fiftyPercentSaleProducts}
-              ref={sliderRef3}
-            />
+            <OfferViewSlider Data={offerProducts} ref={sliderRef6} />
           </div>
         ) : (
           <>
@@ -975,14 +752,14 @@ export default function Home() {
               {Array(4)
                 .fill(0)
                 .map((_, index) => (
-                  <SkeletonLoader />
+                  <SkeletonLoader key={index} />
                 ))}
             </div>
             <div className="md:hidden flex items-center justify-between">
               {Array(2)
                 .fill(0)
                 .map((_, index) => (
-                  <SkeletonLoader />
+                  <SkeletonLoader key={index} />
                 ))}
             </div>
           </>
