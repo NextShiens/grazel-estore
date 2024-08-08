@@ -3,8 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { FaStar } from "react-icons/fa";
-import { FaHeart } from "react-icons/fa";
+import { FaStar, FaHeart } from "react-icons/fa";
 import { calculateFinalPrice } from "@/utils/priceCalculation";
 import { updateCart } from "@/features/features";
 import { toast } from "react-toastify";
@@ -91,18 +90,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
 
   return (
     <div
-      className={`group w-full max-w-xs mx-auto border mb-4 rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${
+      className={`group relative w-full max-w-[180px] md:max-w-xs mx-auto border mb-4 rounded-2xl transition-all duration-300 ease-in-out ${
         touchedProductId === product.id ? "active" : ""
       }`}
       onClick={() => setTouchedProductId(product.id)}
     >
-      <div onClick={goToDetail} className="cursor-pointer">
+      <div
+        onClick={goToDetail}
+        className="cursor-pointer relative overflow-hidden"
+      >
         {product?.featured_image ? (
-          <div className="w-full h-[200px] md:h-[250px] flex items-center justify-center">
+          <div className="w-full h-[150px] md:h-[200px] flex items-center justify-center">
             <Image
               alt="Product Image"
-              width={200}
-              height={250}
+              width={screen.width < 640 ? 160 : 150}
+              height={screen.width < 640 ? 150 : 180}
               src={product.featured_image}
               className="w-full h-full object-cover rounded-t-2xl"
               onError={(e) => {
@@ -113,7 +115,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
             />
           </div>
         ) : (
-          <div className="w-full h-[200px] md:h-[250px] flex items-center justify-center bg-gray-200 rounded-t-2xl"></div>
+          <div className="w-full h-[150px] md:h-[200px] flex items-center justify-center bg-gray-200 rounded-t-2xl"></div>
         )}
 
         <div className="p-3">
