@@ -196,8 +196,8 @@ export const getFirstTrendingCategoryApi = async () =>
 export const getSecondTrendingCategoryApi = async () =>
   await axios.get(`/trending-products-by-second-category`);
 
-export const getBannersApi = async (id) =>
-  await axios.get(`/global/banners/${id}`);
+export const getBannersApi = async (id,screen) =>
+  await axios.get(`/global/banners/${id}/${screen}`);
 
 export const getDynamicViewApi = async () =>
   await axios.get(`/global/products-dynamic`);

@@ -23,7 +23,8 @@ const EditGrazleMedia = () => {
     title: "",
     position: "",
     banner_image: null,
-    hyperlink: "",
+    // hyperlink: "",
+     screen: "web",
   });
 
   useEffect(() => {
@@ -47,7 +48,8 @@ const EditGrazleMedia = () => {
         title: banner.title,
         position: banner.position,
         banner_image: null,
-        hyperlink: banner.hyperlink || "",
+        // hyperlink: banner.hyperlink || "",
+        screen: banner.screen || "web",
       });
       setImagePreview(banner.image);
       setVisibility(banner.is_visible ? "show" : "hide");
@@ -92,7 +94,7 @@ const EditGrazleMedia = () => {
     }
     submitFormData.append("position", formData.position);
     submitFormData.append("title", formData.title);
-    submitFormData.append("hyperlink", formData.hyperlink);
+    // submitFormData.append("hyperlink", formData.hyperlink);
     submitFormData.append("is_visible", visibility === "show");
 
     try {
@@ -166,7 +168,7 @@ const EditGrazleMedia = () => {
                           Browse
                         </span>
                       </p>
-                     
+
                     </label>
                   )}
                   {imagePreview && (
@@ -186,7 +188,7 @@ const EditGrazleMedia = () => {
                   )}
                 </div>
               </div>
-              <div className="flex flex-col gap-1">
+              {/* <div className="flex flex-col gap-1">
                 <label className="text-[var(--text-color-body)]">
                   Hyperlink
                 </label>
@@ -197,7 +199,7 @@ const EditGrazleMedia = () => {
                   value={formData.hyperlink}
                   onChange={handleInputChange}
                 />
-              </div>
+              </div> */}
               <div className="flex flex-col gap-1">
                 <label className="text-[var(--text-color-body)]">
                   Display Order
@@ -220,11 +222,10 @@ const EditGrazleMedia = () => {
                 </label>
                 <div className="flex gap-10 sm:gap-32 mt-1">
                   <div
-                    className={`flex items-center gap-2 cursor-pointer ${
-                      visibility === "show"
+                    className={`flex items-center gap-2 cursor-pointer ${visibility === "show"
                         ? "text-[var(--text-color)]"
                         : "text-[var(--text-color-body)]"
-                    }`}
+                      }`}
                     onClick={() => setVisibility("show")}
                   >
                     {visibility === "show" ? (
@@ -235,11 +236,10 @@ const EditGrazleMedia = () => {
                     Show
                   </div>
                   <div
-                    className={`flex items-center gap-2 cursor-pointer ${
-                      visibility === "hide"
+                    className={`flex items-center gap-2 cursor-pointer ${visibility === "hide"
                         ? "text-[var(--text-color)]"
                         : "text-[var(--text-color-body)]"
-                    }`}
+                      }`}
                     onClick={() => setVisibility("hide")}
                   >
                     {visibility === "hide" ? (
@@ -248,6 +248,51 @@ const EditGrazleMedia = () => {
                       <IoMdRadioButtonOff className="w-[20px] h-[20px]" />
                     )}
                     Hide
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[var(--text-color-body)]">
+                  View
+                </label>
+                <div className="flex gap-10 sm:gap-32 mt-1">
+                  <div
+                    className={`flex items-center gap-2 cursor-pointer ${formData.screen === "web"
+                      ? "text-[var(--text-color)]"
+                      : "text-[var(--text-color-body)]"
+                      }`}
+                    onClick={() => {
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        screen: "web",
+                      }));
+                    }}
+                  >
+                    {formData.screen === "web" ? (
+                      <IoMdRadioButtonOn className="w-[20px] h-[20px]" />
+                    ) : (
+                      <IoMdRadioButtonOff className="w-[20px] h-[20px]" />
+                    )}
+                    web
+                  </div>
+                  <div
+                    className={`flex items-center gap-2 cursor-pointer ${formData.screen === "mobile"
+                      ? "text-[var(--text-color)]"
+                      : "text-[var(--text-color-body)]"
+                      }`}
+                    onClick={() => {
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        screen: "mobile",
+                      }));
+                    }}
+                  >
+                    {formData.screen === "mobile" ? (
+                      <IoMdRadioButtonOn className="w-[20px] h-[20px]" />
+                    ) : (
+                      <IoMdRadioButtonOff className="w-[20px] h-[20px]" />
+                    )}
+                    mobile
                   </div>
                 </div>
               </div>
