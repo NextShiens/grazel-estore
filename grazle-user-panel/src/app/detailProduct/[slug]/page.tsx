@@ -39,6 +39,7 @@ import Card1 from "@/assets/a5a6296b2158604a47215a2b0a00bde0.png";
 import { MdExpandMore } from "react-icons/md";
 import { calculateFinalPrice } from "@/utils/priceCalculation";
 import LikeButton from "@/components/LikeButton";
+import { useSwipeable } from 'react-swipeable';
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL || "https://api.grazle.co.in/api";
@@ -52,13 +53,14 @@ export default function ProductDetail() {
   const [singleProduct, setSingleProduct] = useState(null);
   const [currentVariant, setCurrentVariant] = useState(null);
   const [currentProductId, setCurrentProductId] = useState("");
-  const [favoriteProducts, setFavoriteProducts] = useState([]);
   const [storeProductsDetails, setStoreProductsDetails] = useState([]);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [selectedTab, setSelectedTab] = useState("description");
   const [showPopup, setShowPopup] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [favoriteProducts, setFavoriteProducts] = useState<number[]>([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const router = useRouter();
   const { slug } = useParams();
@@ -81,6 +83,7 @@ export default function ProductDetail() {
     };
     fetchProductData();
   }, [slug]);
+
   const url = `${BASE_URL}/global/products/reviews/${slug}`;
 
   useEffect(() => {
@@ -106,6 +109,20 @@ export default function ProductDetail() {
 
     fetchProductReviews();
   }, [url]);
+
+  useEffect(() => {
+    async function fetchFavoriteProducts() {
+      try {
+        // const response = await getAllFavoriteProductApi();
+        // setFavoriteProducts(response.data.favoriteProducts || []);
+      } catch (error) {
+        console.error("Error fetching favorite products:", error);
+        toast.error("Failed to fetch favorite products");
+        setFavoriteProducts([]); // Set to empty array in case of error
+      }
+    }
+    fetchFavoriteProducts();
+  }, []);
 
   useEffect(() => {
     const fetchBrandData = async () => {
@@ -167,6 +184,7 @@ export default function ProductDetail() {
       setTimeout(() => setPending(false), 200);
     }
   }
+
   const excellentRating =
     (singleProduct?.total_rating?.total_excellent_count /
       singleProduct?.total_rating?.total_rating_count) *
@@ -229,6 +247,54 @@ export default function ProductDetail() {
     );
   };
 
+  async function onLiked(e: React.MouseEvent, productId: number) {
+    e.stopPropagation();
+    if (isPending) return;
+
+    try {
+      setPending(true);
+      const formdata = new FormData();
+      formdata.append("product_id", productId.toString());
+
+      const response = await favoriteProductApi(formdata);
+
+      if (response.data.success) {
+        setFavoriteProducts((prevFavorites = []) => {
+          if (prevFavorites.includes(productId)) {
+            return prevFavorites.filter((id) => id !== productId);
+          } else {
+            return [...prevFavorites, productId];
+          }
+        });
+        toast.success(response.data.message);
+      } else {
+        toast.error("Failed to update favorite status");
+      }
+    } catch (error) {
+      console.error("Error in liking product:", error);
+      toast.error("An error occurred while updating favorite status");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  const images = singleProduct
+    ? [singleProduct.featured_image, ...(singleProduct.gallery?.map(item => item.image) || [])]
+    : [];
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === images.length - 1 ? 0 : prevIndex + 1
+      );
+    },
+    onSwipedRight: () => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === 0 ? images.length - 1 : prevIndex - 1
+      );
+    },
+  });
+
   if (!singleProduct) {
     return <div>Loading...</div>;
   }
@@ -238,26 +304,40 @@ export default function ProductDetail() {
       <div className="lg:my-[50px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[20px] sm:mx-[20px] md:mx-[30px]">
         <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap justify-between">
           <div className="w-[100%] sm:w-[100%] md:w-[100%] lg:w-[40%]">
-            {singleProduct.featured_image && (
-              <Image
-                alt={singleProduct.title || "Product image"}
-                height={350}
-                width={350}
-                src={singleProduct.featured_image}
-                className="w-full h-[350px] sm:[400px] md:[400px] lg:h-[500px] cursor-pointer"
-                onClick={() => handleImageClick(singleProduct.featured_image)}
-              />
-            )}
+            <div {...handlers} className="relative">
+              {images[currentImageIndex] && (
+                <Image
+                  alt={singleProduct.title || "Product image"}
+                  height={350}
+                  width={350}
+                  src={images[currentImageIndex]}
+                  className="w-full h-[350px] sm:[400px] md:[400px] lg:h-[500px] cursor-pointer"
+                  onClick={() => handleImageClick(images[currentImageIndex])}
+                />
+              )}
+              <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+                {images.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`h-2 w-2 rounded-full mx-1 ${
+                      index === currentImageIndex ? 'bg-red-500' : 'bg-gray-300'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
             <div className="flex justify-between mt-5 lg:mt-10 gap-2">
-              {singleProduct.gallery?.map((item, index) => (
+              {images.map((image, index) => (
                 <Image
                   key={index}
                   alt={`Gallery image ${index + 1}`}
                   width={90}
                   height={90}
-                  src={item?.image}
-                  className="lg:w-[90px] lg:h-[90px] h-[60px] sm:h-[60px] md:h-[60px] w-[60px] sm:w-[60px] md:w-[60px] hover:border-[1px] border-[#F70000] cursor-pointer"
-                  onClick={() => handleImageClick(item.image)}
+                  src={image}
+                  className={`lg:w-[90px] lg:h-[90px] h-[60px] sm:h-[60px] md:h-[60px] w-[60px] sm:w-[60px] md:w-[60px] hover:border-[1px] border-[#F70000] cursor-pointer ${
+                    index === currentImageIndex ? 'border-2 border-[#F70000]' : ''
+                  }`}
+                  onClick={() => setCurrentImageIndex(index)}
                 />
               ))}
             </div>
@@ -307,7 +387,6 @@ export default function ProductDetail() {
                 </p>
               )}
             </div>
-
             <div className="mt-4">
               <p className="text-[14px] text-[#000000] font-semibold">
                 Variants
@@ -356,9 +435,21 @@ export default function ProductDetail() {
                 >
                   Add to cart
                 </button>
-                
-                <div className="mt-[20px] flex justify-center items-center rounded-full h-[52px] w-[52px]">
-                  <LikeButton productId={singleProduct?.id} />
+
+                <div className="mt-[18px] flex justify-center items-center rounded-full h-[72px] w-[68px]">
+                  <IconButton
+                    size="large"
+                    onClick={(e) => onLiked(e, singleProduct?.id)}
+                    disabled={isPending}
+                    className="bg-white bg-opacity-70 hover:bg-opacity-100 h-[64px] w-[64px]"
+                  >
+                    {favoriteProducts &&
+                    favoriteProducts.includes(singleProduct?.id) ? (
+                      <FaHeart className="text-[#F70000] text-[32px]" />
+                    ) : (
+                      <Image src={heart} alt="like" width={32} height={32} />
+                    )}
+                  </IconButton>
                 </div>
               </div>
 
