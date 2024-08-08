@@ -38,7 +38,12 @@ const GrazleMedia = () => {
           Authorization: `Bearer ${token}`
         }
       });
-      setBanners(response.data?.banners);
+      // Update the is_active property to match the active field
+      const updatedBanners = response.data?.banners.map(banner => ({
+        ...banner,
+        is_active: banner.active
+      }));
+      setBanners(updatedBanners);
       setLoading(false);
     } catch (err) {
       console.error("Error fetching banners:", err);
@@ -60,38 +65,36 @@ const GrazleMedia = () => {
       toast.success("Banner deleted successfully");
     } catch (err) {
       console.error("Error deleting banner:", err);
-      // setError("Failed to delete banner. Please try again.");
       toast.error("Failed to delete banner. Please try again.");
     }
   };
 
   const handleToggleActivation = async () => {
     const endpoint = selectedBanner.is_active ? 'deactivate' : 'activate';
-  
+
     try {
       const token = localStorage.getItem('token');
       await axiosPrivate.put(
         `/admin/banners/${selectedBanner.id}/${endpoint}`,
-        {}, 
+        {},
         {
           headers: {
             Authorization: `Bearer ${token}`
           }
         }
       );
-      
+
       // Update the state locally
-      setBanners(banners.map(banner => 
-        banner.id === selectedBanner.id 
-          ? {...banner, is_active: !banner.is_active} 
+      setBanners(banners.map(banner =>
+        banner.id === selectedBanner.id
+          ? { ...banner, is_active: !banner.is_active }
           : banner
       ));
-      
+
       setModalOpen(false);
       toast.success(`Banner ${endpoint}d successfully`);
     } catch (err) {
       console.error(`Error ${endpoint}ing banner:`, err);
-      // setError(`Failed to ${endpoint} banner. Please try again.`);
       toast.error(`Failed to ${endpoint} banner. Please try again.`);
     }
   };
@@ -182,6 +185,9 @@ const MediaData = ({ banner, onDelete, onToggleActivation }) => {
           <p className="text-[14px] sm:text-[18px] mt-2 text-[var(--text-color-body)]">
             Position: {banner.position}
           </p>
+          <p className="text-[14px] sm:text-[18px] mt-2 text-[var(--text-color-body)]">
+            View: {banner.type}
+          </p>
           <p className={`text-[14px] sm:text-[18px] mt-1 font-semibold ${banner.is_active ? 'text-green-600' : 'text-red-600'}`}>
             Status: {banner.is_active ? 'Active' : 'Inactive'}
           </p>
@@ -198,7 +204,7 @@ const MediaData = ({ banner, onDelete, onToggleActivation }) => {
             className={`px-3 py-1 rounded ${banner.is_active
               ? 'bg-red-500 text-white hover:bg-red-600'
               : 'bg-green-500 text-white hover:bg-green-600'
-            }`}
+              }`}
           >
             {banner.is_active ? 'Deactivate' : 'Activate'}
           </button>

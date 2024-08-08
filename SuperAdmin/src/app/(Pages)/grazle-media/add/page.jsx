@@ -14,8 +14,9 @@ const AddGrazleMedia = () => {
   const dispatch = useDispatch();
   const [visibility, setVisibility] = useState("");
   const [bannerName, setBannerName] = useState("");
-  const [hyperlink, setHyperlink] = useState("");
+  // const [hyperlink, setHyperlink] = useState("");
   const [displayOrder, setDisplayOrder] = useState("");
+  const [screen, setScreen] = useState("web");
   const [bannerImage, setBannerImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -29,7 +30,6 @@ const AddGrazleMedia = () => {
     const file = event.target.files[0];
     setBannerImage(file);
 
-    // Create a preview URL for the selected image
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -50,6 +50,9 @@ const AddGrazleMedia = () => {
     formData.append("banner_image", bannerImage);
     formData.append("position", displayOrder);
     formData.append("title", bannerName);
+    formData.append("type", screen);
+    // formData.append("hyperlink", hyperlink);
+    formData.append("visibility", visibility);
 
     try {
       const response = await axiosPrivate.post("/admin/banners", formData, {
@@ -62,7 +65,7 @@ const AddGrazleMedia = () => {
       console.log("Banner created successfully:", response.data);
       toast.success("Banner created successfully");
       setBannerName("");
-      setHyperlink("");
+      // setHyperlink("");
       setDisplayOrder("");
       setBannerImage(null);
       setImagePreview(null);
@@ -136,7 +139,7 @@ const AddGrazleMedia = () => {
                   )}
                 </div>
               </div>
-              <div className="flex flex-col gap-1">
+              {/* <div className="flex flex-col gap-1">
                 <label className="text-[var(--text-color-body)]">
                   Hyperlink
                 </label>
@@ -146,7 +149,7 @@ const AddGrazleMedia = () => {
                   value={hyperlink}
                   onChange={(e) => setHyperlink(e.target.value)}
                 />
-              </div>
+              </div> */}
               <div className="flex flex-col gap-1">
                 <label className="text-[var(--text-color-body)]">
                   Display Order
@@ -194,6 +197,41 @@ const AddGrazleMedia = () => {
                       <IoMdRadioButtonOff className="w-[20px] h-[20px]" />
                     )}
                     Hide
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[var(--text-color-body)]">
+                  View 
+                </label>
+                <div className="flex gap-10 sm:gap-32 mt-1">
+                  <div
+                    className={`flex items-center gap-2 cursor-pointer ${screen === "web"
+                      ? "text-[var(--text-color)]"
+                      : "text-[var(--text-color-body)]"
+                      }`}
+                    onClick={() => setScreen("web")}
+                  >
+                    {screen === "web" ? (
+                      <IoMdRadioButtonOn className="w-[20px] h-[20px]" />
+                    ) : (
+                      <IoMdRadioButtonOff className="w-[20px] h-[20px]" />
+                    )}
+                    web
+                  </div>
+                  <div
+                    className={`flex items-center gap-2 cursor-pointer ${screen === "mobile"
+                      ? "text-[var(--text-color)]"
+                      : "text-[var(--text-color-body)]"
+                      }`}
+                    onClick={() => setScreen("mobile")}
+                  >
+                    {screen === "mobile" ? (
+                      <IoMdRadioButtonOn className="w-[20px] h-[20px]" />
+                    ) : (
+                      <IoMdRadioButtonOff className="w-[20px] h-[20px]" />
+                    )}
+                    mobile
                   </div>
                 </div>
               </div>
