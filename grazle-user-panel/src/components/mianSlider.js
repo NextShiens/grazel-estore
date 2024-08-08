@@ -51,7 +51,7 @@ const sliderItems = [
   },
 ];
 
-const MainSlider = ({ banners }) => {
+const MainSlider = ({ banners = [] }) => {
   return (
     <div className="parent">
       <Carousel
@@ -72,7 +72,7 @@ const MainSlider = ({ banners }) => {
             </div>
           ))}
 
-        {banners.length < 1 &&
+        {banners.length === 0 &&
           sliderItems.map((item, index) => (
             <div key={index} style={{ width: "100%" }} className="">
               <Image
