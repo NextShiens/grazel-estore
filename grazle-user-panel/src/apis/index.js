@@ -1,6 +1,7 @@
 "use client";
 import axios from "axios";
-axios.defaults.baseURL = process.env.NEXT_PUBLIC_BASE_URL || "https://api.grazle.co.in/api";
+axios.defaults.baseURL =
+  process.env.NEXT_PUBLIC_BASE_URL || "https://api.grazle.co.in/api";
 let token = "";
 
 if (typeof window !== "undefined") {
@@ -9,7 +10,6 @@ if (typeof window !== "undefined") {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   }
 }
-
 
 export const debounce = function debounce(fn, delay = 700) {
   let timeout;
@@ -150,7 +150,6 @@ export const fiftyPercentSaleProductsApi = async () =>
 export const getOfferProductsApi = async (data) =>
   await axios.get(`/global/product-offers`);
 
-
 export const getFilterProductsApi = async (query) =>
   await axios.get(`/global/search-results${query}`);
 
@@ -209,48 +208,55 @@ export const getSingleCategoryProductsApi = async (id) =>
   await axios.get(`/global/products?categoryId=${id}`);
 export const forgetPasswordApi = async (email) => {
   const formData = new FormData();
-  formData.append('email', email);
+  formData.append("email", email);
 
   await axios.post("/auth/forgot-password", formData, {
     headers: {
-      'Content-Type': 'multipart/form-data'
-    }
+      "Content-Type": "multipart/form-data",
+    },
   });
 };
 
 export const deleteuserApi = async (formdata) =>
   await axios.post(`/profile/delete-account`, formdata, {
     headers: {
-      'Content-Type': 'multipart/form-data'
-    }
+      "Content-Type": "multipart/form-data",
+    },
   });
 
-  export const deactivateAccountApi = async () =>
-    await axios.post('/profile/deactivate-account', {
-        });
+export const deactivateAccountApi = async () =>
+  await axios.post("/profile/deactivate-account", {});
 
-  export const getAllMembershipPlansApi = async () =>
-    await axios.get("/membership-plans");
-  
-  export const getMembershipPlanByIdApi = async (id) =>
-    await axios.get(`/membership-plans/${id}`);
-  
-  export const purchaseMembershipPlanApi = async (membershipPlanId) => {
-    const formData = new FormData();
-    formData.append("membership_plan_id", membershipPlanId);
-    return await axios.post("/purchase-membership-plan", formData);
-  };
-  
-  export const confirmPlanPaymentApi = async (id, transactionId, paymentStatus) => {
-    const formData = new FormData();
-    formData.append("transaction_id", transactionId);
-    formData.append("payment_status", paymentStatus);
-    return await axios.post(`/confirm-plan-payment/${id}`, formData);
-  };
-  
-  export const getUserMembershipPlansApi = async () =>
-    await axios.get("/user-membership-plan");
-  
-  export const getActiveMembershipPlanApi = async () =>
-    await axios.get("/active-membership-plan");
+export const getAllMembershipPlansApi = async () =>
+  await axios.get("/membership-plans");
 
+export const getMembershipPlanByIdApi = async (id) =>
+  await axios.get(`/membership-plans/${id}`);
+
+export const purchaseMembershipPlanApi = async (membershipPlanId) => {
+  const formData = new FormData();
+  formData.append("membership_plan_id", membershipPlanId);
+  return await axios.post("/purchase-membership-plan", formData);
+};
+
+export const confirmPlanPaymentApi = async (
+  id,
+  transactionId,
+  paymentStatus
+) => {
+  const formData = new FormData();
+  formData.append("transaction_id", transactionId);
+  formData.append("payment_status", paymentStatus);
+  return await axios.post(`/confirm-plan-payment/${id}`, formData);
+};
+
+export const getUserMembershipPlansApi = async () =>
+  await axios.get("/user-membership-plan");
+
+export const getActiveMembershipPlanApi = async () =>
+  await axios.get("/active-membership-plan");
+
+// In your apis.js file
+export const initiatePhonePePaymentApi = async (data) => {
+  return await axios.post('/phonepe/initiate-payment', data);
+};

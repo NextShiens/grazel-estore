@@ -6,7 +6,7 @@ import { Radio, Checkbox } from "@mui/material";
 import { toast } from "react-toastify";
 import { FaCircleCheck } from "react-icons/fa6";
 
-import { ccavCheckoutApi,purchaseMembershipPlanApi,confirmPlanPaymentApi } from "@/apis";
+import { ccavCheckoutApi, purchaseMembershipPlanApi, confirmPlanPaymentApi, initiatePhonePePaymentApi } from "@/apis";
 import CustomModal from "@/components/CustomModel";
 
 import card from "@/assets/credit-card (3) 1.png";
@@ -32,35 +32,50 @@ export default function Payment() {
       console.log("Payment Data", decodedData);
     }
   }, [searchParams]);
-
+ console.log(paymentData, 'paymentData')
   const onPayment = async (event) => {
-    debugger;
     event.preventDefault();
     try {
       setLoading(true);
-      const billingData = new FormData();
       const { username, planPrice, planId, membershipId, address } = paymentData;
 
-      billingData.append("order_id", planId);
-      billingData.append("name", username);
-      billingData.append("amount", planPrice);
-      billingData.append("plan_id", planId);
-      billingData.append("address", address);
-      billingData.append("currency", "INR");
+      if (paymentMethod === "ccavenue") {
+        const billingData = new FormData();
+        billingData.append("order_id", planId);
+        billingData.append("name", username);
+        billingData.append("amount", planPrice);
+        billingData.append("plan_id", planId);
+        billingData.append("address", address);
+        billingData.append("currency", "INR");
 
-      const response = await ccavCheckoutApi(billingData);
-      if (response.data && response.data.url) {
-        window.location.href = response.data.url;
-        const res = await purchaseMembershipPlanApi(planId);
-        if(!res.data || !res.data.membership) {
+        const response = await ccavCheckoutApi(billingData);
+        if (response.data && response.data.url) {
+          window.location.href = response.data.url;
+          const res = await purchaseMembershipPlanApi(planId);
+          if (!res.data || !res.data.membership) {
+            toast.error("Failed to initiate CCAvenue payment");
+            return;
+          } else {
+            await confirmPlanPaymentApi(res.data.membership.id, "dummy_transaction_id", "paid");
+          }
+        } else {
           toast.error("Failed to initiate CCAvenue payment");
-          return;
-        }else{
-      // For this example, let's assume we immediately confirm the payment
-      await confirmPlanPaymentApi(res.data.membership.id, "dummy_transaction_id", "paid");
-    }
+        }
+      } else if (paymentMethod === "phonepe") {
+        const phonePeData = new FormData();
+        phonePeData.append("user_id", '14');
+        phonePeData.append("amount", planPrice);
+        phonePeData.append("redirect_url", `${window.location.origin}/payment-success`);
+        phonePeData.append("redirect_mode", "REDIRECT");
+
+        const response = await initiatePhonePePaymentApi(phonePeData);
+        if (response.data && response.data.payment_url) {
+          window.location.href = response.data.payment_url;
+        } else {
+          toast.error("Failed to initiate PhonePe payment");
+        }
       } else {
-        toast.error("Failed to initiate CCAvenue payment");
+        toast.error("Please select a payment method");
       }
     } catch (error) {
       console.error(error);
@@ -124,12 +139,31 @@ export default function Payment() {
             />
           </div>
 
+          <div
+            className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${
+              paymentMethod === "phonepe" ? "border-[#F70000]" : "border-[#777777]"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <p className="text-lg text-[#5f259f] font-medium ml-2">PhonePe</p>
+            </div>
+            <Radio
+              sx={{
+                color: "#F70000",
+                "& .MuiSvgIcon-root": { fontSize: 24 },
+                "&.Mui-checked": { color: "#F70000" },
+              }}
+              checked={paymentMethod === "phonepe"}
+              onChange={() => setPaymentMethod("phonepe")}
+            />
+          </div>
+
           <button
             type="submit"
             disabled={isPending || !agreedTerms || paymentMethod === ""}
             className="mt-10 bg-[#F70000] disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none rounded-md h-[50px] w-[100%] text-[18px] font-medium text-white"
           >
-            Pay ₹{paymentData ? paymentData.planPrice : "nothing"}
+            Pay ₹{paymentData ? paymentData.planPrice : "nothing"} with {paymentMethod === "ccavenue" ? "CCAvenue" : "PhonePe"}
           </button>
 
           <div className="mt-3 flex items-center">
