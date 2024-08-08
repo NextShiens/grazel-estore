@@ -34,12 +34,11 @@ export default function Payment() {
   }, [searchParams]);
 
   const onPayment = async (event) => {
-    debugger;
     event.preventDefault();
     try {
       setLoading(true);
       const billingData = new FormData();
-      const { username, planPrice, planId, membershipId, address } = paymentData;
+      const { username, planPrice, planId,  address } = paymentData;
 
       billingData.append("order_id", planId);
       billingData.append("name", username);
@@ -141,8 +140,14 @@ export default function Payment() {
               }}
               onChange={(e) => setAgreedTerms(e.target.checked)}
             />
-            <p className="md:text-base text-sm font-medium ml-2 text-[#777777]">
-              By Clicking this, I agree all Terms & Conditions and Privacy & Policy
+           <p className="text-black font-normal text-sm">
+              By Clicking I agree to all terms of services and{' '}
+              <span
+                className="text-blue-500 cursor-pointer"
+                onClick={() => router.push('/Terms&Conditions')}
+              >
+                Privacy & Policy
+              </span>.
             </p>
           </div>
         </form>

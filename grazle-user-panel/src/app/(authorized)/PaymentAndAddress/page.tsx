@@ -187,6 +187,8 @@ export default function PaymentAndAddress() {
         const resData = new FormData();
         resData.append("enc_resp", response.data.encryptedData);
         const ccavRes = await ccavResponseApi(resData);
+        setShowSendModel(true);
+        toast.success("Order placed successfully");
         dispatch(clearCart()); // Add this line
         router.replace(response.data.url);
       }
@@ -212,6 +214,8 @@ export default function PaymentAndAddress() {
         resData.append("enc_resp", checkOutResponse.data.encryptedData);
         const ccavRes = await ccavResponseApi(resData);
         console.log("first response", checkOutResponse);
+        setShowSendModel(true);
+        toast.success("Order placed successfully");
         dispatch(clearCart()); // Add this line
         router.replace(checkOutResponse.data.url);
       }
@@ -600,10 +604,15 @@ export default function PaymentAndAddress() {
                   setAgreedTerms(e.target.checked);
                 }}
               />
-              <p className="md:text-base text-sm font-medium ml-2 text-[#777777]">
-                By Clicking this, I agree all Terms & Conditions and Privacy &
-                Ploicy
-              </p>
+              <p className="text-black font-normal text-sm">
+              By Clicking I agree to all terms of services and{' '}
+              <span
+                className="text-blue-500 cursor-pointer"
+                onClick={() => router.push('/Terms&Conditions')}
+              >
+                Privacy & Policy
+              </span>.
+            </p>
             </div>
           </form>
         </div>

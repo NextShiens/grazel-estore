@@ -129,7 +129,7 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
   }, []);
 
   const truncateTitle = (title: string, maxLength: number = 50) => {
-    return title.length > maxLength ? `${title.slice(0, maxLength)}...` : title;
+    return title?.length > maxLength ? `${title.slice(0, maxLength)}...` : title;
   };
 
   const handleSeeMore = (id: number) => {
@@ -195,7 +195,7 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
                       {expanded === item.id
                         ? item?.title
                         : truncateTitle(item?.title)}
-                      {item?.title.length > 50 && (
+                      {item?.title?.length > 50 && (
                         <button
                           className="text-blue-300 ml-1"
                           onClick={(e) => {

@@ -331,9 +331,15 @@ export default function RegisterSeller() {
                         "&.Mui-checked": { color: "#F70000" },
                       }}
                     />
-                    <p className="text-black font-normal lg:text-[16px] text-[11px]">
-                      By Clicking I agree to all terms of services and Privacy &
-                      Policy.
+                    <p className="text-black font-normal text-sm">
+                      By Clicking I agree to all terms of services and{" "}
+                      <span
+                        className="text-blue-500 cursor-pointer"
+                        onClick={() => router.push("/Terms&Conditions")}
+                      >
+                        Privacy & Policy
+                      </span>
+                      .
                     </p>
                   </div>
                 </div>

@@ -302,20 +302,20 @@ export default function Footer() {
                   )}
                   {index === 1 && (
                     <div>
-                      <Link href="/about" className="text-[14px] font-medium block mt-[8px]">
+                      <Link href="/Terms&Conditions" className="text-[14px] font-medium block mt-[8px]">
                         About
                       </Link>
-                      <Link href="/contact" className="text-[14px] font-medium block mt-[8px]">
+                      <Link href="/ContactSupport" className="text-[14px] font-medium block mt-[8px]">
                         Contact
                       </Link>
                     </div>
                   )}
                   {index === 2 && (
                     <>
-                      <Link href="/help-center" className="text-[14px] font-medium block mt-[8px]">
+                      <Link href="/ContactSupport" className="text-[14px] font-medium block mt-[8px]">
                         Help Center
                       </Link>
-                      <Link href="/safety-center" className="text-[14px] font-medium block mt-[8px]">
+                      <Link href="/ContactSupport" className="text-[14px] font-medium block mt-[8px]">
                         Safety Center
                       </Link>
                     </>
