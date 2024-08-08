@@ -39,7 +39,7 @@ import Card1 from "@/assets/a5a6296b2158604a47215a2b0a00bde0.png";
 import { MdExpandMore } from "react-icons/md";
 import { calculateFinalPrice } from "@/utils/priceCalculation";
 import LikeButton from "@/components/LikeButton";
-import { useSwipeable } from 'react-swipeable';
+import { useSwipeable } from "react-swipeable";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL || "https://api.grazle.co.in/api";
@@ -279,17 +279,20 @@ export default function ProductDetail() {
   }
 
   const images = singleProduct
-    ? [singleProduct.featured_image, ...(singleProduct.gallery?.map(item => item.image) || [])]
+    ? [
+        singleProduct.featured_image,
+        ...(singleProduct.gallery?.map((item) => item.image) || []),
+      ]
     : [];
 
   const handlers = useSwipeable({
     onSwipedLeft: () => {
-      setCurrentImageIndex((prevIndex) => 
+      setCurrentImageIndex((prevIndex) =>
         prevIndex === images.length - 1 ? 0 : prevIndex + 1
       );
     },
     onSwipedRight: () => {
-      setCurrentImageIndex((prevIndex) => 
+      setCurrentImageIndex((prevIndex) =>
         prevIndex === 0 ? images.length - 1 : prevIndex - 1
       );
     },
@@ -320,26 +323,30 @@ export default function ProductDetail() {
                   <div
                     key={index}
                     className={`h-2 w-2 rounded-full mx-1 ${
-                      index === currentImageIndex ? 'bg-red-500' : 'bg-gray-300'
+                      index === currentImageIndex ? "bg-red-500" : "bg-gray-300"
                     }`}
                   />
                 ))}
               </div>
             </div>
             <div className="flex justify-between mt-5 lg:mt-10 gap-2">
-              {images.map((image, index) => (
-                <Image
-                  key={index}
-                  alt={`Gallery image ${index + 1}`}
-                  width={90}
-                  height={90}
-                  src={image}
-                  className={`lg:w-[90px] lg:h-[90px] h-[60px] sm:h-[60px] md:h-[60px] w-[60px] sm:w-[60px] md:w-[60px] hover:border-[1px] border-[#F70000] cursor-pointer ${
-                    index === currentImageIndex ? 'border-2 border-[#F70000]' : ''
-                  }`}
-                  onClick={() => setCurrentImageIndex(index)}
-                />
-              ))}
+              <div className="grid grid-cols-4 gap-2">
+                {images.map((image, index) => (
+                  <Image
+                    key={index}
+                    alt={`Gallery image ${index + 1}`}
+                    width={90}
+                    height={90}
+                    src={image}
+                    className={`lg:w-[90px] lg:h-[90px] h-[70px] w-[70px] sm:h-[80px] sm:w-[80px] md:h-[85px] md:w-[85px] hover:border-2 border-[#F70000] cursor-pointer rounded-md ${
+                      index === currentImageIndex
+                        ? "border-2 border-[#F70000]"
+                        : ""
+                    }`}
+                    onClick={() => setCurrentImageIndex(index)}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 
@@ -429,12 +436,12 @@ export default function ProductDetail() {
               </div>
 
               <div className="flex gap-4">
-                <button
-                  className="bg-[#F70000] rounded-full h-[50px] mt-[20px] lg:w-[275px] w-[200px] sm:w-[200px] md:w-[200px] font-medium text-white"
-                  onClick={(e) => onAddingCart(e, singleProduct)}
-                >
-                  Add to cart
-                </button>
+              <button
+      className={`bg-[#F70000] rounded-full h-[60px] mt-[20px] font-medium text-white flex items-center justify-center w-full sm:h-[50px]`}
+      onClick={(e) => onAddingCart(e, singleProduct)}
+    >
+      Add to cart
+    </button>
 
                 <div className="mt-[18px] flex justify-center items-center rounded-full h-[72px] w-[68px]">
                   <IconButton
@@ -559,11 +566,11 @@ export default function ProductDetail() {
         <p className="text-[#000000] text-[19px] border-t pt-5 mt-5">
           More from the store
         </p>
-        <div className="p-6 lg:p-10 overflow-x-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8 ">
-          {storeProductsDetails.slice(0, 4).map((item) => (
-            <ProductCard width="25" key={item.id} product={item} />
-          ))}
-        </div>
+      </div>
+      <div className="p-6 overflow-x-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+        {storeProductsDetails.slice(0, 4).map((item) => (
+          <ProductCard width="25" key={item.id} product={item} />
+        ))}
       </div>
 
       {selectedImage && (
