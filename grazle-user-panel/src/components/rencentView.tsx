@@ -128,7 +128,7 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
     fetchFavoriteProducts();
   }, []);
 
-  const truncateTitle = (title: string, maxLength: number = 50) => {
+  const truncateTitle = (title: string, maxLength: number = 5) => {
     return title?.length > maxLength ? `${title.slice(0, maxLength)}...` : title;
   };
 
@@ -195,7 +195,7 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
                       {expanded === item.id
                         ? item?.title
                         : truncateTitle(item?.title)}
-                      {item?.title?.length > 50 && (
+                      {item?.title?.length > 5 && (
                         <button
                           className="text-blue-300 ml-1"
                           onClick={(e) => {
