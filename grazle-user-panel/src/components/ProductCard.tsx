@@ -90,7 +90,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
 
   return (
     <div
-      className={`group relative w-full max-w-[180px] md:max-w-xs mx-auto border mb-4 rounded-2xl transition-all duration-300 ease-in-out ${
+      className={`group relative w-full max-w-[220px] md:max-w-sm mx-auto border mb-4 rounded-2xl transition-all duration-300 ease-in-out ${
         touchedProductId === product.id ? "active" : ""
       }`}
       onClick={() => setTouchedProductId(product.id)}
@@ -100,11 +100,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
         className="cursor-pointer relative overflow-hidden"
       >
         {product?.featured_image ? (
-          <div className="w-full h-[150px] md:h-[200px] flex items-center justify-center">
+          <div className="w-full h-[120px] md:h-[180px] flex items-center justify-center">
             <Image
               alt="Product Image"
-              width={screen.width < 640 ? 160 : 150}
-              height={screen.width < 640 ? 150 : 180}
+              width={screen.width < 640 ? 200 : 190}
+              height={screen.width < 640 ? 130 : 160}
               src={product.featured_image}
               className="w-full h-full object-cover rounded-t-2xl"
               onError={(e) => {
@@ -115,7 +115,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
             />
           </div>
         ) : (
-          <div className="w-full h-[150px] md:h-[200px] flex items-center justify-center bg-gray-200 rounded-t-2xl"></div>
+          <div className="w-full h-[130px] md:h-[180px] flex items-center justify-center bg-gray-200 rounded-t-2xl"></div>
         )}
 
         <div className="p-3">
