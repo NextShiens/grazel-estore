@@ -504,18 +504,18 @@ export default function Home() {
             />
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center mt-[20px]">
+          <div className="">
             <p className="text-lg font-semibold text-gray-600">
               No items related to this category
             </p>
-            <div className="hidden md:flex items-center justify-between mt-[20px]">
+            <div className="hidden md:flex items-center justify-between">
               {Array(4)
                 .fill(0)
                 .map((_, index) => (
                   <SkeletonLoader key={index} />
                 ))}
             </div>
-            <div className="md:hidden flex items-center justify-between mt-[20px]">
+            <div className="md:hidden flex items-center justify-between">
               {Array(2)
                 .fill(0)
                 .map((_, index) => (
