@@ -14,6 +14,7 @@ import Manage from "./Manage";
 import CreateNew from "./CreateNew";
 import EditProduct from "./EditProduct";
 import { axiosPrivate } from "../../../axios/index";
+import { toast } from "react-toastify";
 
 const Products = () => {
   const dispatch = useDispatch();
@@ -56,6 +57,7 @@ const Products = () => {
       setItemsPerPage(data.limit);
     } catch (error) {
       console.error("Failed to fetch products", error);
+      toast.error("Failed to fetch products");
     } finally {
       setIsLoading(false);
     }
@@ -67,6 +69,21 @@ const Products = () => {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    try {
+      await axiosPrivate.delete(`/vendor/products/${productId}`, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+      toast.success("Product deleted successfully");
+      fetchProducts();
+    } catch (error) {
+      console.error("Failed to delete product", error);
+      toast.error("Failed to delete product");
+    }
   };
 
   const renderPageNumbers = () => {
@@ -206,6 +223,7 @@ const Products = () => {
                   setSelectedTab={setSelectedTab}
                   setProduct={setProduct}
                   searchTerm={searchTerm}
+                  onDeleteProduct={handleDeleteProduct}
                 />
                 {allProducts.length > 0 && (
                   <div className="flex flex-col items-center mt-4">
@@ -239,6 +257,7 @@ const Products = () => {
                 <EditProduct
                   product={product}
                   setSelectedTab={setSelectedTab}
+                  onProductUpdated={fetchProducts}
                 />
               )
             )}
@@ -248,7 +267,6 @@ const Products = () => {
     </>
   );
 };
-
 const PageButton = ({ page, currentPage, onClick }) => (
   <button
     onClick={onClick}
