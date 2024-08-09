@@ -501,6 +501,19 @@ export default function MyAccount() {
                   />
                 </div>
                 <div className="flex-col mt-[30px]">
+                  <label className="text-[16px] font-semibold">
+                    Email
+                  </label>
+                  <input
+                    onChange={profileDataHandler}
+                    placeholder="Enter Phone Number"
+                    type="tel"
+                    name="phone"
+                    defaultValue={currentUser?.email}
+                    className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                  />
+                </div>
+                <div className="flex-col mt-[30px]">
                   <label className="text-[16px] font-semibold"> Gender *</label>
                   <select
                     name="gender"

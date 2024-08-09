@@ -590,6 +590,17 @@ export default function MyAccount() {
                   />
                 </div>
                 <div className="flex-col mt-[30px]">
+                  <label className="text-[16px] font-semibold">Email *</label>
+                  <input
+                    onChange={profileDataHandler}
+                    placeholder="Enter Email"
+                    type="email"
+                    name="email"
+                    value={userRedux.email || ""}
+                    className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                  />
+                </div>
+                <div className="flex-col mt-[30px]">
                   <label className="text-[16px] font-semibold">Country</label>
                   <input
                     onChange={profileDataHandler}
@@ -727,14 +738,19 @@ export default function MyAccount() {
                 </CustomModal>
               </form>
             )}
-
             {activeSection === "Orders" &&
-              userOrders?.map((item, index) => (
-                <MyorderCard
-                  setHasOrderCanceled={setHasOrderCanceled}
-                  key={index}
-                  order={item}
-                />
+              (userOrders && userOrders.length > 0 ? (
+                userOrders.map((item, index) => (
+                  <MyorderCard
+                    setHasOrderCanceled={setHasOrderCanceled}
+                    key={index}
+                    order={item}
+                  />
+                ))
+              ) : (
+                <div className="text-center text-gray-500 mt-5">
+                No orders Found
+              </div>
               ))}
 
             {activeSection === "Manage Address" && (

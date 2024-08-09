@@ -278,7 +278,7 @@ export default function Home() {
     <>
       {/* MianSlider */}
       <div className="lg:mx-[150px] md:mx-[60px] lg:px-0 md:px-3">
-        <MainSlider  />
+        <MainSlider />
       </div>
 
       {/* Get Now Banner */}
@@ -474,6 +474,7 @@ export default function Home() {
       {/* categories */}
       <div
         style={{ scrollbarWidth: "none" }}
+        style={{ marginTop: "-22px", marginBottom: '10px' }}
         className="lg:mx-[150px] md:mx-[60px] mx-[14px] pb-2 md:my-[24px] mt-5 flex items-center  overflow-x-auto lg:justify-between gap-3"
       >
         {allCategories.map((item: any, index: any) => (
@@ -492,10 +493,7 @@ export default function Home() {
         ))}
       </div>
 
-      <div
-        className="lg:mx-[150px] md:mx-[60px] md:my-[24px] my-0"
-        style={{ padding: "10px" }}
-      >
+      <div className="lg:mx-[150px] md:mx-[60px] md:my-[24px] my-0">
         {selectedCategoryProducts?.length ? (
           <div>
             <RecentViewSlider
@@ -527,11 +525,15 @@ export default function Home() {
       </div>
 
       {/* Dynamic View */}
-      <div className="lg:mx-[150px] md:mx-[60px] mx-[14px] my-[24px]">
-        <div className="flex items-center justify-between w-full mt-[15px] md:mt-0">
+      <div className="lg:mx-[150px] md:mx-[60px] mx-[14px] my-[24px]"
+            style={{ marginTop: "-15px" }}
+            >
+        <div className="flex items-center justify-between w-full mt-[15px] md:mt-0"
+            style={{ marginTop: "0px" }}
+            >
           <p
             className="md:text-2xl text-lg font-semibold"
-            style={{ margin: "15px 0px" }}
+            // style={{ margin: "-15px 0px" }}
           >
             Dynamic View
           </p>
@@ -568,204 +570,166 @@ export default function Home() {
       </div>
       {/* sale product */}
       <div className="flex lg:flex-row flex-col lg:mx-[150px] md:mx-[60px] mx-[5px] my-[24px] border border-[#E5E7EB] py-2 lg:px-6 px-1 rounded-md">
-        {offerProducts[0]?.offer_products?.length > 0 && (
-          <>
-            <Link
-              href={`/detailProduct/${offerProducts[0].offer_products[0].id}`}
-              className="flex items-center justify-center md:gap-5 gap-2 lg:w-[60%] w-[100%] lg:border-r lg:border-[#77777740]"
+  {offerProducts[0]?.offer_products?.length > 0 && (
+    <>
+      <Link
+        href={`/detailProduct/${offerProducts[0].offer_products[0].id}`}
+        className="flex items-center justify-center md:gap-5 gap-2 lg:w-[60%] w-[100%] lg:border-r lg:border-[#77777740]"
+      >
+        <div className="relative h-[203px]">
+          <Image
+            alt="Product Image"
+            width={190}
+            height={190}
+            src={offerProducts[0].offer_products[0].featured_image}
+            className="w-full h-full object-cover outline-none	rounded-2xl cursor-pointer border"
+          />
+
+          <div className="flex absolute w-full justify-between items-center absolute px-[16px] top-[10px]">
+            <button className="text-[12px] rounded-3xl text-white bg-[#F70000] py-2 px-3">
+              {offerProducts[0].offer.discount_value}% OFF
+            </button>
+            <IconButton
+              size="small"
+              onClick={(e) =>
+                onLiked(e, offerProducts[0].offer_products[0].id)
+              }
+              disabled={isPending}
+              className="bg-white bg-opacity-70 hover:bg-opacity-100"
             >
-              <div className="relative h-[203px]">
-                <Image
-                  alt="Product Image"
-                  width={203}
-                  height={203}
-                  src={offerProducts[0].offer_products[0].featured_image}
-                  className="w-full h-full object-cover outline-none	rounded-2xl cursor-pointer border"
-                />
-
-                <div className="flex absolute w-full justify-between items-center absolute px-[16px] top-[10px]">
-                  <button className="text-[12px] rounded-3xl text-white bg-[#F70000] py-2 px-3">
-                    {offerProducts[0].offer.discount_value}% OFF
-                  </button>
-                  <IconButton
-                    size="small"
-                    onClick={(e) =>
-                      onLiked(e, offerProducts[0].offer_products[0].id)
-                    }
-                    disabled={isPending}
-                    className="bg-white bg-opacity-70 hover:bg-opacity-100"
-                  >
-                    {favoriteProducts &&
-                    favoriteProducts.includes(
-                      offerProducts[0].offer_products[0].id
-                    ) ? (
-                      <FaHeart className="text-[#F70000]" />
-                    ) : (
-                      <Image src={heart} alt="like" width={20} height={20} />
-                    )}
-                  </IconButton>
-                </div>
-              </div>
-              <div className="flex flex-col lg:gap-3 gap-1">
-                <span className="md:text-lg text-base font-semibold">
-                  {offerProducts[0].offer_products[0].title}
-                </span>
-                <div className="flex items-center gap-2">
-                  <Rating
-                    precision={0.5}
-                    name="read-only"
-                    readOnly
-                    value={Number(offerProducts[0].offer_products[0].rating)}
-                    defaultValue={Number(
-                      offerProducts[0].offer_products[0].rating
-                    )}
-                    className="lg:text-xl text-sm"
-                  />
-
-                  <span className="text-sm text-[#434343]">
-                    {offerProducts[0].offer_products[0].reviewCount} reviews
-                  </span>
-                </div>
-                <div className="flex gap-4 items-center lg:mt-10">
-                  <span className="md:text-lg text-sm text-[#F70000] font-semibold">
-                    ₹{offerProducts[0].offer_products[0].discounted_price}
-                  </span>
-                  <span className="text-[#949494] text-sm line-through">
-                    ₹{offerProducts[0].offer_products[0].price}
-                  </span>
-                </div>
-
-                {/* <button
-                className="text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg"
-                onClick={(e) => onAddingCart(e, offerProducts[0].offer_products[0])}
-              >
-                <div className="flex items-center justify-center">
-                  <p className="font-semibold text-[14px]">Add to cart</p>
-                  <Image
-                    alt="cart"
-                    src={Cart}
-                    className="w-[20px] h-[20px] ml-[12px]"
-                  />
-                </div>
-              </button> */}
-              </div>
-            </Link>
-
-            <div className="flex flex-col gap-4 lg:px-10 px-0 justify-center lg:w-[40%] w-[100%]">
-              <div className="flex items-center gap-2 bg-[#F7000014] w-fit rounded-full py-2 px-3 text-[#FC3030]">
-                <Image src={sale} alt="sale" />
-                <span className="uppercase text-sm font-medium">
-                  {offerProducts[0].offer.name.toUpperCase()}
-                </span>
-              </div>
-
-              <div className="flex text-sm items-center gap-2">
-                <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
-                  {timeLeft?.days > 0
-                    ? timeLeft?.days + "d"
-                    : timeLeft?.hours > 0
-                    ? timeLeft?.hours
-                    : 0}
-                </span>
-                <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
-                  {timeLeft?.days > 0
-                    ? timeLeft?.hours + "h"
-                    : timeLeft?.minutes}
-                </span>
-                <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
-                  {timeLeft?.days > 0
-                    ? timeLeft?.minutes + "m"
-                    : timeLeft?.seconds}
-                </span>
-                <span className="mr-2 text-[#949494]">
-                  Remains until the end of the offer
-                </span>
-              </div>
-
-              <button
-                className="text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg"
-                onClick={(e) =>
-                  onAddingCart(e, offerProducts[0].offer_products[0])
-                }
-              >
-                <div className="flex items-center justify-center">
-                  <p className="font-semibold text-[14px]">Add to cart</p>
-                  <Image
-                    alt="cart"
-                    src={Cart}
-                    className="w-[20px] h-[20px] ml-[12px]"
-                  />
-                </div>
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* 50% off */}
-      <div className="lg:mx-[150px] md:mx-[60px] my-[24px]">
-        <div className="flex items-center justify-between lg:px-0 px-2">
-          <div className="flex justify-between items-center w-full">
-            <p className="hidden md:block text-[24px] font-semibold">
-              Up to 70% Off On Selected Products
-            </p>
-            <p className="md:hidden text-md font-semibold">
-              70% Off On Selected Products
-            </p>
-            <Link
-              href={`/offers?id=${offerProducts[0]?.offer?.id}`}
-              passHref
-              legacyBehavior
-            >
-              <button
-                className="flex items-center gap-3 border border-[#FC3030] text-[#FC3030] text-sm rounded-lg py-2 px-4"
-                onClick={async (e) => {
-                  e.preventDefault();
-                  setIsLoading(true);
-                  await router.push(
-                    `/offers?id=${offerProducts[0]?.offer?.id}`
-                  );
-                  setIsLoading(false);
-                }}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <CircularProgress size={20} color="inherit" />
-                ) : (
-                  <>
-                    <span>View All</span>
-                    <FaArrowRightLong />
-                  </>
-                )}
-              </button>
-            </Link>
+              {favoriteProducts &&
+              favoriteProducts.includes(
+                offerProducts[0].offer_products[0].id
+              ) ? (
+                <FaHeart className="text-[#F70000]" />
+              ) : (
+                <Image src={heart} alt="like" width={20} height={20} />
+              )}
+            </IconButton>
           </div>
         </div>
+        <div className="flex flex-col lg:gap-3 gap-1">
+          <span className="md:text-lg text-base font-semibold">
+            {offerProducts[0].offer_products[0].title}
+          </span>
+          <div className="flex items-center gap-2">
+            <Rating
+              precision={0.5}
+              name="read-only"
+              readOnly
+              value={Number(offerProducts[0].offer_products[0].rating)}
+              defaultValue={Number(
+                offerProducts[0].offer_products[0].rating
+              )}
+              className="lg:text-xl text-sm"
+            />
 
-        {offerProducts?.length ? (
-          <div className="mx-[20px] sm:mx-[20px] md:mx-[20px] lg:mx-[0px]">
-            <OfferViewSlider Data={offerProducts} ref={sliderRef6} />
+            <span className="text-sm text-[#434343]">
+              {offerProducts[0].offer_products[0].reviewCount}
+            </span>
           </div>
-        ) : (
-          <>
-            <div className="hidden md:flex items-center justify-between">
-              {Array(4)
-                .fill(0)
-                .map((_, index) => (
-                  <SkeletonLoader key={index} />
-                ))}
-            </div>
-            <div className="md:hidden flex items-center justify-between">
-              {Array(2)
-                .fill(0)
-                .map((_, index) => (
-                  <SkeletonLoader key={index} />
-                ))}
-            </div>
-          </>
-        )}
-      </div>
+          <div className="flex gap-4 items-center lg:mt-10">
+            <span className="md:text-lg text-sm text-[#F70000] font-semibold">
+              ₹{offerProducts[0].offer_products[0].discounted_price}
+            </span>
+            <span className="text-[#949494] text-sm line-through">
+              ₹{offerProducts[0].offer_products[0].price}
+            </span>
+          </div>
 
+          <button
+            className="lg:hidden text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg"
+            onClick={(e) => onAddingCart(e, offerProducts[0].offer_products[0])}
+          >
+            <div className="flex items-center justify-center">
+              <p className="font-semibold text-[14px]">Add to cart</p>
+              <Image
+                alt="cart"
+                src={Cart}
+                className="w-[20px] h-[20px] ml-[12px]"
+              />
+            </div>
+          </button>
+        </div>
+      </Link>
+
+      <div className="flex flex-col gap-4 lg:px-10 px-0 justify-center lg:w-[40%] w-[100%]">
+        <div className="flex items-center gap-2 bg-[#F7000014] w-fit rounded-full py-2 px-3 text-[#FC3030]">
+          <Image src={sale} alt="sale" />
+          <span className="uppercase text-sm font-medium">
+            {offerProducts[0].offer.name.toUpperCase()}
+          </span>
+        </div>
+
+        <div className="flex text-sm items-center gap-2">
+          <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
+            {timeLeft?.days > 0
+              ? timeLeft?.days + "d"
+              : timeLeft?.hours > 0
+              ? timeLeft?.hours
+              : 0}
+          </span>
+          <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
+            {timeLeft?.days > 0
+              ? timeLeft?.hours + "h"
+              : timeLeft?.minutes}
+          </span>
+          <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
+            {timeLeft?.days > 0
+              ? timeLeft?.minutes + "m"
+              : timeLeft?.seconds}
+          </span>
+          <span className="mr-2 text-[#949494]">
+            Remains until the end of the offer
+          </span>
+        </div>
+
+        <button
+          className="hidden lg:block text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg"
+          onClick={(e) =>
+            onAddingCart(e, offerProducts[0].offer_products[0])
+          }
+        >
+          <div className="flex items-center justify-center">
+            <p className="font-semibold text-[14px]">Add to cart</p>
+            <Image
+              alt="cart"
+              src={Cart}
+              className="w-[20px] h-[20px] ml-[12px]"
+            />
+          </div>
+        </button>
+      </div>
+    </>
+  )}
+</div>
+
+      {/* 50% off */}
+      <div className="lg:mx-[150px] md:mx-[60px] mx-[5px]">
+  <h2 className="text-2xl font-bold mb-4 text-center lg:text-left">Minimum 70% OFF Products</h2>
+  {offerProducts?.length > 0 ? (
+    <div>
+      <OfferViewSlider Data={offerProducts} ref={sliderRef6} />
+    </div>
+  ) : (
+    <>
+      <div className="hidden md:flex items-center justify-between">
+        {Array(4)
+          .fill(0)
+          .map((_, index) => (
+            <SkeletonLoader key={index} />
+          ))}
+      </div>
+      <div className="md:hidden flex items-center justify-between">
+        {Array(2)
+          .fill(0)
+          .map((_, index) => (
+            <SkeletonLoader key={index} />
+          ))}
+      </div>
+    </>
+  )}
+</div>
       {/* small appliances */}
       <div
         style={{
