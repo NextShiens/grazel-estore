@@ -128,7 +128,7 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
     fetchFavoriteProducts();
   }, []);
 
-  const truncateTitle = (title: string, maxLength: number = 5) => {
+  const truncateTitle = (title: string, maxLength: number = 4) => {
     return title?.length > maxLength ? `${title.slice(0, maxLength)}...` : title;
   };
 

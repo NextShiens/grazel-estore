@@ -62,26 +62,18 @@ export default function Footer() {
           />
 
           <div className="flex items-center gap-2 justify-center lg:justify-start mt-[40px]">
-            <Link href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA==" target="_blank" rel="noopener noreferrer">
-              <Image
-                src={Instagram}
-                alt=""
-                className="w-[32px] h-[32px] mx-2 lg:mx-0"
-              />
-            </Link>
-            <Link href="https://www.linkedin.com/company/grazle" target="_blank" rel="noopener noreferrer">
-              <SiLinkedin className="w-[32px] h-[32px] mx-2 lg:mx-0" />
-            </Link>
-            <Link href="https://x.com/GrazleHomeware" target="_blank" rel="noopener noreferrer">
-              <Image
-                src={Twitter}
-                alt=""
-                className="w-[32px] h-[32px] mx-2 lg:mx-0"
-              />
-            </Link>
-            <Link href="https://www.facebook.com/grazlefb/" target="_blank" rel="noopener noreferrer">
-              <FaFacebook className="w-[32px] h-[32px] mx-2 lg:mx-0" />
-            </Link>
+          <Link href="https://x.com/GrazleHomeware" target="_blank" rel="noopener noreferrer">
+            <FaTwitter className="text-[24px] text-[#434343]" />
+          </Link>
+          <Link href="https://www.facebook.com/grazlefb/" target="_blank" rel="noopener noreferrer">
+            <FaFacebook className="text-[24px] text-[#434343]" />
+          </Link>
+          <Link href="https://www.linkedin.com/company/grazle" target="_blank" rel="noopener noreferrer">
+            <SiLinkedin className="text-[24px] text-[#434343]" />
+          </Link>
+          <Link href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA==" target="_blank" rel="noopener noreferrer">
+            <GrInstagram className="text-[24px] text-[#434343]" />
+          </Link>
           </div>
         </div>
 
@@ -244,7 +236,7 @@ export default function Footer() {
               key={index}
               style={{
                 backgroundColor: "transparent",
-                border: "none",
+                // border: "none",
                 boxShadow: "none",
                 borderBottom: "1px solid #0000001A",
               }}
@@ -276,7 +268,7 @@ export default function Footer() {
 
               <AccordionDetails
                 style={{
-                  padding: "0px 0px 16px 0px",
+                  padding: "0px 0px 10px 0px",
                   textAlign: "start",
                   textJustify: "none",
                 }}
@@ -285,6 +277,8 @@ export default function Footer() {
                   style={{
                     backgroundColor: "transparent",
                     paddingTop: "0px",
+                    marginBottom:"-10px",
+                    marginTop:"-20px"
                   }}
                 >
                   {index === 0 && (
@@ -293,7 +287,7 @@ export default function Footer() {
                         <Link
                           key={category?.id}
                           href={`/search?category=${category?.id}`}
-                          className="text-[14px] font-medium block mt-[8px]"
+                          className="text-[14px] font-medium block  leading-tight"
                         >
                           {category?.name}
                         </Link>
@@ -302,36 +296,36 @@ export default function Footer() {
                   )}
                   {index === 1 && (
                     <div>
-                      <Link href="/Terms&Conditions" className="text-[14px] font-medium block mt-[8px]">
+                      <Link href="/Terms&Conditions" className="text-[14px] font-medium block ">
                         About
                       </Link>
-                      <Link href="/ContactSupport" className="text-[14px] font-medium block mt-[8px]">
+                      <Link href="/ContactSupport" className="text-[14px] font-medium block ">
                         Contact
                       </Link>
                     </div>
                   )}
                   {index === 2 && (
                     <>
-                      <Link href="/ContactSupport" className="text-[14px] font-medium block mt-[8px]">
+                      <Link href="/ContactSupport" className="text-[14px] font-medium block">
                         Help Center
                       </Link>
-                      <Link href="/ContactSupport" className="text-[14px] font-medium block mt-[8px]">
+                      <Link href="/ContactSupport" className="text-[14px] font-medium block">
                         Safety Center
                       </Link>
                     </>
                   )}
                   {index === 3 && (
                     <>
-                      <Link href="/privacy-policy" className="text-[14px] font-medium block mt-[8px]">
+                      <Link href="/privacy-policy" className="text-[14px] font-medium block">
                         Privacy Policy
                       </Link>
-                      <Link href="/terms-of-service" className="text-[14px] font-medium block mt-[8px]">
+                      <Link href="/terms-of-service" className="text-[14px] font-medium block">
                         Terms of Service
                       </Link>
-                      <Link href="/cancellation-policy" className="text-[14px] font-medium block mt-[8px]">
+                      <Link href="/cancellation-policy" className="text-[14px] font-medium block">
                         Cancellation Policy
                       </Link>
-                      <Link href="/refund-policy" className="text-[14px] font-medium block mt-[8px]">
+                      <Link href="/refund-policy" className="text-[14px] font-medium block">
                         Refund Policy
                       </Link>
                     </>
