@@ -135,7 +135,13 @@ const EditProduct = ({ product, setSelectedTab, onProductUpdated }) => {
   const handleDeleteProduct = async () => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        await axiosPrivate.delete(`/vendor/products/${product?.id}`);
+        await axiosPrivate.delete(`/vendor/products/${product?.id}`,
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          }
+        );
         toast.success("Product has been deleted");
         onProductUpdated();
         setSelectedTab("manage");
@@ -148,7 +154,13 @@ const EditProduct = ({ product, setSelectedTab, onProductUpdated }) => {
 
   const handleDeleteGalleryImage = async (imageId) => {
     try {
-      await axiosPrivate.delete(`/vendor/products/${product?.id}/gallery/${imageId}`);
+      await axiosPrivate.delete(`/vendor/products/${product?.id}/gallery/${imageId}`,
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      );
       setGalleryImages(galleryImages.filter(img => img.id !== imageId));
       toast.success("Gallery image has been deleted");
     } catch (error) {
