@@ -278,7 +278,7 @@ export default function Home() {
     <>
       {/* MianSlider */}
       <div className="lg:mx-[150px] md:mx-[60px] lg:px-0 md:px-3">
-        <MainSlider  />
+        <MainSlider />
       </div>
 
       {/* Get Now Banner */}
@@ -474,6 +474,7 @@ export default function Home() {
       {/* categories */}
       <div
         style={{ scrollbarWidth: "none" }}
+        style={{ marginTop: "-22px", marginBottom: '10px' }}
         className="lg:mx-[150px] md:mx-[60px] mx-[14px] pb-2 md:my-[24px] mt-5 flex items-center  overflow-x-auto lg:justify-between gap-3"
       >
         {allCategories.map((item: any, index: any) => (
@@ -492,10 +493,7 @@ export default function Home() {
         ))}
       </div>
 
-      <div
-        className="lg:mx-[150px] md:mx-[60px] md:my-[24px] my-0"
-        style={{ padding: "10px" }}
-      >
+      <div className="lg:mx-[150px] md:mx-[60px] md:my-[24px] my-0">
         {selectedCategoryProducts?.length ? (
           <div>
             <RecentViewSlider
@@ -527,11 +525,15 @@ export default function Home() {
       </div>
 
       {/* Dynamic View */}
-      <div className="lg:mx-[150px] md:mx-[60px] mx-[14px] my-[24px]">
-        <div className="flex items-center justify-between w-full mt-[15px] md:mt-0">
+      <div className="lg:mx-[150px] md:mx-[60px] mx-[14px] my-[24px]"
+            style={{ marginTop: "-15px" }}
+            >
+        <div className="flex items-center justify-between w-full mt-[15px] md:mt-0"
+            style={{ marginTop: "0px" }}
+            >
           <p
             className="md:text-2xl text-lg font-semibold"
-            style={{ margin: "15px 0px" }}
+            // style={{ margin: "-15px 0px" }}
           >
             Dynamic View
           </p>
