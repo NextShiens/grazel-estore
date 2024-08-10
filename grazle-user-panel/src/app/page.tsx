@@ -19,7 +19,7 @@ import Google from "@/assets/Google Play Badge.png";
 import RecentViewSlider from "@/components/rencentView";
 import React, { useState, useEffect, useRef } from "react";
 import { IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
-import { updateCart } from "@/features/features";
+import { updateCart, setSelectedCategory } from "@/features/features";
 
 import bg from "@/assets/2 copy.png";
 import ProductCard from "@/components/ProductCard";
@@ -273,7 +273,15 @@ export default function Home() {
       setPending(false);
     }
   }
+  const fn_categoryClickednew = (category) => {
+    dispatch(setSelectedCategory(category));
 
+    // Store the selected category in localStorage
+    // localStorage.setItem("selectedCategory", JSON.stringify(category));
+
+    // // You can perform other actions if needed
+    // console.log("Category clicked:", category);
+  };
   return (
     <>
       {/* MianSlider */}
@@ -366,11 +374,14 @@ export default function Home() {
           )}
         </div>
 
-        {allCategories?.map((item: any) => (
+        {allCategories?.map((item) => (
           <div
             key={item?.id}
             className="w-full flex flex-col justify-center items-center mx-2 text-center"
-            onClick={() => fn_categoryClicked(item)}
+            onClick={() => {
+              fn_categoryClickednew(item);
+              fn_categoryClicked(item);
+            }} // This stores the clicked category
           >
             <div className="flex justify-center  hover:border border-[#FC3030] items-center lg:w-[92px] lg:h-[92px] w-[70px] h-[70px] sm:w-[70px] sm:h-[70px]  border-[#F70000] rounded-full bg-[#F8F8F8] ">
               {item?.image !== null ? (
@@ -474,7 +485,7 @@ export default function Home() {
       {/* categories */}
       <div
         style={{ scrollbarWidth: "none" }}
-        style={{ marginTop: "-22px", marginBottom: '10px' }}
+        style={{ marginTop: "-22px", marginBottom: "10px" }}
         className="lg:mx-[150px] md:mx-[60px] mx-[14px] pb-2 md:my-[24px] mt-5 flex items-center  overflow-x-auto lg:justify-between gap-3"
       >
         {allCategories.map((item: any, index: any) => (
@@ -525,12 +536,14 @@ export default function Home() {
       </div>
 
       {/* Dynamic View */}
-      <div className="lg:mx-[150px] md:mx-[60px] mx-[14px] my-[24px]"
-            style={{ marginTop: "-15px" }}
-            >
-        <div className="flex items-center justify-between w-full mt-[15px] md:mt-0"
-            style={{ marginTop: "0px" }}
-            >
+      <div
+        className="lg:mx-[150px] md:mx-[60px] mx-[14px] my-[24px]"
+        style={{ marginTop: "-15px" }}
+      >
+        <div
+          className="flex items-center justify-between w-full mt-[15px] md:mt-0"
+          style={{ marginTop: "0px" }}
+        >
           <p
             className="md:text-2xl text-lg font-semibold"
             // style={{ margin: "-15px 0px" }}
@@ -570,166 +583,170 @@ export default function Home() {
       </div>
       {/* sale product */}
       <div className="flex lg:flex-row flex-col lg:mx-[150px] md:mx-[60px] mx-[5px] my-[24px] border border-[#E5E7EB] py-2 lg:px-6 px-1 rounded-md">
-  {offerProducts[0]?.offer_products?.length > 0 && (
-    <>
-      <Link
-        href={`/detailProduct/${offerProducts[0].offer_products[0].id}`}
-        className="flex items-center justify-center md:gap-5 gap-2 lg:w-[60%] w-[100%] lg:border-r lg:border-[#77777740]"
-      >
-        <div className="relative h-[203px]">
-          <Image
-            alt="Product Image"
-            width={190}
-            height={190}
-            src={offerProducts[0].offer_products[0].featured_image}
-            className="w-full h-full object-cover outline-none	rounded-2xl cursor-pointer border"
-          />
-
-          <div className="flex absolute w-full justify-between items-center absolute px-[16px] top-[10px]">
-            <button className="text-[12px] rounded-3xl text-white bg-[#F70000] py-2 px-3">
-              {offerProducts[0].offer.discount_value}% OFF
-            </button>
-            <IconButton
-              size="small"
-              onClick={(e) =>
-                onLiked(e, offerProducts[0].offer_products[0].id)
-              }
-              disabled={isPending}
-              className="bg-white bg-opacity-70 hover:bg-opacity-100"
+        {offerProducts[0]?.offer_products?.length > 0 && (
+          <>
+            <Link
+              href={`/detailProduct/${offerProducts[0].offer_products[0].id}`}
+              className="flex items-center justify-center md:gap-5 gap-2 lg:w-[60%] w-[100%] lg:border-r lg:border-[#77777740]"
             >
-              {favoriteProducts &&
-              favoriteProducts.includes(
-                offerProducts[0].offer_products[0].id
-              ) ? (
-                <FaHeart className="text-[#F70000]" />
-              ) : (
-                <Image src={heart} alt="like" width={20} height={20} />
-              )}
-            </IconButton>
-          </div>
-        </div>
-        <div className="flex flex-col lg:gap-3 gap-1">
-          <span className="md:text-lg text-base font-semibold">
-            {offerProducts[0].offer_products[0].title}
-          </span>
-          <div className="flex items-center gap-2">
-            <Rating
-              precision={0.5}
-              name="read-only"
-              readOnly
-              value={Number(offerProducts[0].offer_products[0].rating)}
-              defaultValue={Number(
-                offerProducts[0].offer_products[0].rating
-              )}
-              className="lg:text-xl text-sm"
-            />
+              <div className="relative h-[203px]">
+                <Image
+                  alt="Product Image"
+                  width={190}
+                  height={190}
+                  src={offerProducts[0].offer_products[0].featured_image}
+                  className="w-full h-full object-cover outline-none	rounded-2xl cursor-pointer border"
+                />
 
-            <span className="text-sm text-[#434343]">
-              {offerProducts[0].offer_products[0].reviewCount}
-            </span>
-          </div>
-          <div className="flex gap-4 items-center lg:mt-10">
-            <span className="md:text-lg text-sm text-[#F70000] font-semibold">
-              ₹{offerProducts[0].offer_products[0].discounted_price}
-            </span>
-            <span className="text-[#949494] text-sm line-through">
-              ₹{offerProducts[0].offer_products[0].price}
-            </span>
-          </div>
+                <div className="flex absolute w-full justify-between items-center absolute px-[16px] top-[10px]">
+                  <button className="text-[12px] rounded-3xl text-white bg-[#F70000] py-2 px-3">
+                    {offerProducts[0].offer.discount_value}% OFF
+                  </button>
+                  <IconButton
+                    size="small"
+                    onClick={(e) =>
+                      onLiked(e, offerProducts[0].offer_products[0].id)
+                    }
+                    disabled={isPending}
+                    className="bg-white bg-opacity-70 hover:bg-opacity-100"
+                  >
+                    {favoriteProducts &&
+                    favoriteProducts.includes(
+                      offerProducts[0].offer_products[0].id
+                    ) ? (
+                      <FaHeart className="text-[#F70000]" />
+                    ) : (
+                      <Image src={heart} alt="like" width={20} height={20} />
+                    )}
+                  </IconButton>
+                </div>
+              </div>
+              <div className="flex flex-col lg:gap-3 gap-1">
+                <span className="md:text-lg text-base font-semibold">
+                  {offerProducts[0].offer_products[0].title}
+                </span>
+                <div className="flex items-center gap-2">
+                  <Rating
+                    precision={0.5}
+                    name="read-only"
+                    readOnly
+                    value={Number(offerProducts[0].offer_products[0].rating)}
+                    defaultValue={Number(
+                      offerProducts[0].offer_products[0].rating
+                    )}
+                    className="lg:text-xl text-sm"
+                  />
 
-          <button
-            className="lg:hidden text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg"
-            onClick={(e) => onAddingCart(e, offerProducts[0].offer_products[0])}
-          >
-            <div className="flex items-center justify-center">
-              <p className="font-semibold text-[14px]">Add to cart</p>
-              <Image
-                alt="cart"
-                src={Cart}
-                className="w-[20px] h-[20px] ml-[12px]"
-              />
+                  <span className="text-sm text-[#434343]">
+                    {offerProducts[0].offer_products[0].reviewCount}
+                  </span>
+                </div>
+                <div className="flex gap-4 items-center lg:mt-10">
+                  <span className="md:text-lg text-sm text-[#F70000] font-semibold">
+                    ₹{offerProducts[0].offer_products[0].discounted_price}
+                  </span>
+                  <span className="text-[#949494] text-sm line-through">
+                    ₹{offerProducts[0].offer_products[0].price}
+                  </span>
+                </div>
+
+                <button
+                  className="lg:hidden text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg"
+                  onClick={(e) =>
+                    onAddingCart(e, offerProducts[0].offer_products[0])
+                  }
+                >
+                  <div className="flex items-center justify-center">
+                    <p className="font-semibold text-[14px]">Add to cart</p>
+                    <Image
+                      alt="cart"
+                      src={Cart}
+                      className="w-[20px] h-[20px] ml-[12px]"
+                    />
+                  </div>
+                </button>
+              </div>
+            </Link>
+
+            <div className="flex flex-col gap-4 lg:px-10 px-0 justify-center lg:w-[40%] w-[100%]">
+              <div className="flex items-center gap-2 bg-[#F7000014] w-fit rounded-full py-2 px-3 text-[#FC3030]">
+                <Image src={sale} alt="sale" />
+                <span className="uppercase text-sm font-medium">
+                  {offerProducts[0].offer.name.toUpperCase()}
+                </span>
+              </div>
+
+              <div className="flex text-sm items-center gap-2">
+                <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
+                  {timeLeft?.days > 0
+                    ? timeLeft?.days + "d"
+                    : timeLeft?.hours > 0
+                    ? timeLeft?.hours
+                    : 0}
+                </span>
+                <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
+                  {timeLeft?.days > 0
+                    ? timeLeft?.hours + "h"
+                    : timeLeft?.minutes}
+                </span>
+                <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
+                  {timeLeft?.days > 0
+                    ? timeLeft?.minutes + "m"
+                    : timeLeft?.seconds}
+                </span>
+                <span className="mr-2 text-[#949494]">
+                  Remains until the end of the offer
+                </span>
+              </div>
+
+              <button
+                className="hidden lg:block text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg"
+                onClick={(e) =>
+                  onAddingCart(e, offerProducts[0].offer_products[0])
+                }
+              >
+                <div className="flex items-center justify-center">
+                  <p className="font-semibold text-[14px]">Add to cart</p>
+                  <Image
+                    alt="cart"
+                    src={Cart}
+                    className="w-[20px] h-[20px] ml-[12px]"
+                  />
+                </div>
+              </button>
             </div>
-          </button>
-        </div>
-      </Link>
-
-      <div className="flex flex-col gap-4 lg:px-10 px-0 justify-center lg:w-[40%] w-[100%]">
-        <div className="flex items-center gap-2 bg-[#F7000014] w-fit rounded-full py-2 px-3 text-[#FC3030]">
-          <Image src={sale} alt="sale" />
-          <span className="uppercase text-sm font-medium">
-            {offerProducts[0].offer.name.toUpperCase()}
-          </span>
-        </div>
-
-        <div className="flex text-sm items-center gap-2">
-          <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
-            {timeLeft?.days > 0
-              ? timeLeft?.days + "d"
-              : timeLeft?.hours > 0
-              ? timeLeft?.hours
-              : 0}
-          </span>
-          <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
-            {timeLeft?.days > 0
-              ? timeLeft?.hours + "h"
-              : timeLeft?.minutes}
-          </span>
-          <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
-            {timeLeft?.days > 0
-              ? timeLeft?.minutes + "m"
-              : timeLeft?.seconds}
-          </span>
-          <span className="mr-2 text-[#949494]">
-            Remains until the end of the offer
-          </span>
-        </div>
-
-        <button
-          className="hidden lg:block text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg"
-          onClick={(e) =>
-            onAddingCart(e, offerProducts[0].offer_products[0])
-          }
-        >
-          <div className="flex items-center justify-center">
-            <p className="font-semibold text-[14px]">Add to cart</p>
-            <Image
-              alt="cart"
-              src={Cart}
-              className="w-[20px] h-[20px] ml-[12px]"
-            />
-          </div>
-        </button>
+          </>
+        )}
       </div>
-    </>
-  )}
-</div>
 
       {/* 50% off */}
       <div className="lg:mx-[150px] md:mx-[60px] mx-[5px]">
-  <h2 className="text-2xl font-bold mb-4 text-center lg:text-left">Minimum 70% OFF Products</h2>
-  {offerProducts?.length > 0 ? (
-    <div>
-      <OfferViewSlider Data={offerProducts} ref={sliderRef6} />
-    </div>
-  ) : (
-    <>
-      <div className="hidden md:flex items-center justify-between">
-        {Array(4)
-          .fill(0)
-          .map((_, index) => (
-            <SkeletonLoader key={index} />
-          ))}
+        <h2 className="text-2xl font-bold mb-4 text-center lg:text-left">
+          Minimum 70% OFF Products
+        </h2>
+        {offerProducts?.length > 0 ? (
+          <div>
+            <OfferViewSlider Data={offerProducts} ref={sliderRef6} />
+          </div>
+        ) : (
+          <>
+            <div className="hidden md:flex items-center justify-between">
+              {Array(4)
+                .fill(0)
+                .map((_, index) => (
+                  <SkeletonLoader key={index} />
+                ))}
+            </div>
+            <div className="md:hidden flex items-center justify-between">
+              {Array(2)
+                .fill(0)
+                .map((_, index) => (
+                  <SkeletonLoader key={index} />
+                ))}
+            </div>
+          </>
+        )}
       </div>
-      <div className="md:hidden flex items-center justify-between">
-        {Array(2)
-          .fill(0)
-          .map((_, index) => (
-            <SkeletonLoader key={index} />
-          ))}
-      </div>
-    </>
-  )}
-</div>
       {/* small appliances */}
       <div
         style={{
