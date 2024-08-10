@@ -23,8 +23,20 @@ export default function StoreProductPage() {
   const [brands, setBrands] = useState([]);
   const catredux = useSelector((state) => state.catagories);
   const [categories, setCategories] = useState(catredux);
+  const [categoriesFilter, setCategoriesFilter] = useState(null);
+
+  const getFirstWord = (categoryName) => {
+    if (!categoryName) return "";
+    const words = categoryName.split(" ");
+    return words[0];
+  };
+
+  const selectedCategory = useSelector((state) =>
+    getFirstWord(state?.selectedCategory?.name)
+  );
+
   const [filters, setFilters] = useState({
-    keyword: searchParams.get("keyword") || "",
+    keyword: searchParams.get("keyword") || selectedCategory || "",
     brand_id: "",
     category_id: searchParams.get("category") || "",
     rating: "",
@@ -43,6 +55,11 @@ export default function StoreProductPage() {
     rating: false,
     sort: false,
   });
+
+  useEffect(() => {
+    setCategoriesFilter(selectedCategory);
+    setFilters(selectedCategory);
+  }, [selectedCategory]);
 
   useEffect(() => {
     fetchProducts();
@@ -82,7 +99,21 @@ export default function StoreProductPage() {
   const handleFilterChange = (key, value) => {
     setFilters((prev) => {
       const newValue = prev[key] === value ? "" : value;
-      return { ...prev, [key]: newValue };
+      let updatedFilters = { ...prev, [key]: newValue };
+
+      if (key === "category_id") {
+        const selectedCategory = categories.find(
+          (cat) => cat.id.toString() === value
+        );
+        if (selectedCategory) {
+          const firstWord = selectedCategory.name.split(" ")[0];
+          updatedFilters.keyword = firstWord;
+        } else {
+          updatedFilters.keyword = prev.keyword;
+        }
+      }
+
+      return updatedFilters;
     });
   };
 
@@ -95,12 +126,16 @@ export default function StoreProductPage() {
       if (value) newSearchParams.set(key, value);
     });
 
+    if (filters.keyword) {
+      newSearchParams.set("keyword", filters.keyword);
+    }
+
     router.push(`/search?${newSearchParams.toString()}`, { scroll: false });
   };
 
   const clearFilters = () => {
     setFilters({
-      keyword: searchParams.get("keyword") || "i",
+      keyword: "",
       brand_id: "",
       category_id: "",
       rating: "",
@@ -308,7 +343,6 @@ export default function StoreProductPage() {
   return (
     <div className="container mx-auto px-4 py-8 lg:py-12">
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Filter sidebar for large screens */}
         <div className="lg:w-1/4 hidden lg:block">
           <div className="bg-white rounded-lg shadow-md border border-gray-200">
             <div className="flex items-center p-4 justify-between border-b border-gray-200">
@@ -328,7 +362,6 @@ export default function StoreProductPage() {
         </div>
 
         <div className="lg:w-3/4">
-          {/* Banner - hidden on mobile, visible from medium screens up */}
           <div className="hidden md:block bg-[#FF9C2A] rounded-lg overflow-hidden mb-8">
             <div className="flex flex-col md:flex-row items-center justify-between p-8 lg:p-12">
               <div className="text-center md:text-left mb-6 md:mb-0">
@@ -357,7 +390,6 @@ export default function StoreProductPage() {
             </div>
           </div>
 
-          {/* Filter toggle for small screens */}
           <div className="flex justify-between items-center mb-4 lg:hidden">
             <p className="text-gray-600 text-lg font-medium">Filter Products</p>
             <button
@@ -368,7 +400,6 @@ export default function StoreProductPage() {
             </button>
           </div>
 
-          {/* Filter modal for small screens */}
           {isFilterVisible && (
             <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
               <div className="bg-white w-full sm:w-96 h-full overflow-y-auto">
@@ -388,7 +419,6 @@ export default function StoreProductPage() {
             </div>
           )}
 
-          {/* Product grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
