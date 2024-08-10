@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
@@ -52,6 +52,7 @@ const OfferViewSlider = React.forwardRef(({ Data }, ref) => {
   const [touchedProductId, setTouchedProductId] = useState(null);
   const [favoriteProducts, setFavoriteProducts] = useState<number[]>([]);
   const [isPending, setPending] = useState(false);
+  const [expanded, setExpanded] = useState<number | null>(null);
 
   const onAddingCart = (e, product, price, basePrice, discountInfo) => {
     e.stopPropagation();
@@ -112,6 +113,14 @@ const OfferViewSlider = React.forwardRef(({ Data }, ref) => {
     fetchFavoriteProducts();
   }, []);
 
+  const truncateTitle = (title: string, maxLength: number = 10) => {
+    return title?.length > maxLength ? `${title.slice(0, maxLength)}` : title;
+  };
+
+  const handleSeeMore = (id: number) => {
+    setExpanded(expanded === id ? null : id);
+  };
+
   const offerProducts = Data?.[0]?.offer_products || [];
 
   return (
@@ -132,17 +141,27 @@ const OfferViewSlider = React.forwardRef(({ Data }, ref) => {
           Array(4)
             .fill(0)
             .map((_, index) => (
-              <div key={index} className="animate-pulse bg-gray-200 h-72 rounded-lg m-2"></div>
+              <div
+                key={index}
+                className="animate-pulse bg-gray-200 h-72 rounded-lg m-2"
+              ></div>
             ))
         ) : offerProducts.length <= 0 ? (
-          <div className="text-center text-gray-500 text-lg font-medium py-8">No Products Found!</div>
+          <div className="text-center text-gray-500 text-lg font-medium py-8">
+            No Products Found!
+          </div>
         ) : (
           offerProducts.map((product, index) => {
-            const { basePrice, price, discountInfo } = calculateFinalPrice(product, null);
+            const { basePrice, price, discountInfo } = calculateFinalPrice(
+              product,
+              null
+            );
             return (
               <div
                 key={index}
-                className={`group lg:w-[98%] w-[95%] border mb-1 mt-1 lg:mt-[16px] rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${touchedProductId === product.id ? 'active' : ''}`}
+                className={`group lg:w-[98%] w-[95%] border mb-1 mt-1 lg:mt-[16px] rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${
+                  touchedProductId === product.id ? "active" : ""
+                }`}
                 onClick={() => setTouchedProductId(product.id)}
               >
                 <div
@@ -157,8 +176,9 @@ const OfferViewSlider = React.forwardRef(({ Data }, ref) => {
                       src={product.featured_image}
                       className="w-full h-[160px] md:h-[170px] object-cover rounded-2xl cursor-pointer"
                       onError={(e) => {
-                        console.error('Image failed to load:', e);
-                        (e.target as HTMLImageElement).src = '/path/to/fallback-image.jpg';
+                        console.error("Image failed to load:", e);
+                        (e.target as HTMLImageElement).src =
+                          "/path/to/fallback-image.jpg";
                       }}
                     />
                   ) : (
@@ -172,7 +192,8 @@ const OfferViewSlider = React.forwardRef(({ Data }, ref) => {
                       disabled={isPending}
                       className="bg-white bg-opacity-70 hover:bg-opacity-100"
                     >
-                      {favoriteProducts && favoriteProducts.includes(product.id) ? (
+                      {favoriteProducts &&
+                      favoriteProducts.includes(product.id) ? (
                         <FaHeart className="text-[#F70000]" />
                       ) : (
                         <Image src={heart} alt="like" width={20} height={20} />
@@ -182,7 +203,20 @@ const OfferViewSlider = React.forwardRef(({ Data }, ref) => {
 
                   <div className="p-2">
                     <p className="text-[14px] md:text-[15px] w-[80%] font-semibold">
-                      {product?.title}
+                      {expanded === product.id
+                        ? product?.title
+                        : truncateTitle(product?.title)}
+                      {product?.title?.length > 40 && (
+                        <button
+                          className="text-blue-300 ml-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSeeMore(product.id);
+                          }}
+                        >
+                          {expanded === product.id ? "..." : "...."}
+                        </button>
+                      )}
                     </p>
                     <div className="flex items-center mt-[4px] md:mt-[8px] gap-1">
                       <span className="text-[8px] md:text-[10px] text-[#F69B26]">
@@ -192,12 +226,15 @@ const OfferViewSlider = React.forwardRef(({ Data }, ref) => {
                     </div>
 
                     <p className="text-[12px] md:text-[18px] text-[#FC3030] font-semibold mt-[4px] md:mt-[8px]">
-                      ₹{typeof price === 'number' ? price.toFixed(2) : price}
+                      ₹{typeof price === "number" ? price.toFixed(2) : price}
                     </p>
 
                     <div className="flex items-center mt-[4px] md:mt-[8px]">
                       <p className="text-[8px] md:text-[14px] text-[#909198] line-through font-normal">
-                        ₹{typeof basePrice === 'number' ? basePrice.toFixed(2) : basePrice}
+                        ₹
+                        {typeof basePrice === "number"
+                          ? basePrice.toFixed(2)
+                          : basePrice}
                       </p>
 
                       <p className="text-[8px] md:text-[14px] text-[#4FAD2E] ml-[12px] md:ml-[20px] font-semibold">
@@ -215,7 +252,9 @@ const OfferViewSlider = React.forwardRef(({ Data }, ref) => {
                     }
                   >
                     <div className="flex items-center justify-center">
-                      <p className="font-semibold text-[12px] md:text-[13px]">Add to cart</p>
+                      <p className="font-semibold text-[12px] md:text-[13px]">
+                        Add to cart
+                      </p>
                       <Image
                         alt="cart"
                         src={Cart}

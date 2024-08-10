@@ -362,7 +362,7 @@ export default function StoreProductPage() {
         </div>
 
         <div className="lg:w-3/4">
-          <div className="hidden md:block bg-[#FF9C2A] rounded-lg overflow-hidden mb-8">
+          {/* <div className="hidden md:block bg-[#FF9C2A] rounded-lg overflow-hidden mb-8">
             <div className="flex flex-col md:flex-row items-center justify-between p-8 lg:p-12">
               <div className="text-center md:text-left mb-6 md:mb-0">
                 <p className="text-white text-xl lg:text-2xl font-semibold mb-2">
@@ -388,7 +388,7 @@ export default function StoreProductPage() {
                 />
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex justify-between items-center mb-4 lg:hidden">
             <p className="text-gray-600 text-lg font-medium">Filter Products</p>
@@ -419,11 +419,21 @@ export default function StoreProductPage() {
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+<div>
+  {products.length > 0 ? (
+    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {products.map((product) => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </div>
+  ) : (
+    <div className="text-center py-12">
+      <p className="text-xl text-gray-600">
+        No related products found.
+      </p>
+    </div>
+  )}
+</div>
         </div>
       </div>
     </div>
