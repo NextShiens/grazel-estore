@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import BBB from "@/assets/Box.png";
 import close from "@/assets/close.png";
@@ -198,10 +199,10 @@ const MyorderCard = ({
                 <div className="h-[100px] bg-[#F700000D] flex items-center justify-center w-[100px] rounded-2xl mr-5">
                   <Image
                     alt="Product Image"
-                    width={60}
-                    height={60}
+                    width={70}
+                    height={70}
                     src={prod.featured_image}
-                    className="w-[60px] h-[60px] "
+                    className="w-[100px] h-[100px] rounded-2xl"
                     onError={(e: any) => {
                       console.error("Image failed to load:", e);
                       e.target.src = "/path/to/fallback-image.jpg";
