@@ -340,7 +340,7 @@ export default function Home() {
             </div>
 
             <p className="text-nowrap color-[#393A44] lg:text-[14px] text-[10px] sm:text-[12px] font-normal mt-[4px]">
-              Categories check
+              Categories
             </p>
           </div>
 
