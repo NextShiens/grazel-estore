@@ -98,16 +98,20 @@ const AddProduct = ({ setSelectedTab }) => {
           "Content-Type": "multipart/form-data",
         },
       });
-      toast.success("Product has been created");
-      setSelectedTab("manage");
+      if (data.success) {
+        toast.success("Product has been created");
+        setSelectedTab("manage");
+      } else {
+        if (data.message.includes("Your store profile is under review")) {
+          toast.error("Your store profile is under review by our administrator. We appreciate your patience and will notify you once the approval process is complete. Thank you for your understanding.");
+        } else {
+          toast.error(data.message);
+        }
+      }
     } catch (error) {
       toast.error("Something went wrong");
-    } finally {
-      setTimeout(() => {
-        setPending(false);
-      }, 1000);
     }
-  }
+  };
 
   function onRemoveImg(index) {
     const tempArr = [...galleryImage];
@@ -163,7 +167,7 @@ const AddProduct = ({ setSelectedTab }) => {
             className="bg-white rounded-[8px] shadow-sm px-[20px] py-[25px]"
           >
             <h1 className="text-[24px] font-[600] mb-[20px]">Create New Product</h1>
-            
+
             <section className="mb-[30px]">
               <h2 className="text-[20px] font-[600] mb-[15px]">General Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -254,7 +258,7 @@ const AddProduct = ({ setSelectedTab }) => {
               >
                 Add FAQ
               </button>
-              
+
               {faqs.length > 0 && (
                 <div className="mt-4">
                   <h3 className="text-[18px] font-[600] mb-2">Added FAQs:</h3>

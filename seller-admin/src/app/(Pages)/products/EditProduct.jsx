@@ -1,68 +1,77 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updatePageNavigation } from "../../../features/features";
-import { WithContext as ReactTags } from "react-tag-input";
-
-import Navbar from "../../../components/navbar";
-import Sidebar from "../../../components/sidebar";
-
-import { FaCamera } from "react-icons/fa6";
-import { toast } from "react-toastify";
-
+import { FaCamera, FaTrash } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
+import { LuLoader2 } from "react-icons/lu";
 import Image from "next/image";
 import { axiosPrivate } from "../../../axios/index";
-import { LuLoader2 } from "react-icons/lu";
+import { toast } from "react-toastify";
+import { WithContext as ReactTags } from "react-tag-input";
 
-const EditProduct = ({ product, setSelectedTab }) => {
+const EditProduct = ({ product, setSelectedTab, onProductUpdated }) => {
+  const dispatch = useDispatch();
   const [isPending, setPending] = useState(false);
   const [allCategories, setAllCategories] = useState([]);
   const [allBrands, setAllBrands] = useState([]);
-  const [productImage, setProductImage] = useState([]);
-  const [galleryImage, setGalleryImage] = useState([]);
+  const [productImage, setProductImage] = useState(null);
+  const [galleryImages, setGalleryImages] = useState([]);
   const [tags, setTags] = useState([]);
   const [formErrors, setFormErrors] = useState({});
-  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
-    title: product?.title || "",
-    tags: product?.tags || "",
-    description: product?.description || "",
-    color: product?.color || "",
-    category_id: product?.category_id || "",
-    price: product?.price || "",
-    discount: product?.discount || "",
+    title: "",
+    description: "",
+    color: "",
+    category_id: "",
+    brand_id: "",
+    price: "",
+    discount: "",
   });
 
   useEffect(() => {
     dispatch(updatePageNavigation("products"));
-  }, [dispatch]);
-
-  useEffect(() => {
-    const getAllCategories = async () => {
-      const { data } = await axiosPrivate.get("/global/categories", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
+    fetchCategories();
+    fetchBrands();
+    if (product) {
+      setFormData({
+        title: product.title || "",
+        description: product.description || "",
+        color: product.color || "",
+        category_id: product.category_id || "",
+        brand_id: product.brand_id || "",
+        price: product.price || "",
+        discount: product.discount || "",
       });
-      !allCategories.length && setAllCategories(data?.categories);
-    };
-    getAllCategories();
-  }, []);
+      setTags(product.tags ? product.tags.split(',').map(tag => ({ id: tag, text: tag })) : []);
+      if (product.featured_image) {
+        setProductImage(product.featured_image);
+      }
+      if (product.gallery) {
+        setGalleryImages(product.gallery.map(img => ({ id: img.id, url: img.image })));
+      }
+    }
+  }, [dispatch, product]);
 
-  useEffect(() => {
-    const getAllBrands = async () => {
-      const { data } = await axiosPrivate.get("/global/brands", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-      !allBrands.length && setAllBrands(data?.brands);
-    };
-    getAllBrands();
-  }, []);
+  const fetchCategories = async () => {
+    try {
+      const { data } = await axiosPrivate.get("/global/categories");
+      setAllCategories(data?.categories);
+    } catch (error) {
+      console.error("Failed to fetch categories", error);
+      toast.error("Failed to fetch categories");
+    }
+  };
+
+  const fetchBrands = async () => {
+    try {
+      const { data } = await axiosPrivate.get("/global/brands");
+      setAllBrands(data?.brands);
+    } catch (error) {
+      console.error("Failed to fetch brands", error);
+      toast.error("Failed to fetch brands");
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -74,389 +83,342 @@ const EditProduct = ({ product, setSelectedTab }) => {
 
   const validateForm = () => {
     const errors = {};
-
     if (!formData.title.trim()) errors.title = "Product name is required";
-    if (!formData.tags.trim()) errors.tags = "Tags are required";
-    if (!formData.description.trim())
-      errors.description = "Description is required";
+    if (!formData.description.trim()) errors.description = "Description is required";
     if (!formData.color.trim()) errors.color = "Color is required";
-    if (tags.length === 0) errors.variants = "At least one variant is required";
     if (!formData.category_id) errors.category_id = "Category is required";
     if (!formData.price) errors.price = "Price is required";
-    if (!productImage.length)
-      errors.featured_image = "Feature image is required";
-    if (!galleryImage.length)
-      errors.gallery_images = "At least one gallery image is required";
-
+    if (!productImage) errors.featured_image = "Feature image is required";
+    if (galleryImages.length === 0) errors.gallery_images = "At least one gallery image is required";
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
-
-  async function onEditProduct(e) {
+  const onEditProduct = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) {
       toast.error("Please fill in all required fields");
       return;
     }
-
     try {
       setPending(true);
-
-      const formdata = new FormData(e.target);
-
-      for (let key in galleryImage) {
-        formdata.append("gallery_images", galleryImage[key]);
+      const formdata = new FormData();
+      for (let key in formData) {
+        formdata.append(key, formData[key]);
       }
-
-      await axiosPrivate.put(`/vendor/products/${product?.id}`, formdata, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
+      // Add tags to formdata
+      formdata.append("tags", tags.map(tag => tag.text).join(','));
+      if (productImage instanceof File) {
+        formdata.append("featured_image", productImage);
+      }
+      galleryImages.forEach((image, index) => {
+        if (image.file instanceof File) {
+          formdata.append("gallery_images", image.file);
+        }
       });
+      await axiosPrivate.put(`/vendor/products/${product?.id}`, formdata,
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      );
       toast.success("Product has been updated");
+      onProductUpdated();
       setSelectedTab("manage");
     } catch (error) {
-      toast.error("Something went wrong");
+      console.error("Failed to update product", error);
+      toast.error("Something went wrong while updating the product");
     } finally {
-      setTimeout(() => {
-        setPending(false);
-      }, 1000);
+      setPending(false);
     }
-  }
+  };
+  const handleDeleteProduct = async () => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      try {
+        await axiosPrivate.delete(`/vendor/products/${product?.id}`,
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          }
+        );
+        toast.success("Product has been deleted");
+        onProductUpdated();
+        setSelectedTab("manage");
+      } catch (error) {
+        console.error("Failed to delete product", error);
+        toast.error("Failed to delete product");
+      }
+    }
+  };
 
-  function onRemoveImg(index) {
-    const tempArr = [...galleryImage];
-    tempArr.splice(index, 1);
-    setGalleryImage(tempArr);
-  }
+  const handleDeleteGalleryImage = async (imageId) => {
+    try {
+      await axiosPrivate.delete(`/vendor/products/${product?.id}/gallery/${imageId}`,
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      );
+      setGalleryImages(galleryImages.filter(img => img.id !== imageId));
+      toast.success("Gallery image has been deleted");
+    } catch (error) {
+      console.error("Failed to delete gallery image", error);
+      toast.error("Failed to delete gallery image");
+    }
+  };
 
-  function onRemoveFeatureImg() {
-    setProductImage([]);
-  }
+  const handleFeatureImageChange = (e) => {
+    if (e.target.files[0]) {
+      setProductImage(e.target.files[0]);
+    }
+  };
 
-  const handleDelete = (i) => {
+  const handleGalleryImageChange = (e) => {
+    const newImages = Array.from(e.target.files).map(file => ({ url: URL.createObjectURL(file), file }));
+    setGalleryImages([...galleryImages, ...newImages]);
+  };
+
+  const handleDeleteTag = (i) => {
     setTags(tags.filter((tag, index) => index !== i));
   };
 
-  const handleAddition = (tag) => {
+  const handleAddTag = (tag) => {
     setTags([...tags, tag]);
   };
 
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <div className="flex-1 flex">
-        <div className="flex-1 mt-[30px] px-[22px]">
-          <form
-            onSubmit={onEditProduct}
-            className="bg-white rounded-[8px] shadow-sm px-[20px] py-[25px]"
-          >
-            <p className="text-[20px] font-[600]">Edit Product</p>
-            <p className="text-[18px] font-[600] pt-[20px]">
-              General Information
-            </p>
-            <div>
-              <div className="flex flex-col gap-1 my-[15px]">
-                <label className="text-[#777777]">Name</label>
+      <div className="flex-1 mt-[30px] px-[22px]">
+        <form onSubmit={onEditProduct} className="bg-white rounded-[8px] shadow-sm px-[20px] py-[25px]">
+          <h2 className="text-2xl font-semibold mb-6">Edit Product</h2>
+
+          {/* General Information */}
+          <section className="mb-8">
+            <h3 className="text-xl font-semibold mb-4">General Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
                 <input
-                  placeholder="Product Name"
+                  type="text"
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
-                  required
-                  className={`focus:outline-none border-[2px] ${
-                    formErrors.title ? "border-red-500" : "border-gray-200"
-                  } rounded-[8px] px-[15px] h-[50px] text-[15px]`}
+                  className={`w-full p-2 border rounded-md ${formErrors.title ? "border-red-500" : "border-gray-300"}`}
+                  placeholder="Product Name"
                 />
-                {formErrors.title && (
-                  <p className="text-red-500 text-sm">{formErrors.title}</p>
-                )}
+                {formErrors.title && <p className="text-red-500 text-xs mt-1">{formErrors.title}</p>}
               </div>
-              <div className="flex flex-col gap-1 my-[15px]">
-                <label className="text-[#777777]">Tags</label>
-                <input
-                  placeholder="Tags"
-                  name="tags"
-                  value={formData.tags}
-                  onChange={handleInputChange}
-                  required
-                  className={`focus:outline-none border-[2px] ${
-                    formErrors.tags ? "border-red-500" : "border-gray-200"
-                  } rounded-[8px] px-[15px] h-[50px] text-[15px]`}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+                <ReactTags
+                  tags={tags}
+                  handleDelete={handleDeleteTag}
+                  handleAddition={handleAddTag}
+                  delimiters={[188, 13]}
+                  classNames={{
+                    tags: 'w-full',
+                    tagInput: 'w-full p-2 border rounded-md',
+                    tag: 'bg-blue-100 inline-block rounded-full px-3 py-1 text-sm font-semibold text-blue-700 mr-2 mb-2',
+                    remove: 'ml-1 text-blue-500 hover:text-blue-700',
+                  }}
                 />
-                {formErrors.tags && (
-                  <p className="text-red-500 text-sm">{formErrors.tags}</p>
-                )}
               </div>
-              <div className="flex flex-col gap-1 my-[15px]">
-                <label className="text-[#777777]">Description</label>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                 <textarea
-                  placeholder="Write about product"
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  required
-                  className={`focus:outline-none border-[2px] ${
-                    formErrors.description
-                      ? "border-red-500"
-                      : "border-gray-200"
-                  } py-2 rounded-[8px] px-[15px] h-[110px] text-[15px]`}
-                />
-                {formErrors.description && (
-                  <p className="text-red-500 text-sm">
-                    {formErrors.description}
-                  </p>
-                )}
+                  className={`w-full p-2 border rounded-md ${formErrors.description ? "border-red-500" : "border-gray-300"}`}
+                  rows="4"
+                  placeholder="Product description"
+                ></textarea>
+                {formErrors.description && <p className="text-red-500 text-xs mt-1">{formErrors.description}</p>}
               </div>
-            </div>
-
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Color</label>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
                 <input
-                  placeholder="Color"
+                  type="text"
                   name="color"
                   value={formData.color}
                   onChange={handleInputChange}
-                  required
-                  className={`focus:outline-none border-[2px] ${
-                    formErrors.color ? "border-red-500" : "border-gray-200"
-                  } rounded-[8px] px-[15px] h-[50px] text-[15px]`}
+                  className={`w-full p-2 border rounded-md ${formErrors.color ? "border-red-500" : "border-gray-300"}`}
+                  placeholder="Color"
                 />
-                {formErrors.color && (
-                  <p className="text-red-500 text-sm">{formErrors.color}</p>
-                )}
+                {formErrors.color && <p className="text-red-500 text-xs mt-1">{formErrors.color}</p>}
               </div>
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Variants</label>
-                <div
-                  className={`ReactTags__tags ${
-                    formErrors.variants ? "border-red-500" : ""
-                  }`}
-                >
-                  <ReactTags
-                    tags={tags}
-                    handleDelete={handleDelete}
-                    handleAddition={handleAddition}
-                    delimiters={[188, 13]}
-                  />
-                </div>
-                {formErrors.variants && (
-                  <p className="text-red-500 text-sm">{formErrors.variants}</p>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Category</label>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
                 <select
                   name="category_id"
                   value={formData.category_id}
                   onChange={handleInputChange}
-                  required
-                  className={`focus:outline-none border-[2px] ${
-                    formErrors.category_id
-                      ? "border-red-500"
-                      : "border-gray-200"
-                  } rounded-[8px] px-[15px] h-[50px] text-[15px] text-[var(--text-color-body)]`}
+                  className={`w-full p-2 border rounded-md ${formErrors.category_id ? "border-red-500" : "border-gray-300"}`}
                 >
-                  <option value="" disabled>
-                    Select an option
-                  </option>
-                  {allCategories?.map((item) => (
-                    <option key={item?.id} value={item?.id}>
-                      {item.name}
+                  <option value="">Select a category</option>
+                  {allCategories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
                     </option>
                   ))}
                 </select>
-                {formErrors.category_id && (
-                  <p className="text-red-500 text-sm">
-                    {formErrors.category_id}
-                  </p>
-                )}
+                {formErrors.category_id && <p className="text-red-500 text-xs mt-1">{formErrors.category_id}</p>}
               </div>
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Brand</label>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Brand</label>
                 <select
                   name="brand_id"
                   value={formData.brand_id}
                   onChange={handleInputChange}
-                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px] text-[var(--text-color-body)]"
+                  className="w-full p-2 border border-gray-300 rounded-md"
                 >
-                  <option value="" disabled>
-                    Select an option
-                  </option>
-                  {allBrands?.map((item) => (
-                    <option key={item?.id} value={item?.id}>
-                      {item.name}
+                  <option value="">Select a brand</option>
+                  {allBrands.map((brand) => (
+                    <option key={brand.id} value={brand.id}>
+                      {brand.name}
                     </option>
                   ))}
                 </select>
               </div>
             </div>
-            <p className="text-[18px] font-[600] pt-[20px]">Pricing</p>
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Price</label>
+          </section>
+
+          {/* Pricing */}
+          <section className="mb-8">
+            <h3 className="text-xl font-semibold mb-4">Pricing</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
                 <input
-                  placeholder="₹"
+                  type="number"
                   name="price"
                   value={formData.price}
                   onChange={handleInputChange}
-                  required
-                  className={`focus:outline-none border-[2px] ${
-                    formErrors.price ? "border-red-500" : "border-gray-200"
-                  } rounded-[8px] px-[15px] h-[50px] text-[15px]`}
+                  className={`w-full p-2 border rounded-md ${formErrors.price ? "border-red-500" : "border-gray-300"}`}
+                  placeholder="Price"
                 />
-                {formErrors.price && (
-                  <p className="text-red-500 text-sm">{formErrors.price}</p>
-                )}
+                {formErrors.price && <p className="text-red-500 text-xs mt-1">{formErrors.price}</p>}
               </div>
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <label className="text-[#777777]">Discount</label>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Discount (%)</label>
                 <input
-                  placeholder="%"
+                  type="number"
                   name="discount"
                   value={formData.discount}
                   onChange={handleInputChange}
-                  className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  placeholder="Discount percentage"
                 />
               </div>
             </div>
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-10 my-[15px]">
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <p className="text-[18px] font-[600] pt-[20px]">
-                  Feature Image
-                </p>
-                <div className="my-[15px] ">
-                  <label className="text-[#777777]">Feature Image</label>
-                  <div className="flex gap-5  my-[15px]  xl:flex-row">
-                    <input
-                      type="file"
-                      id="uploadPic"
-                      className="hidden"
-                      name="featured_image"
-                      onChange={(e) => {
-                        setProductImage([e.target.files[0]]);
-                      }}
-                    />
-                    <div className="flex flex-col gap-2 mt-3">
-                      <label
-                        htmlFor="uploadPic"
-                        className="min-w-[230px] cursor-pointer h-[180px] rounded-[10px] border-[2px] border-dashed border-blue-100 bg-[#F8F8FF] flex items-center justify-center flex-col"
-                      >
-                        <FaCamera className="h-[40px] w-[45px] text-[var(--text-color-body)] mb-4" />
-                        <p className="font-[500] text-[13px] text-center">
-                          Drag & drop files or Browse
-                        </p>
-                        <p className="text-[11px] text-[var(--text-color-body)] text-center mt-1">
-                          Supported formats: JPEG, PNG
-                        </p>
-                      </label>
-                      <div className="flex flex-row gap-3">
-                        {productImage?.map((item, index) => (
-                          <div key={index} className="relative">
-                            <Image
-                              width={120}
-                              height={120}
-                              src={URL?.createObjectURL(item)}
-                              alt=""
-                            />
-                            <span
-                              onClick={() => onRemoveFeatureImg(index)}
-                              className="absolute top-0 right-0 cursor-pointer"
-                            >
-                              <MdCancel className="text-white" size={20} />
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  {formErrors.featured_image && (
-                    <p className="text-red-500 text-sm">
-                      {formErrors.featured_image}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="flex-1 flex flex-col gap-1 lg:my-[15px]">
-                <p className="text-[18px] font-[600] pt-[20px]">
-                  Gallery Images
-                </p>
-                <div className="my-[15px]">
-                  <label className="text-[#777777]">Gallery Image</label>
-                  <div className="flex gap-5 justify-between my-[15px] flex-col xl:flex-row">
-                    <input
-                      type="file"
-                      id="uploadGalleryPic"
-                      className="hidden"
-                      multiple
-                      onChange={(e) => {
-                        const filesArray = Array.from(e.target.files);
-                        setGalleryImage([...galleryImage, ...filesArray]);
-                      }}
-                    />
-                    <div className="flex flex-col gap-2 mt-3">
-                      <label
-                        htmlFor="uploadGalleryPic"
-                        className="min-w-[230px] cursor-pointer h-[180px] rounded-[10px] border-[2px] border-dashed border-blue-100 bg-[#F8F8FF] flex items-center justify-center flex-col"
-                      >
-                        <FaCamera className="h-[40px] w-[45px] text-[var(--text-color-body)] mb-4" />
-                        <p className="font-[500] text-[13px] text-center">
-                          Drag & drop files or Browse
-                        </p>
-                        <p className="text-[11px] text-[var(--text-color-body)] text-center mt-1">
-                          Supported formats: JPEG, PNG
-                        </p>
-                      </label>
+          </section>
 
-                      <div className="flex flex-row gap-3">
-                        {galleryImage?.map((item, index) => (
-                          <div key={index} className="relative">
-                            <Image
-                              width={120}
-                              height={120}
-                              src={URL.createObjectURL(item)}
-                              alt=""
-                            />
-                            <span
-                              onClick={() => onRemoveImg(index)}
-                              className="absolute top-0 right-0 cursor-pointer"
-                            >
-                              <MdCancel className="text-white" size={20} />
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+          {/* Images */}
+          <section className="mb-8">
+            <h3 className="text-xl font-semibold mb-4">Images</h3>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Featured Image</label>
+              <div className="flex items-center space-x-4">
+                <input
+                  type="file"
+                  id="featured-image"
+                  className="hidden"
+                  onChange={handleFeatureImageChange}
+                  accept="image/*"
+                />
+                <label
+                  htmlFor="featured-image"
+                  className="cursor-pointer bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Choose File
+                </label>
+                {productImage && (
+                  <div className="relative">
+                    <Image
+                      src={productImage instanceof File ? URL.createObjectURL(productImage) : productImage}
+                      alt="Featured product"
+                      width={100}
+                      height={100}
+                      className="object-cover rounded-md"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setProductImage(null)}
+                      className="absolute top-0 right-0 bg-white rounded-full p-1"
+                    >
+                      <MdCancel className="text-red-500" size={20} />
+                    </button>
                   </div>
-                  {formErrors.gallery_images && (
-                    <p className="text-red-500 text-sm">
-                      {formErrors.gallery_images}
-                    </p>
-                  )}
-                </div>
+                )}
               </div>
+              {formErrors.featured_image && <p className="text-red-500 text-xs mt-1">{formErrors.featured_image}</p>}
             </div>
 
-            <div className="flex flex-col gap-10 pb-8">
-              <button
-                type="submit"
-                disabled={isPending}
-                className="h-[50px] rounded-[8px] bg-[#FE4242]  text-white font-[500] w-[200px] mt-10 disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none"
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Gallery Images</label>
+              <input
+                type="file"
+                id="gallery-images"
+                className="hidden"
+                onChange={handleGalleryImageChange}
+                multiple
+                accept="image/*"
+              />
+              <label
+                htmlFor="gallery-images"
+                className="cursor-pointer bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                <div className="w-full h-full flex items-center justify-center">
-                  {isPending ? (
-                    <LuLoader2 className="animate-spin" />
-                  ) : (
-                    "Update Product"
-                  )}
-                </div>
-              </button>
+                Add Gallery Images
+              </label>
+              <div className="mt-4 grid grid-cols-3 gap-4">
+                {galleryImages.map((image, index) => (
+                  <div key={image.id || index} className="relative">
+                    <Image
+                      src={image.url}
+                      alt={`Gallery image ${index + 1}`}
+                      width={100}
+                      height={100}
+                      className="object-cover rounded-md"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteGalleryImage(image.id)}
+                      className="absolute top-0 right-0 bg-white rounded-full p-1"
+                    >
+                      <MdCancel className="text-red-500" size={20} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              {formErrors.gallery_images && <p className="text-red-500 text-xs mt-1">{formErrors.gallery_images}</p>}
             </div>
-          </form>
-        </div>
+          </section>
+
+          {/* Submit and Delete buttons */}
+          <div className="flex justify-between items-center mt-8">
+            <button
+              type="submit"
+              className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              disabled={isPending}
+            >
+              {isPending ? (
+                <LuLoader2 className="animate-spin" size={24} />
+              ) : (
+                "Update Product"
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={handleDeleteProduct}
+              className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            >
+              Delete Product
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
