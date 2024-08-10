@@ -29,14 +29,23 @@ export default function PaymentPlan() {
   const fetchData = async (user) => {
     try {
       setLoading(true);
-      const [plansResponse, activePlanResponse, userMembershipsResponse] = await Promise.all([
+      const [plansResponse, activePlanResponse, userMembershipsResponse] = await Promise.allSettled([
         getAllMembershipPlansApi(),
-        // getActiveMembershipPlanApi(),
+        getActiveMembershipPlanApi(),
         getUserMembershipPlansApi()
       ]);
-      setPlans(plansResponse?.data.membership_plans);
-      // setActivePlan(activePlanResponse?.data.membership_plan);
-      setUserMemberships(userMembershipsResponse?.data.memberships);
+  
+      if (plansResponse.status === 'fulfilled') {
+        setPlans(plansResponse.value.data.membership_plans);
+      }
+  
+      if (activePlanResponse.status === 'fulfilled') {
+        setActivePlan(activePlanResponse.value.data.membership_plan);
+      }
+  
+      if (userMembershipsResponse.status === 'fulfilled') {
+        setUserMemberships(userMembershipsResponse.value.data.memberships);
+      }
     } catch (err) {
       setError("Failed to fetch data");
       console.error(err);
@@ -46,7 +55,6 @@ export default function PaymentPlan() {
   };
 
   const handlePurchase = async (planId, planPrice) => {
-    debugger
     try {     
       const paymentData = {
         username: user.username,
@@ -99,7 +107,7 @@ export default function PaymentPlan() {
             <p className="mt-[18px] text-[24px] text-[#777777] font-normal">
               {plan.name}
             </p>
-            <p className="text-[35px] text-[#F70000] font-bold">${plan.price}</p>
+            <p className="text-[35px] text-[#F70000] font-bold">{plan.price}</p>
             {plan.discount_percentage > 0 && (
               <p className="text-[24px] text-[#777777] font-normal">{plan.discount_percentage}% Off</p>
             )}

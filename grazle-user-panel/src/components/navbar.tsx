@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { Drawer, Badge, CircularProgress } from "@mui/material";
+import { Drawer, Badge, CircularProgress, Divider } from "@mui/material";
 import { IoClose } from "react-icons/io5";
 import { PiClockCountdownThin } from "react-icons/pi";
 import { FaUser } from "react-icons/fa";
@@ -36,8 +36,6 @@ import {
 import LoginDropdown from "./LoginDropdown";
 import { useAuth } from "@/app/AuthContext";
 import { ShoppingLoader } from "vibrant-loaders";
-
-
 
 export default function Navbar() {
   const cartLength = useSelector((state) => state.cartLength);
@@ -103,29 +101,24 @@ export default function Navbar() {
     }
   };
 
-
   const openSearch = () => {
     setIsOpenSearch(true);
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
   };
 
   // Function to close search and enable scroll
   const closeSearch = () => {
     setIsOpenSearch(false);
-    document.body.style.overflow = 'visible';
+    document.body.style.overflow = "visible";
   };
-
-
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-      document.body.style.overflow = 'visible';
+      document.body.style.overflow = "visible";
     };
   }, []);
-
-
 
   // useEffect(() => {
   //   (async () => {
@@ -137,13 +130,12 @@ export default function Navbar() {
   // }, []);
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("theUser"));
-    console.log(user)
+    console.log(user);
     if (user) {
       setUser(user);
     }
-  }
-    , [userRedux]);
-  console.log(userRedux, 'userRedux', user, 'user')
+  }, [userRedux]);
+  console.log(userRedux, "userRedux", user, "user");
 
   const handleToggleMenu = () => setIsMenuBar((prev) => !prev);
   const handleMenuclose = () => setIsMenuBar(false);
@@ -152,17 +144,20 @@ export default function Navbar() {
     setIsOpenSearch((prev) => {
       if (!prev) {
         // If opening the search, disable scroll
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = "hidden";
       } else {
         // If closing the search, enable scroll
-        document.body.style.overflow = 'visible';
+        document.body.style.overflow = "visible";
       }
       return !prev;
     });
   };
 
   const handleClickOutside = (event) => {
-    if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+    if (
+      searchContainerRef.current &&
+      !searchContainerRef.current.contains(event.target)
+    ) {
       closeSearch();
     }
     if (MenubarRef.current && !MenubarRef.current.contains(event.target)) {
@@ -204,7 +199,10 @@ export default function Navbar() {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (mobileSearchRef.current && !mobileSearchRef.current.contains(event.target)) {
+      if (
+        mobileSearchRef.current &&
+        !mobileSearchRef.current.contains(event.target)
+      ) {
         setIsMobileSearchActive(false);
       }
     }
@@ -228,30 +226,30 @@ export default function Navbar() {
       ].slice(0, 5);
       return updatedSearches;
     });
-    router.push(`/search?keyword=${encodeURIComponent(newSearch)}`)
-      setIsLoading(false);
-      setIsMobileSearchActive(false);
-      setIsOpenSearch(false);
-      setSearchResult([]);
-      setSearchValue("");
-      if (searchRef.current) {
-        searchRef.current.value = "";
-      }
-    
-      
+    router.push(`/search?keyword=${encodeURIComponent(newSearch)}`);
+    setIsLoading(false);
+    setIsMobileSearchActive(false);
+    setIsOpenSearch(false);
+    setSearchResult([]);
+    setSearchValue("");
+    if (searchRef.current) {
+      searchRef.current.value = "";
+    }
   }
 
   if (loading) {
     return (
-      <div style={{
-        position: "fixed",
-        width: "100%",
-        height: "100%",
-        left: 0,
-        top: 0,
-        overflow: "hidden",
-        zIndex: 100000000000000
-      }}>
+      <div
+        style={{
+          position: "fixed",
+          width: "100%",
+          height: "100%",
+          left: 0,
+          top: 0,
+          overflow: "hidden",
+          zIndex: 100000000000000,
+        }}
+      >
         <ShoppingLoader />
       </div>
     );
@@ -286,7 +284,7 @@ export default function Navbar() {
     setSearchValue(value);
     onSearchProduct(value);
     setIsOpenSearch(true);
-  }
+  };
   const clearSearch = () => {
     setSearchValue("");
     if (searchRef.current) {
@@ -297,15 +295,17 @@ export default function Navbar() {
 
   if (authLoading) {
     return (
-      <div style={{
-        position: "fixed",
-        width: "100%",
-        height: "100%",
-        left: 0,
-        top: 0,
-        overflow: "hidden",
-        zIndex: 100000000000
-      }}>
+      <div
+        style={{
+          position: "fixed",
+          width: "100%",
+          height: "100%",
+          left: 0,
+          top: 0,
+          overflow: "hidden",
+          zIndex: 100000000000,
+        }}
+      >
         <ShoppingLoader />
       </div>
     );
@@ -313,15 +313,17 @@ export default function Navbar() {
 
   if (isLoading) {
     return (
-      <div style={{
-        position: "fixed",
-        width: "100%",
-        height: "100%",
-        left: 0,
-        top: 0,
-        overflow: "hidden",
-        zIndex: 100000000000
-      }}>
+      <div
+        style={{
+          position: "fixed",
+          width: "100%",
+          height: "100%",
+          left: 0,
+          top: 0,
+          overflow: "hidden",
+          zIndex: 100000000000,
+        }}
+      >
         <ShoppingLoader />
       </div>
     );
@@ -467,11 +469,13 @@ export default function Navbar() {
                         Popular Searches
                       </p>
                       {Array.isArray(popularSearches) &&
-                        popularSearches.length > 0 ? (
+                      popularSearches.length > 0 ? (
                         popularSearches.map((search, index) => (
                           <div key={index} className="flex gap-3 mt-3">
                             <Link
-                              href={`/search?keyword=${encodeURIComponent(search)}`}
+                              href={`/search?keyword=${encodeURIComponent(
+                                search
+                              )}`}
                               className="text-black text-[14px] font-normal"
                             >
                               {search}
@@ -494,8 +498,14 @@ export default function Navbar() {
             <Link href="/CartPage" className="relative">
               <Badge badgeContent={cartLength} color="error">
                 <Image src={Cart} alt="Cart" className="w-6 h-6" />
+                <span className="text-sm">Cart</span>
               </Badge>
             </Link>
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{ display: { xs: "none", sm: "block" } }}
+            />
             <Link
               href="/RegisterSeller"
               className="hidden sm:flex items-center space-x-1"
@@ -532,29 +542,34 @@ export default function Navbar() {
                     className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
                   >
                     {user?.profile?.image ? (
-                      <Image src={user.profile.image} alt="User" width={16}
-                        height={16} className="w-5 h-5 rounded-full" />
+                      <Image
+                        src={user.profile.image}
+                        alt="User"
+                        width={16}
+                        height={16}
+                        className="w-5 h-5 rounded-full"
+                      />
                     ) : (
                       <div className="w-5 h-5 bg-gray-200" />
                     )}
                     <span className="text-sm">Your Account</span>
                   </Link>
                   <div
-                    onClick={() => router.push('/MyOrders')}
+                    onClick={() => router.push("/MyOrders")}
                     className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
                   >
                     <Image src={order} alt="" width={18} height={18} />
                     <span className="text-sm">My Orders</span>
                   </div>
                   <div
-                    onClick={() => router.push('/favorite')}
+                    onClick={() => router.push("/favorite")}
                     className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
                   >
                     <Image src={Fav} alt="Favorites" width={20} height={20} />
                     <span className="text-sm">Favorites</span>
                   </div>
                   <div
-                    onClick={() => router.push('/CreditLimit')}
+                    onClick={() => router.push("/CreditLimit")}
                     className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
                   >
                     <Image src={card} alt="Credit" width={20} height={20} />
@@ -562,15 +577,15 @@ export default function Navbar() {
                   </div>
                   {/* <div className="border-t my-2"> */}
                   <div
-                    onClick={() => router.push('/PaymentPlan')}
+                    onClick={() => router.push("/PaymentPlan")}
                     className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
                   >
                     <Image src={crown} alt="Referral" width={20} height={20} />
                     <span className="text-sm">Payment Plan</span>
-                    </div>
+                  </div>
                   {/* </div> */}
                   <div
-                    onClick={() => router.push('/ReferralRanking')}
+                    onClick={() => router.push("/ReferralRanking")}
                     className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
                   >
                     <Image src={bulid} alt="Referral" width={20} height={20} />
@@ -578,14 +593,14 @@ export default function Navbar() {
                   </div>
                   <div className="border-t my-2"></div>
                   <div
-                    onClick={() => router.push('/FAQs')}
+                    onClick={() => router.push("/FAQs")}
                     className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
                   >
                     <Image src={FAQ} alt="FAQ" width={20} height={20} />
                     <span className="text-sm">FAQs</span>
                   </div>
                   <div
-                    onClick={() => router.push('/privacy-policy')}
+                    onClick={() => router.push("/privacy-policy")}
                     className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
                   >
                     <Image src={Privcy} alt="Privacy" width={20} height={20} />
@@ -639,18 +654,13 @@ export default function Navbar() {
                   onClickDetail(item, e);
                 }}
               >
-                <Image
-                  src={Search}
-                  alt="Search"
-                  className="w-5 h-5"
-                />
+                <Image src={Search} alt="Search" className="w-5 h-5" />
                 <p className="text-black text-sm font-normal">{item.title}</p>
               </div>
             ))}
           </div>
         )}
       </div>
-
 
       {/* Mobile menu drawer */}
 
@@ -745,8 +755,7 @@ export default function Navbar() {
                   className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
                   onClick={handleMenuclose}
                 >
-                  <Image src={crown} alt
-                  ="Referral" className="w-5 h-5" />
+                  <Image src={crown} alt="Referral" className="w-5 h-5" />
                   <span className="text-sm">Payment Plan</span>
                 </Link>
                 <Link

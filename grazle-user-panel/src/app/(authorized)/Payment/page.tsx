@@ -38,6 +38,8 @@ export default function Payment() {
     try {
       setLoading(true);
       const { username, planPrice, planId, membershipId, address } = paymentData;
+      const billingData = new FormData();
+
 
       if (paymentMethod === "ccavenue") {
         const billingData = new FormData();
@@ -175,8 +177,14 @@ export default function Payment() {
               }}
               onChange={(e) => setAgreedTerms(e.target.checked)}
             />
-            <p className="md:text-base text-sm font-medium ml-2 text-[#777777]">
-              By Clicking this, I agree all Terms & Conditions and Privacy & Policy
+           <p className="text-black font-normal text-sm">
+              By Clicking I agree to all terms of services and{' '}
+              <span
+                className="text-blue-500 cursor-pointer"
+                onClick={() => router.push('/Terms&Conditions')}
+              >
+                Privacy & Policy
+              </span>.
             </p>
           </div>
         </form>

@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  selectedCategory: null,  // Add this line to hold the selected category
+
   pageNavigation: "",
   showSidebar: false,
   user: {},
@@ -170,6 +172,9 @@ export const featuresSlice = createSlice({
         localStorage.removeItem("cartItems");
       }
     },
+    setSelectedCategory: (state, action) => {
+      state.selectedCategory = action.payload;
+    },
     deleteCartProduct: (state, action) => {
       let cartProducts = state.cartProducts;
       const id = action.payload;
@@ -207,6 +212,7 @@ export const {
   updateCartInitialState,
   onVariantChange,
   updateCategories,
-  clearCart
+  clearCart,
+  setSelectedCategory
 } = featuresSlice.actions;
 export const featuresReducer = featuresSlice.reducer;

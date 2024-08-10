@@ -10,7 +10,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { CiSquareCheck } from "react-icons/ci";
 import { RiDeleteBin6Fill } from "react-icons/ri";
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { calculateDiscountPercentage } from "@/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { HiOutlineMinus, HiOutlinePlus } from "react-icons/hi";
@@ -22,6 +22,8 @@ export default function Cartpage() {
   const cartLength = useSelector((state: any) => state.cartLength);
   const cartTotal = useSelector((state: any) => state.cartTotal);
   const cartDiscount = useSelector((state: any) => state.cartDiscount);
+
+  const [expandedTitles, setExpandedTitles] = useState({});
 
   useEffect(() => {
     !cartProducts.length && dispatch(updateCart({ type: "onRefresh" }));
@@ -39,6 +41,32 @@ export default function Cartpage() {
     router.push("/address");
   };
 
+  const toggleTitleExpansion = (id) => {
+    setExpandedTitles(prev => ({...prev, [id]: !prev[id]}));
+  };
+
+  const renderTitle = (item) => {
+    const words = item.title.split(' ');
+    const shortTitle = words.slice(0, 2).join(' ');
+    const isLongTitle = words.length > 2;
+
+    return (
+      <div>
+        <p className="lg:text-[24px] text-[16px] font-medium text-black">
+          {expandedTitles[item.id] || !isLongTitle ? item.title : `${shortTitle}...`}
+        </p>
+        {isLongTitle && (
+          <button 
+            className="text-[#F70000] text-[12px] lg:hidden"
+            onClick={() => toggleTitleExpansion(item.id)}
+          >
+            {expandedTitles[item.id] ? 'See Less' : 'See More'}
+          </button>
+        )}
+      </div>
+    );
+  };
+
   console.log(cartProducts);
   return (
     <>
@@ -52,16 +80,6 @@ export default function Cartpage() {
               ({cartLength} Products)
             </p>
           </div>
-
-          {/* <div className="lg:w-[70%] w-[100%] mb-3 rounded-2xl bg-[#FFFAFA] flex justify-between p-3">
-            <p className="text-[16px] font-medium text-[#777777]">
-              Add More Products
-            </p>
-
-            <p className="text-[16px] font-medium text-[#F70000]">
-              <Link href="/">+ Add</Link>
-            </p>
-          </div> */}
 
           <div className="flex flex-wrap lg:flex-nowrap sm:flex-wrap md:flex-wrap  gap-8">
             <div className="lg:w-[70%] w-[100%] sm:w-[100%] md:w-[100%] h-auto ">
@@ -104,11 +122,9 @@ export default function Cartpage() {
                         />
 
                         <div>
-                          <p className="lg:text-[24px] text-[16px] font-medium text-black">
-                            {item?.title}
-                          </p>
+                          {renderTitle(item)}
 
-                          <div className="my-3 flex items-center">
+                          <div className=" my-1 flex items-center">
                             <div className="flex justify-center items-center">
                               <p className="text-[12px] font-medium text-[#F70000] px-3 py-2 mr-3 bg-[#FFFAFA]">
                                 {item?.discountInfo}
@@ -156,10 +172,6 @@ export default function Cartpage() {
                         </div>
 
                         <div className="flex justify-end mt-4 gap-4">
-                          {/* <div className="lg:w-[43px] lg:h-[43px] h-[30px] w-[30px]  bg-[#5EF7000A] rounded-md flex items-center justify-center">
-                            <FaRegEdit className="lg:text-[24px] text-[18px] text-[#00F763]" />
-                          </div> */}
-
                           <div
                             onClick={() => onDeleteProduct(item?.id)}
                             className="lg:w-[43px] cursor-pointer lg:h-[43px] h-[30px] w-[30px] bg-[#F700000A] rounded-md flex items-center justify-center"
@@ -195,11 +207,6 @@ export default function Cartpage() {
               <div className="border-b-[1px] mt-10"></div>
               <div className="w-[100%] ">
                 <p className="text-[24px] font-medium mt-6">Cart Total</p>
-
-                {/* <div className="flex items-center mt-4 justify-between">
-                      <p className="text-[18px] font-medium text-[#777777] "></p>
-                      <p className="text-[18px] font-bold text-black ">Cart Total</p>
-                    </div> */}
 
                 <div className="flex items-center mt-4 justify-between">
                   <p className="text-[18px] font-medium text-[#777777] ">

@@ -8,27 +8,71 @@ import Sidebar from "@/components/sidebar";
 import { FaCamera } from "react-icons/fa6";
 import { IoMdRadioButtonOff, IoMdRadioButtonOn } from "react-icons/io";
 import { axiosPrivate } from "@/axios";
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
-const AddGrazleMedia = () => {
+const EditGrazleMedia = () => {
   const dispatch = useDispatch();
-  const [visibility, setVisibility] = useState("");
-  const [bannerName, setBannerName] = useState("");
-  // const [hyperlink, setHyperlink] = useState("");
-  const [displayOrder, setDisplayOrder] = useState("");
-  const [screen, setScreen] = useState("web");
-  const [bannerImage, setBannerImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const router = useRouter();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [visibility, setVisibility] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
+  const [formData, setFormData] = useState({
+    title: "",
+    position: "",
+    banner_image: null,
+    // hyperlink: "",
+     screen: "web",
+  });
 
   useEffect(() => {
     dispatch(updatePageNavigation("grazle-media"));
+    const id = window.location.pathname.split("/").pop();
+    if (id) {
+      fetchBanner(id);
+    }
   }, [dispatch]);
+
+  const fetchBanner = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axiosPrivate.get(`/admin/banners/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const banner = response.data?.banner;
+      setFormData({
+        title: banner.title,
+        position: banner.position,
+        banner_image: null,
+        // hyperlink: banner.hyperlink || "",
+        screen: banner.screen || "web",
+      });
+      setImagePreview(banner.image);
+      setVisibility(banner.is_visible ? "show" : "hide");
+    } catch (err) {
+      console.error("Error fetching banner:", err);
+      setError("Failed to fetch banner. Please try again.");
+    }
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
-    setBannerImage(file);
+    setFormData((prevData) => ({
+      ...prevData,
+      banner_image: file,
+    }));
 
     if (file) {
       const reader = new FileReader();
@@ -36,44 +80,37 @@ const AddGrazleMedia = () => {
         setImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
-    } else {
-      setImagePreview(null);
     }
   };
 
-  const handleSubmit = async (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
     setError("");
 
-    const formData = new FormData();
-    formData.append("banner_image", bannerImage);
-    formData.append("position", displayOrder);
-    formData.append("title", bannerName);
-    formData.append("type", screen);
-    // formData.append("hyperlink", hyperlink);
-    formData.append("visibility", visibility);
+    const submitFormData = new FormData();
+    if (formData.banner_image) {
+      submitFormData.append("banner_image", formData.banner_image);
+    }
+    submitFormData.append("position", formData.position);
+    submitFormData.append("title", formData.title);
+    // submitFormData.append("hyperlink", formData.hyperlink);
+    submitFormData.append("is_visible", visibility === "show");
 
     try {
-      const response = await axiosPrivate.post("/admin/banners", formData, {
+      const id = window.location.pathname.split("/").pop();
+      await axiosPrivate.put(`/admin/banners/${id}`, submitFormData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
-      console.log("Banner created successfully:", response.data);
-      toast.success("Banner created successfully");
-      setBannerName("");
-      // setHyperlink("");
-      setDisplayOrder("");
-      setBannerImage(null);
-      setImagePreview(null);
-      setVisibility("");
-      setLoading(false);
+      toast.success("Banner updated successfully");
+      router.push("/grazle-media");
     } catch (err) {
-      console.error("Error creating banner:", err);
-      setError("Failed to create banner. Please try again.");
+      console.error("Error updating banner:", err);
+      setError("Failed to update banner. Please try again.");
+    } finally {
       setLoading(false);
     }
   };
@@ -85,8 +122,8 @@ const AddGrazleMedia = () => {
         <Sidebar />
         <div className="flex-1 mt-[30px] px-[10px] sm:px-[22px]">
           <div className="bg-white shadow-sm rounded-[8px] p-[10px] sm:p-[25px]">
-            <p className="text-[24px] font-[600]">Add New Banner</p>
-            <form className="mt-[20px] flex flex-col gap-5" onSubmit={handleSubmit}>
+            <p className="text-[24px] font-[600]">Edit Banner</p>
+            <form className="mt-[20px] flex flex-col gap-5" onSubmit={onSubmit}>
               <div className="flex flex-col gap-1">
                 <label className="text-[var(--text-color-body)]">
                   Banner Name
@@ -94,8 +131,9 @@ const AddGrazleMedia = () => {
                 <input
                   placeholder="Banner Name"
                   className="border border-gray-200 rounded-[8px] h-[45px] text-[15px] px-3 focus:outline-none focus:border-gray-400"
-                  value={bannerName}
-                  onChange={(e) => setBannerName(e.target.value)}
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
                   required
                 />
               </div>
@@ -110,17 +148,25 @@ const AddGrazleMedia = () => {
                     onChange={handleImageUpload}
                     className="hidden"
                     id="banner-image"
-                    required
                   />
                   {imagePreview ? (
                     <div className="w-full h-full flex items-center justify-center">
-                      <img src={imagePreview} alt="Banner preview" className="max-w-full max-h-full object-contain" />
+                      <img
+                        src={imagePreview}
+                        alt="Banner preview"
+                        className="max-w-full max-h-full object-contain"
+                      />
                     </div>
                   ) : (
-                    <label htmlFor="banner-image" className="cursor-pointer flex flex-col items-center">
+                    <label
+                      htmlFor="banner-image"
+                      className="cursor-pointer flex flex-col items-center"
+                    >
                       <FaCamera className="h-[40px] w-[45px] text-[var(--text-color-body)] mb-4" />
                       <p className="font-[500] text-[13px] text-center">
-                        <span className="underline text-[var(--text-color)]">Browse</span>
+                        <span className="underline text-[var(--text-color)]">
+                          Browse
+                        </span>
                       </p>
 
                     </label>
@@ -129,7 +175,10 @@ const AddGrazleMedia = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        setBannerImage(null);
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          banner_image: null,
+                        }));
                         setImagePreview(null);
                       }}
                       className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 text-xs"
@@ -146,8 +195,9 @@ const AddGrazleMedia = () => {
                 <input
                   placeholder="https://example.com/summer-sale"
                   className="border border-gray-200 rounded-[8px] h-[45px] text-[15px] px-3 focus:outline-none focus:border-gray-400"
-                  value={hyperlink}
-                  onChange={(e) => setHyperlink(e.target.value)}
+                  name="hyperlink"
+                  value={formData.hyperlink}
+                  onChange={handleInputChange}
                 />
               </div> */}
               <div className="flex flex-col gap-1">
@@ -157,8 +207,9 @@ const AddGrazleMedia = () => {
                 <input
                   placeholder="Enter display order"
                   className="border border-gray-200 rounded-[8px] h-[45px] text-[15px] px-3 focus:outline-none focus:border-gray-400"
-                  value={displayOrder}
-                  onChange={(e) => setDisplayOrder(e.target.value)}
+                  name="position"
+                  value={formData.position}
+                  onChange={handleInputChange}
                   required
                   type="number"
                   min="1"
@@ -172,8 +223,8 @@ const AddGrazleMedia = () => {
                 <div className="flex gap-10 sm:gap-32 mt-1">
                   <div
                     className={`flex items-center gap-2 cursor-pointer ${visibility === "show"
-                      ? "text-[var(--text-color)]"
-                      : "text-[var(--text-color-body)]"
+                        ? "text-[var(--text-color)]"
+                        : "text-[var(--text-color-body)]"
                       }`}
                     onClick={() => setVisibility("show")}
                   >
@@ -186,8 +237,8 @@ const AddGrazleMedia = () => {
                   </div>
                   <div
                     className={`flex items-center gap-2 cursor-pointer ${visibility === "hide"
-                      ? "text-[var(--text-color)]"
-                      : "text-[var(--text-color-body)]"
+                        ? "text-[var(--text-color)]"
+                        : "text-[var(--text-color-body)]"
                       }`}
                     onClick={() => setVisibility("hide")}
                   >
@@ -202,17 +253,22 @@ const AddGrazleMedia = () => {
               </div>
               <div className="flex flex-col gap-1">
                 <label className="text-[var(--text-color-body)]">
-                  View 
+                  View
                 </label>
                 <div className="flex gap-10 sm:gap-32 mt-1">
                   <div
-                    className={`flex items-center gap-2 cursor-pointer ${screen === "web"
+                    className={`flex items-center gap-2 cursor-pointer ${formData.screen === "web"
                       ? "text-[var(--text-color)]"
                       : "text-[var(--text-color-body)]"
                       }`}
-                    onClick={() => setScreen("web")}
+                    onClick={() => {
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        screen: "web",
+                      }));
+                    }}
                   >
-                    {screen === "web" ? (
+                    {formData.screen === "web" ? (
                       <IoMdRadioButtonOn className="w-[20px] h-[20px]" />
                     ) : (
                       <IoMdRadioButtonOff className="w-[20px] h-[20px]" />
@@ -220,13 +276,18 @@ const AddGrazleMedia = () => {
                     web
                   </div>
                   <div
-                    className={`flex items-center gap-2 cursor-pointer ${screen === "mobile"
+                    className={`flex items-center gap-2 cursor-pointer ${formData.screen === "mobile"
                       ? "text-[var(--text-color)]"
                       : "text-[var(--text-color-body)]"
                       }`}
-                    onClick={() => setScreen("mobile")}
+                    onClick={() => {
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        screen: "mobile",
+                      }));
+                    }}
                   >
-                    {screen === "mobile" ? (
+                    {formData.screen === "mobile" ? (
                       <IoMdRadioButtonOn className="w-[20px] h-[20px]" />
                     ) : (
                       <IoMdRadioButtonOff className="w-[20px] h-[20px]" />
@@ -241,7 +302,7 @@ const AddGrazleMedia = () => {
                 className="h-[50px] px-[20px] sm:px-[80px] w-[max-content] bg-[#FE4242] rounded-[8px] font-[500] text-white my-3 cursor-pointer border border-[#FE4242] hover:bg-transparent transition-all duration-100 hover:text-[#FE4242]"
                 disabled={loading}
               >
-                {loading ? "Saving..." : "Save Changes"}
+                {loading ? "Updating..." : "Update Banner"}
               </button>
             </form>
           </div>
@@ -251,4 +312,4 @@ const AddGrazleMedia = () => {
   );
 };
 
-export default AddGrazleMedia;
+export default EditGrazleMedia;

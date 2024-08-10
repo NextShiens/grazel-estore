@@ -1,11 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { getOfferProductsByIDApi, getBannersApi } from "@/apis";
+import { getOfferProductsByIDApi, getBannersApi, getAllProductsApi } from "@/apis";
 import ProductCard from "@/components/ProductCard";
 import MainSlider from "@/components/mianSlider";
 import { FaSpinner } from 'react-icons/fa';
-
 
 const Offers = () => {
   const [positionOneBanners, setPositionOneBanners] = useState([]);
@@ -16,15 +15,22 @@ const Offers = () => {
   const id = searchParams.get("id");
 
   useEffect(() => {
-    const fetchOfferProducts = async () => {
+    const fetchProducts = async () => {
       setLoading(true);
       setError(null);
       try {
-        const { data } = await getOfferProductsByIDApi(id);
-        console.log("Fetched products:", data.products);
-        setAllProducts(data.products);
+        let data;
+        if (id) {
+          const response = await getOfferProductsByIDApi(id);
+          data = response.data.products;
+        } else {
+          const response = await getAllProductsApi();
+          data = response.data.products;
+        }
+        console.log("Fetched products:", data);
+        setAllProducts(data);
       } catch (error) {
-        console.error("Error fetching offer products:", error);
+        console.error("Error fetching products:", error);
         setError("Failed to fetch products");
       } finally {
         setLoading(false);
@@ -40,7 +46,7 @@ const Offers = () => {
       }
     };
 
-    fetchOfferProducts();
+    fetchProducts();
     fetchBanners();
   }, [id]);
 
@@ -71,10 +77,10 @@ const Offers = () => {
       <div className="lg:mx-[150px] md:mx-[60px] lg:px-0 md:px-3">
         <MainSlider banners={positionOneBanners} />
       </div>
-      <div className="p-6 overflow-x-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 ">
+     <div className="p-6 overflow-x-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 ">
         {allProducts?.map((product: any) => (
           <ProductCard
-           width="20"
+            width="20"
             key={product.id}
             offerId={id || ''}
             product={product}

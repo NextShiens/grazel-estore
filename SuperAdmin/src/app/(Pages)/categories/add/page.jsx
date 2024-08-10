@@ -9,7 +9,7 @@ import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 import { FaCamera } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { axiosPrivate } from "@/axios";
 import { toast } from "react-toastify";
 
@@ -19,54 +19,57 @@ const AddCategories = () => {
   const [loader, setLoader] = useState(false);
   const [categoryImage, setCategoryImage] = useState([]);
   const [categoryDetail, setCategoryDetail] = useState({});
-  const searchParams = useSearchParams();
-  const category = searchParams.get("category");
+  const [categoryId, setCategoryId] = useState(null);
 
   useEffect(() => {
     dispatch(updatePageLoader(false));
     dispatch(updatePageNavigation("categories"));
+
+    // Extract category ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get("category");
+    setCategoryId(category);
+
+    if (category) {
+      getCategory(category);
+    } else {
+      setCategoryDetail({});
+      setCategoryImage([]);
+    }
   }, [dispatch]);
+
+  const getCategory = async (categoryId) => {
+    try {
+      const { data } = await axiosPrivate.get(
+        `/categories/details/${categoryId}`,
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      );
+      setCategoryDetail(data?.category);
+      if (data?.category?.image) {
+        setCategoryImage([data.category.image]);
+      }
+    } catch (error) {
+      console.error("Error fetching category details:", error);
+      toast.error("Failed to fetch category details");
+    }
+  };
 
   function onRemoveCategoryImg() {
     setCategoryImage([]);
   }
 
-  useEffect(() => {
-    const getCategory = async () => {
-      try {
-        const { data } = await axiosPrivate.get(
-          `/categories/details/${category}`,
-          {
-            headers: {
-              Authorization: "Bearer " + localStorage.getItem("token"),
-            },
-          }
-        );
-        setCategoryDetail(data?.category);
-        if (data?.category?.image) {
-          setCategoryImage([data.category.image]);
-        }
-      } catch (error) {
-        console.error("Error fetching category details:", error);
-        toast.error("Failed to fetch category details");
-      }
-    };
-    if (category) {
-      getCategory();
-    } else {
-      setCategoryDetail({});
-      setCategoryImage([]);
-    }
-  }, [category]);
-
   async function onCreate(formData) {
-    if (!category && !categoryImage?.length) {
+    if (!categoryId && !categoryImage?.length) {
       setLoader(false);
       return toast.error("Please select an image");
     }
     try {
-      const url = category ? `/categories/${category}` : "/categories";
-      const method = category ? "PUT" : "POST";
+      const url = categoryId ? `/categories/${categoryId}` : "/categories";
+      const method = categoryId ? "PUT" : "POST";
       await axiosPrivate({
         url,
         method,
@@ -76,7 +79,7 @@ const AddCategories = () => {
           "Content-Type": "multipart/form-data"
         },
       });
-      const message = category
+      const message = categoryId
         ? "Category has been updated"
         : "Category has been created";
       toast.success(message);
@@ -92,8 +95,7 @@ const AddCategories = () => {
   }
 
   return (
-    <Suspense fallback={<>Loading...</>}>
-      <Loading />
+    <Suspense fallback={<Loading />}>
       <div className="flex flex-col min-h-screen bg-gray-50">
         <Navbar />
         <div className="flex-1 flex">
@@ -110,7 +112,7 @@ const AddCategories = () => {
               className="mt-[20px] bg-white rounded-[8px] shadow-sm p-[30px]"
             >
               <p className="text-[20px] font-[600]">
-                {category ? "Edit Category" : "Create New Category"}
+                {categoryId ? "Edit Category" : "Create New Category"}
               </p>
               <div className="flex flex-col gap-1 my-[15px]">
                 <label className="text-[#777777]">Category Name</label>
@@ -199,7 +201,7 @@ const AddCategories = () => {
                 className={`${loader ? "bg-red-300 cursor-not-allowed" : "bg-[#FE4242]"
                   } rounded-[8px] h-[40px] px-[40px] py-[10px] text-white text-[15px] font-[500] w-[max-content]`}
               >
-                {loader ? "Loading..." : category ? "Save Changes" : "Submit"}
+                {loader ? "Loading..." : categoryId ? "Save Changes" : "Submit"}
               </button>
             </form>
           </div>

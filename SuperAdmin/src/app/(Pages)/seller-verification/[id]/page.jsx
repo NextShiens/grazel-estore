@@ -8,6 +8,8 @@ import Sidebar from "@/components/sidebar";
 import { updatePageNavigation } from "@/features/features";
 import electronicLED from "@/assets/document-image.png";
 import documentSvg from "@/assets/svgs/document-svg.svg";
+import doc2 from "@/assets/svgs/doc2.svg";
+import doc3 from "@/assets/svgs/doc3.svg";
 import { useParams } from "next/navigation";
 import { axiosPrivate } from "@/axios";
 import { BiLoader } from "react-icons/bi";
@@ -199,7 +201,7 @@ const DocumentUploaded = ({ type, date, fileUrl }) => {
 
   return (
     <div className="border border-gray-200 rounded-[8px] p-[20px] flex items-center gap-4 sm:gap-10 flex-wrap">
-      <Image alt="" src={documentSvg} className="h-[50px] w-[50px]" />
+      <Image alt="" src={type ==="business_license"? documentSvg :(type ==="tax_id" ? doc2 :doc3) } className="h-[50px] w-[50px]" />
       <div className="flex-1 flex items-center justify-between min-w-[max-content]">
         <div>
           <p className="text-[18px] font-[500]">{getDocumentTitle(type)}</p>

@@ -89,25 +89,26 @@ export default function RegisterSeller() {
         if (!/^\d{10}$/.test(value)) error = "Phone number must be 10 digits";
         break;
       case "password":
-        if (value.length < 8) error = "Password must be at least 8 characters long";
+        if (value.length < 8)
+          error = "Password must be at least 8 characters long";
         break;
       case "pin_code":
         if (!/^\d{6}$/.test(value)) error = "Pin code must be 6 digits";
         break;
-        case "store_url":
-          // Simplified regular expression to validate a URL
-          const urlPattern = new RegExp(
-            '^(https?:\\/\\/)?' + // protocol
-            '((([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,})|' + // domain name
-            '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-            '(\\:\\d+)?' + // port
-            '(\\/[-a-zA-Z0-9%_.~+]*)*' + // path
-            '(\\?[;&a-zA-Z0-9%_.~+=-]*)?' + // query string
-            '(\\#[-a-zA-Z0-9_]*)?$' // fragment locator
-          );
-        
-          if (!urlPattern.test(value)) error = "Please enter a valid URL";
-          break;
+      case "store_url":
+        // Simplified regular expression to validate a URL
+        const urlPattern = new RegExp(
+          "^(https?:\\/\\/)?" + // protocol
+            "((([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,})|" + // domain name
+            "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+            "(\\:\\d+)?" + // port
+            "(\\/[-a-zA-Z0-9%_.~+]*)*" + // path
+            "(\\?[;&a-zA-Z0-9%_.~+=-]*)?" + // query string
+            "(\\#[-a-zA-Z0-9_]*)?$" // fragment locator
+        );
+
+        if (!urlPattern.test(value)) error = "Please enter a valid URL";
+        break;
       // case "gst":
       //   if (!/^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}$/.test(value)) error = "Invalid GST number";
       //   break;
@@ -121,7 +122,7 @@ export default function RegisterSeller() {
       //   if (!/^\d{11}$/.test(value)) error = "Bank code must be 11 digits";
       //   break;
     }
-    setErrors(prev => ({ ...prev, [name]: error }));
+    setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
   const handleNext = () => {
@@ -144,7 +145,7 @@ export default function RegisterSeller() {
 
   async function onRegister(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (Object.values(errors).some(error => error !== "")) {
+    if (Object.values(errors).some((error) => error !== "")) {
       toast.error("Please correct all errors before submitting");
       return;
     }
@@ -158,11 +159,13 @@ export default function RegisterSeller() {
           if (value) formData.append(key, value);
         });
         if (storeImage) {
-          formData.append('store_image', storeImage);
+          formData.append("store_image", storeImage);
         }
 
         const response = await registerApiStore(formData);
-        toast.success("Account created successfully. Please wait for Admin to approve your Seller Account");
+        toast.success(
+          "Account created successfully. Please wait for Admin to approve your Seller Account"
+        );
         router.push("/");
       }
     } catch (err: any) {
@@ -217,7 +220,9 @@ export default function RegisterSeller() {
                     value={formValues.username || ""}
                     onChange={handleInputChange}
                   />
-                  {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
+                  {errors.username && (
+                    <p className="text-red-500 text-sm">{errors.username}</p>
+                  )}
                   <div className="flex flex-wrap lg:flex-nowrap items-center lg:gap-4">
                     <input
                       className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
@@ -228,7 +233,7 @@ export default function RegisterSeller() {
                       value={formValues.email || ""}
                       onChange={handleInputChange}
                     />
-                    {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+
                     <div className="relative mt-[20px] w-full">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
                         +91
@@ -243,8 +248,15 @@ export default function RegisterSeller() {
                         onChange={handleInputChange}
                       />
                     </div>
-                    {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
                   </div>
+                  {errors.email && (
+                    <p className="text-red-500 text-sm">{errors.email}</p>
+                  )}
+                  <br />
+                  {errors.phone && (
+                    <p className="text-red-500 text-sm">{errors.phone}</p>
+                  )}
+
                   <input
                     className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
                     placeholder="Password"
@@ -255,7 +267,9 @@ export default function RegisterSeller() {
                     value={formValues.password || ""}
                     onChange={handleInputChange}
                   />
-                  {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+                  {errors.password && (
+                    <p className="text-red-500 text-sm">{errors.password}</p>
+                  )}
                   <div className="flex flex-wrap lg:flex-nowrap items-center lg:gap-4">
                     <select
                       className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none text-[#777777] mt-[20px]"
@@ -297,7 +311,9 @@ export default function RegisterSeller() {
                     value={formValues.pin_code || ""}
                     onChange={handleInputChange}
                   />
-                  {errors.pin_code && <p className="text-red-500 text-sm">{errors.pin_code}</p>}
+                  {errors.pin_code && (
+                    <p className="text-red-500 text-sm">{errors.pin_code}</p>
+                  )}
                   <textarea
                     className="bg-[#F5F7F9] w-full rounded-md h-[100px] resize-none p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
                     placeholder="About"
@@ -315,9 +331,15 @@ export default function RegisterSeller() {
                         "&.Mui-checked": { color: "#F70000" },
                       }}
                     />
-                    <p className="text-black font-normal lg:text-[16px] text-[11px]">
-                      By Clicking I agree to all terms of services and Privacy &
-                      Policy.
+                    <p className="text-black font-normal text-sm">
+                      By Clicking I agree to all terms of services and{" "}
+                      <span
+                        className="text-blue-500 cursor-pointer"
+                        onClick={() => router.push("/Terms&Conditions")}
+                      >
+                        Privacy & Policy
+                      </span>
+                      .
                     </p>
                   </div>
                 </div>
@@ -325,7 +347,10 @@ export default function RegisterSeller() {
               {screenName === "Store Details" && (
                 <div className="mt-5">
                   <div className="flex justify-center">
-                    <label htmlFor="store-image-upload" className="cursor-pointer">
+                    <label
+                      htmlFor="store-image-upload"
+                      className="cursor-pointer"
+                    >
                       <input
                         id="store-image-upload"
                         type="file"
@@ -335,7 +360,11 @@ export default function RegisterSeller() {
                       />
                       <Avatar className="h-[80px] w-[80px]">
                         {storeImage ? (
-                          <img src={URL.createObjectURL(storeImage)} alt="Store" className="h-full w-full object-cover" />
+                          <img
+                            src={URL.createObjectURL(storeImage)}
+                            alt="Store"
+                            className="h-full w-full object-cover"
+                          />
                         ) : (
                           <CameraAltIcon className="h-[40px] w-[40px]" />
                         )}
@@ -357,17 +386,21 @@ export default function RegisterSeller() {
                     value={formValues.store_url || ""}
                     onChange={handleInputChange}
                   />
-                  {errors.store_url && <p className="text-red-500 text-sm">{errors.store_url}</p>}
+                  {errors.store_url && (
+                    <p className="text-red-500 text-sm">{errors.store_url}</p>
+                  )}
                   <div className="flex flex-wrap lg:flex-nowrap items-center gap-6">
                     <input
                       className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
-                      placeholder="GST no. (Optional)"
+                      placeholder="GST no."
                       name="gst"
                       required
                       value={formValues.gst || ""}
                       onChange={handleInputChange}
                     />
-                    {errors.gst && <p className="text-red-500 text-sm">{errors.gst}</p>}
+                    {errors.gst && (
+                      <p className="text-red-500 text-sm">{errors.gst}</p>
+                    )}
                     <input
                       className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
                       placeholder="PAN no."
@@ -376,7 +409,9 @@ export default function RegisterSeller() {
                       value={formValues.pan || ""}
                       onChange={handleInputChange}
                     />
-                    {errors.pan && <p className="text-red-500 text-sm">{errors.pan}</p>}
+                    {errors.pan && (
+                      <p className="text-red-500 text-sm">{errors.pan}</p>
+                    )}
                   </div>
                   <textarea
                     className="bg-[#F5F7F9] w-full rounded-md h-[100px] resize-none p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
@@ -392,16 +427,20 @@ export default function RegisterSeller() {
                 <div className="mt-10">
                   <input
                     className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
-                    placeholder="Account Number (Optional)"
+                    placeholder="Account Number"
                     name="account_number"
                     required
                     value={formValues.account_number || ""}
                     onChange={handleInputChange}
                   />
-                  {errors.account_number && <p className="text-red-500 text-sm">{errors.account_number}</p>}
+                  {errors.account_number && (
+                    <p className="text-red-500 text-sm">
+                      {errors.account_number}
+                    </p>
+                  )}
                   <input
                     className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
-                    placeholder="Account Name (Optional)"
+                    placeholder="Account Name"
                     name="account_name"
                     required
                     value={formValues.account_name || ""}
@@ -409,16 +448,18 @@ export default function RegisterSeller() {
                   />
                   <input
                     className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
-                    placeholder="Bank Code (Optional)"
+                    placeholder="Bank Code"
                     name="bank_code"
                     required
                     value={formValues.bank_code || ""}
                     onChange={handleInputChange}
                   />
-                  {errors.bank_code && <p className="text-red-500 text-sm">{errors.bank_code}</p>}
+                  {errors.bank_code && (
+                    <p className="text-red-500 text-sm">{errors.bank_code}</p>
+                  )}
                   <input
                     className="bg-[#F5F7F9] w-full rounded-md h-[50px] p-3 focus:outline-none placeholder:text-[#777777] mt-[20px]"
-                    placeholder="Bank Name (Optional)"
+                    placeholder="Bank Name"
                     name="bank_name"
                     required
                     value={formValues.bank_name || ""}
@@ -428,8 +469,9 @@ export default function RegisterSeller() {
               )}
 
               <button
-                className={`${!isChecked && "opacity-50"
-                  } bg-[#F70000] mb-4 rounded-xl h-[50px] mt-[50px] w-full text-[18px] font-medium text-white flex justify-center items-center`}
+                className={`${
+                  !isChecked && "opacity-50"
+                } bg-[#F70000] mb-4 rounded-xl h-[50px] mt-[50px] w-full text-[18px] font-medium text-white flex justify-center items-center`}
                 type="submit"
                 disabled={!isChecked || isLoading}
               >

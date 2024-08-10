@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { BiLoader } from "react-icons/bi";
 import { TiLockClosed } from "react-icons/ti";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import logo from "@/assets/Grazle Logo.png";
+import logo from "../../assets/grazle-logo.png";
 
 const ResetPassword = () => {
   const router = useRouter();
@@ -42,20 +42,18 @@ const ResetPassword = () => {
       toast.error("Passwords do not match");
       return;
     }
-
-    setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/reset-password?token=${token}`, {
+      const formData = new FormData();
+      formData.append('new_password', newPassword);
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/reset-password?token=${token}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ new_password: newPassword }),
+        body: formData,
       });
 
       if (response.ok) {
         toast.success("Password reset successfully");
-        router.push('/signin');
+        router.push('/signIn');
       } else {
         const errorData = await response.json();
         toast.error(errorData.message || "Failed to reset password");
@@ -117,8 +115,8 @@ const ResetPassword = () => {
             </div>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="bg-[#F70000] flex justify-center items-center rounded-xl h-[50px] w-full text-lg font-medium text-white hover:bg-red-600 transition duration-300"
             disabled={loading}
           >

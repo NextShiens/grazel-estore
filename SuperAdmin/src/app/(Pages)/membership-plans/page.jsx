@@ -140,7 +140,7 @@ const MembershipPlans = () => {
               ) : error ? (
                 <p className="text-red-500">{error}</p>
               ) : plans.length === 0 ? (
-                <p className="text-gray-500">No membership plans available. Click "Add New Plan" to create one.</p>
+                <p className="text-gray-500">No membership plans available. Click Add New Plan to create one.</p>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
