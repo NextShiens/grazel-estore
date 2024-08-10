@@ -38,6 +38,7 @@ import MyorderCard from "@/components/MyorderCard";
 import { BiCopy, BiLoader } from "react-icons/bi";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import { useSelector } from "react-redux";
+import { count } from "console";
 
 export default function MyAccount() {
   const [showSendModel, setShowSendModel] = useState(false);
@@ -73,6 +74,9 @@ export default function MyAccount() {
     phone: "",
     gender: "",
     image: "",
+    country: "",
+    state: "",
+    city: "",
   });
   const [meta, setMeta] = useState({});
   const user = localStorage.getItem("theUser");
@@ -228,7 +232,6 @@ export default function MyAccount() {
       }, 500);
     }
   }
-  
   async function onCreateAddress(formdata: any) {
     try {
       setPending(true);
@@ -322,6 +325,9 @@ export default function MyAccount() {
     formdata.append("phone", profileData.phone);
     formdata.append("gender", profileData.gender);
     formdata.append("image", profileData.image);
+    formdata.append("country", profileData.country);
+    formdata.append("state", profileData.state);
+    formdata.append("city", profileData.city);
     try {
       setPending(true);
       if (!currentUser.id) return null;
@@ -478,12 +484,13 @@ export default function MyAccount() {
                   </div>
                 </div>
                 <div className="flex-col mt-[30px]">
-                  <label className="text-[16px] font-semibold">Address</label>
+                  <label className="text-[16px] font-semibold">Email</label>
                   <input
                     onChange={profileDataHandler}
-                    placeholder="Enter Address"
-                    name="address"
-                    defaultValue={currentUser?.profile?.address}
+                    placeholder="Enter Phone Number"
+                    type="tel"
+                    name="phone"
+                    defaultValue={currentUser?.email}
                     className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
                   />
                 </div>
@@ -501,19 +508,54 @@ export default function MyAccount() {
                   />
                 </div>
                 <div className="flex-col mt-[30px]">
-                  <label className="text-[16px] font-semibold">
-                    Email
-                  </label>
+                  <label className="text-[16px] font-semibold">Address</label>
                   <input
                     onChange={profileDataHandler}
-                    placeholder="Enter Phone Number"
-                    type="tel"
-                    name="phone"
-                    defaultValue={currentUser?.email}
+                    placeholder="Enter Address"
+                    name="address"
+                    defaultValue={currentUser?.profile?.address}
                     className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
                   />
                 </div>
-                <div className="flex-col mt-[30px]">
+                <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center gap-4  ">
+                  <div className="flex-col mt-[30px] lg:w-[50%] w-[100%] sm:w-[100%] md:w-[100%]">
+                    <label className="text-[16px] font-semibold">
+                      Country *
+                    </label>
+                    <input
+                      onChange={profileDataHandler}
+                      placeholder="country" 
+                      name="country"
+                      defaultValue={currentUser?.profile?.country}
+                      className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                    />
+                  </div>
+                  <div className="flex-col mt-[30px] lg:w-[50%] w-[100%] sm:w-[100%] md:w-[100%]">
+                    <label className="text-[16px] font-semibold">
+                      State *
+                    </label>
+                    <input
+                      onChange={profileDataHandler}
+                      placeholder="state "
+                      name="state"
+                      defaultValue={currentUser?.profile?.state}
+                      className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                    />
+                  </div>
+                </div>
+                <div className="flex-col mt-[30px] lg:w-[50%] w-[100%] sm:w-[100%] md:w-[100%]">
+                    <label className="text-[16px] font-semibold">
+                      City *
+                    </label>
+                    <input
+                      onChange={profileDataHandler}
+                      placeholder="city "
+                      name="city"
+                      defaultValue={currentUser?.profile?.city}
+                      className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                    />
+                  </div>
+                {/* <div className="flex-col mt-[30px]">
                   <label className="text-[16px] font-semibold"> Gender *</label>
                   <select
                     name="gender"
@@ -523,7 +565,7 @@ export default function MyAccount() {
                     <option value={"Male"}>Male</option>
                     <option value={"FeMale"}>FeMale</option>
                   </select>
-                </div>
+                </div> */}
                 <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center justify-between mt-[30px]">
                   <button
                     type="submit"
@@ -629,7 +671,7 @@ export default function MyAccount() {
                   >
                     <p
                       onClick={() => handleSectionChanges("Active")}
-                      className={`lg:text-[16px] text-[10px] md:text-[14px]  font-normal cursor-pointer ${
+                      className={`lg:text-[16px] text-[10px] md:text-[14px]  font-normal cursor-pointer bold ${
                         activeSections === "Active"
                           ? "border-b-[4px] border-[#F70000] font-semibold"
                           : "text-[#8B8B8B]"
@@ -640,7 +682,7 @@ export default function MyAccount() {
 
                     <p
                       onClick={() => handleSectionChanges("Completed")}
-                      className={`lg:text-[16px] text-[10px] md:text-[14px] font-normal cursor-pointer ${
+                      className={`lg:text-[16px] text-[10px] md:text-[14px] font-normal cursor-pointer bold ${
                         activeSections === "Completed"
                           ? "border-b-[4px] border-[#F70000] font-semibold"
                           : "text-[#8B8B8B]"
@@ -664,7 +706,9 @@ export default function MyAccount() {
                   {activeSections === "Active" && (
                     <>
                       {!orders?.length ? (
-                        <SkeletonLoader />
+                        <p className="text-center text-gray-500 text-lg mt-4">
+                          No active orders found...
+                        </p>
                       ) : (
                         orders.map((order: any) => {
                           return (
@@ -683,7 +727,9 @@ export default function MyAccount() {
                   {activeSections === "Completed" && (
                     <>
                       {!orders?.length ? (
-                        <SkeletonLoader />
+                        <p className="text-center text-gray-500 text-lg mt-4">
+                          No completed orders found...
+                        </p>
                       ) : (
                         orders.map((order: any) => {
                           return (
@@ -701,7 +747,9 @@ export default function MyAccount() {
                   {activeSections === "Cancelled" && (
                     <>
                       {!orders?.length ? (
-                        <SkeletonLoader />
+                        <p className="text-center text-gray-500 text-lg mt-4">
+                          No cancelled orders found...
+                        </p>
                       ) : (
                         orders.map((order: any) => {
                           return (

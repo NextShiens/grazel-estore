@@ -129,7 +129,7 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
   }, []);
 
 
-  const truncateTitle = (title: string, maxLength: number = 40) => {
+  const truncateTitle = (title: string, maxLength: number = 10) => {
     return title?.length > maxLength ? `${title.slice(0, maxLength)}` : title;
   };
 

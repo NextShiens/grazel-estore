@@ -36,6 +36,8 @@ import {
 import LoginDropdown from "./LoginDropdown";
 import { useAuth } from "@/app/AuthContext";
 import { ShoppingLoader } from "vibrant-loaders";
+import home from "@/assets/icons8_Home 1.png";
+
 
 export default function Navbar() {
   const cartLength = useSelector((state) => state.cartLength);
@@ -696,7 +698,7 @@ export default function Navbar() {
               className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
               onClick={handleMenuclose}
             >
-              <Image src={MenuIcon} alt="Home" className="w-5 h-5" />
+              <Image src={home} alt="Home" className="w-5 h-5" />
               <span className="text-sm">Home</span>
             </Link>
             <Link
