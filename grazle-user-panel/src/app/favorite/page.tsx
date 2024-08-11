@@ -46,7 +46,7 @@ const Favorite = () => {
       {favoriteProducts.length === 0 ? (
         <div className="text-center text-gray-500">No favorite products found.</div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+        <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
           {favoriteProducts.map((product: any) => (
             <ProductCard
               key={product.id}

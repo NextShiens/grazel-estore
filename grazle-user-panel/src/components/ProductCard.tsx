@@ -23,7 +23,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
   const [touchedProductId, setTouchedProductId] = useState<number | null>(null);
   const [favoriteProducts, setFavoriteProducts] = useState<number[]>([]);
   const [isPending, setPending] = useState(false);
-  const [expanded, setExpanded] = useState<number | null>(null);
 
   const { basePrice, price, discountInfo } = calculateFinalPrice(product, null);
 
@@ -89,12 +88,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
     }
   }
 
-  const truncateTitle = (title: string, maxLength: number = 10) => {
+  const truncateTitle = (title: string, maxLength: number = 40) => {
     return title?.length > maxLength ? `${title.slice(0, maxLength)}` : title;
-  };
-
-  const handleSeeMore = (id: number) => {
-    setExpanded(expanded === id ? null : id);
   };
 
   return (
@@ -128,21 +123,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
         )}
 
         <div className="p-3">
-          <p className="text-[14px] md:text-[15px] w-[80%] font-semibold">
-            {expanded === product.id
-              ? product?.title
-              : truncateTitle(product?.title)}
-            {product?.title?.length > 40 && (
-              <button
-                className="text-blue-300 ml-1"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleSeeMore(product.id);
-                }}
-              >
-                {expanded === product.id ? "..." : "...."}
-              </button>
-            )}
+          <p className="text-[14px] md:text-[15px] w-[100%] font-semibold h-[40px] overflow-hidden">
+            {product?.title}
           </p>
           <div className="flex items-center mt-[4px] md:mt-[8px] gap-1">
             <span className="text-[8px] md:text-[10px] text-[#F69B26]">
