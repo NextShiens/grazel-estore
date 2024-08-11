@@ -126,10 +126,6 @@ export default function PaymentAndAddress() {
     e.preventDefault();
     setLoading(true);
 
-    if (paymentMethod === "creditcard" && !validateCreditCardData()) {
-      setLoading(false);
-      return;
-    }
 
     const formdata = new FormData();
     const productIds = cartProducts.map((item: any) => item.id);
@@ -175,28 +171,12 @@ export default function PaymentAndAddress() {
     }
   }
 
-  const validateCreditCardData = () => {
-    const { cardName, cardNumber, expiryMonth, expiryYear, cvv } = creditCardData;
-    if (!cardName || !cardNumber || !expiryMonth || !expiryYear || !cvv) {
-      toast.error("All credit card fields are required");
-      return false;
-    }
-    return true;
-  };
-  const handleCCAvenue = async (orderId: string) => {
-    const formdata = new FormData();
-    formdata.append("name", creditCardData.cardName);
-    formdata.append("card_name", creditCardData.nameOfCard);
-    formdata.append("card_number", creditCardData.cardNumber);
-    formdata.append("card_type", creditCardData.cardType);
-    formdata.append("expiry_month", creditCardData.expiryMonth);
-    formdata.append("expiry_year", creditCardData.expiryYear);
-    formdata.append("cvv_number", creditCardData.cvv);
-    formdata.append("order_id", orderId);
-    formdata.append("amount", cartTotal.toString());
-    formdata.append("payment_option", creditCardData.cardType === "Credit Card" ? "OPTCRDC" : "OPTDBCRD");
-    formdata.append("address", JSON.stringify(addressDetail));
 
+  const handleCCAvenue = async (orderId: string) => {
+    debugger
+    const formdata = new FormData();
+    formdata.append("order_id", 54545);
+    formdata.append("amount", cartTotal.toString());
     // Add redirect and cancel URIs
     formdata.append("redirect_url", `${window.location.origin}/payment-success`);
     formdata.append("cancel_url", `${window.location.origin}/payment-failure`);
@@ -210,7 +190,7 @@ export default function PaymentAndAddress() {
 
       toast.success("Payment initiated");
       dispatch(clearCart());
-      router.replace(checkOutResponse.data.url);
+      router.replace(checkOutResponse.data.actionUrl);
     } catch (error) {
       console.error("CCAvenue payment initiation failed:", error);
       toast.error("Failed to initiate CCAvenue payment");
@@ -409,6 +389,7 @@ export default function PaymentAndAddress() {
 
             {/* Payment options */}
             <div
+                onClick={() => setPaymentMethod("creditcard")}
               className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${paymentMethod === "creditcard" ? "border-[#F70000]" : "border-[#777777]"
                 }`}
             >
@@ -423,15 +404,16 @@ export default function PaymentAndAddress() {
                   "&.Mui-checked": { color: "#F70000" },
                 }}
                 checked={paymentMethod === "creditcard"}
-                onChange={() => setPaymentMethod("creditcard")}
               />
             </div>
 
             <div
+                onClick={() => setPaymentMethod("phonepe")}
               className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${paymentMethod === "phonepe" ? "border-[#F70000]" : "border-[#777777]"
                 }`}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2"
+                >
                 <p className="text-lg text-[#5f259f] font-medium ml-2">PhonePe</p>
               </div>
               <Radio
@@ -441,11 +423,12 @@ export default function PaymentAndAddress() {
                   "&.Mui-checked": { color: "#F70000" },
                 }}
                 checked={paymentMethod === "phonepe"}
-                onChange={() => setPaymentMethod("phonepe")}
               />
             </div>
 
             <div
+                  onClick={() => setPaymentMethod("cod")}
+
               className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${paymentMethod === "cod" ? "border-[#F70000]" : "border-[#777777]"
                 }`}
             >
@@ -457,62 +440,12 @@ export default function PaymentAndAddress() {
                     "&.Mui-checked": { color: "#F70000" },
                   }}
                   checked={paymentMethod === "cod"}
-                  onChange={() => setPaymentMethod("cod")}
                 />
                 <p className="">Cash on Delivery</p>
               </div>
               <Image src={Cash} alt="Cash" className="w-[43px] h-[30px] mr-2" />
             </div>
 
-            {paymentMethod === "creditcard" && (
-              <div className="mt-4">
-                <h3 className="text-lg font-medium mb-2">Credit Card Details</h3>
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    name="cardName"
-                    placeholder="Cardholder Name"
-                    value={creditCardData.cardName}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                  />
-                  <input
-                    type="text"
-                    name="cardNumber"
-                    placeholder="Card Number"
-                    value={creditCardData.cardNumber}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                  />
-                  <div className="flex space-x-4">
-                    <input
-                      type="text"
-                      name="expiryMonth"
-                      placeholder="MM"
-                      value={creditCardData.expiryMonth}
-                      onChange={handleChange}
-                      className="w-1/4 p-2 border rounded"
-                    />
-                    <input
-                      type="text"
-                      name="expiryYear"
-                      placeholder="YYYY"
-                      value={creditCardData.expiryYear}
-                      onChange={handleChange}
-                      className="w-1/4 p-2 border rounded"
-                    />
-                    <input
-                      type="text"
-                      name="cvv"
-                      placeholder="CVV"
-                      value={creditCardData.cvv}
-                      onChange={handleChange}
-                      className="w-1/4 p-2 border rounded"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
 
             <button
               type="submit"
