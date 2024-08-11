@@ -159,7 +159,7 @@ const OfferViewSlider = React.forwardRef(({ Data }, ref) => {
             return (
               <div
                 key={index}
-                className={`group lg:w-[98%] w-[95%] border mb-1 mt-1 lg:mt-[16px] rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${
+                className={`group lg:w-[88%] w-[95%] border mb-1 mt-1 lg:mt-[16px] rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${
                   touchedProductId === product.id ? "active" : ""
                 }`}
                 onClick={() => setTouchedProductId(product.id)}
@@ -202,23 +202,10 @@ const OfferViewSlider = React.forwardRef(({ Data }, ref) => {
                   </div>
 
                   <div className="p-2">
-                    <p className="text-[14px] md:text-[15px] w-[80%] font-semibold">
-                      {expanded === product.id
-                        ? product?.title
-                        : truncateTitle(product?.title)}
-                      {product?.title?.length > 40 && (
-                        <button
-                          className="text-blue-300 ml-1"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSeeMore(product.id);
-                          }}
-                        >
-                          {expanded === product.id ? "..." : "...."}
-                        </button>
-                      )}
+                    <p className="text-[12px] md:text-[15px] w-[100%] h-[40px] overflow-hidden">
+                      {product?.title}
                     </p>
-                    <div className="flex items-center mt-[4px] md:mt-[8px] gap-1">
+                    <div className="flex items-center mt-2 md:mt-[8px] gap-1">
                       <span className="text-[8px] md:text-[10px] text-[#F69B26]">
                         {product?.rating} ({product?.reviews})
                       </span>

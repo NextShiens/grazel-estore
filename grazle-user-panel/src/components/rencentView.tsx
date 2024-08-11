@@ -128,7 +128,6 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
     fetchFavoriteProducts();
   }, []);
 
-
   const truncateTitle = (title: string, maxLength: number = 10) => {
     return title?.length > maxLength ? `${title.slice(0, maxLength)}` : title;
   };
@@ -166,7 +165,7 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
             return (
               <div
                 key={index}
-                className={`group lg:w-[98%] w-[95%] border mb-1 mt-1 lg:mt-[16px] rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${
+                className={`group lg:w-[88%] w-[95%] border mb-1 mt-1 lg:mt-[16px] rounded-2xl hover:border-[1px] border-[#b9b5b5] relative ${
                   touchedProductId === item.id ? "active" : ""
                 }`}
                 onClick={() => setTouchedProductId(item.id)}
@@ -192,23 +191,10 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
                   )}
 
                   <div className="p-2">
-                    <p className="text-[14px] md:text-[15px] w-[80%] font-semibold">
-                      {expanded === item.id
-                        ? item?.title
-                        : truncateTitle(item?.title)}
-                      {item?.title?.length > 40 && (
-                        <button
-                          className="text-blue-300 ml-1"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSeeMore(item.id);
-                          }}
-                        >
-                          {expanded === item.id ? "..." : "...."}
-                        </button>
-                      )}
+                    <p className="text-[14px] md:text-[15px] w-[100%] h-[40px] overflow-hidden">
+                      {item?.title}
                     </p>
-                    <div className="flex items-center mt-[4px] md:mt-[8px] gap-1">
+                    <div className="flex items-center mt-2 md:mt-[8px] gap-2 ">
                       <span className="text-[8px] md:text-[10px] text-[#F69B26]">
                         {item?.rating} ({item?.reviews})
                       </span>

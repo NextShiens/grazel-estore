@@ -62,26 +62,18 @@ export default function Footer() {
           />
 
           <div className="flex items-center gap-2 justify-center lg:justify-start mt-[40px]">
-            <Link href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA==" target="_blank" rel="noopener noreferrer">
-              <Image
-                src={Instagram}
-                alt=""
-                className="w-[32px] h-[32px] mx-2 lg:mx-0"
-              />
-            </Link>
-            <Link href="https://www.linkedin.com/company/grazle" target="_blank" rel="noopener noreferrer">
-              <SiLinkedin className="w-[32px] h-[32px] mx-2 lg:mx-0" />
-            </Link>
-            <Link href="https://x.com/GrazleHomeware" target="_blank" rel="noopener noreferrer">
-              <Image
-                src={Twitter}
-                alt=""
-                className="w-[32px] h-[32px] mx-2 lg:mx-0"
-              />
-            </Link>
-            <Link href="https://www.facebook.com/grazlefb/" target="_blank" rel="noopener noreferrer">
-              <FaFacebook className="w-[32px] h-[32px] mx-2 lg:mx-0" />
-            </Link>
+          <Link href="https://x.com/GrazleHomeware" target="_blank" rel="noopener noreferrer">
+            <FaTwitter className="text-[24px] text-[#434343]" />
+          </Link>
+          <Link href="https://www.facebook.com/grazlefb/" target="_blank" rel="noopener noreferrer">
+            <FaFacebook className="text-[24px] text-[#434343]" />
+          </Link>
+          <Link href="https://www.linkedin.com/company/grazle" target="_blank" rel="noopener noreferrer">
+            <SiLinkedin className="text-[24px] text-[#434343]" />
+          </Link>
+          <Link href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA==" target="_blank" rel="noopener noreferrer">
+            <GrInstagram className="text-[24px] text-[#434343]" />
+          </Link>
           </div>
         </div>
 

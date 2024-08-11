@@ -74,10 +74,10 @@ const Offers = () => {
 
   return (
     <>
-      <div className="lg:mx-[150px] md:mx-[60px] lg:px-0 md:px-3">
+      <div className="conatiner mx-auto lg:mx-[150px] md:mx-[60px] lg:px-0 md:px-3">
         <MainSlider banners={positionOneBanners} />
       </div>
-     <div className="p-6 overflow-x-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 ">
+     <div className="container lg:!w-[80%] sm:!w-full justify-center m-auto p-6 overflow-x-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 ">
         {allProducts?.map((product: any) => (
           <ProductCard
             width="20"
