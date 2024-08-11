@@ -40,9 +40,9 @@ const OrderTable = ({ order, type, status }) => {
   if (status?.length > 0 && !status.includes(orderStatus)) return null;
   return (
     <>
-      <tr key={order?.id} className="h-[50px] text-[14px]">
+      <tr key={order?.id} className="h-[63px] text-[13px]">
         <td>{order?.id}</td>
-        <td className="flex items-center gap-1.5 h-[50px] capitalize">
+        <td className="flex items-center gap-1.5 h-[50px]  py-1">
           <Image
             width={26}
             height={26}
