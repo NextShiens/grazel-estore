@@ -23,7 +23,7 @@ const AddProduct = ({ setSelectedTab }) => {
   const [faqs, setFaqs] = useState([]);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
-
+  const [title, setTitle] = useState("");
   useEffect(() => {
     dispatch(updatePageNavigation("products"));
   }, [dispatch]);
@@ -112,7 +112,16 @@ const AddProduct = ({ setSelectedTab }) => {
       toast.error("Something went wrong");
     }
   };
+  const handleTitleChange = (e) => {
+    const newTitle = e.target.value;
+    const wordCount = newTitle.trim().split(/\s+/).length;
 
+    if (wordCount <= 6) {
+      setTitle(newTitle);
+    } else {
+      toast.error("Title should not exceed 6 words");
+    }
+  };
   function onRemoveImg(index) {
     const tempArr = [...galleryImage];
     tempArr.splice(index, 1);
@@ -177,6 +186,8 @@ const AddProduct = ({ setSelectedTab }) => {
                     placeholder="Product Name"
                     name="title"
                     required
+                    value={title}
+                    onChange={handleTitleChange}
                     className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
                   />
                 </div>
