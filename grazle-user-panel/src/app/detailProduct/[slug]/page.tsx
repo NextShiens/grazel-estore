@@ -131,6 +131,7 @@ export default function ProductDetail() {
         const { data } = await getBrandProductsApi(singleProduct.brand_id);
         setStoreProductsDetails(data.products || []);
         const res = await getBrandDetails(singleProduct.brand_id);
+        console.log("res", res);
         setCurrentStore(res.data.store || {});
       } catch (error) {
         console.error("Error fetching brand data:", error);
@@ -351,9 +352,27 @@ export default function ProductDetail() {
           </div>
 
           <div className="w-[100%] sm:w-[100%] md:w-[100%] lg:w-[50%]">
-            <p className="lg:text-[32px] text-[24px] sm:text-[24px] md:text-[24px] font-semibold">
-              {singleProduct.title}
-            </p>
+            <div className="flex justify-between items-center mt-2">
+              <p className="lg:text-[32px] text-[24px] sm:text-[24px] md:text-[24px] font-semibold flex-grow mr-2">
+                {singleProduct.title}
+              </p>
+              <div className="sm:hidden flex-shrink-0">
+                <IconButton
+                  size="large"
+                  onClick={(e) => onLiked(e, singleProduct?.id)}
+                  disabled={isPending}
+                  className="bg-white bg-opacity-70 hover:bg-opacity-100 p-2"
+                  style={{ marginBottom: "10px" }}
+                >
+                  {favoriteProducts &&
+                  favoriteProducts.includes(singleProduct?.id) ? (
+                    <FaHeart className="text-[#F70000] text-[32px]" />
+                  ) : (
+                    <Image src={heart} alt="like" width={32} height={32} />
+                  )}
+                </IconButton>
+              </div>
+            </div>
 
             <div className="flex mt-2 items-center gap-2">
               <Rating
@@ -374,14 +393,6 @@ export default function ProductDetail() {
                 {singleProduct.total_rating?.total_rating_count || 0} Review
               </p>
             </div>
-            <div className="mt-3">
-              {Number(price) < basePrice && (
-                <p className="text-[32px] text-[#F70000] font-bold">
-                  ₹ {Number(price?.toFixed(2))}
-                </p>
-              )}
-            </div>
-
             <div className="flex text-start justify-start gap-2 pb-8 border-b-[1px] border-[#0000001A]">
               {Number(price) < basePrice && (
                 <p className="text-[16px] text-[#909198] font-normal line-through">
@@ -436,14 +447,20 @@ export default function ProductDetail() {
               </div>
 
               <div className="flex gap-4">
-              <button
-      className={`bg-[#F70000] rounded-full h-[60px] mt-[20px] font-medium text-white flex items-center justify-center w-full sm:h-[50px]`}
-      onClick={(e) => onAddingCart(e, singleProduct)}
-    >
-      Add to cart
-    </button>
+                <button
+                  className="bg-[#F70000] rounded-full h-[60px] mt-[20px] font-medium text-white flex items-center justify-center w-full sm:h-[50px] hidden sm:flex"
+                  onClick={(e) => onAddingCart(e, singleProduct)}
+                >
+                  Add to cart
+                </button>
+                <button
+                  className="bg-[#F70000] rounded-md h-[50px] mt-[20px] font-medium text-white flex items-center justify-center w-full sm:hidden"
+                  onClick={(e) => onAddingCart(e, singleProduct)}
+                >
+                  Add to cart
+                </button>
 
-                <div className="mt-[18px] flex justify-center items-center rounded-full h-[72px] w-[68px]">
+                <div className="mt-[18px] flex justify-center items-center rounded-full h-[72px] w-[68px] hidden sm:block">
                   <IconButton
                     size="large"
                     onClick={(e) => onLiked(e, singleProduct?.id)}
@@ -466,7 +483,7 @@ export default function ProductDetail() {
                     <div className="flex justify-center items-center rounded-full bg-[#F8F8F8] h-[52px] w-[52px]">
                       {singleProduct?.store?.image && (
                         <Image
-                          src={singleProduct?.store?.image}
+                          src={singleProduct?.store?.image|| logo}
                           alt={`${singleProduct?.store?.image}'s profile`}
                           width={48}
                           height={48}
@@ -475,7 +492,7 @@ export default function ProductDetail() {
                       )}
                     </div>
                     <p className="text-[14px] text-[#000000] font-semibold">
-                      {singleProduct?.store?.store_name}
+                      {singleProduct?.store?.store_name || "Store Name"}
                     </p>
                   </div>
                   <button
@@ -563,12 +580,12 @@ export default function ProductDetail() {
           <ReviewSection reviewsData={reviews} />
         </div>
 
-        <p className="text-[#000000] text-[19px] border-t pt-5 mt-5">
-          More from the store
+        <p className="text-[#000000] text-[19px] border-t pt-5 mt-5 -mb-10">
+        More from frequently Our Store
         </p>
       </div>
-      <div className="p-6 overflow-x-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-        {storeProductsDetails.slice(0, 4).map((item) => (
+      <div className="p-6 overflow-x-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 ml-10">
+        {storeProductsDetails.slice(0, 5).map((item) => (
           <ProductCard width="25" key={item.id} product={item} />
         ))}
       </div>

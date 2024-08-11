@@ -319,7 +319,6 @@ export default function MyAccount() {
       console.log(error);
     }
   }
-
   async function onEditAddress(formdata) {
     try {
       setPending(true);
@@ -596,7 +595,7 @@ export default function MyAccount() {
                     placeholder="Enter Email"
                     type="email"
                     name="email"
-                    value={userRedux.email || ""}
+                    value={currentUser.email}
                     className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
                   />
                 </div>
@@ -738,7 +737,8 @@ export default function MyAccount() {
                 </CustomModal>
               </form>
             )}
-            {activeSection === "Orders" &&
+
+{activeSection === "Orders" &&
               (userOrders && userOrders.length > 0 ? (
                 userOrders.map((item, index) => (
                   <MyorderCard
@@ -749,7 +749,7 @@ export default function MyAccount() {
                 ))
               ) : (
                 <div className="text-center text-gray-500 mt-5">
-                No orders Found
+                No orders Found...
               </div>
               ))}
 

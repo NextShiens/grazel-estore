@@ -108,8 +108,12 @@ export const editProfileApi = async (data, id) =>
 export const editPasswordApi = async (data) =>
   await axios.post("/profile/reset-password", data);
 
-export const createAddressApi = async (data) =>
-  await axios.post("/addresses", data);
+export const createAddressApi = async (data,token) =>
+  await axios.post("/addresses", data ,{
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    }
+  });
 
 export const getAddressApi = async () => await axios.get("/addresses");
 export const getAddressByIdApi = async (id) =>

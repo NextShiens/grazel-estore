@@ -36,7 +36,7 @@ export default function ReferralRanking() {
           </div> */}
           <div className="w-[20%]">
             <p className="text-[24px] font-medium text-[#777777] mt-3">
-            Referral Score
+              Referral Score
             </p>
           </div>
           <div className="w-[20%]">
@@ -52,7 +52,17 @@ export default function ReferralRanking() {
               {/* Large screen item */}
               <div className="hidden lg:flex gap-3 w-[100%] justify-center items-center mt-2 p-3 ">
                 <div className="w-[20%] flex items-center gap-3">
-                  <Image alt="" src={airpod} className="h-[42px] w-[42px]" />
+                  <Image
+                    alt=""
+                    src={
+                      item?.profile?.image
+                        ? "https://api.grazle.co.in/" + item?.profile?.image
+                        : airpod
+                    }
+                    className="h-[42px] w-[42px] rounded-3xl"
+                    width={26}
+                    height={26}
+                  />
                   <p className="text-[16px] font-medium text-[#191919]">
                     {item?.profile?.first_name || item?.username}
                   </p>
@@ -86,10 +96,16 @@ export default function ReferralRanking() {
               {/* Small screen item */}
               <div className="flex lg:hidden items-center justify-between bg-white p-3 rounded-lg mb-2">
                 <div className="flex items-center gap-4 w-full">
-                  <Image
+                <Image
                     alt=""
-                    src={airpod}
-                    className="h-[42px] w-[42px] rounded-full"
+                    src={
+                      item?.profile?.image
+                        ? "https://api.grazle.co.in/" + item?.profile?.image
+                        : airpod
+                    }
+                    className="h-[42px] w-[42px] rounded-3xl"
+                    width={26}
+                    height={26}
                   />
 
                   <div className="flex-grow">
