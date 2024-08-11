@@ -18,7 +18,7 @@ const EditProduct = ({ product, setSelectedTab, onProductUpdated }) => {
   const [galleryImages, setGalleryImages] = useState([]);
   const [tags, setTags] = useState([]);
   const [formErrors, setFormErrors] = useState({});
-
+  const [title, setTitle] = useState("");
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -60,6 +60,19 @@ const EditProduct = ({ product, setSelectedTab, onProductUpdated }) => {
     } catch (error) {
       console.error("Failed to fetch categories", error);
       toast.error("Failed to fetch categories");
+    }
+  };
+  const handleTitleChange = (e) => {
+    const newTitle = e.target.value;
+    const wordCount = newTitle.trim().split(/\s+/).length;
+
+    if (wordCount <= 6) {
+      setFormData(prevData => ({
+        ...prevData,
+        title: newTitle
+      }));
+    } else {
+      toast.error("Title should not exceed 6 words");
     }
   };
 
@@ -205,7 +218,7 @@ const EditProduct = ({ product, setSelectedTab, onProductUpdated }) => {
                   type="text"
                   name="title"
                   value={formData.title}
-                  onChange={handleInputChange}
+                  onChange={handleTitleChange}
                   className={`w-full p-2 border rounded-md ${formErrors.title ? "border-red-500" : "border-gray-300"}`}
                   placeholder="Product Name"
                 />
