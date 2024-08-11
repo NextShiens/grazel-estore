@@ -1021,6 +1021,30 @@
 							"response": []
 						},
 						{
+							"name": "Suggested Keywords",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/global/search-suggestion?keyword=Memory",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"global",
+										"search-suggestion"
+									],
+									"query": [
+										{
+											"key": "keyword",
+											"value": "Memory"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Search Results Filters",
 							"request": {
 								"method": "GET",
@@ -2098,7 +2122,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzAzOTQwNCwiZXhwIjoxNzIzMjk4NjA0fQ.I1ri_3zsiWAbHZHMpPB6hsdZKRc9oscKIz2781vQfXA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyMzM0Mzc1MiwiZXhwIjoxNzIzNjAyOTUyfQ.6HcircZ1d9830zqtRw2SiBOa138N1twC292rjfZoCtU",
 											"type": "string"
 										}
 									]
@@ -4802,7 +4826,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMwNzk5MjAsImV4cCI6MTcyMzMzOTEyMH0.a0kFbOVtJ5JSooOftUX2g5wYdd85Exu2bE4vcpRz1YI",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMzMDEwNjQsImV4cCI6MTcyMzU2MDI2NH0.11LC9sstLDf_FS856BYaL-hjyRUJzNUa3u8gUN7iZ8o",
 											"type": "string"
 										}
 									]
@@ -4865,7 +4889,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMwODI4NjgsImV4cCI6MTcyMzM0MjA2OH0.Gg_y2El36lljhI7pTy4eXnQl3NtgaHk19Lwf4HLK5hc",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMzNDc5MTgsImV4cCI6MTcyMzYwNzExOH0.ea7CaC_IDjIDgP7kBc-SNVqlmZ_UWcmPJg-O01pjJtQ",
 											"type": "string"
 										}
 									]
@@ -4882,7 +4906,7 @@
 										},
 										{
 											"key": "title",
-											"value": "Nest js ",
+											"value": "Professional DSLR Camera",
 											"type": "text"
 										},
 										{
@@ -4898,7 +4922,7 @@
 										},
 										{
 											"key": "description",
-											"value": "JavaScript , Typescript",
+											"value": "Capture stunning photos and videos with this professional DSLR camera. Features include a high-resolution sensor and interchangeable lenses.",
 											"type": "text"
 										},
 										{
@@ -4949,15 +4973,12 @@
 										{
 											"key": "featured_image",
 											"type": "file",
-											"src": "/C:/Users/Ubaid Computers/Downloads/data-removebg-preview.png"
+											"src": "/C:/Users/Ubaid Computers/Downloads/review-removebg-preview.png"
 										},
 										{
 											"key": "gallery_images",
 											"type": "file",
-											"src": [
-												"/C:/Users/Ubaid Computers/Downloads/review-removebg-preview.png",
-												"/C:/Users/Ubaid Computers/Downloads/data-removebg-preview.png"
-											]
+											"src": "/C:/Users/Ubaid Computers/Downloads/e8dbf3973a8918dcdf9e7e61daae70f71581003303 (1).jpg"
 										}
 									]
 								},
@@ -4982,7 +5003,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMwODA5MDUsImV4cCI6MTcyMzM0MDEwNX0.a3a3w7Z-X5CW-455hxooxuhyKh70ThFh6D5zma4BVr8",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMyNjQzNTUsImV4cCI6MTcyMzUyMzU1NX0.2N5wMoLiVs8LLQzQOJBDPwS4si-bstuo-Sn2HwET7AA",
 											"type": "string"
 										}
 									]
@@ -5029,6 +5050,11 @@
 												"/C:/Users/Ubaid Computers/OneDrive/Documents/mg.jpg",
 												"/C:/Users/Ubaid Computers/OneDrive/Documents/mg-hs-01.jpg"
 											]
+										},
+										{
+											"key": "discount",
+											"value": "30",
+											"type": "text"
 										}
 									]
 								},
@@ -5045,7 +5071,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "10"
+											"value": "20"
 										}
 									]
 								}
@@ -5095,7 +5121,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMwMzUwODUsImV4cCI6MTcyMzI5NDI4NX0.5tmzew_RW1_qWHrN_Sx29qPOlBQK3VBIVPvtij2sAjs",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMzMDEwNjQsImV4cCI6MTcyMzU2MDI2NH0.11LC9sstLDf_FS856BYaL-hjyRUJzNUa3u8gUN7iZ8o",
 											"type": "string"
 										}
 									]
@@ -5115,7 +5141,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "6"
+											"value": "22"
 										}
 									]
 								}
@@ -5258,7 +5284,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzE4NDI0MzUyLCJleHAiOjE3MTg1MTA3NTJ9.B_Ik9ZnmkDHRYtRWcYIpC4HGPGcM3ztvYZGuastoC6w",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMyOTAxMDksImV4cCI6MTcyMzU0OTMwOX0.H5AAaS-AGQLYEoGlRuWXCFckyFkRnQ9UecL_6kLds6U",
 											"type": "string"
 										}
 									]
@@ -5391,7 +5417,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzE4NDI0MzUyLCJleHAiOjE3MTg1MTA3NTJ9.B_Ik9ZnmkDHRYtRWcYIpC4HGPGcM3ztvYZGuastoC6w",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMyOTAxMDksImV4cCI6MTcyMzU0OTMwOX0.H5AAaS-AGQLYEoGlRuWXCFckyFkRnQ9UecL_6kLds6U",
 											"type": "string"
 										}
 									]
@@ -5423,7 +5449,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "1"
+											"value": "59"
 										}
 									]
 								}
@@ -6454,7 +6480,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTg5ODcyODcsImV4cCI6MTcxOTA3MzY4N30.DIDRIctk5XJDWZoEGK8oBf8p_a-FklnSQN2XSsOOBYE",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInJvbGUiOiJidXllciIsImlhdCI6MTcyMzI5MTk2NCwiZXhwIjoxNzIzNTUxMTY0fQ.pjCHw2y_T8x0iuFy6R-moEScuVBrXrCO47wDNXEIRag",
 											"type": "string"
 										}
 									]
@@ -6472,13 +6498,13 @@
 										},
 										{
 											"key": "payment_type",
-											"value": "creditcard",
+											"value": "cod",
 											"description": "payment types :   cod ,  creditcard , paypal",
 											"type": "text"
 										},
 										{
 											"key": "quantities",
-											"value": "1,2",
+											"value": "1",
 											"description": "required  | for multiple products format : 2,5,6 ",
 											"type": "text"
 										},
@@ -6495,19 +6521,14 @@
 											"type": "text"
 										},
 										{
-											"key": "transaction_id",
-											"value": "11",
-											"type": "text"
-										},
-										{
 											"key": "product_ids",
-											"value": "2,3",
+											"value": "2",
 											"description": "required  | for multiple products format : 2,5,6 ",
 											"type": "text"
 										},
 										{
 											"key": "prices",
-											"value": "400,500",
+											"value": "400",
 											"type": "text"
 										}
 									]
@@ -7368,151 +7389,162 @@
 					"name": "ccAvenue",
 					"item": [
 						{
-							"name": "Initiate Payment",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "order_id",
-											"value": "",
-											"type": "text"
+							"name": "ccav Checkout",
+							"item": [
+								{
+									"name": "Payment Request",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "order_id",
+													"value": "1",
+													"type": "text"
+												},
+												{
+													"key": "currency",
+													"value": "INR",
+													"type": "text"
+												},
+												{
+													"key": "amount",
+													"value": "100",
+													"type": "text"
+												},
+												{
+													"key": "redirect_url",
+													"value": "https://grazle.co.in/success",
+													"type": "text"
+												},
+												{
+													"key": "cancel_url",
+													"value": "https://grazle.co.in/failed",
+													"type": "text"
+												}
+											]
 										},
-										{
-											"key": "currency",
-											"value": "",
-											"description": "INR | USD | EUR",
-											"type": "text"
-										},
-										{
-											"key": "amount",
-											"value": "",
-											"description": "Numeric (12, 2)",
-											"type": "text"
-										},
-										{
-											"key": "redirect_url",
-											"value": "",
-											"description": "Alphanumeric (100)\n\nCharacters allowed:\nAlphabet (A-Z), (a-z),\nNumbers, / (slash),\n_ (underscore)",
-											"type": "text"
-										},
-										{
-											"key": "cancel_url",
-											"value": "",
-											"description": "Alphanumeric (100)\n\nCharacters allowed:\nAlphabet (A-Z), (a-z),\nNumbers, / (slash),\n_ (underscore)",
-											"type": "text"
-										},
-										{
-											"key": "payment_option",
-											"value": "",
-											"description": "OPTCRDC - Credit Card\nOPTDBCRD - Debit Card\nOPTNBK - Net Banking\nOPTCASHC - Cash Card\nOPTMOBP - Mobile Payments\nOPTCHKOT - Checkout\nOPTUPI - Unified Payments",
-											"type": "text"
-										},
-										{
-											"key": "card_type",
-											"value": "",
-											"description": "Type of card used by the customer.\nCRDC - Credit Card\nDBCRD - Debit Card\nNBK - Net Banking\nCASHC - Cash Card\nMOBP - Mobile Payments\nCHKOT - Checkout\nUPI - Unified Payments",
-											"type": "text"
-										},
-										{
-											"key": "card_name",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "card_number",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "expiry_month",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "expiry_year",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "cvv_number",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "issuing_bank",
-											"value": "",
-											"description": "Card issuing bank name",
-											"type": "text"
-										},
-										{
-											"key": "mobile_no",
-											"value": "",
-											"description": "Mobile no (Only in case of Mobile payments.)",
-											"type": "text"
-										},
-										{
-											"key": "mm_id",
-											"value": "",
-											"description": "Mobile Money Identification Number (MMID) is a seven digit number for the bank offering IMPS.",
-											"type": "text"
-										},
-										{
-											"key": "otp",
-											"value": "",
-											"description": "One Time Password to complete an IMPS transaction",
-											"type": "text"
-										},
-										{
-											"key": "virtualAddress",
-											"value": "",
-											"description": "Virtual payment address (VPA) is a user-generated unique identifier for each bank account. All payment addresses are in the format abc @bank, where abc can be chosen by the customer. (Only in case of UPI)",
-											"type": "text"
+										"url": {
+											"raw": "{{BASE_URL}}/ccavenue/checkout/request",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"ccavenue",
+												"checkout",
+												"request"
+											]
 										}
-									]
+									},
+									"response": []
 								},
-								"url": {
-									"raw": "{{BASE_URL}}/ccavenue/initiate-payment",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"ccavenue",
-										"initiate-payment"
-									]
+								{
+									"name": "Payment Response",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "encResp",
+													"value": "qnStn10mi0a+9ZNu2rDElM/ZbPSAnz/5E7WSR+CbI2FYL2UGX44TUb8HiLl+4UeSQ4bWIPvKCSoTiVVoumv2Zx3f8bizytGh5vEDuLKqkO3q7At7R4AvjDwtLrjveIznB2I2fCAsVL2T2jWfffV8zH9g85isy80FITF/jEqLZ7y5sWBGYAd7uGeKEMq9PADsJ1t7Ze6htFiBT9s0Xyzy2g==",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/ccavenue/checkout/response",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"ccavenue",
+												"checkout",
+												"response"
+											]
+										}
+									},
+									"response": []
 								}
-							},
-							"response": []
+							]
 						},
 						{
-							"name": "Handle Payment response",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "",
-											"value": "",
-											"type": "text"
+							"name": "Custom Checkout",
+							"item": [
+								{
+									"name": "Initiate Payment",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "order_id",
+													"value": "1",
+													"type": "text"
+												},
+												{
+													"key": "currency",
+													"value": "INR",
+													"type": "text"
+												},
+												{
+													"key": "amount",
+													"value": "100",
+													"type": "text"
+												},
+												{
+													"key": "redirect_url",
+													"value": "https://grazle.co.in/success",
+													"type": "text"
+												},
+												{
+													"key": "cancel_url",
+													"value": "https://grazle.co.in/failed",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/ccavenue/initiate-payment",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"ccavenue",
+												"initiate-payment"
+											]
 										}
-									]
+									},
+									"response": []
 								},
-								"url": {
-									"raw": "{{BASE_URL}}/ccavenue/handle-payment-response",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"ccavenue",
-										"handle-payment-response"
-									]
+								{
+									"name": "Handle Payment response",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": []
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/ccavenue/handle-payment-response",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"ccavenue",
+												"handle-payment-response"
+											]
+										}
+									},
+									"response": []
 								}
-							},
-							"response": []
+							]
 						}
 					]
 				}
@@ -7661,7 +7693,7 @@
 	"variable": [
 		{
 			"key": "BASE_URL",
-			"value": "https://api.grazle.co.in/api",
+			"value": "localhost:8000/api",
 			"type": "string"
 		},
 		{
