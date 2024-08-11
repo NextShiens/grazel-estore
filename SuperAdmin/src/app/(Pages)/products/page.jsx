@@ -190,8 +190,8 @@ const Products = () => {
     if (category && brand) {
       return brand === "new"
         ? categoryId === category &&
-            created_at <= IsoDate &&
-            created_at >= new Date().toISOString()
+        created_at <= IsoDate &&
+        created_at >= new Date().toISOString()
         : categoryId === category && created_at < new Date().toISOString();
     } else if (brand) {
       return brand === "new"
@@ -239,14 +239,14 @@ const Products = () => {
       if (category && brand) {
         return typeof brand === "string"
           ? priceLogic &&
-              filterProductByDate(category, categoryId, brand, created_at)
+          filterProductByDate(category, categoryId, brand, created_at)
           : priceLogic && categoryId === category && brandId === brand;
       } else if (category || brand) {
         return category
           ? priceLogic && categoryId === category
           : typeof brand === "string"
-          ? priceLogic && filterProductByDate(null, null, brand, created_at)
-          : priceLogic && brandId === brand;
+            ? priceLogic && filterProductByDate(null, null, brand, created_at)
+            : priceLogic && brandId === brand;
       } else {
         return priceLogic;
       }
@@ -259,10 +259,23 @@ const Products = () => {
       <Loading />
       <div className="flex flex-col min-h-screen bg-gray-50">
         <Navbar />
+
         <div className="flex-1 flex">
           <Sidebar />
           <div className="flex-1 mt-[30px] px-[22px]">
-            <SearchOnTop title="New Product" url="/products/add" />
+            <div className="flex flex-row gap-3 w-full">
+              <div className="w-[90%]">
+                <SearchOnTop title="New Product" url="/products/add" />
+
+              </div>
+
+              <button onClick={() => window.location.href = "/products/add"}
+                className="h-[50px] rounded-[8px] bg-[#FE4242] flex items-center justify-center text-white font-[500] w-full sm:w-[150px]  disabled:border-none transition-colors hover:bg-[#E63B3B]"
+              >
+                Add Product
+              </button>
+            </div>
+
             <div className="flex flex-col lg:flex-row gap-[20px] mt-[20px]">
               <LeftSection
                 allCategories={allCategories}
@@ -295,11 +308,10 @@ const Products = () => {
 const PageButton = ({ page, currentPage, onClick }) => (
   <button
     onClick={onClick}
-    className={`mx-1 px-3 py-1 rounded ${
-      currentPage === page
-        ? "bg-red-500 text-white"
-        : "bg-gray-200 text-gray-700"
-    }`}
+    className={`mx-1 px-3 py-1 rounded ${currentPage === page
+      ? "bg-red-500 text-white"
+      : "bg-gray-200 text-gray-700"
+      }`}
   >
     {page}
   </button>
