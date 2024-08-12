@@ -281,9 +281,9 @@ export default function ProductDetail() {
 
   const images = singleProduct
     ? [
-        singleProduct.featured_image,
-        ...(singleProduct.gallery?.map((item) => item.image) || []),
-      ]
+      singleProduct.featured_image,
+      ...(singleProduct.gallery?.map((item) => item.image) || []),
+    ]
     : [];
 
   const handlers = useSwipeable({
@@ -323,9 +323,8 @@ export default function ProductDetail() {
                 {images.map((_, index) => (
                   <div
                     key={index}
-                    className={`h-2 w-2 rounded-full mx-1 ${
-                      index === currentImageIndex ? "bg-red-500" : "bg-gray-300"
-                    }`}
+                    className={`h-2 w-2 rounded-full mx-1 ${index === currentImageIndex ? "bg-red-500" : "bg-gray-300"
+                      }`}
                   />
                 ))}
               </div>
@@ -339,11 +338,10 @@ export default function ProductDetail() {
                     width={90}
                     height={90}
                     src={image}
-                    className={`lg:w-[90px] lg:h-[90px] h-[70px] w-[70px] sm:h-[80px] sm:w-[80px] md:h-[85px] md:w-[85px] hover:border-2 border-[#F70000] cursor-pointer rounded-md ${
-                      index === currentImageIndex
-                        ? "border-2 border-[#F70000]"
-                        : ""
-                    }`}
+                    className={`lg:w-[90px] lg:h-[90px] h-[70px] w-[70px] sm:h-[80px] sm:w-[80px] md:h-[85px] md:w-[85px] hover:border-2 border-[#F70000] cursor-pointer rounded-md ${index === currentImageIndex
+                      ? "border-2 border-[#F70000]"
+                      : ""
+                      }`}
                     onClick={() => setCurrentImageIndex(index)}
                   />
                 ))}
@@ -353,7 +351,7 @@ export default function ProductDetail() {
 
           <div className="w-[100%] sm:w-[100%] md:w-[100%] lg:w-[50%]">
             <div className="flex justify-between items-center mt-2">
-              <p className="lg:text-[32px] text-[24px] sm:text-[24px] md:text-[24px] font-semibold flex-grow mr-2">
+              <p className="lg:text-[32px] text-[18px] sm:text-[18px] md:text-[18px] font-semibold flex-grow mr-2">
                 {singleProduct.title}
               </p>
               <div className="sm:hidden flex-shrink-0">
@@ -365,7 +363,7 @@ export default function ProductDetail() {
                   style={{ marginBottom: "10px" }}
                 >
                   {favoriteProducts &&
-                  favoriteProducts.includes(singleProduct?.id) ? (
+                    favoriteProducts.includes(singleProduct?.id) ? (
                     <FaHeart className="text-[#F70000] text-[32px]" />
                   ) : (
                     <Image src={heart} alt="like" width={32} height={32} />
@@ -394,14 +392,18 @@ export default function ProductDetail() {
               </p>
             </div>
             <div className="flex text-start justify-start gap-2 pb-8 border-b-[1px] border-[#0000001A]">
-              {Number(price) < basePrice && (
+
+              <p className="text-[18px] text-[#F70000] font-semibold">
+                ₹ {Number(singleProduct.discounted_price)?.toFixed(2)}
+              </p>
+              {Number(singleProduct.discounted_price) < Number(singleProduct.price) && (
                 <p className="text-[16px] text-[#909198] font-normal line-through">
-                  ₹ {Number(basePrice)?.toFixed(2)}
+                  ₹ {Number(singleProduct.price)?.toFixed(2)}
                 </p>
               )}
-              {price < basePrice && (
+              {Number(singleProduct.discounted_price) < Number(singleProduct.price) && (
                 <p className="text-[16px] text-[#4FAD2E] font-normal">
-                  {discountInfo}
+                  {singleProduct.discount}% OFF
                 </p>
               )}
             </div>
@@ -419,11 +421,10 @@ export default function ProductDetail() {
                         setSelectedVariant(item);
                         onVariantChangeFunc(item.id);
                       }}
-                      className={`py-2 px-3 bg-[#FEF2F2] rounded-lg border-[1px] cursor-pointer ${
-                        currentVariant === item.id
-                          ? "border-[#F70000] text-[#F70000]"
-                          : "border-[#E6E6E6]"
-                      }`}
+                      className={`py-2 px-3 bg-[#FEF2F2] rounded-lg border-[1px] cursor-pointer ${currentVariant === item.id
+                        ? "border-[#F70000] text-[#F70000]"
+                        : "border-[#E6E6E6]"
+                        }`}
                     >
                       {item.variant}
                     </div>
@@ -468,7 +469,7 @@ export default function ProductDetail() {
                     className="bg-white bg-opacity-70 hover:bg-opacity-100 h-[64px] w-[64px]"
                   >
                     {favoriteProducts &&
-                    favoriteProducts.includes(singleProduct?.id) ? (
+                      favoriteProducts.includes(singleProduct?.id) ? (
                       <FaHeart className="text-[#F70000] text-[32px]" />
                     ) : (
                       <Image src={heart} alt="like" width={32} height={32} />
@@ -483,8 +484,8 @@ export default function ProductDetail() {
                     <div className="flex justify-center items-center rounded-full bg-[#F8F8F8] h-[52px] w-[52px]">
                       {singleProduct?.store?.image && (
                         <Image
-                          src={singleProduct?.store?.image|| logo}
-                          alt={singleProduct?.store?.image || logo}
+                          src={singleProduct?.store?.image || logo}
+                          alt={`${singleProduct?.store?.image}'s profile`}
                           width={48}
                           height={48}
                           className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
@@ -509,29 +510,26 @@ export default function ProductDetail() {
 
         <div className="flex justify-center mt-10 items-center pb-2 gap-4 border-b-[1px] border-[##E5E5E5]">
           <p
-            className={`${
-              selectedTab === "description"
-                ? "text-[#F70000]"
-                : "text-[#777777]"
-            } text-[14px] font-semibold cursor-pointer`}
+            className={`${selectedTab === "description"
+              ? "text-[#F70000]"
+              : "text-[#777777]"
+              } text-[14px] font-semibold cursor-pointer`}
             onClick={() => setSelectedTab("description")}
           >
             Descriptions
           </p>
           <p
-            className={`${
-              selectedTab === "productInfo"
-                ? "text-[#F70000]"
-                : "text-[#777777]"
-            }  text-[14px] font-semibold cursor-pointer`}
+            className={`${selectedTab === "productInfo"
+              ? "text-[#F70000]"
+              : "text-[#777777]"
+              }  text-[14px] font-semibold cursor-pointer`}
             onClick={() => setSelectedTab("productInfo")}
           >
             Product info
           </p>
           <p
-            className={` ${
-              selectedTab === "faq" ? "text-[#F70000]" : "text-[#777777]"
-            } text-[14px] font-semibold cursor-pointer`}
+            className={` ${selectedTab === "faq" ? "text-[#F70000]" : "text-[#777777]"
+              } text-[14px] font-semibold cursor-pointer`}
             onClick={() => setSelectedTab("faq")}
           >
             FAQs
@@ -581,12 +579,12 @@ export default function ProductDetail() {
         </div>
 
         <p className="text-[#000000] text-[19px] border-t pt-5 mt-5 -mb-10">
-        More from frequently Our Store
+          More from frequently Our Store
         </p>
       </div>
-      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto p-6 overflow-x-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+      <div className="p-6 overflow-x-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 ml-10">
         {storeProductsDetails.slice(0, 5).map((item) => (
-          <ProductCard width="25" style={{height:"10vh"}} key={item.id} product={item} />
+          <ProductCard width="25" key={item.id} product={item} />
         ))}
       </div>
 
