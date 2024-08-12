@@ -484,7 +484,7 @@ export default function ProductDetail() {
                       {singleProduct?.store?.image && (
                         <Image
                           src={singleProduct?.store?.image|| logo}
-                          alt={`${singleProduct?.store?.image}'s profile`}
+                          alt={singleProduct?.store?.image || logo}
                           width={48}
                           height={48}
                           className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
@@ -584,9 +584,9 @@ export default function ProductDetail() {
         More from frequently Our Store
         </p>
       </div>
-      <div className="p-6 overflow-x-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 ml-10">
+      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto p-6 overflow-x-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
         {storeProductsDetails.slice(0, 5).map((item) => (
-          <ProductCard width="25" key={item.id} product={item} />
+          <ProductCard width="25" style={{height:"10vh"}} key={item.id} product={item} />
         ))}
       </div>
 

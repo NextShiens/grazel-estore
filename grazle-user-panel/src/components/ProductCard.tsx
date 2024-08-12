@@ -23,7 +23,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
   const [touchedProductId, setTouchedProductId] = useState<number | null>(null);
   const [favoriteProducts, setFavoriteProducts] = useState<number[]>([]);
   const [isPending, setPending] = useState(false);
-  const [expanded, setExpanded] = useState<number | null>(null);
 
   const { basePrice, price, discountInfo } = calculateFinalPrice(product, null);
 
@@ -89,12 +88,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
     }
   }
 
-  const truncateTitle = (title: string, maxLength: number = 10) => {
+  const truncateTitle = (title: string, maxLength: number = 40) => {
     return title?.length > maxLength ? `${title.slice(0, maxLength)}` : title;
-  };
-
-  const handleSeeMore = (id: number) => {
-    setExpanded(expanded === id ? null : id);
   };
 
   return (
@@ -128,21 +123,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
         )}
 
         <div className="p-3">
-          <p className="text-[14px] md:text-[15px] w-[80%] font-semibold">
-            {expanded === product.id
-              ? product?.title
-              : truncateTitle(product?.title)}
-            {product?.title?.length > 40 && (
-              <button
-                className="text-blue-300 ml-1"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleSeeMore(product.id);
-                }}
-              >
-                {expanded === product.id ? "..." : "...."}
-              </button>
-            )}
+          <p className="text-[14px] md:text-[15px] w-[100%] h-[40px] overflow-hidden">
+            {product?.title}
           </p>
           <div className="flex items-center mt-[4px] md:mt-[8px] gap-1">
             <span className="text-[8px] md:text-[10px] text-[#F69B26]">
@@ -181,19 +163,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
           )}
         </IconButton>
       </div>
-      <div className="h-[40px] flex items-center justify-center">
+      <div className="h-[40px] flex items-center justify-center ">
         <button
           className="text-[#F70000] w-[90%] h-[32px] border-[1px] border-[#F70001] rounded-lg bg-white opacity-0 group-hover:opacity-100 group-[.active]:opacity-100 transition-opacity duration-300"
           onClick={(e) => onAddingCart(e)}
         >
           <div className="flex items-center justify-center">
-            <p className="font-semibold text-[12px] md:text-[13px]">
+            <p className="font-semibold text-[10px] md:text-[10px]">
               Add to cart
             </p>
             <Image
               alt="cart"
               src={Cart}
-              className="w-[16px] h-[16px] ml-[8px]"
+              className="w-[14px] h-[14px] ml-[8px]"
             />
           </div>
         </button>

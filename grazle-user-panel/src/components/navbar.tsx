@@ -11,9 +11,15 @@ import { BiLogOut, BiUser } from "react-icons/bi";
 import { FaUser } from "react-icons/fa";
 import { ShoppingLoader } from "vibrant-loaders";
 import { updateCart } from "@/features/features";
-import { debounce, searchProductApi, getPopularSearchApi } from "@/apis";
+import {
+  debounce,
+  searchProductApi,
+  getPopularSearchApi,
+  suggestionKeyApi,
+} from "@/apis";
 import { useAuth } from "@/app/AuthContext";
 import LoginDropdown from "./LoginDropdown";
+import home from "@/assets/icons8_Home 1.png";
 
 // Import all images
 import logo from "@/assets/Grazle Logo.png";
@@ -42,78 +48,114 @@ const SearchBar = ({
   onClickDetail,
   recentSearches,
   popularSearches,
-}) => (
-  <div className="hidden lg:flex">
-    <div ref={searchContainerRef} className="relative w-[380px]">
-      <input
-        placeholder="Search"
-        className="w-full lg:w-[380px] sm:w-[300px] h-[52px] rounded-full pl-[50px] pr-[40px] focus:outline-none border-[1px] border-[#D2D4DA]"
-        onClick={() => setIsOpenSearch(true)}
-        onChange={(e) => {
-          const value = e.target.value;
-          setSearchValue(value);
-          onSearchProduct(value);
-        }}
-        value={searchValue}
-        ref={searchRef}
-      />
-      <Image
-        src={Search}
-        alt="Search"
-        className="w-[36px] h-[36px] absolute top-[50%] left-[10px] transform -translate-y-1/2"
-      />
-      {searchValue && (
-        <button
-          className="absolute top-1/2 right-[10px] transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-          onClick={clearSearch}
-        >
-          <IoClose size={24} />
-        </button>
-      )}
-      {isOpenSearch && (
-        <div className="absolute top-full left-0 right-0 bg-white z-50 mt-2 shadow-lg border border-gray-200 rounded-lg">
-          <div className="p-4">
-            <IoClose
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 cursor-pointer"
-              size={24}
-              onClick={() => setIsOpenSearch(false)}
-            />
-            {searchResult && searchResult.length > 0 ? (
-              searchResult.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center gap-3 my-3 cursor-pointer"
-                  onClick={() => onClickDetail(item)}
-                >
-                  <Image
-                    src={Search}
-                    alt="Search"
-                    className="w-[36px] h-[36px]"
-                  />
-                  <div className="w-full">
-                    <p className="text-black text-[14px] font-normal">
-                      {item.title}
-                    </p>
-                    <hr />
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-4">
-                <p className="text-gray-500">No product available</p>
-              </div>
-            )}
+}) => {
+  const router = useRouter();
 
-            {recentSearches.length > 0 && (
-              <>
-                <div className="flex gap-3 items-center mt-4">
-                  <PiClockCountdownThin className="text-black text-[#777777]" />
-                  <p className="text-black text-[16px] font-semibold">
-                    Recent Searches
-                  </p>
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (searchValue.trim()) {
+        setIsOpenSearch(false);
+        router.push(
+          `/search?keyword=${encodeURIComponent(searchValue.trim())}`
+        );
+      }
+    }
+  };
+
+  return (
+    <div className="hidden lg:flex">
+      <div ref={searchContainerRef} className="relative w-[380px]">
+        <input
+          placeholder="Search"
+          className="w-full lg:w-[380px] sm:w-[300px] h-[52px] rounded-full pl-[50px] pr-[40px] focus:outline-none border-[1px] border-[#D2D4DA]"
+          onClick={() => setIsOpenSearch(true)}
+          onKeyPress={handleKeyPress}
+          onChange={(e) => {
+            const value = e.target.value;
+            setSearchValue(value);
+            onSearchProduct(value);
+          }}
+          value={searchValue}
+          ref={searchRef}
+        />
+        <Image
+          src={Search}
+          alt="Search"
+          className="w-[36px] h-[36px] absolute top-[50%] left-[10px] transform -translate-y-1/2"
+        />
+        {searchValue && (
+          <button
+            className="absolute top-1/2 right-[10px] transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            onClick={clearSearch}
+          >
+            <IoClose size={24} />
+          </button>
+        )}
+        {isOpenSearch && (
+          <div className="absolute top-full left-0 right-0 bg-white z-50 mt-2 shadow-lg border border-gray-200 rounded-lg">
+            <div className="p-4">
+              <IoClose
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 cursor-pointer"
+                size={24}
+                onClick={() => setIsOpenSearch(false)}
+              />
+              {searchResult && searchResult.length > 0 ? (
+                searchResult.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 my-3 cursor-pointer"
+                    onClick={() => onClickDetail(item)}
+                  >
+                    <Image
+                      src={Search}
+                      alt="Search"
+                      className="w-[36px] h-[36px]"
+                    />
+                    <div className="w-full">
+                      <p className="text-black text-[14px] font-normal">
+                        {item}
+                      </p>
+                      <hr />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-gray-500">No suggestions available</p>
                 </div>
-                <div className="rounded-xl mt-3 bg-[#F8F8F8] p-3">
-                  {recentSearches.map((search, index) => (
+              )}
+
+              {recentSearches.length > 0 && (
+                <>
+                  <div className="flex gap-3 items-center mt-4">
+                    <PiClockCountdownThin className="text-black text-[#777777]" />
+                    <p className="text-black text-[16px] font-semibold">
+                      Recent Searches
+                    </p>
+                  </div>
+                  <div className="rounded-xl mt-3 bg-[#F8F8F8] p-3">
+                    {recentSearches.map((search, index) => (
+                      <div key={index} className="flex gap-3 mt-3">
+                        <Link
+                          href={`/search?keyword=${encodeURIComponent(search)}`}
+                          className="text-black text-[14px] font-normal"
+                        >
+                          {search}
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              <div className="rounded-xl mt-3 bg-[#F8F8F8] p-3">
+                <p className="text-black text-[16px] font-semibold">
+                  Popular Searches
+                </p>
+                {Array.isArray(popularSearches) &&
+                popularSearches.length > 0 ? (
+                  popularSearches.map((search, index) => (
                     <div key={index} className="flex gap-3 mt-3">
                       <Link
                         href={`/search?keyword=${encodeURIComponent(search)}`}
@@ -122,36 +164,18 @@ const SearchBar = ({
                         {search}
                       </Link>
                     </div>
-                  ))}
-                </div>
-              </>
-            )}
-
-            <div className="rounded-xl mt-3 bg-[#F8F8F8] p-3">
-              <p className="text-black text-[16px] font-semibold">
-                Popular Searches
-              </p>
-              {Array.isArray(popularSearches) && popularSearches.length > 0 ? (
-                popularSearches.map((search, index) => (
-                  <div key={index} className="flex gap-3 mt-3">
-                    <Link
-                      href={`/search?keyword=${encodeURIComponent(search)}`}
-                      className="text-black text-[14px] font-normal"
-                    >
-                      {search}
-                    </Link>
-                  </div>
-                ))
-              ) : (
-                <span className="text-sm">No Popular Searches Found</span>
-              )}
+                  ))
+                ) : (
+                  <span className="text-sm">No Popular Searches Found</span>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 const MobileSearchBar = ({
   searchValue,
   setSearchValue,
@@ -160,14 +184,20 @@ const MobileSearchBar = ({
   onSearchProduct,
   searchResult,
   onClickDetail,
+  recentSearches,
+  popularSearches,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const router = useRouter();
 
   useEffect(() => {
-    setIsDropdownOpen(searchValue !== "" && searchResult.length > 0);
-  }, [searchValue, searchResult]);
+    setIsDropdownOpen(
+      searchValue !== "" ||
+        recentSearches.length > 0 ||
+        popularSearches.length > 0
+    );
+  }, [searchValue, searchResult, recentSearches, popularSearches]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -187,23 +217,32 @@ const MobileSearchBar = ({
       e.preventDefault();
       if (searchValue.trim()) {
         setIsDropdownOpen(false);
+        setSearchValue(searchValue.trim());
+        clearSearch();
         router.push(
           `/search?keyword=${encodeURIComponent(searchValue.trim())}`
         );
       }
+      setIsDropdownOpen(false);
     }
+    setIsDropdownOpen(false);
+  };
+
+  const onSelect = ({ e, item }) => {
+    e.preventDefault();
+    setIsDropdownOpen(false);
+    router.push(`/search?keyword=${encodeURIComponent(item)}`);
   };
 
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchValue(value);
     onSearchProduct(value);
-    setIsDropdownOpen(value !== "" && searchResult.length > 0);
   };
 
   return (
     <div className="lg:hidden px-4 pb-3 relative" ref={dropdownRef}>
-      <div className="relative z-[10000]">
+      <div className={`relative ${isDropdownOpen ? "z-[10000]" : ""}`}>
         <input
           type="text"
           placeholder="Search products..."
@@ -235,25 +274,73 @@ const MobileSearchBar = ({
             onClick={() => setIsDropdownOpen(false)}
           ></div>
           <div className="absolute left-0 right-0 bg-white z-[9999] mt-2 shadow-lg border border-gray-200 rounded-lg max-h-[60vh] overflow-y-auto">
-            {searchResult.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-100 border-b border-gray-200"
-                onClick={(e) => {
-                  onClickDetail(item, e);
-                  setIsDropdownOpen(false);
-                }}
-              >
-                <Image src={Search} alt="Search" className="w-5 h-5" />
-                <p className="text-black text-sm font-normal">{item.title}</p>
+            {searchValue &&
+              searchResult.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-100 border-b border-gray-200"
+                  onClick={(e) => {
+                    setIsDropdownOpen(false);
+                    onSelect({ e, item });
+                    clearSearch();
+                    setIsDropdownOpen(false);
+                  }}
+                >
+                  <Image src={Search} alt="Search" className="w-5 h-5" />
+                  <p className="text-black text-sm font-normal">{item}</p>
+                </div>
+              ))}
+
+            {/* {recentSearches.length > 0 && (
+              <div className="p-3">
+                <p className="text-black text-[16px] font-semibold mb-2">
+                  Recent Searches
+                </p>
+                {recentSearches.map((search, index) => (
+                  <div key={index} className="flex gap-3 mt-2">
+                    <Link
+                      href={`/search?keyword=${encodeURIComponent(search)}`}
+                      className="text-black text-[14px] font-normal"
+                      onClick={() => {
+                        setIsDropdownOpen(false);
+                        setSearchValue(search);
+                      }}
+                    >
+                      {search}
+                    </Link>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
+
+            {popularSearches.length > 0 && (
+              <div className="p-3">
+                <p className="text-black text-[16px] font-semibold mb-2">
+                  Popular Searches
+                </p>
+                {popularSearches.map((search, index) => (
+                  <div key={index} className="flex gap-3 mt-2">
+                    <Link
+                      href={`/search?keyword=${encodeURIComponent(search)}`}
+                      className="text-black text-[14px] font-normal"
+                      onClick={() => {
+                        setIsDropdownOpen(false);
+                        setSearchValue(search);
+                      }}
+                    >
+                      {search}
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )} */}
           </div>
         </>
       )}
     </div>
   );
 };
+
 const UserMenu = ({ user, handleToggle, isOpen, router, handleLogout }) => (
   <>
     <div
@@ -393,7 +480,7 @@ const MobileMenu = ({
           className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
           onClick={handleMenuclose}
         >
-          <Image src={MenuIcon} alt="Home" className="w-5 h-5" />
+          <Image src={home} alt="Home" className="w-5 h-5" />
           <span className="text-sm">Home</span>
         </Link>
         <Link
@@ -620,8 +707,8 @@ export default function Navbar() {
       return;
     }
     try {
-      const { data } = await searchProductApi(keyword);
-      setSearchResult(data?.products);
+      const { data } = await suggestionKeyApi(keyword);
+      setSearchResult((data?.suggestions || []).slice(0, 7));
     } catch (error) {
       console.log(error);
     }
@@ -632,7 +719,7 @@ export default function Navbar() {
       event.preventDefault();
       event.stopPropagation();
     }
-    const newSearch = item.title;
+    const newSearch = item; // item is now directly the suggestion string
     setRecentSearches((prevSearches) => {
       const updatedSearches = [
         newSearch,
@@ -800,6 +887,8 @@ export default function Navbar() {
         onSearchProduct={onSearchProduct}
         searchResult={searchResult}
         onClickDetail={onClickDetail}
+        recentSearches={recentSearches}
+        popularSearches={popularSearches}
       />
 
       <MobileMenu
@@ -813,4 +902,3 @@ export default function Navbar() {
     </nav>
   );
 }
-

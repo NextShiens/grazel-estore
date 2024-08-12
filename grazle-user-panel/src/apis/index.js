@@ -89,6 +89,11 @@ export const getPopularSearchApi = async () =>
   await axios.get("/global/popular-searches");
 export const favoriteProductApi = async (data) =>
   await axios.post("/favorite-product", data);
+  export const suggestionKeyApi = async (keyword) =>
+  await axios.get("/global/search-suggestion?keyword=" + keyword);
+
+
+export const suggestionKeyApiDebounce = debounce(suggestionKeyApi, 700);
 
 export const getAllFavoriteProductApi = async () =>
   await axios.get("/favorite-products");
@@ -190,9 +195,12 @@ export const payWithPaypalApi = async (data) =>
 export const ccavResponseApi = async (data) => {
   return await axios.post("/payment/ccav-response-handler", data);
 };
+export const phonePeInitiatePaymentApi = async (data) =>
+  await axios.post("/phonepe/initiate-payment", data);
+
 
 export const ccavCheckoutApi = async (data) =>
-  await axios.post("/payment/ccavenue-iframe-checkout", data);
+  await axios.post("/ccavenue/initiate-payment", data);
 
 export const getFirstTrendingCategoryApi = async () =>
   await axios.get(`/trending-products-by-first-category`);
@@ -200,7 +208,7 @@ export const getFirstTrendingCategoryApi = async () =>
 export const getSecondTrendingCategoryApi = async () =>
   await axios.get(`/trending-products-by-second-category`);
 
-export const getBannersApi = async (id,screen) =>
+export const getBannersApi = async (id, screen) =>
   await axios.get(`/global/banners/${id}/${screen}`);
 
 export const getDynamicViewApi = async () =>
@@ -229,32 +237,32 @@ export const deleteuserApi = async (formdata) =>
     }
   });
 
-  export const deactivateAccountApi = async () =>
-    await axios.post('/profile/deactivate-account', {
-        });
+export const deactivateAccountApi = async () =>
+  await axios.post('/profile/deactivate-account', {
+  });
 
-  export const getAllMembershipPlansApi = async () =>
-    await axios.get("/membership-plans");
-  
-  export const getMembershipPlanByIdApi = async (id) =>
-    await axios.get(`/membership-plans/${id}`);
-  
-  export const purchaseMembershipPlanApi = async (membershipPlanId) => {
-    const formData = new FormData();
-    formData.append("membership_plan_id", membershipPlanId);
-    return await axios.post("/purchase-membership-plan", formData);
-  };
-  
-  export const confirmPlanPaymentApi = async (id, transactionId, paymentStatus) => {
-    const formData = new FormData();
-    formData.append("transaction_id", transactionId);
-    formData.append("payment_status", paymentStatus);
-    return await axios.post(`/confirm-plan-payment/${id}`, formData);
-  };
-  
-  export const getUserMembershipPlansApi = async () =>
-    await axios.get("/user-membership-plan");
-  
-  export const getActiveMembershipPlanApi = async () =>
-    await axios.get("/active-membership-plan");
+export const getAllMembershipPlansApi = async () =>
+  await axios.get("/membership-plans");
+
+export const getMembershipPlanByIdApi = async (id) =>
+  await axios.get(`/membership-plans/${id}`);
+
+export const purchaseMembershipPlanApi = async (membershipPlanId) => {
+  const formData = new FormData();
+  formData.append("membership_plan_id", membershipPlanId);
+  return await axios.post("/purchase-membership-plan", formData);
+};
+
+export const confirmPlanPaymentApi = async (id, transactionId, paymentStatus) => {
+  const formData = new FormData();
+  formData.append("transaction_id", transactionId);
+  formData.append("payment_status", paymentStatus);
+  return await axios.post(`/confirm-plan-payment/${id}`, formData);
+};
+
+export const getUserMembershipPlansApi = async () =>
+  await axios.get("/user-membership-plan");
+
+export const getActiveMembershipPlanApi = async () =>
+  await axios.get("/active-membership-plan");
 

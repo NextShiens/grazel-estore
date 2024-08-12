@@ -285,13 +285,12 @@ export default function Home() {
   return (
     <>
       {/* MianSlider */}
-      <div className="lg:mx-[150px] md:mx-[60px] lg:px-0 md:px-3">
+      <div className="container lg:!w-[80%] m-auto lg:px-0 md:px-3">
         <MainSlider />
       </div>
 
       {/* Get Now Banner */}
-      <div className="lg:my-[30px] my-[10px] lg:px-0 md:px-3 sm:my-[10px] md:my-[20px] lg:mx-[150px] mx-[0px] md:mx-[30px]">
-        <div className="flex  items-center justify-between md:py-5 py-2 px-5  bg-gradient-to-r from-[#F81F1F] to-[#FFA31A] w-full lg:w-[100%] h-auto md:rounded-[20px] rounded-md shadow-lg">
+        <div className=" container lg:!w-[80%] my-3 mx-auto flex  items-center justify-between md:py-5 py-2 px-5  bg-gradient-to-r from-[#F81F1F] to-[#FFA31A]  h-auto md:rounded-[20px] rounded-md shadow-lg">
           <div className="flex items-center gap-4">
             <div className="rounded-full lg:h-[60px] lg:w-[60px] h-[40px] w-[40px] sm:w-[40px] sm:h-[40px] bg-[#FA6464] flex items-center justify-center">
               <Image
@@ -323,11 +322,10 @@ export default function Home() {
             )}
           </button>
         </div>
-      </div>
 
       {/* Categories */}
-      <div className="hide-scrollbar lg:mx-[150px] gap-2 sm:gap-2 lg:gap-0 mt-3 lg:mt-2 md:mx-auto overflow:-webkit-scrollbar: none; md:overflow-x-auto md:w-[645px] lg:w-auto sm:mx-auto sm:max-w-[calc(100vw - 120px)] flex items-center justify-between overflow-x-auto">
-        <div className="w-full flex items-center mx-2 text-center">
+      <div className="container hide-scrollbar lg:!w-[80%] md:!w-[80%] sm:!w-[80%] gap-2 sm:gap-2 lg:gap-0 mt-3 !my-8 md:mx-auto  sm:mx-auto  flex items-center justify-between overflow-x-auto">
+        <div className="w flex items-center mx-2 text-center">
           <div className="flex flex-col items-center justify-center">
             <div className="border-[1px] flex justify-center items-center lg:w-[92px] lg:h-[92px] w-[70px] h-[70px] border-[#F70000] rounded-full bg-[#F8F8F8] ">
               <Image
@@ -344,7 +342,7 @@ export default function Home() {
             </p>
           </div>
 
-          {!allCategories?.length && (
+          {/* {!allCategories?.length && (
             <>
               <div className="hidden md:flex justify-between w-full ml-2">
                 {Array(8)
@@ -371,7 +369,7 @@ export default function Home() {
                   ))}
               </div>
             </>
-          )}
+          )} */}
         </div>
 
         {allCategories?.map((item) => (
@@ -410,7 +408,7 @@ export default function Home() {
       </div>
 
       {/* Flash sale */}
-      <div className="flex justify-between items-center lg:mx-[150px] md:mx-[60px] mx-[14px] md:mt-14 mt-5">
+      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] m-auto flex justify-between items-center md:mt-14 mt-5">
         <span className="text-xl font-semibold">Flash Sale</span>
         <button
           className="flex items-center gap-3 border border-[#FC3030] text-[#FC3030] text-sm rounded-lg py-2 px-4"
@@ -432,7 +430,7 @@ export default function Home() {
         </button>
       </div>
 
-      <div className="flex md:p-4 p-2 rounded-lg md:gap-20 md:justify-start justify-between mx-[14px] items-center lg:mx-[150px] md:mx-[60px] mt-5 border border-[#00000033]">
+      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto flex md:p-4 p-2 rounded-lg md:gap-20 md:justify-start justify-between items-center mt-5 border border-[#00000033]">
         <span className="font-medium text-[#F81F1F] md:text-base text-xs">
           On Sale Now
         </span>
@@ -457,7 +455,8 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="lg:mx-[150px] md:mx-[60px] mx-[5px]">
+      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto "
+      style={{ padding: "10px" }}>
         {offerProducts?.length > 0 ? (
           <div>
             <OfferViewSlider Data={offerProducts} ref={sliderRef6} />
@@ -485,8 +484,8 @@ export default function Home() {
       {/* categories */}
       <div
         style={{ scrollbarWidth: "none" }}
-        style={{ marginTop: "-12px", marginBottom: "10px" }}
-        className="lg:mx-[150px] md:mx-[60px] mx-[14px] pb-2 md:my-[24px] mt-5 flex items-center  overflow-x-auto lg:justify-between gap-3"
+        style={{ marginTop: "10px" }}
+        className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto pb-2 md:my-[24px] mt-5 flex items-center  overflow-x-auto lg:justify-between gap-3"
       >
         {allCategories.map((item: any, index: any) => (
           <button
@@ -505,7 +504,7 @@ export default function Home() {
       </div>
 
       <div
-        className="lg:mx-[150px] md:mx-[60px] md:my-[24px] my-0"
+        className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto md:my-[24px] my-0"
         style={{ padding: "10px" }}
       >
         {selectedCategoryProducts?.length ? (
@@ -540,8 +539,8 @@ export default function Home() {
 
       {/* Dynamic View */}
       <div
-        className="lg:mx-[150px] md:mx-[60px] mx-[14px] my-[24px]"
-        style={{ marginTop: "-25px" }}
+        className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto my-[24px]"
+        style={{ marginTop: "-3px", padding:"10px" }}
       >
         <div
           className="flex items-center justify-between w-full mt-[15px] md:mt-0"
@@ -578,14 +577,14 @@ export default function Home() {
           </>
         )}
       </div>
-      <div
-        className="lg:mx-[150px] md:mx-[60px] mx-0"
+           <div
+        className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto"
         style={{ marginTop: "20px" }}
       >
-        <Image src={banner} alt="banner" />
+        <Image src={banner} alt="banner" style={{ width: "100%" }} />
       </div>
       {/* sale product */}
-      <div className="flex lg:flex-row flex-col lg:mx-[150px] md:mx-[60px] mx-[5px] my-[24px] border border-[#E5E7EB] py-5  lg:px-6 px-1 rounded-md">
+      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto flex lg:flex-row flex-col my-[24px] border border-[#E5E7EB] py-5  lg:px-6 px-1 rounded-md">
         {offerProducts[0]?.offer_products?.length > 0 && (
           <>
             <div className="flex flex-col lg:w-[60%] w-[100%] lg:border-r lg:border-[#77777740]">
@@ -602,7 +601,7 @@ export default function Home() {
                     className="w-full h-full object-cover outline-none rounded-2xl cursor-pointer border"
                   />
 
-                  <div className="flex absolute w-full justify-between items-center absolute px-[16px] top-[10px]">
+                  <div className="flex w-full justify-between items-center absolute px-[16px] top-[10px] sm:space-x-4">
                     <button className="text-[10px] lg:text-[11px] rounded-3xl text-white bg-[#F70000] py-1 px-2 lg:py-1.5 lg:px-2.5">
                       {offerProducts[0].offer.discount_value}% OFF
                     </button>
@@ -625,7 +624,7 @@ export default function Home() {
                     </IconButton>
                   </div>
                 </div>
-                <div className="flex flex-col lg:gap-3 gap-1 mb-4 lg:mb-0">
+                <div className="flex flex-col lg:gap-3 gap-1 mb-4 lg:mb-0 mb:4">
                   <span className="md:text-lg text-base font-bold">
                     {offerProducts[0].offer_products[0].title}
                   </span>
@@ -659,11 +658,11 @@ export default function Home() {
               {/* Add to cart button for small screens */}
               <div className="lg:hidden -mt-12">
                 <button
-                  className="w-[140px] text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg ml-52 mr-4"
+                  className="w-[150px] text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg ml-56"
                   onClick={(e) =>
                     onAddingCart(e, offerProducts[0].offer_products[0])
                   }
-                >
+                > 
                   <div className="flex items-center justify-center">
                     <p className="font-semibold text-[14px]">Add to cart</p>
                     <Image
@@ -677,7 +676,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col gap-4 lg:px-10 px-0 justify-center lg:w-[40%] w-[100%]">
-              <div className="flex items-center gap-2 bg-[#F7000014] w-fit rounded-full py-2 px-3 text-[#FC3030]">
+              <div className="flex items-center gap-2 bg-[#F7000014] w-fit rounded-full py-2 px-3 text-[#FC3030] sm:mt-2">
                 <Image src={sale} alt="sale" />
                 <span className="uppercase text-sm font-medium">
                   {offerProducts[0].offer.name.toUpperCase()}
@@ -729,11 +728,9 @@ export default function Home() {
           </>
         )}
       </div>
-      <div className="flex justify-between items-center lg:mx-[150px] md:mx-[60px] mx-[14px] md:mt-14 mt-5">
-        <span className="text-1xl font-bold mb-4 text-center lg:text-left">
-          {" "}
-          Minimum 70% OFF Products
-        </span>
+      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto flex justify-between items-center md:mt-14 mt-5"
+      style={{ padding: "10px" }}>
+        <span className="text-xl font-semibold">70% off Products</span>
         <button
           className="flex items-center gap-3 border border-[#FC3030] text-[#FC3030] text-sm rounded-lg py-2 px-4"
           onClick={async () => {
@@ -754,8 +751,10 @@ export default function Home() {
         </button>
       </div>
 
+
       {/* 50% off */}
-      <div className="lg:mx-[150px] md:mx-[60px] mx-[5px]">
+      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto"
+      style={{ padding: "10px" }}>
         {/* <h2 className="text-2xl font-bold mb-4 text-center lg:text-left">
           Minimum 70% OFF Products
         </h2> */}
@@ -806,7 +805,7 @@ export default function Home() {
           background:
             "linear-gradient(97.69deg, rgba(247, 0, 0, 0.1) 3.55%, rgba(145, 131, 0, 0.1) 91.28%)",
         }}
-        className="lg:mx-[150px] md:mx-[60px] mx-0 relative lg:px-[70px] px-[20px] sm:px-[40px] md:px-[40px] my-[16px] flex lg:flex-row justify-between"
+        className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto relative lg:px-[70px] px-[20px] sm:px-[40px] md:px-[40px] my-[16px] flex lg:flex-row justify-between"
       >
         <div className="md:py-7 py-2 flex flex-col items-start md:w-[60%] w-[50%]">
           <Image
