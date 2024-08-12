@@ -89,6 +89,11 @@ export const getPopularSearchApi = async () =>
   await axios.get("/global/popular-searches");
 export const favoriteProductApi = async (data) =>
   await axios.post("/favorite-product", data);
+  export const suggestionKeyApi = async (keyword) =>
+  await axios.get("/global/search-suggestion?keyword=" + keyword);
+
+
+export const suggestionKeyApiDebounce = debounce(suggestionKeyApi, 700);
 
 export const getAllFavoriteProductApi = async () =>
   await axios.get("/favorite-products");
