@@ -16,6 +16,7 @@ import { getBrandDetails } from "@/apis";
 import ProductCard from "@/components/ProductCard";
 import { ImCheckboxChecked, ImCheckboxUnchecked } from "react-icons/im";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
+
 export default function StoreProduct() {
   const [isChecked, setIsChecked] = useState(false);
 
@@ -107,7 +108,7 @@ export default function StoreProduct() {
   return (
     <div className="lg:my-[50px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[20px] sm:mx-[20px] md:mx-[30px]">
       <div className="relative w-[100%] h-[250px]">
-        <div className="relative w-full h-[150px] sm:h-[200px] md:h-[250px] lg:h-[300px] overflow-hidden">
+        <div className="relative w-[100%] h-[200px] sm:h-[200px] md:h-[250px] lg:h-[300px] overflow-hidden">
           <div className="absolute inset-0 bg-white rounded-2xl border-[.5px] shadow-md">
             {currentStore.image && (
               <Image
@@ -123,13 +124,13 @@ export default function StoreProduct() {
         </div>
         <div
           className="absolute left-1/2 transform -translate-x-1/2"
-          style={{ top: "calc(50% - -50px)" }}
+          style={{ top: "calc(50% - -40px)" }}
         >
-          <div className="w-[190px] h-[190px] flex justify-center items-center rounded-2xl  border-[.5px] border-[#F70000]  duration-300">
+          <div className="w-[170px] h-[170px] flex justify-center items-center rounded-2xl border-[.5px] border-[#F70000] duration-300">
             {currentStore.image && (
               <Image
-                width={190}
-                height={190}
+                width={170}
+                height={170}
                 src={currentStore.image}
                 alt="Logo"
                 className="w-full h-full object-fill rounded-2xl"
@@ -269,18 +270,22 @@ export default function StoreProduct() {
                 </div>
               </div>
               <div
-                  className="px-3 py-2 text-[13px] font-[500] flex items-center gap-2 cursor-pointer text-red-500 hover:bg-gray-100"
-                  onClick={clearSort}
-                >
-                  Clear Sort
-                </div>
+                className="px-3 py-2 text-[13px] font-[500] flex items-center gap-2 cursor-pointer text-red-500 hover:bg-gray-100"
+                onClick={clearSort}
+              >
+                Clear Sort
+              </div>
             </div>
           )}
         </div>
       </div>
-      <div className="p-6 lg:p-10 overflow-x-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8">
+      <div className="p-2 lg:p-6 overflow-x-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 lg:gap-4">
         {storeProduct?.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard
+            key={product.id}
+            product={product}
+            className="h-auto sm:h-full"
+          />
         ))}
       </div>
     </div>
