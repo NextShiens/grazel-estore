@@ -421,9 +421,11 @@ export default function StoreProductPage() {
 
 <div>
   {products.length > 0 ? (
-    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <div className="">
+          <ProductCard key={product.id} product={product} />
+        </div>
       ))}
     </div>
   ) : (

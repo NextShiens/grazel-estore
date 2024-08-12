@@ -235,7 +235,7 @@ export default function Footer() {
             <Accordion
               key={index}
               style={{
-                // backgroundColor: "transparent",
+                backgroundColor: "transparent",
                 border: "none",
                 boxShadow: "none",
                 borderBottom: "1px solid #0000001A",

@@ -18,7 +18,7 @@ export default function Menu() {
 
   // Define link styles
   const linkStyle = "flex flex-col items-center py-2 px-4 rounded-md cursor-pointer";
-  const activeTextColor = "text-[#007BFF]"; // Blue text color for active link
+  const activeTextColor = "text-[#F81F1F]"; // Blue text color for active link
   const inactiveTextColor = "text-[#8B8B8B]"; // Gray text color for inactive links
 
   return (

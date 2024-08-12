@@ -658,7 +658,7 @@ export default function Home() {
               {/* Add to cart button for small screens */}
               <div className="lg:hidden -mt-12">
                 <button
-                  className="w-[150px] text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg ml-44"
+                  className="w-[150px] text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg ml-56"
                   onClick={(e) =>
                     onAddingCart(e, offerProducts[0].offer_products[0])
                   }
@@ -728,7 +728,8 @@ export default function Home() {
           </>
         )}
       </div>
-      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto flex justify-between items-center md:mt-14 mt-5">
+      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto flex justify-between items-center md:mt-14 mt-5"
+      style={{ padding: "10px" }}>
         <span className="text-xl font-semibold">70% off Products</span>
         <button
           className="flex items-center gap-3 border border-[#FC3030] text-[#FC3030] text-sm rounded-lg py-2 px-4"
@@ -752,7 +753,8 @@ export default function Home() {
 
 
       {/* 50% off */}
-      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto">
+      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto"
+      style={{ padding: "10px" }}>
         {/* <h2 className="text-2xl font-bold mb-4 text-center lg:text-left">
           Minimum 70% OFF Products
         </h2> */}
