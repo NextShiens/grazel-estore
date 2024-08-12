@@ -14,6 +14,7 @@ import { updateCart } from "@/features/features";
 import { debounce, searchProductApi, getPopularSearchApi } from "@/apis";
 import { useAuth } from "@/app/AuthContext";
 import LoginDropdown from "./LoginDropdown";
+import home from "@/assets/icons8_Home 1.png";
 
 // Import all images
 import logo from "@/assets/Grazle Logo.png";
@@ -393,7 +394,7 @@ const MobileMenu = ({
           className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
           onClick={handleMenuclose}
         >
-          <Image src={MenuIcon} alt="Home" className="w-5 h-5" />
+          <Image src={home} alt="Home" className="w-5 h-5" />
           <span className="text-sm">Home</span>
         </Link>
         <Link
