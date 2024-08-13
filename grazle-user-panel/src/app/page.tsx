@@ -249,8 +249,9 @@ export default function Home() {
   useEffect(() => {
     async function fetchFiftyPercentSaleProducts() {
       try {
+        // actually we use 70% offer products instead 50 keep in mind 
         const { data } = await fiftyPercentSaleProductsApi();
-        setFiftyPercentSaleProducts(data.products || []);
+        setFiftyPercentSaleProducts(data?.offers[0]?.offer_products || []);
       } catch (error) {
         console.error("Error fetching 50% sale products:", error);
       }
@@ -791,9 +792,9 @@ export default function Home() {
             </>
           )}
         </button> */}
-        {offerProducts?.length > 0 ? (
+        {fiftyPercentSaleProducts?.length > 0 ? (
           <div>
-            <OfferViewSlider Data={offerProducts} ref={sliderRef6} />
+            <OfferViewSlider Data={fiftyPercentSaleProducts} ref={sliderRef6} />
           </div>
         ) : (
           <>
