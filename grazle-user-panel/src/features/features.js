@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  selectedCategory: null,  // Add this line to hold the selected category
+  selectedCategory: null, // Add this line to hold the selected category
 
   pageNavigation: "",
   showSidebar: false,
@@ -54,6 +54,7 @@ export const featuresSlice = createSlice({
     // },
     updateCart: (state, action) => {
       const { type, product } = action.payload;
+      console.log(type, product, "adsfadsfads");
 
       if (type === "onRefresh") {
         state.cartProducts = state.cartLocalStorage;
@@ -68,15 +69,17 @@ export const featuresSlice = createSlice({
             if (index === existingProductIndex) {
               return {
                 ...item,
-                qty: item.qty + 1,
+                qty: (item.qty || 0) + (product.qty || 1),
               };
             }
-
             return item;
           });
         } else {
-          // If product does not exist, add the new product with quantity 1
-          state.cartProducts = [...state.cartProducts, { ...product, qty: 1 }];
+          // If product does not exist, add the new product
+          state.cartProducts = [
+            ...state.cartProducts,
+            { ...product, qty: product.qty || 1 },
+          ];
         }
 
         // Update the local storage cart
@@ -84,20 +87,33 @@ export const featuresSlice = createSlice({
           localStorage.setItem("cartItems", JSON.stringify(state.cartProducts));
         }
       }
+
       // Update cart length
       state.cartLength = state.cartProducts?.length;
 
-      // Calculate the total bill
-      const totalBill = state.cartProducts.reduce((acc, item) => {
-        // const price = item.discount ? item.discounted_price : item.price;
-        return acc + item.discountPrice * item.qty;
-      }, 0);
-      const totalAmount = state.cartProducts.reduce((acc, item) => {
-        // const price = item.discount ? item.discounted_price : item.price;
-        return acc + item.originalPrice * item.qty;
-      }, 0);
+      // Calculate the total bill and total amount
+      const { totalBill, totalAmount } = state.cartProducts.reduce(
+        (acc, item) => ({
+          totalBill:
+            acc.totalBill +
+            (parseFloat(item.discountPrice) ||
+              parseFloat(item.discounted_price)) *
+              (item.qty || 1),
+          totalAmount:
+            acc.totalAmount +
+            parseFloat(item.originalPrice || item.price) * (item.qty || 1),
+        }),
+        { totalBill: 0, totalAmount: 0 }
+      );
+
       state.cartTotal = totalBill;
       state.cartDiscount = totalAmount - totalBill;
+
+      // Calculate total items (including quantities)
+      state.totalItems = state.cartProducts.reduce(
+        (acc, item) => acc + (item.qty || 1),
+        0
+      );
     },
     onVariantChange: (state, action) => {
       const { product } = action.payload;
@@ -213,6 +229,6 @@ export const {
   onVariantChange,
   updateCategories,
   clearCart,
-  setSelectedCategory
+  setSelectedCategory,
 } = featuresSlice.actions;
 export const featuresReducer = featuresSlice.reducer;
