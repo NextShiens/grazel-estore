@@ -211,42 +211,46 @@ export default function ProductDetail() {
       singleProduct?.total_rating?.total_rating_count) *
     100;
 
-  const { basePrice, price, discountInfo } = calculateFinalPrice(
-    singleProduct,
-    selectedVariant ? selectedVariant.id : null
-  );
-
-  const onAddingCart = (e, product) => {
-    e.stopPropagation();
-    if (!product) return;
-    setCurrentProductId(product.id);
-    const updateProduct = {
-      ...product,
-      qty: count,
-      discountPrice: price,
-      originalPrice: basePrice,
-      discountInfo: discountInfo,
-    };
-    dispatch(updateCart({ type: null, product: updateProduct }));
-    toast.success("Item has been added to cart!");
-  };
-
-  const onVariantChangeFunc = (id) => {
     const { basePrice, price, discountInfo } = calculateFinalPrice(
       singleProduct,
-      id
+      selectedVariant ? selectedVariant.id : null
     );
-    dispatch(
-      onVariantChange({
-        product: {
-          ...singleProduct,
-          discountPrice: price,
-          originalPrice: basePrice,
-          discountInfo: discountInfo,
-        },
-      })
-    );
-  };
+
+    const onAddingCart = (e, product) => {
+      e.stopPropagation();
+      if (!product) return;
+      setCurrentProductId(product.id);
+      const updateProduct = {
+        ...product,
+        qty: count,
+        discountPrice: price,
+        originalPrice: basePrice,
+        discountInfo: discountInfo,
+        selectedVariant: selectedVariant,
+      };
+      dispatch(updateCart({ type: null, product: updateProduct }));
+      toast.success("Item has been added to cart!");
+    };
+
+    const onVariantChangeFunc = (variant) => {
+      setSelectedVariant(variant);
+      setCurrentVariant(variant.id);
+      const { basePrice, price, discountInfo } = calculateFinalPrice(
+        singleProduct,
+        variant.id
+      );
+      dispatch(
+        onVariantChange({
+          product: {
+            ...singleProduct,
+            discountPrice: price,
+            originalPrice: basePrice,
+            discountInfo: discountInfo,
+            selectedVariant: variant,
+          },
+        })
+      );
+    };
 
   async function onLiked(e: React.MouseEvent, productId: number) {
     e.stopPropagation();
@@ -281,9 +285,9 @@ export default function ProductDetail() {
 
   const images = singleProduct
     ? [
-        singleProduct.featured_image,
-        ...(singleProduct.gallery?.map((item) => item.image) || []),
-      ]
+      singleProduct.featured_image,
+      ...(singleProduct.gallery?.map((item) => item.image) || []),
+    ]
     : [];
 
   const handlers = useSwipeable({
@@ -323,9 +327,8 @@ export default function ProductDetail() {
                 {images.map((_, index) => (
                   <div
                     key={index}
-                    className={`h-2 w-2 rounded-full mx-1 ${
-                      index === currentImageIndex ? "bg-red-500" : "bg-gray-300"
-                    }`}
+                    className={`h-2 w-2 rounded-full mx-1 ${index === currentImageIndex ? "bg-red-500" : "bg-gray-300"
+                      }`}
                   />
                 ))}
               </div>
@@ -339,11 +342,10 @@ export default function ProductDetail() {
                     width={90}
                     height={90}
                     src={image}
-                    className={`lg:w-[90px] lg:h-[90px] h-[70px] w-[70px] sm:h-[80px] sm:w-[80px] md:h-[85px] md:w-[85px] hover:border-2 border-[#F70000] cursor-pointer rounded-md ${
-                      index === currentImageIndex
-                        ? "border-2 border-[#F70000]"
-                        : ""
-                    }`}
+                    className={`lg:w-[90px] lg:h-[90px] h-[70px] w-[70px] sm:h-[80px] sm:w-[80px] md:h-[85px] md:w-[85px] hover:border-2 border-[#F70000] cursor-pointer rounded-md ${index === currentImageIndex
+                      ? "border-2 border-[#F70000]"
+                      : ""
+                      }`}
                     onClick={() => setCurrentImageIndex(index)}
                   />
                 ))}
@@ -365,7 +367,7 @@ export default function ProductDetail() {
                   style={{ marginBottom: "10px" }}
                 >
                   {favoriteProducts &&
-                  favoriteProducts.includes(singleProduct?.id) ? (
+                    favoriteProducts.includes(singleProduct?.id) ? (
                     <FaHeart className="text-[#F70000] text-[32px]" />
                   ) : (
                     <Image src={heart} alt="like" width={32} height={32} />
@@ -393,71 +395,43 @@ export default function ProductDetail() {
                 {singleProduct.total_rating?.total_rating_count || 0} Review
               </p>
             </div>
-
-            <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center justify-between mt-2 gap-3">
-              <div className="flex text-start justify-start gap-2 pb-8 border-b-[1px] border-[#0000001A]">
-                <p className="text-[18px] text-[#F70000] font-semibold">
-                  ₹ {Number(singleProduct.discounted_price)?.toFixed(2)}
-                </p>
-                {Number(singleProduct.discounted_price) <
-                  Number(singleProduct.price) && (
-                  <p className="text-[16px] text-[#909198] font-normal line-through">
-                    ₹ {Number(singleProduct.price)?.toFixed(2)}
-                  </p>
-                )}
-                {Number(singleProduct.discounted_price) <
-                  Number(singleProduct.price) && (
-                  <p className="text-[16px] text-[#4FAD2E] font-normal">
-                    {singleProduct.discount}% OFF
-                  </p>
-                )}
-              </div>
-
-              <div
-                className="w-[124px] rounded-full border-[1px] border-[#E6E6E6] p-2 flex items-center justify-between"
-                style={{ marginTop: "-50px" }}
-              >
-                <div
-                  className="w-[34px] h-[34px] rounded-full bg-[#F2F2F2] flex items-center cursor-pointer justify-center"
-                  onClick={handleDecrement}
-                >
-                  <HiOutlineMinus className="text-[16px] font-bold" />
-                </div>
-                <p className="text-[16px] font-bold">{count}</p>
-                <div
-                  className="w-[34px] h-[34px] rounded-full bg-[#F2F2F2] flex items-center cursor-pointer justify-center"
-                  onClick={handleIncrement}
-                >
-                  <HiOutlinePlus className="text-[16px] font-bold" />
-                </div>
-              </div>
-            </div>
+            <div className="flex text-start justify-start gap-2 pb-8 border-b-[1px] border-[#0000001A]">
+            <p className="text-[18px] text-[#F70000] font-semibold">
+              ₹ {Number(selectedVariant ? selectedVariant.price : singleProduct.discounted_price)?.toFixed(2)}
+            </p>
+            {Number(selectedVariant ? selectedVariant.price : singleProduct.discounted_price) < Number(singleProduct.price) && (
+              <p className="text-[16px] text-[#909198] font-normal line-through">
+                ₹ {Number(singleProduct.price)?.toFixed(2)}
+              </p>
+            )}
+            {Number(selectedVariant ? selectedVariant.price : singleProduct.discounted_price) < Number(singleProduct.price) && (
+              <p className="text-[16px] text-[#4FAD2E] font-normal">
+                {calculateDiscountPercentage(singleProduct.price, selectedVariant ? selectedVariant.price : singleProduct.discounted_price)}% OFF
+              </p>
+            )}
+          </div>
 
             <div className="mt-4">
               <p className="text-[14px] text-[#000000] font-semibold">
                 Variants
               </p>
               <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center justify-between mt-2 gap-3">
-                <div className="flex items-center gap-3">
-                  {singleProduct.variants?.map((item, index) => (
-                    <div
-                      key={index}
-                      onClick={() => {
-                        setCurrentVariant(item.id);
-                        setSelectedVariant(item);
-                        onVariantChangeFunc(item.id);
-                      }}
-                      className={`py-2 px-3 bg-[#FEF2F2] rounded-lg border-[1px] cursor-pointer ${
-                        currentVariant === item.id
-                          ? "border-[#F70000] text-[#F70000]"
-                          : "border-[#E6E6E6]"
-                      }`}
-                    >
-                      {item.variant}
-                    </div>
-                  ))}
-                </div>
-                {/* <div className="w-[124px] rounded-full border-[1px] border-[#E6E6E6] p-2 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {singleProduct.variants?.map((item, index) => (
+                  <div
+                    key={index}
+                    onClick={() => onVariantChangeFunc(item)}
+                    className={`py-2 px-3 bg-[#FEF2F2] rounded-lg border-[1px] cursor-pointer ${
+                      currentVariant === item.id
+                        ? "border-[#F70000] text-[#F70000]"
+                        : "border-[#E6E6E6]"
+                    }`}
+                  >
+                    {item.variant}
+                  </div>
+                ))}
+              </div>
+                <div className="w-[124px] rounded-full border-[1px] border-[#E6E6E6] p-2 flex items-center justify-between">
                   <div
                     className="w-[34px] h-[34px] rounded-full bg-[#F2F2F2] flex items-center cursor-pointer justify-center"
                     onClick={handleDecrement}
@@ -471,7 +445,7 @@ export default function ProductDetail() {
                   >
                     <HiOutlinePlus className="text-[16px] font-bold" />
                   </div>
-                </div> */}
+                </div>
               </div>
 
               <div className="flex gap-4">
@@ -496,7 +470,7 @@ export default function ProductDetail() {
                     className="bg-white bg-opacity-70 hover:bg-opacity-100 h-[64px] w-[64px]"
                   >
                     {favoriteProducts &&
-                    favoriteProducts.includes(singleProduct?.id) ? (
+                      favoriteProducts.includes(singleProduct?.id) ? (
                       <FaHeart className="text-[#F70000] text-[32px]" />
                     ) : (
                       <Image src={heart} alt="like" width={32} height={32} />
@@ -537,29 +511,26 @@ export default function ProductDetail() {
 
         <div className="flex justify-center mt-10 items-center pb-2 gap-4 border-b-[1px] border-[##E5E5E5]">
           <p
-            className={`${
-              selectedTab === "description"
-                ? "text-[#F70000]"
-                : "text-[#777777]"
-            } text-[14px] font-semibold cursor-pointer`}
+            className={`${selectedTab === "description"
+              ? "text-[#F70000]"
+              : "text-[#777777]"
+              } text-[14px] font-semibold cursor-pointer`}
             onClick={() => setSelectedTab("description")}
           >
             Descriptions
           </p>
           <p
-            className={`${
-              selectedTab === "productInfo"
-                ? "text-[#F70000]"
-                : "text-[#777777]"
-            }  text-[14px] font-semibold cursor-pointer`}
+            className={`${selectedTab === "productInfo"
+              ? "text-[#F70000]"
+              : "text-[#777777]"
+              }  text-[14px] font-semibold cursor-pointer`}
             onClick={() => setSelectedTab("productInfo")}
           >
             Product info
           </p>
           <p
-            className={` ${
-              selectedTab === "faq" ? "text-[#F70000]" : "text-[#777777]"
-            } text-[14px] font-semibold cursor-pointer`}
+            className={` ${selectedTab === "faq" ? "text-[#F70000]" : "text-[#777777]"
+              } text-[14px] font-semibold cursor-pointer`}
             onClick={() => setSelectedTab("faq")}
           >
             FAQs
