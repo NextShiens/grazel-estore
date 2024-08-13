@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import { PiSealCheckFill } from "react-icons/pi";
 import { FaAngleDown, FaStar } from "react-icons/fa6";
@@ -20,15 +20,14 @@ export default function StoreProduct() {
     itemsPerPage: 30,
     totalPages: 1
   });
+  const [isLoading, setIsLoading] = useState(true);
 
-  const id = useSearchParams().get("id");
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
 
-  useEffect(() => {
-    fetchData(meta.currentPage);
-  }, [id]);
-
-  const fetchData = async (page) => {
+  const fetchData = useCallback(async (page) => {
     if (!id) return;
+    setIsLoading(true);
     try {
       const params = new URLSearchParams({
         page: page.toString(),
@@ -40,8 +39,14 @@ export default function StoreProduct() {
       setMeta(res.data.meta);
     } catch (error) {
       console.error("Error fetching brand details:", error);
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [id, meta.itemsPerPage]);
+
+  useEffect(() => {
+    fetchData(meta.currentPage);
+  }, [fetchData, meta.currentPage]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -64,7 +69,7 @@ export default function StoreProduct() {
     { value: "topRated", label: "Top Rated" },
   ];
 
-  const sortProducts = () => {
+  const sortProducts = useCallback(() => {
     const sortedArray = [...storeProduct].sort((a, b) => {
       switch (sortCriteria) {
         case "name":
@@ -85,19 +90,21 @@ export default function StoreProduct() {
       }
     });
     setStoreProduct(sortedArray);
-  };
+  }, [sortCriteria, storeProduct]);
 
-  useEffect(sortProducts, [sortCriteria, storeProduct]);
+  useEffect(() => {
+    sortProducts();
+  }, [sortProducts]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= meta.totalPages) {
-      fetchData(newPage);
+      setMeta(prevMeta => ({ ...prevMeta, currentPage: newPage }));
     }
   };
 
   const renderPageNumbers = () => {
     const pageNumbers = [];
-    const ellipsis = <span className="mx-1">...</span>;
+    const ellipsis = <span key="ellipsis" className="mx-1">...</span>;
 
     if (meta.totalPages <= 5) {
       for (let i = 1; i <= meta.totalPages; i++) {
@@ -186,6 +193,14 @@ export default function StoreProduct() {
     return pageNumbers;
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="relative mb-24 sm:mb-32">
@@ -232,7 +247,7 @@ export default function StoreProduct() {
           </div>
           <div className="h-8 border-l border-gray-300"></div>
           <div>
-            <p className="font-semibold">{currentStore.store_products}</p>
+            <p className="font-semibold">{meta?.totalItems}</p>
             <p className="text-xs sm:text-sm text-gray-500">Products</p>
           </div>
         </div>

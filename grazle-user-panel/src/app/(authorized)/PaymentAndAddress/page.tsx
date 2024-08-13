@@ -12,13 +12,13 @@ import { MdKeyboardArrowRight, MdKeyboardArrowLeft } from "react-icons/md";
 
 import {
   getProfileApi,
-  placeOrderApi,
   editAddressApi,
   ccavCheckoutApi,
   ccavResponseApi,
   phonePeInitiatePaymentApi,
   phonePeCheckStatusApi,
   getAddressByIdApi,
+  placeOrderApi,
 } from "@/apis";
 import { updateCart, clearCart } from "@/features/features";
 
@@ -63,16 +63,9 @@ export default function PaymentAndAddress() {
   const cartTotal = useSelector((state: any) => state.cartTotal);
   const cartDiscount = useSelector((state: any) => state.cartDiscount);
   const [agreedTerms, setAgreedTerms] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const [creditCardData, setCreditCardData] = useState({
-    cardType: "Credit Card",
-    cardName: "",
-    cardNumber: "",
-    expiryMonth: "",
-    expiryYear: "",
-    cvv: "",
-    nameOfCard: "",
-  });
+
 
   useEffect(() => {
     const addressId = searchParams.get("addressId");
@@ -84,12 +77,7 @@ export default function PaymentAndAddress() {
     })();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCreditCardData({
-      ...creditCardData,
-      [e.target.name]: e.target.value,
-    });
-  };
+
 
   const handleCloseModel = () => {
     router.push("/");
@@ -121,6 +109,10 @@ export default function PaymentAndAddress() {
     const { name, value } = e.target;
     setOtherFields((prev) => ({ ...prev, [name]: value }));
   }
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    router.push("/");
+  };
 
   async function onPayment(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -160,7 +152,7 @@ export default function PaymentAndAddress() {
       } else if (paymentMethod === "phonepe") {
         await handlePhonePe();
       } else if (paymentMethod === "cod") {
-        handleCOD();
+        handleCOD(formdata);
       }
 
     } catch (error) {
@@ -256,10 +248,20 @@ export default function PaymentAndAddress() {
       toast.error("An error occurred while initiating payment");
     }
   };
-
-  const handleCOD = () => {
-    setShowSendModel(true);
-    dispatch(clearCart());
+  const handleCOD = async (formdata) => {
+    try {
+      const { data } = await placeOrderApi(formdata);
+      if (data.message === "Order Placed Successfully") {
+        setShowSuccessModal(true);
+        dispatch(clearCart());
+        toast.success("Order placed successfully");
+      } else {
+        toast.error("Failed to place order");
+      }
+    } catch (error) {
+      console.error("Error placing COD order:", error);
+      toast.error("An error occurred while placing the order");
+    }
   };
 
   return (
@@ -620,7 +622,7 @@ export default function PaymentAndAddress() {
           </div>
         </div>
 
-        <CustomModal showModal={showSendModel}>
+        <CustomModal isOpen={showSuccessModal} onClose={handleCloseSuccessModal}>
           <div className="flex flex-col justify-center items-center w-full h-full">
             <div className="flex flex-col justify-center items-center w-full max-w-[400px] h-auto p-4 bg-white rounded-lg sm:max-h-[90vh] sm:overflow-y-auto">
               <div className="flex justify-center mb-[22px]">
@@ -638,7 +640,7 @@ export default function PaymentAndAddress() {
               <div className="flex mt-[30px] gap-4 justify-center">
                 <button
                   className="bg-[#F69B26] rounded-lg h-[50px] w-[300px] text-white font-medium sm:h-[40px] sm:w-full"
-                  onClick={handleCloseModel}
+                  onClick={handleCloseSuccessModal}
                 >
                   Back to Home
                 </button>
