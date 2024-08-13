@@ -27,7 +27,7 @@ export default function StoreProductPage() {
   const [meta, setMeta] = useState({
     totalItems: 0,
     currentPage: 1,
-    itemsPerPage: 12,
+    itemsPerPage: 30,
     totalPages: 1
   });
 

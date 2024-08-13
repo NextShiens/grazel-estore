@@ -212,10 +212,10 @@ export const getBannersApi = async (id, screen) =>
   await axios.get(`/global/banners/${id}/${screen}`);
 
 export const getDynamicViewApi = async () =>
-  await axios.get(`/global/products-dynamic`);
+  await axios.get(`/global/products-dynamic?page=1&limit=30`);
 
 export const getSeasonTop = async () =>
-  await axios.get(`/global/season-top-products`);
+  await axios.get(`/global/season-top-products?page=1&limit=30`);
 
 export const getSingleCategoryProductsApi = async (id) =>
   await axios.get(`/global/products?categoryId=${id}`);

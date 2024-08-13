@@ -17,7 +17,7 @@ export default function StoreProduct() {
   const [meta, setMeta] = useState({
     totalItems: 0,
     currentPage: 1,
-    itemsPerPage: 10,
+    itemsPerPage: 30,
     totalPages: 1
   });
 
@@ -32,7 +32,7 @@ export default function StoreProduct() {
     try {
       const params = new URLSearchParams({
         page: page.toString(),
-        limit:  meta.itemsPerPage.toString()
+        limit: meta.itemsPerPage.toString()
       });
       const res = await getBrandDetails(id, params);
       setCurrentStore(res.data.store);
@@ -70,16 +70,16 @@ export default function StoreProduct() {
         case "name":
           return a.title.localeCompare(b.title);
         case "priceLowToHigh":
-          return a.price - b.price;
+          return parseFloat(a.price) - parseFloat(b.price);
         case "priceHighToLow":
-          return b.price - a.price;
+          return parseFloat(b.price) - parseFloat(a.price);
         case "rating":
         case "topRated":
-          return b.rating - a.rating;
+          return parseFloat(b.rating) - parseFloat(a.rating);
         case "discount":
-          return b.discount - a.discount;
+          return parseFloat(b.discount) - parseFloat(a.discount);
         case "latestArrival":
-          return new Date(b.arrivalDate) - new Date(a.arrivalDate);
+          return new Date(b.created_at) - new Date(a.created_at);
         default:
           return 0;
       }
@@ -87,7 +87,7 @@ export default function StoreProduct() {
     setStoreProduct(sortedArray);
   };
 
-  useEffect(sortProducts, [sortCriteria]);
+  useEffect(sortProducts, [sortCriteria, storeProduct]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= meta.totalPages) {
