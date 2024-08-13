@@ -175,6 +175,7 @@ export default function PaymentAndAddress() {
     const randomNum = Math.floor(Math.random() * 1000000);
     return `ORD-${timestamp}-${randomNum}`;
   };
+
   const handleCCAvenue = async (orderId: string) => {
     const formdata = new FormData();
     formdata.append("order_id", generateRandomOrderId());
@@ -187,50 +188,38 @@ export default function PaymentAndAddress() {
       const checkOutResponse = await ccavCheckoutApi(formdata);
       console.info("CCAvenue payment initiation response:", checkOutResponse);
 
-      if (!checkOutResponse.data.encRequest || !checkOutResponse.data.accessCode || !checkOutResponse.data.ccavenueUrl) {
-        throw new Error("Missing required data from checkout response");
-      }
-
+      // Create a form element
       const form = document.createElement('form');
       form.method = 'POST';
       form.action = checkOutResponse.data.ccavenueUrl;
 
+      // Add the encRequest as a hidden input
       const encRequestInput = document.createElement('input');
       encRequestInput.type = 'hidden';
-      encRequestInput.name = 'encReq';
+      encRequestInput.name = 'encRequest';
       encRequestInput.value = checkOutResponse.data.encRequest;
       form.appendChild(encRequestInput);
 
+      // Add the access_code as a hidden input
       const accessCodeInput = document.createElement('input');
       accessCodeInput.type = 'hidden';
       accessCodeInput.name = 'access_code';
       accessCodeInput.value = checkOutResponse.data.accessCode;
       form.appendChild(accessCodeInput);
 
-      console.log("Form data:", {
-        action: form.action,
-        encReq: encRequestInput.value,
-        access_code: accessCodeInput.value
-      });
-
+      // Append the form to the body
       document.body.appendChild(form);
 
-      // Add an event listener for form submission errors
-      form.addEventListener('submit', (event) => {
-        if (event.submitter !== form) {
-          console.error("Form submission intercepted or failed");
-          toast.error("Payment initiation failed. Please try again.");
-        }
-      });
-
+      // Submit the form
       form.submit();
 
+      // Optional: Remove the form from the DOM after submission
       document.body.removeChild(form);
 
-      toast.info("Redirecting to payment gateway...");
+      toast.success("Redirecting to payment gateway...");
     } catch (error) {
       console.error("CCAvenue payment initiation failed:", error);
-      toast.error("Failed to initiate CCAvenue payment. Please try again later.");
+      toast.error("Failed to initiate CCAvenue payment");
     }
   };
   const handlePhonePe = async (orderId: string) => {
