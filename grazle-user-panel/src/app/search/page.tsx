@@ -24,6 +24,12 @@ export default function StoreProductPage() {
   const catredux = useSelector((state) => state.catagories);
   const [categories, setCategories] = useState(catredux);
   const [categoriesFilter, setCategoriesFilter] = useState(null);
+  const [meta, setMeta] = useState({
+    totalItems: 0,
+    currentPage: 1,
+    itemsPerPage: 30,
+    totalPages: 1
+  });
 
   const getFirstWord = (categoryName) => {
     if (!categoryName) return "";
@@ -46,6 +52,7 @@ export default function StoreProductPage() {
     price: "",
     top_rated: "",
     popular: "",
+    page: 1,
   });
 
   const [openSections, setOpenSections] = useState({
@@ -58,13 +65,13 @@ export default function StoreProductPage() {
 
   useEffect(() => {
     setCategoriesFilter(selectedCategory);
-    setFilters(selectedCategory);
+    setFilters(prev => ({ ...prev, keyword: selectedCategory }));
   }, [selectedCategory]);
 
   useEffect(() => {
     fetchProducts();
     fetchBrands();
-  }, []);
+  }, [filters.page]);
 
   useEffect(() => {
     const category = searchParams.get("category");
@@ -82,6 +89,7 @@ export default function StoreProductPage() {
         },
       });
       setProducts(response.data.products);
+      setMeta(response.data.meta);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -99,7 +107,7 @@ export default function StoreProductPage() {
   const handleFilterChange = (key, value) => {
     setFilters((prev) => {
       const newValue = prev[key] === value ? "" : value;
-      let updatedFilters = { ...prev, [key]: newValue };
+      let updatedFilters = { ...prev, [key]: newValue, page: 1 };
 
       if (key === "category_id") {
         const selectedCategory = categories.find(
@@ -145,6 +153,7 @@ export default function StoreProductPage() {
       price: "",
       top_rated: "",
       popular: "",
+      page: 1,
     });
     router.push("/search", { scroll: false });
   };
@@ -340,6 +349,102 @@ export default function StoreProductPage() {
     </div>
   );
 
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= meta.totalPages) {
+      setFilters(prev => ({ ...prev, page: newPage }));
+    }
+  };
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const ellipsis = <span className="mx-1">...</span>;
+
+    if (meta.totalPages <= 5) {
+      for (let i = 1; i <= meta.totalPages; i++) {
+        pageNumbers.push(
+          <PageButton
+            key={i}
+            page={i}
+            currentPage={meta.currentPage}
+            onClick={() => handlePageChange(i)}
+          />
+        );
+      }
+    } else {
+      if (meta.currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={meta.currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+        pageNumbers.push(ellipsis);
+        pageNumbers.push(
+          <PageButton
+            key={meta.totalPages}
+            page={meta.totalPages}
+            currentPage={meta.currentPage}
+            onClick={() => handlePageChange(meta.totalPages)}
+          />
+        );
+      } else if (meta.currentPage >= meta.totalPages - 2) {
+        pageNumbers.push(
+          <PageButton
+            key={1}
+            page={1}
+            currentPage={meta.currentPage}
+            onClick={() => handlePageChange(1)}
+          />
+        );
+        pageNumbers.push(ellipsis);
+        for (let i = meta.totalPages - 3; i <= meta.totalPages; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={meta.currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+      } else {
+        pageNumbers.push(
+          <PageButton
+            key={1}
+            page={1}
+            currentPage={meta.currentPage}
+            onClick={() => handlePageChange(1)}
+          />
+        );
+        pageNumbers.push(ellipsis);
+        for (let i = meta.currentPage - 1; i <= meta.currentPage + 1; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={meta.currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+        pageNumbers.push(ellipsis);
+        pageNumbers.push(
+          <PageButton
+            key={meta.totalPages}
+            page={meta.totalPages}
+            currentPage={meta.currentPage}
+            onClick={() => handlePageChange(meta.totalPages)}
+          />
+        );
+      }
+    }
+
+    return pageNumbers;
+  };
   return (
     <div className="container mx-auto px-4 py-8 lg:py-12">
       <div className="flex flex-col lg:flex-row gap-8">
@@ -362,34 +467,7 @@ export default function StoreProductPage() {
         </div>
 
         <div className="lg:w-3/4">
-          {/* <div className="hidden md:block bg-[#FF9C2A] rounded-lg overflow-hidden mb-8">
-            <div className="flex flex-col md:flex-row items-center justify-between p-8 lg:p-12">
-              <div className="text-center md:text-left mb-6 md:mb-0">
-                <p className="text-white text-xl lg:text-2xl font-semibold mb-2">
-                  Special Offer
-                </p>
-                <p className="text-white text-3xl lg:text-5xl xl:text-6xl font-bold mb-2">
-                  Super Sale
-                </p>
-                <p className="text-white text-xl lg:text-2xl font-semibold mb-4">
-                  Up To 50% Off
-                </p>
-                <button className="bg-[#F70000] hover:bg-red-700 text-white font-medium py-3 px-6 rounded-full text-lg transition-colors">
-                  Shop Now
-                </button>
-              </div>
-              <div className="w-full md:w-1/2 lg:w-auto">
-                <Image
-                  src={Baner}
-                  alt="Special Offer Banner"
-                  className="w-full h-auto object-contain"
-                  width={560}
-                  height={385}
-                />
-              </div>
-            </div>
-          </div> */}
-
+        
           <div className="flex justify-between items-center mb-4 lg:hidden">
             <p className="text-gray-600 text-lg font-medium">Filter Products</p>
             <button
@@ -419,25 +497,58 @@ export default function StoreProductPage() {
             </div>
           )}
 
-<div>
-  {products.length > 0 ? (
-    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-      {products.map((product) => (
-        <div className="">
-          <ProductCard key={product.id} product={product} />
-        </div>
-      ))}
-    </div>
-  ) : (
-    <div className="text-center py-12">
-      <p className="text-xl text-gray-600">
-        No related products found.
-      </p>
-    </div>
-  )}
-</div>
+          <div>
+            {products.length > 0 ? (
+              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+                {products.map((product) => (
+                  <div key={product.id}>
+                    <ProductCard product={product} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-xl text-gray-600">
+                  No related products found.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Pagination */}
+          {products.length > 0 && (
+            <div className="mt-8 flex justify-center items-center">
+              <button
+                onClick={() => handlePageChange(meta.currentPage - 1)}
+                disabled={meta.currentPage === 1}
+                className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+              >
+                Previous
+              </button>
+              {renderPageNumbers()}
+              <button
+                onClick={() => handlePageChange(meta.currentPage + 1)}
+                disabled={meta.currentPage === meta.totalPages}
+                className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
+
+const PageButton = ({ page, currentPage, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`mx-1 px-3 py-1 rounded ${currentPage === page
+      ? "bg-red-500 text-white"
+      : "bg-gray-200 text-gray-700"
+      }`}
+  >
+    {page}
+  </button>
+);

@@ -4,9 +4,15 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaCircleCheck } from "react-icons/fa6";
 import Dots from "@/assets/Group 1820549907.png";
+import { clearCart } from "@/features/features";
+import { useDispatch } from "react-redux";
+
+
 
 export default function PaymentSuccessPage() {
   const router = useRouter();
+  const dispatch = useDispatch();
+  dispatch(clearCart());
 
   const handleBackToHome = () => {
     router.push("/");

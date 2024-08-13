@@ -12,13 +12,13 @@ import { MdKeyboardArrowRight, MdKeyboardArrowLeft } from "react-icons/md";
 
 import {
   getProfileApi,
-  placeOrderApi,
   editAddressApi,
   ccavCheckoutApi,
   ccavResponseApi,
   phonePeInitiatePaymentApi,
   phonePeCheckStatusApi,
   getAddressByIdApi,
+  placeOrderApi,
 } from "@/apis";
 import { updateCart, clearCart } from "@/features/features";
 
@@ -63,16 +63,9 @@ export default function PaymentAndAddress() {
   const cartTotal = useSelector((state: any) => state.cartTotal);
   const cartDiscount = useSelector((state: any) => state.cartDiscount);
   const [agreedTerms, setAgreedTerms] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const [creditCardData, setCreditCardData] = useState({
-    cardType: "Credit Card",
-    cardName: "",
-    cardNumber: "",
-    expiryMonth: "",
-    expiryYear: "",
-    cvv: "",
-    nameOfCard: "",
-  });
+
 
   useEffect(() => {
     const addressId = searchParams.get("addressId");
@@ -84,12 +77,7 @@ export default function PaymentAndAddress() {
     })();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCreditCardData({
-      ...creditCardData,
-      [e.target.name]: e.target.value,
-    });
-  };
+
 
   const handleCloseModel = () => {
     router.push("/");
@@ -121,6 +109,10 @@ export default function PaymentAndAddress() {
     const { name, value } = e.target;
     setOtherFields((prev) => ({ ...prev, [name]: value }));
   }
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    router.push("/");
+  };
 
   async function onPayment(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -160,7 +152,7 @@ export default function PaymentAndAddress() {
       } else if (paymentMethod === "phonepe") {
         await handlePhonePe();
       } else if (paymentMethod === "cod") {
-        handleCOD();
+        handleCOD(formdata);
       }
 
     } catch (error) {
@@ -170,27 +162,53 @@ export default function PaymentAndAddress() {
       setLoading(false);
     }
   }
-
+  const generateRandomOrderId = () => {
+    const timestamp = Date.now();
+    const randomNum = Math.floor(Math.random() * 1000000);
+    return `ORD-${timestamp}-${randomNum}`;
+  };
 
   const handleCCAvenue = async (orderId: string) => {
-    debugger
     const formdata = new FormData();
-    formdata.append("order_id", 54545);
+    formdata.append("order_id", generateRandomOrderId());
     formdata.append("amount", cartTotal.toString());
-    // Add redirect and cancel URIs
     formdata.append("redirect_url", `${window.location.origin}/payment-success`);
     formdata.append("cancel_url", `${window.location.origin}/payment-failure`);
+    formdata.append("currency", "INR");
 
     try {
       const checkOutResponse = await ccavCheckoutApi(formdata);
       console.info("CCAvenue payment initiation response:", checkOutResponse);
-      const resData = new FormData();
-      resData.append("enc_resp", checkOutResponse.data.encryptedData);
-      const ccavRes = await ccavResponseApi(resData);
 
-      toast.success("Payment initiated");
-      dispatch(clearCart());
-      router.replace(checkOutResponse.data.actionUrl);
+      // Create a form element
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = checkOutResponse.data.ccavenueUrl;
+
+      // Add the encRequest as a hidden input
+      const encRequestInput = document.createElement('input');
+      encRequestInput.type = 'hidden';
+      encRequestInput.name = 'encRequest';
+      encRequestInput.value = checkOutResponse.data.encRequest;
+      form.appendChild(encRequestInput);
+
+      // Add the access_code as a hidden input
+      const accessCodeInput = document.createElement('input');
+      accessCodeInput.type = 'hidden';
+      accessCodeInput.name = 'access_code';
+      accessCodeInput.value = checkOutResponse.data.accessCode;
+      form.appendChild(accessCodeInput);
+
+      // Append the form to the body
+      document.body.appendChild(form);
+
+      // Submit the form
+      form.submit();
+
+      // Optional: Remove the form from the DOM after submission
+      document.body.removeChild(form);
+
+      toast.success("Redirecting to payment gateway...");
     } catch (error) {
       console.error("CCAvenue payment initiation failed:", error);
       toast.error("Failed to initiate CCAvenue payment");
@@ -230,10 +248,20 @@ export default function PaymentAndAddress() {
       toast.error("An error occurred while initiating payment");
     }
   };
-
-  const handleCOD = () => {
-    setShowSendModel(true);
-    dispatch(clearCart());
+  const handleCOD = async (formdata) => {
+    try {
+      const { data } = await placeOrderApi(formdata);
+      if (data.message === "Order Placed Successfully") {
+        setShowSuccessModal(true);
+        dispatch(clearCart());
+        toast.success("Order placed successfully");
+      } else {
+        toast.error("Failed to place order");
+      }
+    } catch (error) {
+      console.error("Error placing COD order:", error);
+      toast.error("An error occurred while placing the order");
+    }
   };
 
   return (
@@ -389,7 +417,7 @@ export default function PaymentAndAddress() {
 
             {/* Payment options */}
             <div
-                onClick={() => setPaymentMethod("creditcard")}
+              onClick={() => setPaymentMethod("creditcard")}
               className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${paymentMethod === "creditcard" ? "border-[#F70000]" : "border-[#777777]"
                 }`}
             >
@@ -408,12 +436,12 @@ export default function PaymentAndAddress() {
             </div>
 
             <div
-                onClick={() => setPaymentMethod("phonepe")}
+              onClick={() => setPaymentMethod("phonepe")}
               className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${paymentMethod === "phonepe" ? "border-[#F70000]" : "border-[#777777]"
                 }`}
             >
               <div className="flex items-center gap-2"
-                >
+              >
                 <p className="text-lg text-[#5f259f] font-medium ml-2">PhonePe</p>
               </div>
               <Radio
@@ -427,7 +455,7 @@ export default function PaymentAndAddress() {
             </div>
 
             <div
-                  onClick={() => setPaymentMethod("cod")}
+              onClick={() => setPaymentMethod("cod")}
 
               className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${paymentMethod === "cod" ? "border-[#F70000]" : "border-[#777777]"
                 }`}
@@ -588,13 +616,13 @@ export default function PaymentAndAddress() {
             <div className="flex items-center mt-4 justify-between">
               <p className="text-[18px] font-bold text-black">Cart Total</p>
               <p className="text-[18px] font-bold text-[#777777]">
-                ₹{(cartTotal - cartDiscount).toFixed(0)}
+                ₹{(cartTotal).toFixed(0)}
               </p>
             </div>
           </div>
         </div>
 
-        <CustomModal showModal={showSendModel}>
+        <CustomModal isOpen={showSuccessModal} onClose={handleCloseSuccessModal}>
           <div className="flex flex-col justify-center items-center w-full h-full">
             <div className="flex flex-col justify-center items-center w-full max-w-[400px] h-auto p-4 bg-white rounded-lg sm:max-h-[90vh] sm:overflow-y-auto">
               <div className="flex justify-center mb-[22px]">
@@ -612,7 +640,7 @@ export default function PaymentAndAddress() {
               <div className="flex mt-[30px] gap-4 justify-center">
                 <button
                   className="bg-[#F69B26] rounded-lg h-[50px] w-[300px] text-white font-medium sm:h-[40px] sm:w-full"
-                  onClick={handleCloseModel}
+                  onClick={handleCloseSuccessModal}
                 >
                   Back to Home
                 </button>

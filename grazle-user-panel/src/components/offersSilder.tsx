@@ -121,7 +121,7 @@ const OfferViewSlider = React.forwardRef(({ Data }, ref) => {
     setExpanded(expanded === id ? null : id);
   };
 
-  const offerProducts = Data?.[0]?.offer_products || [];
+  const offerProducts = Data?.[0]?.offer_products || Data || [];
 
   return (
     <div className="parent md:h-[380px] h-[320px]">

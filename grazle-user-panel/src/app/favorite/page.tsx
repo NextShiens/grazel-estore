@@ -42,11 +42,11 @@ const Favorite = () => {
   }
 
   return (
-    <div className="p-4 lg:p-6 overflow-x-auto">
+    <div className="p-4 lg:p-6 overflow-x-auto ">
       {favoriteProducts.length === 0 ? (
         <div className="text-center text-gray-500">No favorite products found.</div>
       ) : (
-        <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+        <div className="container lg:!w-[80%] sm:!w-full justify-center m-auto p-4 overflow-x-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
           {favoriteProducts.map((product: any) => (
             <ProductCard
               key={product.id}
