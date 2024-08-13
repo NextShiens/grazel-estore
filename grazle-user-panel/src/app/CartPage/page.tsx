@@ -22,7 +22,7 @@ export default function Cartpage() {
   const cartDiscount = useSelector((state: any) => state.cartDiscount);
 
   const [expandedTitles, setExpandedTitles] = useState({});
-
+  console.log(cartProducts, "cartProducts");
   useEffect(() => {
     !cartProducts.length && dispatch(updateCart({ type: "onRefresh" }));
   }, []);
@@ -40,25 +40,27 @@ export default function Cartpage() {
   };
 
   const toggleTitleExpansion = (id) => {
-    setExpandedTitles(prev => ({ ...prev, [id]: !prev[id] }));
+    setExpandedTitles((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   const renderTitle = (item) => {
-    const words = item.title.split(' ');
-    const shortTitle = words.slice(0, 2).join(' ');
+    const words = item.title.split(" ");
+    const shortTitle = words.slice(0, 2).join(" ");
     const isLongTitle = words.length > 2;
 
     return (
       <div>
         <p className="text-sm lg:text-base font-medium text-black truncate">
-          {expandedTitles[item.id] || !isLongTitle ? item.title : `${shortTitle}...`}
+          {expandedTitles[item.id] || !isLongTitle
+            ? item.title
+            : `${shortTitle}...`}
         </p>
         {isLongTitle && (
           <button
             className="text-[#F70000] text-xs"
             onClick={() => toggleTitleExpansion(item.id)}
           >
-            {expandedTitles[item.id] ? 'See Less' : 'See More'}
+            {expandedTitles[item.id] ? "See Less" : "See More"}
           </button>
         )}
       </div>
@@ -79,7 +81,10 @@ export default function Cartpage() {
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="lg:w-2/3 w-full">
               {cartProducts?.map((item: any) => (
-                <div key={item.id} className="bg-white rounded-lg shadow-sm p-3 mb-3 border border-gray-100 hover:border-[#F70000] transition-colors duration-300">
+                <div
+                  key={item.id}
+                  className="bg-white rounded-lg shadow-sm p-3 mb-3 border border-gray-100 hover:border-[#F70000] transition-colors duration-300"
+                >
                   <div className="flex items-center mb-2">
                     <CiSquareCheck className="text-[#F70000] text-base mr-1" />
                     <p className="text-sm font-medium">{item?.title}</p>
@@ -118,7 +123,9 @@ export default function Cartpage() {
                             {item?.discountInfo}
                           </p>
                           <p className="line-through text-xs text-gray-500">
-                            ₹{item?.originalPrice && Number(item?.originalPrice).toFixed(2)}
+                            ₹
+                            {item?.originalPrice &&
+                              Number(item?.originalPrice).toFixed(2)}
                           </p>
                         </div>
 
@@ -131,14 +138,18 @@ export default function Cartpage() {
                     <div className="flex flex-col items-end">
                       <div className="flex items-center justify-between bg-gray-100 rounded-full p-1 w-20">
                         <button
-                          onClick={() => onChangeQty("decrement", item?.id, item?.qty)}
+                          onClick={() =>
+                            onChangeQty("decrement", item?.id, item?.qty)
+                          }
                           className="w-5 h-5 rounded-full bg-white flex items-center justify-center shadow-sm"
                         >
                           <HiOutlineMinus className="text-xs" />
                         </button>
                         <span className="text-xs font-bold">{item?.qty}</span>
                         <button
-                          onClick={() => onChangeQty("increment", item?.id, item?.qty)}
+                          onClick={() =>
+                            onChangeQty("increment", item?.id, item?.qty)
+                          }
                           className="w-5 h-5 rounded-full bg-white flex items-center justify-center shadow-sm"
                         >
                           <HiOutlinePlus className="text-xs" />
@@ -182,7 +193,9 @@ export default function Cartpage() {
 
                   <div className="flex justify-between">
                     <p className="text-gray-600">Discount</p>
-                    <p className="font-bold">₹{Number(cartDiscount).toFixed(0)}</p>
+                    <p className="font-bold">
+                      ₹{Number(cartDiscount).toFixed(0)}
+                    </p>
                   </div>
 
                   <div className="flex justify-between font-bold">
