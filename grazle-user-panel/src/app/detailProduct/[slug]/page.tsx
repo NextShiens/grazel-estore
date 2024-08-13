@@ -84,7 +84,7 @@ export default function ProductDetail() {
     fetchProductData();
   }, [slug]);
 
-  const url = `${BASE_URL}/global/products/reviews/${slug}`;
+  const url = `${BASE_URL}global/products/reviews/${slug}`;
 
   useEffect(() => {
     async function fetchProductReviews() {

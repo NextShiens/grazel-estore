@@ -36,7 +36,12 @@ export default function StoreProduct() {
       const res = await getBrandDetails(id, params);
       setCurrentStore(res.data.store);
       setStoreProduct(res.data.products);
-      setMeta(res.data.meta);
+      setMeta(prevMeta => ({
+        ...prevMeta,
+        totalItems: res.data.meta.totalItems,
+        currentPage: res.data.meta.currentPage,
+        totalPages: res.data.meta.totalPages
+      }));
     } catch (error) {
       console.error("Error fetching brand details:", error);
     } finally {
@@ -70,7 +75,7 @@ export default function StoreProduct() {
   ];
 
   const sortProducts = useCallback(() => {
-    const sortedArray = [...storeProduct].sort((a, b) => {
+    return [...storeProduct].sort((a, b) => {
       switch (sortCriteria) {
         case "name":
           return a.title.localeCompare(b.title);
@@ -89,12 +94,9 @@ export default function StoreProduct() {
           return 0;
       }
     });
-    setStoreProduct(sortedArray);
   }, [sortCriteria, storeProduct]);
 
-  useEffect(() => {
-    sortProducts();
-  }, [sortProducts]);
+  const sortedProducts = sortProducts();
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= meta.totalPages) {
@@ -298,7 +300,7 @@ export default function StoreProduct() {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {storeProduct?.map((product) => (
+        {sortedProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>

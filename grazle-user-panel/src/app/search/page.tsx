@@ -27,7 +27,7 @@ export default function StoreProductPage() {
   const [meta, setMeta] = useState({
     totalItems: 0,
     currentPage: 1,
-    itemsPerPage: 30,
+    itemsPerPage: 100,
     totalPages: 1
   });
 
@@ -82,7 +82,7 @@ export default function StoreProductPage() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/global/search-results`, {
+      const response = await axios.get(`${BASE_URL}/global/search-results?limit=50`, {
         params: {
           ...filters,
           keywords: filters.keyword,
