@@ -157,14 +157,30 @@ export default function Home() {
       dispatch(updateCategories(data?.categories || []));
     })();
   }, []);
+  const [screen, setScreen] = useState("web");
+  useEffect(() => {
+    const handleResize = () => {
+      const screenWidth = window.innerWidth;
+      if (screenWidth <= 768) {
+        setScreen("mobile");
+      } else {
+        setScreen("web");
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     (async () => {
-      const positionOneBanners = await getBannersApi(1);
+      const positionOneBanners = await getBannersApi(1, screen);
       setPositionOneBanners(positionOneBanners.data.banners);
-      const positionTwoBanners = await getBannersApi(2);
+      const positionTwoBanners = await getBannersApi(2, screen);
       setPositionTwoBanners(positionTwoBanners.data.banners);
-      const positionThreeBanners = await getBannersApi(3);
+      const positionThreeBanners = await getBannersApi(3, screen);
       setPositionThreeBanners(positionThreeBanners.data.banners);
     })();
   }, []);
@@ -209,7 +225,7 @@ export default function Home() {
   const seventyFivePercentSaleProducts: any = allProducts.filter(
     (product: any) =>
       product?.offer?.discount_type?.toLowerCase() ===
-        "percentage".toLowerCase() &&
+      "percentage".toLowerCase() &&
       product?.offer?.discount_value?.toLowerCase() === "75.00".toLowerCase()
   );
   const seventyFiveEndDate: any = new Date(
@@ -290,38 +306,38 @@ export default function Home() {
       </div>
 
       {/* Get Now Banner */}
-        <div className=" container lg:!w-[80%] my-3 mx-auto flex  items-center justify-between md:py-5 py-2 px-5  bg-gradient-to-r from-[#F81F1F] to-[#FFA31A]  h-auto md:rounded-[20px] rounded-md shadow-lg">
-          <div className="flex items-center gap-4">
-            <div className="rounded-full lg:h-[60px] lg:w-[60px] h-[40px] w-[40px] sm:w-[40px] sm:h-[40px] bg-[#FA6464] flex items-center justify-center">
-              <Image
-                width={40}
-                height={40}
-                alt=""
-                src={Cardmm}
-                className="lg:h-[40px] lg:w-[40px] w-[30px] h-[30px] sm:w-[30px] sm:h-[30px] "
-              />
-            </div>
-            <div>
-              <p className="text-white text-[10px] lg:text-2xl font-semibold">
-                Credit Limit
-              </p>
-              <p className="text-white text-[8px] lg:text-lg font-normal">
-                Get Credit Upto 10 Lacs
-              </p>
-            </div>
+      <div className=" container lg:!w-[80%] my-3 mx-auto flex  items-center justify-between md:py-5 py-2 px-5  bg-gradient-to-r from-[#F81F1F] to-[#FFA31A]  h-auto md:rounded-[20px] rounded-md shadow-lg">
+        <div className="flex items-center gap-4">
+          <div className="rounded-full lg:h-[60px] lg:w-[60px] h-[40px] w-[40px] sm:w-[40px] sm:h-[40px] bg-[#FA6464] flex items-center justify-center">
+            <Image
+              width={40}
+              height={40}
+              alt=""
+              src={Cardmm}
+              className="lg:h-[40px] lg:w-[40px] w-[30px] h-[30px] sm:w-[30px] sm:h-[30px] "
+            />
           </div>
-          <button
-            className="text-[#F70000] text-[10px] lg:text-xl font-semibold bg-white rounded-lg lg:h-[45px] h-[35px] lg:w-[300px] sm:h-[40px] lg:h-[50px] px-10 lg:px-10 flex items-center justify-center"
-            onClick={goToCreditLimit}
-            disabled={loading}
-          >
-            {loading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              "Get Now"
-            )}
-          </button>
+          <div>
+            <p className="text-white text-[10px] lg:text-2xl font-semibold">
+              Credit Limit
+            </p>
+            <p className="text-white text-[8px] lg:text-lg font-normal">
+              Get Credit Upto 10 Lacs
+            </p>
+          </div>
         </div>
+        <button
+          className="text-[#F70000] text-[10px] lg:text-xl font-semibold bg-white rounded-lg lg:h-[45px] h-[35px] lg:w-[300px] sm:h-[40px] lg:h-[50px] px-10 lg:px-10 flex items-center justify-center"
+          onClick={goToCreditLimit}
+          disabled={loading}
+        >
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            "Get Now"
+          )}
+        </button>
+      </div>
 
       {/* Categories */}
       <div className="container hide-scrollbar lg:!w-[80%] md:!w-[80%] sm:!w-[80%] gap-2 sm:gap-2 lg:gap-0 mt-3 !my-8 md:mx-auto  sm:mx-auto  flex items-center justify-between overflow-x-auto">
@@ -441,8 +457,8 @@ export default function Home() {
             {timeLeft?.days > 0
               ? timeLeft?.days + "d"
               : timeLeft?.hours > 0
-              ? timeLeft?.hours
-              : 0}
+                ? timeLeft?.hours
+                : 0}
           </span>
           <span>:</span>
           <span className="p-2 bg-[#F81F1F] rounded-sm text-white md:text-base text-xs">
@@ -456,7 +472,7 @@ export default function Home() {
       </div>
 
       <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto "
-      style={{ padding: "10px" }}>
+        style={{ padding: "10px" }}>
         {offerProducts?.length > 0 ? (
           <div>
             <OfferViewSlider Data={offerProducts} ref={sliderRef6} />
@@ -492,11 +508,10 @@ export default function Home() {
             disabled={click?.name === item?.name || loading}
             key={index}
             onClick={() => handleClickCategory(item)}
-            className={`${
-              item?.name === click?.name
+            className={`${item?.name === click?.name
                 ? "border border-[#FC3030] text-[#FC3030]"
                 : "bg-[#F8F8F8]"
-            } lg:text-sm text-xs py-2 px-3 rounded-md whitespace-nowrap`}
+              } lg:text-sm text-xs py-2 px-3 rounded-md whitespace-nowrap`}
           >
             {item?.name?.toUpperCase()}
           </button>
@@ -540,7 +555,7 @@ export default function Home() {
       {/* Dynamic View */}
       <div
         className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto my-[24px]"
-        style={{ marginTop: "-3px", padding:"10px" }}
+        style={{ marginTop: "-3px", padding: "10px" }}
       >
         <div
           className="flex items-center justify-between w-full mt-[15px] md:mt-0"
@@ -548,7 +563,7 @@ export default function Home() {
         >
           <p
             className="md:text-2xl text-lg font-semibold ml-2"
-            // style={{ marginRight: "10px" }}
+          // style={{ marginRight: "10px" }}
           >
             Dynamic View
           </p>
@@ -577,7 +592,7 @@ export default function Home() {
           </>
         )}
       </div>
-           <div
+      <div
         className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto"
         style={{ marginTop: "20px" }}
       >
@@ -614,9 +629,9 @@ export default function Home() {
                       className="bg-white bg-opacity-70 hover:bg-opacity-100"
                     >
                       {favoriteProducts &&
-                      favoriteProducts.includes(
-                        offerProducts[0].offer_products[0].id
-                      ) ? (
+                        favoriteProducts.includes(
+                          offerProducts[0].offer_products[0].id
+                        ) ? (
                         <FaHeart className="text-[#F70000]" />
                       ) : (
                         <Image src={heart} alt="like" width={20} height={20} />
@@ -662,7 +677,7 @@ export default function Home() {
                   onClick={(e) =>
                     onAddingCart(e, offerProducts[0].offer_products[0])
                   }
-                > 
+                >
                   <div className="flex items-center justify-center">
                     <p className="font-semibold text-[14px]">Add to cart</p>
                     <Image
@@ -688,8 +703,8 @@ export default function Home() {
                   {timeLeft?.days > 0
                     ? timeLeft?.days + "d"
                     : timeLeft?.hours > 0
-                    ? timeLeft?.hours
-                    : 0}
+                      ? timeLeft?.hours
+                      : 0}
                 </span>
                 <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
                   {timeLeft?.days > 0
@@ -729,7 +744,7 @@ export default function Home() {
         )}
       </div>
       <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto flex justify-between items-center md:mt-14 mt-5"
-      style={{ padding: "10px" }}>
+        style={{ padding: "10px" }}>
         <span className="text-xl font-semibold">70% off Products</span>
         <button
           className="flex items-center gap-3 border border-[#FC3030] text-[#FC3030] text-sm rounded-lg py-2 px-4"
@@ -754,7 +769,7 @@ export default function Home() {
 
       {/* 50% off */}
       <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto"
-      style={{ padding: "10px" }}>
+        style={{ padding: "10px" }}>
         {/* <h2 className="text-2xl font-bold mb-4 text-center lg:text-left">
           Minimum 70% OFF Products
         </h2> */}

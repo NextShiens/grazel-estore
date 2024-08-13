@@ -1,4 +1,14 @@
 "use client";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Radio } from "@mui/material";
+import { toast } from "react-toastify";
+import { FiEdit } from "react-icons/fi";
+import { MdClose, MdOutlineAddToPhotos, MdOutlineDeleteOutline } from "react-icons/md";
+import { SlLocationPin } from "react-icons/sl";
+import { AiOutlineDelete } from "react-icons/ai";
+import Home from "@/assets/Vectorhome.png";
 import {
   getAddressApi,
   editAddressApi,
@@ -6,19 +16,6 @@ import {
   deleteAddressApi,
   setPrimaryAddressApi,
 } from "@/apis";
-import Image from "next/image";
-import { Radio } from "@mui/material";
-import { toast } from "react-toastify";
-import { FiEdit } from "react-icons/fi";
-import { MdClose } from "react-icons/md";
-import Location from "@/assets/layer1.png";
-import Home from "@/assets/Vectorhome.png";
-import { useRouter } from "next/navigation";
-import { SlLocationPin } from "react-icons/sl";
-import { AiOutlineDelete } from "react-icons/ai";
-import React, { useEffect, useState } from "react";
-import { MdOutlineAddToPhotos } from "react-icons/md";
-import { MdOutlineDeleteOutline } from "react-icons/md";
 
 export default function AddressPage() {
   const [addressId, setAddressId] = useState("");
@@ -27,52 +24,36 @@ export default function AddressPage() {
   const [allAddress, setAllAddress] = useState<any>([]);
   const [indexDialog, setDialogIndex] = useState("");
   const router = useRouter();
+
   useEffect(() => {
     (async () => {
       const res = await getAddressApi();
-
       setAllAddress(res?.data?.addresses || []);
     })();
   }, []);
 
-  function onShowDialog(i: any) {
-    setDialogIndex(i);
-    // setAddressId("");
-  }
-
-  function onChangeAddress(id: any) {
+  const onShowDialog = (i: any) => setDialogIndex(i);
+  const onChangeAddress = (id: any) => {
     setDialogIndex("");
     setAddressId(id);
-    console.log("id", id);
-  }
+  };
 
-  async function onCreateAddress(formdata: any) {
+  const onCreateAddress = async (formdata: any) => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        return toast.error("Please login to continue");
-      }
+      if (!token) return toast.error("Please login to continue");
       setPending(true);
-      console.log("formdata", formdata);
       const res: any = await createAddressApi(formdata, token);
-
       setAllAddress([...allAddress, res?.data?.address]);
       toast.success("Address has been created");
-      console.log("res", res);
     } catch (error: any) {
-      if (error?.response?.status === 400) {
-        toast.error(error?.response?.data?.message);
-      } else {
-        toast.error("Something went wrong");
-      }
+      toast.error(error?.response?.data?.message || "Something went wrong");
     } finally {
-      setTimeout(() => {
-        setPending(false);
-      }, 500);
+      setPending(false);
     }
-  }
+  };
 
-  async function onEditAddress(id: any) {
+  const onEditAddress = async (id: any) => {
     try {
       setPending(true);
       await setPrimaryAddressApi(id);
@@ -81,274 +62,164 @@ export default function AddressPage() {
       toast.error("Something went wrong");
     } finally {
       onShowDialog("");
-      setTimeout(() => {
-        setPending(false);
-      }, 500);
+      setPending(false);
     }
-  }
+  };
 
-  async function onDeleteAddress(id: any) {
-    if (!addressId) {
-      return toast.error("Please select the address");
-    }
+  const onDeleteAddress = async (id: any) => {
+    if (!addressId) return toast.error("Please select the address");
     try {
       setPending(true);
       await deleteAddressApi(id);
-      const filterAddress = allAddress.filter((item: any) => item.id !== id);
-      setAllAddress(filterAddress);
+      setAllAddress(allAddress.filter((item: any) => item.id !== id));
       toast.success("Address has been deleted");
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
-      setTimeout(() => {
-        setPending(false);
-      }, 500);
+      setPending(false);
     }
-  }
+  };
 
-  function onCheckout() {
+  const onCheckout = () => {
     if (!addressId) return toast.error("Please select address");
     router.push(`/PaymentAndAddress?addressId=${addressId}`);
-  }
+  };
 
   return (
-    <>
-      <>
-        <div className="lg:my-[80px] flex items-center justify-center  my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[20px] md:mx-[30px]">
-          <div className="rounded-3xl lg:w-[77%] w-[100%] min-h-[454px] max-h-auto">
-            <div className="flex items-center gap-2 mb-4">
-              <p className="md:text-[30px] text-base font-semibold">
-                Shipping Address
-              </p>
+    <div className="max-w-4xl mx-auto my-8 px-4">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-semibold">Shipping Address</h1>
+        <p className="text-lg text-gray-600">({allAddress?.length} addresses)</p>
+      </div>
 
-              <p className="md:text-[25px] text-sm font-semibold text-[#777777]">
-                ({allAddress?.length} addresses)
-              </p>
+      <div className="space-y-4">
+        {allAddress?.map((item: any, index: any) => (
+          <div key={item.id} className="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-200">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-lg font-medium">{item?.address_label?.toUpperCase()}</p>
+              <Radio
+                checked={addressId === item?.id}
+                onChange={() => onChangeAddress(item?.id)}
+                sx={{
+                  color: "#F70000",
+                  "&.Mui-checked": { color: "#F70000" },
+                }}
+              />
             </div>
 
-            <div className="space-y-3">
-              {allAddress?.map((item: any, index: any) => (
-                <div
-                  style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-                  className="rounded-3xl p-[20px] w-full h-auto hover:border-[#F70000] border-[1px] "
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="md:text-[24px] text-[20px] font-medium ">
-                      {item?.address_label?.toUpperCase()}
-                    </p>
-
-                    <Radio
-                      sx={{
-                        color: "#F70000",
-                        "& .MuiSvgIcon-root": {
-                          fontSize: 34,
-                          "@media (max-width: 600px)": {
-                            fontSize: 24,
-                          },
-                        },
-                        "&.Mui-checked": {
-                          color: "#F70000",
-                        },
-                      }}
-                      checked={addressId === item?.id ? true : false}
-                      // onChange={() => setAddressId(item?.id)}
-                      onChange={() => onChangeAddress(item?.id)}
-                    />
-                  </div>
-
-                  <div className="flex items-center ">
-                    <Image
-                      src={Home}
-                      alt=""
-                      className="md:w-[50px] w-[25px] md:h-[50px] h-[25px] mr-4"
-                    />
-
-                    <div>
-                      <p className="flex items-center gap-2">
-                        <span className="text-[16px] font-semibold ">
-                          {item?.recipient_name}
-                        </span>
-
-                        <span className="text-[15px] font-medium text-[#777777] ">
-                          ({item?.recipient_phone})
-                        </span>
-                      </p>
-
-                      <p className="text-[14px] md:mt-2 mt-0 font-medium text-[#777777] ">
-                        {item?.address}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between mt-4">
-                    <div className="flex items-center ">
-                      {/* <Image
-                        src={Location}
-                        alt=""
-                        className="w-[18px] h-[23px] mr-2"
-                      />
-
-                      <p className="text-[14px] font-medium text-[#777777] ">
-                       []
-                      </p> */}
-                    </div>
-
-                    <div className="flex items-center relative">
-                      <div
-                        className="flex items-center cursor-pointer justify-center rounded-md w-[35px] h-[35px] mr-3"
-                        style={{ backgroundColor: "rgba(94, 247, 0, 0.04)" }}
-                      >
-                        <FiEdit
-                          color="rgba(0, 247, 99, 1)"
-                          onClick={() => onShowDialog(index)}
-                          className="h-[20px] w-[20px] text-[#BABABA]"
-                        />
-                      </div>
-
-                      <div
-                        style={{
-                          pointerEvents: isPending ? "none" : undefined,
-                          backgroundColor: "rgba(247, 0, 0, 0.04)",
-                        }}
-                        className="flex cursor-pointer items-center justify-center rounded-md w-[35px] h-[35px] "
-                      >
-                        <MdOutlineDeleteOutline
-                          color="red"
-                          onClick={() => onShowDialog(index)}
-                          className="h-[20px] w-[20px] text-[#BABABA]"
-                        />
-                      </div>
-
-                      {indexDialog === index ? (
-                        <>
-                          <div className="absolute top-0 right-[100%] px-3 py-4 mr-1 h-auto rounded-sm w-[230px] bg-white shadow-lg">
-                            <p
-                              style={{
-                                pointerEvents: isPending ? "none" : undefined,
-                              }}
-                              onClick={() => onEditAddress(item?.id)}
-                              className="flex text-[#777777] items-center gap-2 mb-3 text-sm cursor-pointer"
-                            >
-                              <SlLocationPin /> Set as primary address
-                            </p>
-
-                            <p
-                              style={{
-                                pointerEvents: isPending ? "none" : undefined,
-                              }}
-                              onClick={() => onDeleteAddress(item?.id)}
-                              className="flex items-center text-[#777777] gap-2 text-sm cursor-pointer"
-                            >
-                              <AiOutlineDelete /> Delete address
-                            </p>
-
-                            <MdClose
-                              className="absolute top-2 right-2 cursor-pointer"
-                              onClick={() => setDialogIndex("")}
-                            />
-                          </div>
-                        </>
-                      ) : null}
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              <div className="mt-[30px]">
-                <p
-                  onClick={() => setAddress((prev) => !prev)}
-                  className="flex items-center cursor-pointer text-[20px] font-semibold mr-3 mb-4"
-                >
-                  <MdOutlineAddToPhotos size={30} /> Add New Delivery Address
-                </p>
-
-                <button
-                  disabled={isPending}
-                  onClick={() => onCheckout()}
-                  className=" bg-[#F70000] w-full text-center disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none rounded-md h-[50px] text-[18px] font-medium text-white"
-                >
-                  Proceed to Checkout
-                </button>
+            <div className="flex items-start">
+              <Image src={Home} alt="" className="w-6 h-6 mt-1 mr-3" />
+              <div>
+                <p className="font-semibold">{item?.recipient_name} <span className="text-sm font-normal text-gray-600">({item?.recipient_phone})</span></p>
+                <p className="text-sm text-gray-600 mt-1">{item?.address}</p>
               </div>
             </div>
 
-            {showAddress ? (
-              <form
-                action={onCreateAddress}
-                style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-                className="rounded-3xl p-[30px] w-full mt-6 "
+            <div className="flex justify-end mt-3 space-x-2">
+              <button
+                onClick={() => onShowDialog(index)}
+                className="p-2 bg-green-50 text-green-600 rounded-md hover:bg-green-100 transition-colors duration-200"
               >
-                <p className="text-[24px] font-semibold">Add New Address</p>
-                <div className="flex-col mt-[30px]">
-                  <label className="text-[16px] font-semibold">Name</label>
-                  <input
-                    placeholder="Enter Your Name "
-                    name="recipient_name"
-                    required
-                    className="border-[1px] w-full mt-[9px] border-[#7777777]   rounded-md h-[50px] p-3 focus:outline-none"
-                  />
-                </div>
+                <FiEdit className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => onShowDialog(index)}
+                className="p-2 bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition-colors duration-200"
+              >
+                <MdOutlineDeleteOutline className="w-4 h-4" />
+              </button>
 
-                <div className="flex-col mt-[30px]">
-                  <label className="text-[16px] font-semibold">
-                    Address Title
-                  </label>
-                  <input
-                    placeholder="Address Title e.g Home/Office etc"
-                    required
-                    name="address_label"
-                    className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                  />
-                </div>
-
-                <div className="flex-col mt-[30px]">
-                  <label className="text-[16px] font-semibold">
-                    Street Address
-                  </label>
-                  <input
-                    placeholder="Address"
-                    name="address"
-                    required
-                    className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                  />
-                </div>
-
-                <div className="flex-col mt-[30px]">
-                  <label className="text-[16px] font-semibold">
-                    Phone Number
-                  </label>
-                  <input
-                    placeholder="Phone Number"
-                    name="recipient_phone"
-                    required
-                    className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                  />
-                </div>
-
-                <div className="flex-col mt-[30px]">
-                  <label className="text-[16px] font-semibold">Note</label>
-                  <input
-                    placeholder="Note"
-                    name="note"
-                    required
-                    className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                  />
-                </div>
-
-                <div className=" mt-[30px]">
-                  <button
-                    disabled={isPending}
-                    type="submit"
-                    className=" bg-[#F70000] disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none rounded-2xl h-[50px]  w-[181px] text-[18px] font-medium text-white"
-                  >
-                    Add Address
+              {indexDialog === index && (
+                <div className="absolute mt-2 p-3 bg-white rounded-md shadow-lg">
+                  <button onClick={() => onEditAddress(item?.id)} className="flex items-center text-gray-600 hover:text-gray-800 mb-2">
+                    <SlLocationPin className="mr-2" /> Set as primary address
                   </button>
+                  <button onClick={() => onDeleteAddress(item?.id)} className="flex items-center text-gray-600 hover:text-gray-800">
+                    <AiOutlineDelete className="mr-2" /> Delete address
+                  </button>
+                  <MdClose className="absolute top-2 right-2 cursor-pointer" onClick={() => setDialogIndex("")} />
                 </div>
-              </form>
-            ) : null}
+              )}
+            </div>
           </div>
-        </div>
-      </>
-    </>
+        ))}
+      </div>
+
+      <div className="mt-6">
+        <button
+          onClick={() => setAddress((prev) => !prev)}
+          className="flex items-center text-lg font-semibold text-gray-800 hover:text-gray-600 mb-4"
+        >
+          <MdOutlineAddToPhotos className="mr-2" /> Add New Delivery Address
+        </button>
+
+        <button
+          disabled={isPending || !addressId}
+          onClick={onCheckout}
+          className="w-full bg-red-600 text-white py-3 rounded-md font-medium disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 hover:bg-red-700"
+        >
+          Proceed to Checkout
+        </button>
+      </div>
+
+      {showAddress && (
+        <form onSubmit={onCreateAddress} className="mt-8 bg-white rounded-lg p-6 shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Add New Address</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Name</label>
+              <input
+                name="recipient_name"
+                required
+                placeholder="Enter Your Name"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Address Title</label>
+              <input
+                name="address_label"
+                required
+                placeholder="Address Title e.g Home/Office etc"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Street Address</label>
+              <input
+                name="address"
+                required
+                placeholder="Address"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Phone Number</label>
+              <input
+                name="recipient_phone"
+                required
+                placeholder="Phone Number"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Note</label>
+              <input
+                name="note"
+                placeholder="Note"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+          </div>
+          <button
+            type="submit"
+            disabled={isPending}
+            className="mt-6 w-full bg-red-600 text-white py-3 rounded-md font-medium disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 hover:bg-red-700"
+          >
+            Add Address
+          </button>
+        </form>
+      )}
+    </div>
   );
 }

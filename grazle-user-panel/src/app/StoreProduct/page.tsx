@@ -1,291 +1,177 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Main from "@/assets/Rectangle 2020.png";
-import logo from "@/assets/Grazle Logo.png";
-import Card1 from "@/assets/a5a6296b2158604a47215a2b0a00bde0.png";
 import { PiSealCheckFill } from "react-icons/pi";
 import { FaAngleDown, FaStar } from "react-icons/fa6";
-import { IoSearchOutline } from "react-icons/io5";
-import Star from "@/assets/Star 1.png";
-import Cart from "@/assets/CartVector.png";
-import Like from "@/assets/Frame 1820551183.png";
-import { Checkbox, Radio } from "@mui/material";
+import { ImCheckboxChecked, ImCheckboxUnchecked } from "react-icons/im";
 import { useSearchParams } from "next/navigation";
 import { getBrandDetails } from "@/apis";
 import ProductCard from "@/components/ProductCard";
-import { ImCheckboxChecked, ImCheckboxUnchecked } from "react-icons/im";
-import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 export default function StoreProduct() {
-  const [isChecked, setIsChecked] = useState(false);
-
-  const handleRadioChange = () => {
-    setIsChecked(!isChecked);
-  };
   const [isOpen, setIsOpen] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef(null);
   const [currentStore, setCurrentStore] = useState({});
   const [storeProduct, setStoreProduct] = useState([]);
   const [sortCriteria, setSortCriteria] = useState("name");
 
-  const toggleCard = () => {
-    setIsOpen((prevState) => !prevState);
-  };
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      isOpen &&
-      cardRef.current &&
-      !cardRef.current.contains(event.target as Node) &&
-      buttonRef.current &&
-      !buttonRef.current.contains(event.target as Node)
-    ) {
-      setIsOpen(false);
-    }
-  };
-
   const id = useSearchParams().get("id");
 
   useEffect(() => {
-    (async () => {
+    const fetchData = async () => {
       if (!id) return;
       const res = await getBrandDetails(id);
       setCurrentStore(res.data.store);
       setStoreProduct(res.data.products);
-    })();
+    };
+    fetchData();
   }, [id]);
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+    const handleClickOutside = (event) => {
+      if (cardRef.current && !cardRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
     };
-  }, [isOpen]);
 
-  const clearSort = () => {
-    setSortCriteria("");
-    setIsOpen(false);
-  };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-  useEffect(() => {
-    const sortProducts = () => {
-      let sortedArray = [...storeProduct];
+  const sortOptions = [
+    { value: "rating", label: "Rating" },
+    { value: "name", label: "Name" },
+    { value: "priceLowToHigh", label: "Price: Low to High" },
+    { value: "priceHighToLow", label: "Price: High to Low" },
+    { value: "discount", label: "Discount" },
+    { value: "latestArrival", label: "Latest Arrival" },
+    { value: "topRated", label: "Top Rated" },
+  ];
+
+  const sortProducts = () => {
+    const sortedArray = [...storeProduct].sort((a, b) => {
       switch (sortCriteria) {
         case "name":
-          sortedArray.sort((a, b) => a.title.localeCompare(b.title));
-          break;
+          return a.title.localeCompare(b.title);
         case "priceLowToHigh":
-          sortedArray.sort((a, b) => a.price - b.price);
-          break;
+          return a.price - b.price;
         case "priceHighToLow":
-          sortedArray.sort((a, b) => b.price - a.price);
-          break;
+          return b.price - a.price;
         case "rating":
-          sortedArray.sort((a, b) => b.rating - a.rating);
-          break;
-        case "discount":
-          sortedArray.sort((a, b) => b.discount - a.discount);
-          break;
-        case "latestArrival":
-          sortedArray.sort(
-            (a, b) => new Date(b.arrivalDate) - new Date(a.arrivalDate)
-          );
-          break;
         case "topRated":
-          sortedArray.sort((a, b) => b.rating - a.rating);
-          break;
+          return b.rating - a.rating;
+        case "discount":
+          return b.discount - a.discount;
+        case "latestArrival":
+          return new Date(b.arrivalDate) - new Date(a.arrivalDate);
         default:
-          break;
+          return 0;
       }
-      setStoreProduct(sortedArray);
-    };
+    });
+    setStoreProduct(sortedArray);
+  };
 
-    sortProducts();
-  }, [sortCriteria]);
+  useEffect(sortProducts, [sortCriteria]);
 
   return (
-    <div className="lg:my-[50px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[20px] sm:mx-[20px] md:mx-[30px]">
-      <div className="relative w-[100%] h-[250px]">
-        <div className="relative w-[100%] h-[200px] sm:h-[200px] md:h-[250px] lg:h-[300px] overflow-hidden">
-          <div className="absolute inset-0 bg-white rounded-2xl border-[.5px] shadow-md">
-            {currentStore.image && (
-              <Image
-                src={currentStore.image}
-                alt="Store Banner"
-                layout="fill"
-                objectFit="cover"
-                className="rounded-2xl"
-                priority
-              />
-            )}
-          </div>
-        </div>
-        <div
-          className="absolute left-1/2 transform -translate-x-1/2"
-          style={{ top: "calc(50% - -40px)" }}
-        >
-          <div className="w-[170px] h-[170px] flex justify-center items-center rounded-2xl border-[.5px] border-[#F70000] duration-300">
-            {currentStore.image && (
-              <Image
-                width={170}
-                height={170}
-                src={currentStore.image}
-                alt="Logo"
-                className="w-full h-full object-fill rounded-2xl"
-              />
-            )}
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-col justify-center items-center mt-[150px]">
-        <div className="flex  items-center">
-          <p className="text-[24px] font-semibold">{currentStore.store_name}</p>
-          <PiSealCheckFill className="text-[#F70000] text-[24px] ml-2" />
-        </div>
-        <div className="flex mt-4  items-center justify-center gap-6">
-          <div>
-            <div className="flex  items-center gap-2">
-              <FaStar className="text-[16px] text-[#FF7A00]" />
-              <p className="text-[20px] font-semibold">
-                {currentStore.store_rating}{" "}
-              </p>
-              <p className="text-[18px] font-medium ml-2 text-[#777777]">
-                ({currentStore.store_reviews})
-              </p>
-            </div>
-            <p className="text-[14px] font-medium text-[#777777]">Ratings</p>
-          </div>
-          <div className="border-l-[2px] border-[#777777] h-[30px]"></div>
-          <div>
-            <div className="flex  items-center gap-2">
-              <p className="text-[20px] font-semibold align-baseline">
-                {currentStore.store_products}
-              </p>
-            </div>
-            <p className="text-[14px] font-medium text-[#777777]">Products</p>
-          </div>
-        </div>
-        <div className="flex mt-4 justify-center">
-          <div
-            className="border-[1px]  rounded-lg p-2 w-[370px] flex mt-4 justify-between items-center border-[#777777]"
-            onClick={toggleCard}
-            ref={cardRef}
-          >
-            <p className="text-[16px] font-medium">Sort by</p>
-            <FaAngleDown className="text-[#777777]  text-[16px]" />
-          </div>
-          {isOpen && (
-            <div className="absolute z-50 mt-[60px] p-3 w-[370px] border-[1px] rounded-lg p-4 bg-white shadow-lg">
-              <div className="flex items-center gap-2">
-                <div
-                  className="px-3 py-2 text-[13px] font-[500] flex items-center gap-2 cursor-pointer"
-                  onClick={() => setSortCriteria("rating")}
-                >
-                  {sortCriteria === "rating" ? (
-                    <ImCheckboxChecked className="w-[20px] h-[20px] text-[red]" />
-                  ) : (
-                    <ImCheckboxUnchecked className="w-[20px] h-[20px] text-gray-400" />
-                  )}
-                  Rating
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div
-                  className="px-3 py-2  text-[13px] font-[500] flex items-center gap-2 cursor-pointer"
-                  onClick={() => setSortCriteria("name")}
-                >
-                  {sortCriteria === "name" ? (
-                    <ImCheckboxChecked className="w-[20px] h-[20px] text-[red]" />
-                  ) : (
-                    <ImCheckboxUnchecked className="w-[20px] h-[20px] text-gray-400" />
-                  )}
-                  Name
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div
-                  className="px-3 py-2  text-[13px] font-[500] flex items-center gap-2 cursor-pointer"
-                  onClick={() => setSortCriteria("priceLowToHigh")}
-                >
-                  {sortCriteria === "priceLowToHigh" ? (
-                    <ImCheckboxChecked className="w-[20px] h-[20px] text-[red]" />
-                  ) : (
-                    <ImCheckboxUnchecked className="w-[20px] h-[20px] text-gray-400" />
-                  )}
-                  <p className="flex items-center gap-3">Price low to high</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div
-                  className="px-3 py-2  text-[13px] font-[500] flex items-center gap-2 cursor-pointer"
-                  onClick={() => setSortCriteria("priceHighToLow")}
-                >
-                  {sortCriteria === "priceHighToLow" ? (
-                    <ImCheckboxChecked className="w-[20px] h-[20px] text-[red]" />
-                  ) : (
-                    <ImCheckboxUnchecked className="w-[20px] h-[20px] text-gray-400" />
-                  )}
-                  <p className="flex items-center gap-3">Price high to low</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div
-                  className="px-3 py-2 text-[13px] font-[500] flex items-center gap-2 cursor-pointer"
-                  onClick={() => setSortCriteria("discount")}
-                >
-                  {sortCriteria === "discount" ? (
-                    <ImCheckboxChecked className="w-[20px] h-[20px] text-[red]" />
-                  ) : (
-                    <ImCheckboxUnchecked className="w-[20px] h-[20px] text-gray-400" />
-                  )}
-                  Discount
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div
-                  className="px-3 py-2 text-[13px] font-[500] flex items-center gap-2 cursor-pointer"
-                  onClick={() => setSortCriteria("latestArrival")}
-                >
-                  {sortCriteria === "latestArrival" ? (
-                    <ImCheckboxChecked className="w-[20px] h-[20px] text-[red]" />
-                  ) : (
-                    <ImCheckboxUnchecked className="w-[20px] h-[20px] text-gray-400" />
-                  )}
-                  Latest Arrival
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div
-                  className="px-3 py-2 text-[13px] font-[500] flex items-center gap-2 cursor-pointer"
-                  onClick={() => setSortCriteria("topRated")}
-                >
-                  {sortCriteria === "topRated" ? (
-                    <ImCheckboxChecked className="w-[20px] h-[20px] text-[red]" />
-                  ) : (
-                    <ImCheckboxUnchecked className="w-[20px] h-[20px] text-gray-400" />
-                  )}
-                  Top Rated
-                </div>
-              </div>
-              <div
-                className="px-3 py-2 text-[13px] font-[500] flex items-center gap-2 cursor-pointer text-red-500 hover:bg-gray-100"
-                onClick={clearSort}
-              >
-                Clear Sort
-              </div>
-            </div>
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="relative mb-24 sm:mb-32">
+        <div className="h-32 sm:h-48 md:h-64 lg:h-80 rounded-2xl overflow-hidden shadow-lg">
+          {currentStore.image && (
+            <Image
+              src={currentStore.image}
+              alt="Store Banner"
+              layout="fill"
+              objectFit="cover"
+              className="rounded-2xl"
+              priority
+            />
           )}
         </div>
+        <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-16 sm:-bottom-20">
+          <div className="w-32 h-32 sm:w-40 sm:h-40 flex justify-center items-center rounded-2xl border-2 border-[#F70000] bg-white shadow-md">
+            {currentStore.image && (
+              <Image
+                width={150}
+                height={150}
+                src={currentStore.image}
+                alt="Logo"
+                className="rounded-xl object-contain"
+              />
+            )}
+          </div>
+        </div>
       </div>
-      <div className="p-2 lg:p-6 overflow-x-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 lg:gap-4">
+
+      <div className="text-center mb-8">
+        <div className="flex justify-center items-center mb-2">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mr-2">{currentStore.store_name}</h1>
+          <PiSealCheckFill className="text-[#F70000] text-xl sm:text-2xl" />
+        </div>
+        <div className="flex justify-center items-center space-x-4 sm:space-x-6 mb-4">
+          <div>
+            <div className="flex items-center">
+              <FaStar className="text-[#FF7A00] mr-1" />
+              <span className="font-semibold">{currentStore.store_rating}</span>
+              <span className="text-gray-500 ml-1 text-sm">({currentStore.store_reviews})</span>
+            </div>
+            <p className="text-xs sm:text-sm text-gray-500">Ratings</p>
+          </div>
+          <div className="h-8 border-l border-gray-300"></div>
+          <div>
+            <p className="font-semibold">{currentStore.store_products}</p>
+            <p className="text-xs sm:text-sm text-gray-500">Products</p>
+          </div>
+        </div>
+
+        <div className="flex justify-center">
+          <div className="relative w-full max-w-xs" ref={cardRef}>
+            <button
+              className="border border-gray-300 rounded-full py-2 px-4 w-full flex justify-between items-center text-sm"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              <span className="truncate">
+                {sortOptions.find(option => option.value === sortCriteria)?.label || 'Sort by'}
+              </span>
+              <FaAngleDown className="text-gray-500 ml-2 flex-shrink-0" />
+            </button>
+            {isOpen && (
+              <div className="absolute z-50 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                {sortOptions.map((option) => (
+                  <div
+                    key={option.value}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center text-sm"
+                    onClick={() => {
+                      setSortCriteria(option.value);
+                      setIsOpen(false);
+                    }}
+                  >
+                    {sortCriteria === option.value ? (
+                      <ImCheckboxChecked className="w-4 h-4 text-[#F70000] mr-2 flex-shrink-0" />
+                    ) : (
+                      <ImCheckboxUnchecked className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" />
+                    )}
+                    <span className="truncate">{option.label}</span>
+                  </div>
+                ))}
+                <div
+                  className="px-4 py-2 text-[#F70000] hover:bg-gray-100 cursor-pointer text-sm"
+                  onClick={() => {
+                    setSortCriteria("");
+                    setIsOpen(false);
+                  }}
+                >
+                  Clear Sort
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {storeProduct?.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            className="h-auto sm:h-full"
-          />
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
     </div>

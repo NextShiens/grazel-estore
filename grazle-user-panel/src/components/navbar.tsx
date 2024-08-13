@@ -154,7 +154,7 @@ const SearchBar = ({
                   Popular Searches
                 </p>
                 {Array.isArray(popularSearches) &&
-                popularSearches.length > 0 ? (
+                  popularSearches.length > 0 ? (
                   popularSearches.map((search, index) => (
                     <div key={index} className="flex gap-3 mt-3">
                       <Link
@@ -194,8 +194,8 @@ const MobileSearchBar = ({
   useEffect(() => {
     setIsDropdownOpen(
       searchValue !== "" ||
-        recentSearches.length > 0 ||
-        popularSearches.length > 0
+      recentSearches.length > 0 ||
+      popularSearches.length > 0
     );
   }, [searchValue, searchResult, recentSearches, popularSearches]);
 
@@ -637,7 +637,7 @@ export default function Navbar() {
   const fetchUserProfile = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/user/profile`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/profile`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

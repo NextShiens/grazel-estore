@@ -6,12 +6,10 @@ import {
 } from "@/features/features";
 import Link from "next/link";
 import Image from "next/image";
-import { FaRegEdit } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { CiSquareCheck } from "react-icons/ci";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import React, { Fragment, useEffect, useState } from "react";
-import { calculateDiscountPercentage } from "@/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { HiOutlineMinus, HiOutlinePlus } from "react-icons/hi";
 
@@ -42,7 +40,7 @@ export default function Cartpage() {
   };
 
   const toggleTitleExpansion = (id) => {
-    setExpandedTitles(prev => ({...prev, [id]: !prev[id]}));
+    setExpandedTitles(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
   const renderTitle = (item) => {
@@ -52,12 +50,12 @@ export default function Cartpage() {
 
     return (
       <div>
-        <p className="lg:text-[24px] text-[16px] font-medium text-black">
+        <p className="text-sm lg:text-base font-medium text-black truncate">
           {expandedTitles[item.id] || !isLongTitle ? item.title : `${shortTitle}...`}
         </p>
         {isLongTitle && (
-          <button 
-            className="text-[#F70000] text-[12px] lg:hidden"
+          <button
+            className="text-[#F70000] text-xs"
             onClick={() => toggleTitleExpansion(item.id)}
           >
             {expandedTitles[item.id] ? 'See Less' : 'See More'}
@@ -67,178 +65,135 @@ export default function Cartpage() {
     );
   };
 
-  console.log(cartProducts);
   return (
-    <>
+    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
       {cartProducts.length > 0 ? (
-        <div className=" lg:my-[50px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[20px] sm:mx-[20px] md:mx-[30px]">
-          <div className="flex items-center">
-            <p className="md:text-[40px] text-[30px] md:font-semibold font-medium mr-3 ">
-              Cart
-            </p>
-            <p className="md:text-[24px] text-[20px] font-medium text-[#777777] ">
+        <div>
+          <div className="flex items-center mb-4">
+            <h1 className="text-xl sm:text-2xl font-semibold mr-2">Cart</h1>
+            <p className="text-sm sm:text-base font-medium text-gray-600">
               ({cartLength} Products)
             </p>
           </div>
 
-          <div className="flex flex-wrap lg:flex-nowrap sm:flex-wrap md:flex-wrap  gap-8">
-            <div className="lg:w-[70%] w-[100%] sm:w-[100%] md:w-[100%] h-auto ">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="lg:w-2/3 w-full">
               {cartProducts?.map((item: any) => (
-                <Fragment key={item.id}>
-                  <div
-                    style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-                    className="w-[100%] rounded-[20px] p-[20px] mb-2  border-[1px] border-[#777777] hover:border-[#F70000]"
-                  >
+                <div key={item.id} className="bg-white rounded-lg shadow-sm p-3 mb-3 border border-gray-100 hover:border-[#F70000] transition-colors duration-300">
+                  <div className="flex items-center mb-2">
+                    <CiSquareCheck className="text-[#F70000] text-base mr-1" />
+                    <p className="text-sm font-medium">{item?.title}</p>
+                  </div>
+
+                  <div className="my-2 border-b border-gray-100"></div>
+
+                  <div className="bg-[#FFFAFA] rounded-md flex justify-between p-2 mb-2 text-xs">
+                    <p className="font-medium text-gray-600">
+                      Add More Products
+                    </p>
+                    <Link href="/" className="font-medium text-[#F70000]">
+                      + Add
+                    </Link>
+                  </div>
+
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <CiSquareCheck className="text-[#F70000] text-[24px] mr-3" />
-                      <p className="text-[24px] font-normal">{item?.title}</p>
-                    </div>
-
-                    <div className="my-5 border-b-[1px] border-[#777777]"></div>
-
-                    <div className="lg:w-[100%] w-[100%] mb-3 rounded-2xl bg-[#FFFAFA] flex justify-between p-3">
-                      <p className="text-[16px] font-medium text-[#777777]">
-                        Add More Products
-                      </p>
-
-                      <p className="text-[16px] font-medium text-[#F70000]">
-                        <Link href="/">+ Add</Link>
-                      </p>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <CiSquareCheck className="text-[#F70000] lg:block sm:hidden hidden text-[32px] mr-3" />
-                        <Image
-                          alt="Product Image"
-                          width={100}
-                          height={100}
-                          src={item.featured_image}
-                          className="rounded-2xl lg:w-[90px] w-[60px] h-[60px] lg:h-[90px] lg:mr-7 mr-3 "
-                          onError={(e: any) => {
-                            console.error("Image failed to load:", e);
-                            e.target.src = "/path/to/fallback-image.jpg";
-                          }}
-                        />
-
-                        <div>
-                          {renderTitle(item)}
-
-                          <div className=" my-1 flex items-center">
-                            <div className="flex justify-center items-center">
-                              <p className="text-[12px] font-medium text-[#F70000] px-3 py-2 mr-3 bg-[#FFFAFA]">
-                                {item?.discountInfo}
-                              </p>
-                            </div>
-
-                            <p
-                              className={`line-through lg:text-[16px] text-[10px] sm:text-[12px] md:text-[14px] font-medim text-[#777777]`}
-                            >
-                              ₹
-                              {item?.originalPrice &&
-                                Number(item?.originalPrice).toFixed(2)}
-                            </p>
-                          </div>
-
-                          <p className="md:text-[18px] text-sm font-medium">
-                            ₹{Number(item.discountPrice).toFixed(2)}
-                          </p>
-                        </div>
-                      </div>
+                      <Image
+                        alt="Product Image"
+                        width={50}
+                        height={50}
+                        src={item.featured_image}
+                        className="rounded-md mr-3"
+                        onError={(e: any) => {
+                          console.error("Image failed to load:", e);
+                          e.target.src = "/path/to/fallback-image.jpg";
+                        }}
+                      />
 
                       <div>
-                        <div className="lg:w-[124px] lg:mt-0 mt-3 sm:mt-3 md:mt-3   rounded-full border-[1px] border-[#E6E6E6] p-2 flex items-center justify-between">
-                          <div
-                            onClick={() =>
-                              onChangeQty("decrement", item?.id, item?.qty)
-                            }
-                            className="lg:w-[34px] cursor-pointer lg:h-[34px] h-[24px] w-[24px] rounded-full bg-[#F2F2F2] flex items-center cusor-pointer justify-center"
-                          >
-                            <HiOutlineMinus className="text-[16px] font-bold " />
-                          </div>
+                        {renderTitle(item)}
 
-                          <p className="text-[16px] font-bold lg:mx-0 mx-3">
-                            {item?.qty}
+                        <div className="flex items-center mt-1">
+                          <p className="text-xs font-medium text-[#F70000] px-1.5 py-0.5 mr-1.5 bg-[#FFFAFA] rounded">
+                            {item?.discountInfo}
                           </p>
-
-                          <div
-                            onClick={() =>
-                              onChangeQty("increment", item?.id, item?.qty)
-                            }
-                            className="g:w-[34px] cursor-pointer lg:h-[34px] h-[24px] w-[24px] rounded-full bg-[#F2F2F2] flex items-center cusor-pointer justify-center"
-                          >
-                            <HiOutlinePlus className="text-[16px] font-bold " />
-                          </div>
+                          <p className="line-through text-xs text-gray-500">
+                            ₹{item?.originalPrice && Number(item?.originalPrice).toFixed(2)}
+                          </p>
                         </div>
 
-                        <div className="flex justify-end mt-4 gap-4">
-                          <div
-                            onClick={() => onDeleteProduct(item?.id)}
-                            className="lg:w-[43px] cursor-pointer lg:h-[43px] h-[30px] w-[30px] bg-[#F700000A] rounded-md flex items-center justify-center"
-                          >
-                            <RiDeleteBin6Fill className="lg:text-[24px] text-[18px] text-[#F70000]" />
-                          </div>
-                        </div>
+                        <p className="text-sm font-medium mt-0.5">
+                          ₹{Number(item.discountPrice).toFixed(2)}
+                        </p>
                       </div>
                     </div>
+
+                    <div className="flex flex-col items-end">
+                      <div className="flex items-center justify-between bg-gray-100 rounded-full p-1 w-20">
+                        <button
+                          onClick={() => onChangeQty("decrement", item?.id, item?.qty)}
+                          className="w-5 h-5 rounded-full bg-white flex items-center justify-center shadow-sm"
+                        >
+                          <HiOutlineMinus className="text-xs" />
+                        </button>
+                        <span className="text-xs font-bold">{item?.qty}</span>
+                        <button
+                          onClick={() => onChangeQty("increment", item?.id, item?.qty)}
+                          className="w-5 h-5 rounded-full bg-white flex items-center justify-center shadow-sm"
+                        >
+                          <HiOutlinePlus className="text-xs" />
+                        </button>
+                      </div>
+
+                      <button
+                        onClick={() => onDeleteProduct(item?.id)}
+                        className="mt-2 p-1.5 bg-[#F700000A] rounded-md flex items-center justify-center"
+                      >
+                        <RiDeleteBin6Fill className="text-base text-[#F70000]" />
+                      </button>
+                    </div>
                   </div>
-                </Fragment>
+                </div>
               ))}
             </div>
 
-            <div
-              style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-              className="lg:w-[25%] w-[100%] sm:w-[100%] md:w-[100%] rounded-[20px] p-[20px]"
-            >
-              <div className="w-[100%] ">
-                <p className="text-[20px] font-medium">Promo Code</p>
-                <div className="flex relative items-center border border-[#0000000D] rounded-full overflow-hidden">
+            <div className="lg:w-1/3 w-full">
+              <div className="bg-white rounded-lg shadow-sm p-4">
+                <h2 className="text-lg font-medium mb-3">Promo Code</h2>
+                <div className="flex relative items-center border border-gray-200 rounded-full overflow-hidden">
                   <input
-                    className="w-full rounded-xl h-[50px] pl-3 pr-[90px] focus:outline-none placeholder:text-[#777777]"
+                    className="w-full rounded-full h-10 px-3 text-sm focus:outline-none placeholder-gray-500"
                     placeholder="Type Here"
                   />
-
-                  <button className="absolute right-[10px] h-[35px] w-[70px] text-[12px] font-medium text-white bg-[#FFA31A] rounded-full">
+                  <button className="absolute right-1 h-7 w-16 text-xs font-medium text-white bg-[#FFA31A] rounded-full">
                     Apply
                   </button>
                 </div>
-              </div>
 
-              <div className="border-b-[1px] mt-10"></div>
-              <div className="w-[100%] ">
-                <p className="text-[24px] font-medium mt-6">Cart Total</p>
+                <div className="border-b my-4"></div>
 
-                <div className="flex items-center mt-4 justify-between">
-                  <p className="text-[18px] font-medium text-[#777777] ">
-                    Shipping
-                  </p>
-                  <p className="text-[18px] font-bold text-black ">Free</p>
-                </div>
+                <h2 className="text-lg font-medium mb-3">Cart Total</h2>
 
-                <div className="flex items-center mt-4 justify-between">
-                  <p className="text-[18px] font-medium text-[#777777] ">
-                    Discount
-                  </p>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <p className="text-gray-600">Shipping</p>
+                    <p className="font-bold">Free</p>
+                  </div>
 
-                  <p className="text-[18px] font-bold text-black ">
-                    {Number(cartDiscount).toFixed(0)}
-                  </p>
-                </div>
+                  <div className="flex justify-between">
+                    <p className="text-gray-600">Discount</p>
+                    <p className="font-bold">₹{Number(cartDiscount).toFixed(0)}</p>
+                  </div>
 
-                <div className="flex  items-center mt-4 justify-between">
-                  <p className="text-[18px] font-bold text-black ">
-                    Cart Total
-                  </p>
-                  <p className="text-[18px] font-bold">
-                    ₹{Number(cartTotal.toFixed(0))}
-                  </p>
+                  <div className="flex justify-between font-bold">
+                    <p>Cart Total</p>
+                    <p>₹{Number(cartTotal.toFixed(0))}</p>
+                  </div>
                 </div>
 
                 <button
-                  className=" bg-[#F70000] rounded-full h-[45px] mt-8  w-[100%] text-[18px] font-medium text-white"
-                  onClick={() => {
-                    goToShippingAddress();
-                  }}
+                  className="bg-[#F70000] text-white rounded-full h-10 w-full text-sm font-medium mt-4"
+                  onClick={goToShippingAddress}
                 >
                   Continue Checkout
                 </button>
@@ -247,10 +202,10 @@ export default function Cartpage() {
           </div>
         </div>
       ) : (
-        <h1 className="text-center text-[20px] font-bold p-10">
+        <h1 className="text-center text-lg font-bold p-6">
           Your Cart is Empty
         </h1>
       )}
-    </>
+    </div>
   );
 }
