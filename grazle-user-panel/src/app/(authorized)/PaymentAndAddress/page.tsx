@@ -170,30 +170,67 @@ export default function PaymentAndAddress() {
       setLoading(false);
     }
   }
-
-
+  const generateRandomOrderId = () => {
+    const timestamp = Date.now();
+    const randomNum = Math.floor(Math.random() * 1000000);
+    return `ORD-${timestamp}-${randomNum}`;
+  };
   const handleCCAvenue = async (orderId: string) => {
-    debugger
     const formdata = new FormData();
-    formdata.append("order_id", 54545);
+    formdata.append("order_id", generateRandomOrderId());
     formdata.append("amount", cartTotal.toString());
-    // Add redirect and cancel URIs
     formdata.append("redirect_url", `${window.location.origin}/payment-success`);
     formdata.append("cancel_url", `${window.location.origin}/payment-failure`);
+    formdata.append("currency", "INR");
 
     try {
       const checkOutResponse = await ccavCheckoutApi(formdata);
       console.info("CCAvenue payment initiation response:", checkOutResponse);
-      const resData = new FormData();
-      resData.append("enc_resp", checkOutResponse.data.encryptedData);
-      const ccavRes = await ccavResponseApi(resData);
 
-      toast.success("Payment initiated");
-      dispatch(clearCart());
-      router.replace(checkOutResponse.data.actionUrl);
+      if (!checkOutResponse.data.encRequest || !checkOutResponse.data.accessCode || !checkOutResponse.data.ccavenueUrl) {
+        throw new Error("Missing required data from checkout response");
+      }
+
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = checkOutResponse.data.ccavenueUrl;
+
+      const encRequestInput = document.createElement('input');
+      encRequestInput.type = 'hidden';
+      encRequestInput.name = 'encReq';
+      encRequestInput.value = checkOutResponse.data.encRequest;
+      form.appendChild(encRequestInput);
+
+      const accessCodeInput = document.createElement('input');
+      accessCodeInput.type = 'hidden';
+      accessCodeInput.name = 'access_code';
+      accessCodeInput.value = checkOutResponse.data.accessCode;
+      form.appendChild(accessCodeInput);
+
+      console.log("Form data:", {
+        action: form.action,
+        encReq: encRequestInput.value,
+        access_code: accessCodeInput.value
+      });
+
+      document.body.appendChild(form);
+
+      // Add an event listener for form submission errors
+      form.addEventListener('submit', (event) => {
+        if (event.submitter !== form) {
+          console.error("Form submission intercepted or failed");
+          toast.error("Payment initiation failed. Please try again.");
+        }
+      });
+
+      form.submit();
+
+      document.body.removeChild(form);
+
+      toast.info("Redirecting to payment gateway...");
     } catch (error) {
       console.error("CCAvenue payment initiation failed:", error);
-      toast.error("Failed to initiate CCAvenue payment");
+      toast.error("Failed to initiate CCAvenue payment. Please try again later.");
     }
   };
   const handlePhonePe = async (orderId: string) => {
@@ -389,7 +426,7 @@ export default function PaymentAndAddress() {
 
             {/* Payment options */}
             <div
-                onClick={() => setPaymentMethod("creditcard")}
+              onClick={() => setPaymentMethod("creditcard")}
               className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${paymentMethod === "creditcard" ? "border-[#F70000]" : "border-[#777777]"
                 }`}
             >
@@ -408,12 +445,12 @@ export default function PaymentAndAddress() {
             </div>
 
             <div
-                onClick={() => setPaymentMethod("phonepe")}
+              onClick={() => setPaymentMethod("phonepe")}
               className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${paymentMethod === "phonepe" ? "border-[#F70000]" : "border-[#777777]"
                 }`}
             >
               <div className="flex items-center gap-2"
-                >
+              >
                 <p className="text-lg text-[#5f259f] font-medium ml-2">PhonePe</p>
               </div>
               <Radio
@@ -427,7 +464,7 @@ export default function PaymentAndAddress() {
             </div>
 
             <div
-                  onClick={() => setPaymentMethod("cod")}
+              onClick={() => setPaymentMethod("cod")}
 
               className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${paymentMethod === "cod" ? "border-[#F70000]" : "border-[#777777]"
                 }`}
@@ -588,7 +625,7 @@ export default function PaymentAndAddress() {
             <div className="flex items-center mt-4 justify-between">
               <p className="text-[18px] font-bold text-black">Cart Total</p>
               <p className="text-[18px] font-bold text-[#777777]">
-                ₹{(cartTotal - cartDiscount).toFixed(0)}
+                ₹{(cartTotal).toFixed(0)}
               </p>
             </div>
           </div>

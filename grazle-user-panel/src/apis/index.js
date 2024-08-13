@@ -193,14 +193,14 @@ export const payWithPaypalApi = async (data) =>
   await axios.post("/payment/ccavenue-billing-page", data);
 
 export const ccavResponseApi = async (data) => {
-  return await axios.post("/payment/ccav-response-handler", data);
+  return await axios.post("/ccavenue/checkout/response", data);
 };
 export const phonePeInitiatePaymentApi = async (data) =>
   await axios.post("/phonepe/initiate-payment", data);
 
 
 export const ccavCheckoutApi = async (data) =>
-  await axios.post("/ccavenue/initiate-payment", data);
+  await axios.post("/ccavenue/checkout/request", data);
 
 export const getFirstTrendingCategoryApi = async () =>
   await axios.get(`/trending-products-by-first-category`);
