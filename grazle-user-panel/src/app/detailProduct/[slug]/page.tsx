@@ -73,7 +73,7 @@ export default function ProductDetail() {
           setSingleProduct(data.product);
           if (data.product.variants && data.product.variants.length > 0) {
             setSelectedVariant(data.product.variants[0]);
-            setCurrentVariant(data.product.variants[0]);
+            setCurrentVariant(data.product.variants[0].id);
           }
         }
       } catch (error) {
@@ -83,6 +83,7 @@ export default function ProductDetail() {
     };
     fetchProductData();
   }, [slug]);
+  console.log("singleProduct", singleProduct);
 
   const url = `${BASE_URL}/global/products/reviews/${slug}`;
 
@@ -211,42 +212,45 @@ export default function ProductDetail() {
       singleProduct?.total_rating?.total_rating_count) *
     100;
 
-  const { basePrice, price, discountInfo } = calculateFinalPrice(
-    singleProduct,
-    selectedVariant ? selectedVariant.id : null
-  );
-
-  const onAddingCart = (e, product) => {
-    e.stopPropagation();
-    if (!product) return;
-    setCurrentProductId(product.id);
-    const updateProduct = {
-      ...product,
-      qty: count,
-      discountPrice: price,
-      originalPrice: basePrice,
-      discountInfo: discountInfo,
-    };
-    dispatch(updateCart({ type: null, product: updateProduct }));
-    toast.success("Item has been added to cart!");
-  };
-
-  const onVariantChangeFunc = (id) => {
     const { basePrice, price, discountInfo } = calculateFinalPrice(
       singleProduct,
-      id
+      selectedVariant ? selectedVariant.id : null
     );
-    dispatch(
-      onVariantChange({
-        product: {
-          ...singleProduct,
-          discountPrice: price,
-          originalPrice: basePrice,
-          discountInfo: discountInfo,
-        },
-      })
-    );
-  };
+
+    const onAddingCart = (e, product) => {
+      e.stopPropagation();
+      if (!product) return;
+      setCurrentProductId(product.id);
+      const updateProduct = {
+        ...product,
+        qty: count,
+        discountPrice: price,
+        originalPrice: basePrice,
+        discountInfo: discountInfo,
+        selectedVariant: selectedVariant,
+      };
+      dispatch(updateCart({ type: null, product: updateProduct }));
+      toast.success("Item has been added to cart!");
+    };
+    const onVariantChangeFunc = (variant) => {
+      setSelectedVariant(variant);
+      setCurrentVariant(variant.id);
+      const { basePrice, price, discountInfo } = calculateFinalPrice(
+        singleProduct,
+        variant.id
+      );
+      dispatch(
+        onVariantChange({
+          product: {
+            ...singleProduct,
+            discountPrice: price,
+            originalPrice: basePrice,
+            discountInfo: discountInfo,
+            selectedVariant: variant,
+          },
+        })
+      );
+    };;
 
   async function onLiked(e: React.MouseEvent, productId: number) {
     e.stopPropagation();
@@ -392,44 +396,40 @@ export default function ProductDetail() {
               </p>
             </div>
             <div className="flex text-start justify-start gap-2 pb-8 border-b-[1px] border-[#0000001A]">
-
-              <p className="text-[18px] text-[#F70000] font-semibold">
-                ₹ {Number(singleProduct.discounted_price)?.toFixed(2)}
+            <p className="text-[18px] text-[#F70000] font-semibold">
+              ₹ {Number(selectedVariant ? selectedVariant.price : singleProduct.discounted_price)?.toFixed(2)}
+            </p>
+            {Number(selectedVariant ? selectedVariant.price : singleProduct.discounted_price) < Number(singleProduct.price) && (
+              <p className="text-[16px] text-[#909198] font-normal line-through">
+                ₹ {Number(singleProduct.price)?.toFixed(2)}
               </p>
-              {Number(singleProduct.discounted_price) < Number(singleProduct.price) && (
-                <p className="text-[16px] text-[#909198] font-normal line-through">
-                  ₹ {Number(singleProduct.price)?.toFixed(2)}
-                </p>
-              )}
-              {Number(singleProduct.discounted_price) < Number(singleProduct.price) && (
-                <p className="text-[16px] text-[#4FAD2E] font-normal">
-                  {singleProduct.discount}% OFF
-                </p>
-              )}
-            </div>
-            <div className="mt-4">
-              <p className="text-[14px] text-[#000000] font-semibold">
-                Variants
+            )}
+            {Number(selectedVariant ? selectedVariant.price : singleProduct.discounted_price) < Number(singleProduct.price) && (
+              <p className="text-[16px] text-[#4FAD2E] font-normal">
+                {calculateDiscountPercentage(singleProduct.price, selectedVariant ? selectedVariant.price : singleProduct.discounted_price)}% OFF
               </p>
-              <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center justify-between mt-2 gap-3">
-                <div className="flex items-center gap-3">
-                  {singleProduct.variants?.map((item, index) => (
-                    <div
-                      key={index}
-                      onClick={() => {
-                        setCurrentVariant(item.id);
-                        setSelectedVariant(item);
-                        onVariantChangeFunc(item.id);
-                      }}
-                      className={`py-2 px-3 bg-[#FEF2F2] rounded-lg border-[1px] cursor-pointer ${currentVariant === item.id
+            )}
+          </div>
+          <div className="mt-4">
+            <p className="text-[14px] text-[#000000] font-semibold">
+              Variants
+            </p>
+            <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center justify-between mt-2 gap-3">
+              <div className="flex items-center gap-3">
+                {singleProduct.variants?.map((item, index) => (
+                  <div
+                    key={index}
+                    onClick={() => onVariantChangeFunc(item)}
+                    className={`py-2 px-3 bg-[#FEF2F2] rounded-lg border-[1px] cursor-pointer ${
+                      currentVariant === item.id
                         ? "border-[#F70000] text-[#F70000]"
                         : "border-[#E6E6E6]"
-                        }`}
-                    >
-                      {item.variant}
-                    </div>
-                  ))}
-                </div>
+                    }`}
+                  >
+                    {item.variant}
+                  </div>
+                ))}
+              </div>
                 <div className="w-[124px] rounded-full border-[1px] border-[#E6E6E6] p-2 flex items-center justify-between">
                   <div
                     className="w-[34px] h-[34px] rounded-full bg-[#F2F2F2] flex items-center cursor-pointer justify-center"
