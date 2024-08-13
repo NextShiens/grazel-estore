@@ -14,18 +14,34 @@ export default function StoreProduct() {
   const [currentStore, setCurrentStore] = useState({});
   const [storeProduct, setStoreProduct] = useState([]);
   const [sortCriteria, setSortCriteria] = useState("name");
+  const [meta, setMeta] = useState({
+    totalItems: 0,
+    currentPage: 1,
+    itemsPerPage: 10,
+    totalPages: 1
+  });
 
   const id = useSearchParams().get("id");
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!id) return;
-      const res = await getBrandDetails(id);
+    fetchData(meta.currentPage);
+  }, [id]);
+
+  const fetchData = async (page) => {
+    if (!id) return;
+    try {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit:  meta.itemsPerPage.toString()
+      });
+      const res = await getBrandDetails(id, params);
       setCurrentStore(res.data.store);
       setStoreProduct(res.data.products);
-    };
-    fetchData();
-  }, [id]);
+      setMeta(res.data.meta);
+    } catch (error) {
+      console.error("Error fetching brand details:", error);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -72,6 +88,103 @@ export default function StoreProduct() {
   };
 
   useEffect(sortProducts, [sortCriteria]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= meta.totalPages) {
+      fetchData(newPage);
+    }
+  };
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const ellipsis = <span className="mx-1">...</span>;
+
+    if (meta.totalPages <= 5) {
+      for (let i = 1; i <= meta.totalPages; i++) {
+        pageNumbers.push(
+          <PageButton
+            key={i}
+            page={i}
+            currentPage={meta.currentPage}
+            onClick={() => handlePageChange(i)}
+          />
+        );
+      }
+    } else {
+      if (meta.currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={meta.currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+        pageNumbers.push(ellipsis);
+        pageNumbers.push(
+          <PageButton
+            key={meta.totalPages}
+            page={meta.totalPages}
+            currentPage={meta.currentPage}
+            onClick={() => handlePageChange(meta.totalPages)}
+          />
+        );
+      } else if (meta.currentPage >= meta.totalPages - 2) {
+        pageNumbers.push(
+          <PageButton
+            key={1}
+            page={1}
+            currentPage={meta.currentPage}
+            onClick={() => handlePageChange(1)}
+          />
+        );
+        pageNumbers.push(ellipsis);
+        for (let i = meta.totalPages - 3; i <= meta.totalPages; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={meta.currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+      } else {
+        pageNumbers.push(
+          <PageButton
+            key={1}
+            page={1}
+            currentPage={meta.currentPage}
+            onClick={() => handlePageChange(1)}
+          />
+        );
+        pageNumbers.push(ellipsis);
+        for (let i = meta.currentPage - 1; i <= meta.currentPage + 1; i++) {
+          pageNumbers.push(
+            <PageButton
+              key={i}
+              page={i}
+              currentPage={meta.currentPage}
+              onClick={() => handlePageChange(i)}
+            />
+          );
+        }
+        pageNumbers.push(ellipsis);
+        pageNumbers.push(
+          <PageButton
+            key={meta.totalPages}
+            page={meta.totalPages}
+            currentPage={meta.currentPage}
+            onClick={() => handlePageChange(meta.totalPages)}
+          />
+        );
+      }
+    }
+
+    return pageNumbers;
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -174,6 +287,36 @@ export default function StoreProduct() {
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
+
+      <div className="mt-8 flex justify-center items-center">
+        <button
+          onClick={() => handlePageChange(meta.currentPage - 1)}
+          disabled={meta.currentPage === 1}
+          className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+        >
+          Previous
+        </button>
+        {renderPageNumbers()}
+        <button
+          onClick={() => handlePageChange(meta.currentPage + 1)}
+          disabled={meta.currentPage === meta.totalPages}
+          className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }
+
+const PageButton = ({ page, currentPage, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`mx-1 px-3 py-1 rounded ${currentPage === page
+      ? "bg-red-500 text-white"
+      : "bg-gray-200 text-gray-700"
+      }`}
+  >
+    {page}
+  </button>
+);

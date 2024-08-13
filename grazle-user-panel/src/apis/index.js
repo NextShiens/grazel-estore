@@ -89,7 +89,7 @@ export const getPopularSearchApi = async () =>
   await axios.get("/global/popular-searches");
 export const favoriteProductApi = async (data) =>
   await axios.post("/favorite-product", data);
-  export const suggestionKeyApi = async (keyword) =>
+export const suggestionKeyApi = async (keyword) =>
   await axios.get("/global/search-suggestion?keyword=" + keyword);
 
 
@@ -113,8 +113,8 @@ export const editProfileApi = async (data, id) =>
 export const editPasswordApi = async (data) =>
   await axios.post("/profile/reset-password", data);
 
-export const createAddressApi = async (data,token) =>
-  await axios.post("/addresses", data ,{
+export const createAddressApi = async (data, token) =>
+  await axios.post("/addresses", data, {
     headers: {
       'Authorization': `Bearer ${token}`,
     }
@@ -140,8 +140,8 @@ export const getOrderByStatusApi = async (status) =>
   await axios.get(`/buyer/orders?status=${status}`);
 
 // ============================== ================================
-export const getAllProductsApi = async () =>
-  await axios.get(`/global/products`);
+export const getAllProductsApi = async (params) =>
+  await axios.get(`/global/products?${params}`);
 
 export const getBrandProductsApi = async (id) =>
   await axios.get(`/global/products?brandId=${id}`);
@@ -151,8 +151,8 @@ export const getAllBrandsApi = async () => await axios.get(`/global/brands`);
 export const getBuyerOrdersApi = async () => await axios.get(`/buyer/orders`);
 
 export const addReviewApi = async (data) => await axios.post(`/reviews`, data);
-export const getOfferProductsByIDApi = async (id) =>
-  await axios.get(`/global/products-by-offer/${id}`);
+export const getOfferProductsByIDApi = async (id,params) =>
+  await axios.get(`/global/products-by-offer/${id}?${params}`);
 
 export const fiftyPercentSaleProductsApi = async () =>
   await axios.get(`/global/product-by-percentage-offers/seventy`);
@@ -163,8 +163,8 @@ export const getOfferProductsApi = async (data) =>
 export const getFilterProductsApi = async (query) =>
   await axios.get(`/global/search-results${query}`);
 
-export const getBrandDetails = async (id) =>
-  await axios.get(`/global/store/${id}/products`);
+export const getBrandDetails = async (id, params) =>
+  await axios.get(`/global/store/${id}/products?${params}`);
 
 export const getOrderTrackingApi = async (id) =>
   await axios.get(`/buyer/orders/${id}/track-status`);
