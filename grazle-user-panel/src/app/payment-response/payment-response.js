@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { sendPaymentApiencResponse } from '@/apis';
@@ -20,14 +19,33 @@ export default function PaymentResponsePage() {
 
   useEffect(() => {
     const handlePaymentResponse = async () => {
-      if (!router.isReady) return;
+      if (!router.isReady) {
+        log("Router not ready yet");
+        return;
+      }
 
-      log("Payment response page loaded", { query: router.query });
+      log("Payment response page loaded", { 
+        query: router.query,
+        asPath: router.asPath,
+        pathname: router.pathname,
+        method: typeof window !== 'undefined' ? window.history.state.options.method : 'Unknown'
+      });
 
-      const { encResp } = router.query;
+      let encResp;
+
+      if (typeof window !== 'undefined' && window.history.state.options.method === 'POST') {
+        // Handle POST request
+        log("Detected POST request");
+        const urlParams = new URLSearchParams(window.location.search);
+        encResp = urlParams.get('encResp');
+      } else {
+        // Handle GET request
+        log("Detected GET request");
+        encResp = router.query.encResp;
+      }
 
       if (!encResp) {
-        log("No encResp found in query parameters");
+        log("No encResp found in request");
         setStatus('error');
         return;
       }
