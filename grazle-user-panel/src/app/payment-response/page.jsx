@@ -25,17 +25,18 @@ export default function PaymentResponsePage() {
   const [encResp, setEncResp] = useState(null);
 
   useEffect(() => {
-      async function fetchEncResp() {
-          const response = await fetch('/api/payment-response', {
-              headers: {
-                  'x-request-id': 'unique-request-id', 
-              },
-          });
-          const data = await response.json();
-          setEncResp(data.encResp);
-      }
+    async function fetchEncResp() {
+      const response = await fetch('/api/payment-response', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      setEncResp(data.encResp);
+    }
 
-      fetchEncResp();
+    fetchEncResp();
   }, []);
 
   useEffect(() => {

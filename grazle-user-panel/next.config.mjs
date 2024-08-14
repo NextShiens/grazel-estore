@@ -1,6 +1,19 @@
 /** @type {import('next').NextConfig} */
 const API_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://api.grazle.co.in/api";
 const nextConfig = {
+  async headers() {
+    return [
+      {
+        source: '/api/payment-response',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: 'https://secure.ccavenue.com',
+          },
+        ],
+      },
+    ]
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
