@@ -13,7 +13,6 @@ const log = (message, data = {}) => {
     message,
     ...data
   }));
-  
 };
 
 export default function PaymentResponsePage() {
