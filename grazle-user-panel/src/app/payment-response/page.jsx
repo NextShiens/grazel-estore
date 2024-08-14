@@ -29,8 +29,11 @@ export default function PaymentResponsePage() {
       });
 
       const encResp = searchParams.get('encResp');
-
-      if (!encResp) {
+      if (encResp) {
+        const redirectUrl = `https://grazle.co.in/payment-response?encResp=${encodeURIComponent(encResp)}`;
+        log("Redirecting to URL", { redirectUrl });
+        window.location.href = redirectUrl;
+      } else if (!encResp) {
         log("No encResp found in search params");
         setStatus('error');
         setError('Missing encResp parameter');
@@ -39,7 +42,10 @@ export default function PaymentResponsePage() {
 
       try {
         log("Sending payment response to API", { encResp });
-        const response = await sendPaymentApiencResponse({ encResp });
+        const formData = new FormData();
+        formData.append('encResp', encResp);
+
+        const response = await sendPaymentApiencResponse(formData);
         log("Received API response", { response: response.data });
 
         if (response.data.success) {
@@ -104,7 +110,7 @@ export default function PaymentResponsePage() {
           Back to Home
         </button>
       </div>
-    
+
     </div>
   );
 }
