@@ -9,7 +9,6 @@ const log = (message, data = {}) => {
 };
 // In-memory store
 let encRespStore = {};
-import { NextResponse } from 'next/server';
 
 export async function POST(request) {
   const formData = await request.formData();
