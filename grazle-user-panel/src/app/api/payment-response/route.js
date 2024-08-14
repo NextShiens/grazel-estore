@@ -23,16 +23,20 @@ export async function POST(request) {
           return NextResponse.json({ error: 'Missing encResp parameter' }, { status: 400 });
       }
       log("Extracted encResp from request body", { encResp });
-      const redirectUrl = `/payment-response?encResp=${encodeURIComponent(encResp)}`;
+
+      // Use the current request's origin for the redirect URL
+      const origin = request.headers.get('origin') || new URL(request.url).origin;
+      const redirectUrl = `${origin}/payment-response?encResp=${encodeURIComponent(encResp)}`;
       log("Redirecting to frontend", { redirectUrl });
 
-      return NextResponse.redirect(new URL(redirectUrl, request.url));
+      return NextResponse.redirect(redirectUrl);
   
   } catch (error) {
       log("Error processing payment response", { error: error.message, stack: error.stack });
       return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
 export async function GET(request) {
   const encResp = request.cookies.get('encResp');
   
