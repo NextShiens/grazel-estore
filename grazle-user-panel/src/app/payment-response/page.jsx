@@ -25,22 +25,17 @@ export default function PaymentResponsePage() {
   useEffect(() => {
     const handlePaymentResponse = async () => {
       if (!sessionStorage.getItem('pageReloaded')) {
-        // Set the flag in sessionStorage
         sessionStorage.setItem('pageReloaded', 'true');
-        // Reload the page
         window.location.reload();
         return;
-    }
+      }
 
       log("Payment response page loaded", {
         searchParams: Object.fromEntries(searchParams),
       });
 
       const encResp = searchParams.get('encResp');
-      if (encResp) {
-        log("Found encResp in search params", { encResp });
-        
-      } else if (!encResp) {
+      if (!encResp) {
         log("No encResp found in search params");
         setStatus('error');
         setError('Missing encResp parameter');
@@ -56,9 +51,17 @@ export default function PaymentResponsePage() {
         log("Received API response", { response: response.data });
 
         if (response.data.success) {
-          setStatus('success');
-          setPaymentDetails(response.data.paymentDetails);
-          toast.success('Payment successful!');
+          const paymentData = response.data.data;
+
+          if (paymentData.order_status === 'Success') {
+            setStatus('success');
+            setPaymentDetails(paymentData);
+            toast.success('Payment successful!');
+          } else {
+            setStatus('failed');
+            setPaymentDetails(paymentData);
+            toast.error('Payment failed or aborted. Please try again.');
+          }
         } else {
           throw new Error('Payment was not successful');
         }
@@ -96,18 +99,30 @@ export default function PaymentResponsePage() {
             <p className="text-gray-600 mb-4">Your order has been successfully placed.</p>
             {paymentDetails && (
               <div className="text-sm text-gray-500 mb-4">
-                <p>Order ID: {paymentDetails.orderNo}</p>
+                <p>Order ID: {paymentDetails.order_id}</p>
                 <p>Amount: ₹{paymentDetails.amount}</p>
-                <p>Transaction ID: {paymentDetails.transactionId}</p>
+                <p>Transaction ID: {paymentDetails.tracking_id}</p>
+              </div>
+            )}
+          </>
+        ) : status === 'failed' ? (
+          <>
+            <FaTimesCircle className="text-red-500 text-6xl mb-4" />
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">Payment Failed</h1>
+            <p className="text-gray-600 mb-4">{paymentDetails?.status_message || "We couldn't process your payment. Please try again."}</p>
+            {paymentDetails && (
+              <div className="text-sm text-gray-500 mb-4">
+                <p>Order ID: {paymentDetails.order_id}</p>
+                <p>Amount: ₹{paymentDetails.amount}</p>
+                <p>Transaction ID: {paymentDetails.tracking_id}</p>
               </div>
             )}
           </>
         ) : (
           <>
             <FaTimesCircle className="text-red-500 text-6xl mb-4" />
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">Payment Failed</h1>
-            <p className="text-gray-600 mb-4">We couldn't process your payment. Please try again.</p>
-            {error && <p className="text-sm text-red-500 mb-4">Error: {error}</p>}
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">Error</h1>
+            <p className="text-gray-600 mb-4">{error || "An unexpected error occurred."}</p>
           </>
         )}
         <button
@@ -117,7 +132,6 @@ export default function PaymentResponsePage() {
           Back to Home
         </button>
       </div>
-
     </div>
   );
 }
