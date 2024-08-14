@@ -9,47 +9,36 @@ const log = (message, data = {}) => {
 };
 // In-memory store
 let encRespStore = {};
+import { NextResponse } from 'next/server';
 
 export async function POST(request) {
-    log("Received POST request to /api/payment-response", {
-        headers: Object.fromEntries(request.headers),
-    });
+  const formData = await request.formData();
+  const encResp = formData.get('encResp');
 
-    try {
-        // Parse the request body
-        const formData = await request.formData();
-        log("Received form data", { formData: Object.fromEntries(formData) });
-        const encResp = formData.get('encResp');
+  if (!encResp) {
+    return NextResponse.json({ error: 'Missing encResp parameter' }, { status: 400 });
+  }
 
-        if (!encResp) {
-            log("No encResp found in request body");
-            return NextResponse.json({ error: 'Missing encResp parameter' }, { status: 400 });
-        }
+  // Store encResp in a secure way, such as in a database or encrypted session
+  // For this example, we'll use cookies, but in production, use a more secure method
+  const response = NextResponse.redirect(`/payment-response?encResp=${encResp}`, 307);
+  response.cookies.set('encResp', encResp, { httpOnly: true, secure: true, sameSite: 'strict' });
 
-        log("Extracted encResp from request body", { encResp });
+  return response;
+}
 
-        // Store encResp in the in-memory store
-        encRespStore["123456"] = encResp;
+export async function GET(request) {
+  const encResp = request.cookies.get('encResp');
+  
+  if (!encResp) {
+    return NextResponse.json({ error: 'No encResp found' }, { status: 404 });
+  }
 
-        // Redirect to the payment response page
-        const redirectUrl = `/payment-response`;
-        const baseUrl = request.nextUrl.origin; // Get the base URL from the request
+  // Clear the cookie after reading it
+  const response = NextResponse.json({ encResp: encResp.value });
+  response.cookies.set('encResp', '', { maxAge: 0 });
 
-        // Log the redirection attempt
-        log(`Attempting to redirect to: ${redirectUrl}`);
-
-        // Construct the absolute URL
-        const absoluteUrl = new URL(redirectUrl, baseUrl);
-
-        // Perform the redirection
-        return NextResponse.redirect(absoluteUrl, 307);
-    } catch (error) {
-        // Log any errors that occur during processing
-        log('Error processing payment response', { error: error.message, stack: error.stack });
-
-        // Return a 500 Internal Server Error response
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-    }
+  return response;
 }
 export async function GET(request) {
     log("Received GET request to /api/payment-response");
