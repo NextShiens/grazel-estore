@@ -92,12 +92,18 @@ export default function PaymentAndAddress() {
     setShowSendModel(false);
   };
 
-  async function onEditAddress(formdata) {
+  async function onEditAddress(event: any) {
+    debugger
+    event.preventDefault();
     const addressId = searchParams.get("addressId");
     if (!addressId) return;
     try {
       setPending(true);
-      const { data } = await editAddressApi(formdata, addressId);
+      const formData = new FormData(event.target);
+      const dataFormObj = Object.fromEntries(formData);
+      console.log('Form data:', dataFormObj);
+
+      const { data } = await editAddressApi(dataFormObj, addressId);
       setAddressDetail(data?.address);
       toast.success("Address updated successfully");
     } catch (error) {

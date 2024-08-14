@@ -113,12 +113,23 @@ export const editProfileApi = async (data, id) =>
 export const editPasswordApi = async (data) =>
   await axios.post("/profile/reset-password", data);
 
-export const createAddressApi = async (data, token) =>
-  await axios.post("/addresses", data, {
+export const createAddressApi = async (data, token) => {
+
+  const formData = new FormData();
+
+  formData.append('address', data.address || '');
+  formData.append('address_label', data.address_label || '');
+  formData.append('note', data.note || '');
+  formData.append('recipient_name', data.recipient_name || '');
+  formData.append('recipient_phone', data.recipient_phone || '');
+
+  return axios.post("/addresses", formData, {
     headers: {
       'Authorization': `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data'
     }
   });
+};
 
 export const getAddressApi = async () => await axios.get("/addresses");
 export const getAddressByIdApi = async (id) =>
@@ -151,7 +162,7 @@ export const getAllBrandsApi = async () => await axios.get(`/global/brands`);
 export const getBuyerOrdersApi = async () => await axios.get(`/buyer/orders`);
 
 export const addReviewApi = async (data) => await axios.post(`/reviews`, data);
-export const getOfferProductsByIDApi = async (id,params) =>
+export const getOfferProductsByIDApi = async (id, params) =>
   await axios.get(`/global/products-by-offer/${id}?${params}`);
 
 export const fiftyPercentSaleProductsApi = async () =>
