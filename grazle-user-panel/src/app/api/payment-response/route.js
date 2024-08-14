@@ -40,19 +40,7 @@ export async function GET(request) {
 
   return response;
 }
-export async function GET(request) {
-    log("Received GET request to /api/payment-response");
 
-    // Retrieve encResp from the in-memory store
-    const encResp = encRespStore["123456"];
-
-    if (!encResp) {
-        log("No encResp found in store");
-        return NextResponse.json({ error: 'No encResp found' }, { status: 404 });
-    }
-
-    return NextResponse.json({ encResp });
-}
 
 export async function PUT(request) {
     log("Received PUT request to /api/payment-response");
