@@ -81,6 +81,7 @@ const AddProduct = ({ setSelectedTab }) => {
       formData.append("size", e.target.size.value);
       formData.append("color", e.target.color.value);
       formData.append("discount", e.target.discount.value);
+      formData.append("product_info", e.target.product_info.value); 
 
       faqs.forEach((faq, i) => {
         formData.append(`answers[${i}]`, faq.answer);
