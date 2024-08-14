@@ -24,17 +24,26 @@ export default function PaymentSuccessPage() {
     const processPayment = async () => {
       log("Payment success page loaded, starting payment processing");
       try {
-        const form = document.querySelector('form');
-        if (!form) {
-          log("Form not found");
-          throw new Error('Form not found');
-         
-        }
-        const formData = new FormData(form);
-        const formDataObj = Object.fromEntries(formData);
+        // Attempt to get the form data
+        const urlParams = new URLSearchParams(window.location.search);
+        const encResp = urlParams.get('encResp');
+        const orderNo = urlParams.get('orderNo');
+        const accessCode = urlParams.get('accessCode');
 
-        log("Sending payment response to API", { formData: formDataObj });
-        const response = await sendPaymentApiencResponse(formDataObj);
+        if (!encResp) {
+          log("Missing encResp parameter");
+          throw new Error('Missing encResp parameter');
+        }
+
+        const datas = {
+          encResp,
+          orderNo,
+          accessCode,
+        };
+        const formData = new FormData(datas);
+
+        log("Sending payment response to API", { formData });
+        const response = await sendPaymentApiencResponse(formData);
         log("Received API response", { response: response.data });
 
         if (response.data.success) {
@@ -48,13 +57,11 @@ export default function PaymentSuccessPage() {
       } catch (error) {
         log("Error processing payment", { error: error.message, stack: error.stack });
         setError('Failed to process payment. Please try again.');
-        // Optionally, redirect to failure page
-        // router.push('/payment-failure');
       }
     };
 
     processPayment();
-  }, [dispatch, router]);
+  }, [dispatch]);
 
   const handleBackToHome = () => {
     log("User clicked 'Back to Home'");
