@@ -31,17 +31,26 @@ export async function POST(request) {
         // Store encResp in the in-memory store
         encRespStore["123456"] = encResp;
 
-        // Redirect to the frontend page with encResp as a query parameter
+        // Redirect to the payment response page
         const redirectUrl = `/payment-response`;
-        log("Redirecting to frontend", { redirectUrl });
+        const baseUrl = request.nextUrl.origin; // Get the base URL from the request
 
-        return NextResponse.redirect(new URL(redirectUrl), 307);
+        // Log the redirection attempt
+        log(`Attempting to redirect to: ${redirectUrl}`);
+
+        // Construct the absolute URL
+        const absoluteUrl = new URL(redirectUrl, baseUrl);
+
+        // Perform the redirection
+        return NextResponse.redirect(absoluteUrl, 307);
     } catch (error) {
-        log("Error processing payment response", { error: error.message, stack: error.stack });
+        // Log any errors that occur during processing
+        log('Error processing payment response', { error: error.message, stack: error.stack });
+
+        // Return a 500 Internal Server Error response
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
-
 export async function GET(request) {
     log("Received GET request to /api/payment-response");
 
