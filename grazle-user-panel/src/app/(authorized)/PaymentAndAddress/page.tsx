@@ -22,7 +22,6 @@ import {
 } from "@/apis";
 import { updateCart, clearCart } from "@/features/features";
 
-
 import FedEx from "@/assets/image 9.png";
 import Cash from "@/assets/image 12.png";
 import visa from "@/assets/pngwing 7.png";
@@ -34,19 +33,33 @@ const CustomModal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg max-w-sm w-full">
-        {children}
-        <button
-          className="mt-4 bg-gray-200 text-gray-800 px-4 py-2 rounded"
-          onClick={onClose}
-        >
-          Close
-        </button>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md transform transition-all duration-300 ease-in-out">
+        <div className="border-b border-gray-200 px-6 py-4">
+          <h3 className="text-lg font-medium text-gray-900">Order Confirmation</h3>
+        </div>
+        <div className="px-6 py-4">
+          {children}
+        </div>
+        <div className="bg-gray-50 px-6 py-4 rounded-b-lg flex justify-end">
+          {/* <button
+            className="mr-2 px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+            onClick={onClose}
+          >
+            Cancel
+          </button>
+          <button
+            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+            onClick={onClose}
+          >
+            Confirm
+          </button> */}
+        </div>
       </div>
     </div>
   );
 };
+
 export default function PaymentAndAddress() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -54,18 +67,15 @@ export default function PaymentAndAddress() {
   const [loading, setLoading] = useState(false);
   const [delivery, setDelivery] = useState(false);
   const [isPending, setPending] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
   const [otherFields, setOtherFields] = useState({});
   const [addressDetail, setAddressDetail] = useState({});
   const [paymentMethod, setPaymentMethod] = useState("");
   const [showSendModel, setShowSendModel] = useState(false);
-  const cartProducts = useSelector((state: any) => state.cartProducts);
-  const cartTotal = useSelector((state: any) => state.cartTotal);
-  const cartDiscount = useSelector((state: any) => state.cartDiscount);
+  const cartProducts = useSelector((state) => state.cartProducts);
+  const cartTotal = useSelector((state) => state.cartTotal);
+  const cartDiscount = useSelector((state) => state.cartDiscount);
   const [agreedTerms, setAgreedTerms] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-
-
 
   useEffect(() => {
     const addressId = searchParams.get("addressId");
@@ -77,20 +87,19 @@ export default function PaymentAndAddress() {
     })();
   }, []);
 
-
-
   const handleCloseModel = () => {
     router.push("/");
     setShowSendModel(false);
   };
 
-  async function onEditAddress(formdata: FormData) {
+  async function onEditAddress(formdata) {
     const addressId = searchParams.get("addressId");
     if (!addressId) return;
     try {
       setPending(true);
       const { data } = await editAddressApi(formdata, addressId);
       setAddressDetail(data?.address);
+      toast.success("Address updated successfully");
     } catch (error) {
       console.log(error);
       toast.error("Failed to update address");
@@ -105,24 +114,24 @@ export default function PaymentAndAddress() {
     return "trx_" + Math.random().toString(36).substr(2, 9);
   };
 
-  function onChangeFields(e: React.ChangeEvent<HTMLInputElement>) {
+  function onChangeFields(e) {
     const { name, value } = e.target;
     setOtherFields((prev) => ({ ...prev, [name]: value }));
   }
+
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
     router.push("/");
   };
 
-  async function onPayment(e: React.FormEvent<HTMLFormElement>) {
+  async function onPayment(e) {
     e.preventDefault();
     setLoading(true);
 
-
     const formdata = new FormData();
-    const productIds = cartProducts.map((item: any) => item.id);
-    const productQty = cartProducts.map((item: any) => item.qty);
-    const prices = cartProducts.map((item: any) => item.discountPrice);
+    const productIds = cartProducts.map((item) => item.id);
+    const productQty = cartProducts.map((item) => item.qty);
+    const prices = cartProducts.map((item) => item.discountPrice);
 
     try {
       const addressId = searchParams.get("addressId");
@@ -144,9 +153,6 @@ export default function PaymentAndAddress() {
       formdata.append("product_ids", productIds.join(','));
       formdata.append("prices", prices.join(','));
 
-      // const { data } = await placeOrderApi(formdata);
-
-
       if (paymentMethod === "creditcard") {
         await handleCCAvenue();
       } else if (paymentMethod === "phonepe") {
@@ -162,13 +168,14 @@ export default function PaymentAndAddress() {
       setLoading(false);
     }
   }
+
   const generateRandomOrderId = () => {
     const timestamp = Date.now();
     const randomNum = Math.floor(Math.random() * 1000000);
     return `ORD-${timestamp}-${randomNum}`;
   };
 
-  const handleCCAvenue = async (orderId: string) => {
+  const handleCCAvenue = async () => {
     const formdata = new FormData();
     formdata.append("order_id", generateRandomOrderId());
     formdata.append("amount", cartTotal.toString());
@@ -180,32 +187,24 @@ export default function PaymentAndAddress() {
       const checkOutResponse = await ccavCheckoutApi(formdata);
       console.info("CCAvenue payment initiation response:", checkOutResponse);
 
-      // Create a form element
       const form = document.createElement('form');
       form.method = 'POST';
       form.action = checkOutResponse.data.ccavenueUrl;
 
-      // Add the encRequest as a hidden input
       const encRequestInput = document.createElement('input');
       encRequestInput.type = 'hidden';
       encRequestInput.name = 'encRequest';
       encRequestInput.value = checkOutResponse.data.encRequest;
       form.appendChild(encRequestInput);
 
-      // Add the access_code as a hidden input
       const accessCodeInput = document.createElement('input');
       accessCodeInput.type = 'hidden';
       accessCodeInput.name = 'access_code';
       accessCodeInput.value = checkOutResponse.data.accessCode;
       form.appendChild(accessCodeInput);
 
-      // Append the form to the body
       document.body.appendChild(form);
-
-      // Submit the form
       form.submit();
-
-      // Optional: Remove the form from the DOM after submission
       document.body.removeChild(form);
 
       toast.success("Redirecting to payment gateway...");
@@ -214,20 +213,14 @@ export default function PaymentAndAddress() {
       toast.error("Failed to initiate CCAvenue payment");
     }
   };
-  const handlePhonePe = async (orderId: string) => {
 
-
+  const handlePhonePe = async () => {
     try {
       const formData = new FormData();
       formData.append("user_id", String(otherFields.username || "14"));
       formData.append("amount", String(cartTotal));
       formData.append("redirect_url", `${window.location.origin}/payment-success`);
       formData.append("redirect_mode", "REDIRECT");
-
-      // Debugging: Log the form data
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-      }
 
       const response = await axios.post("https://api.grazle.co.in/api/phonepe/initiate-payment", formData, {
         headers: {
@@ -248,6 +241,7 @@ export default function PaymentAndAddress() {
       toast.error("An error occurred while initiating payment");
     }
   };
+
   const handleCOD = async (formdata) => {
     try {
       const { data } = await placeOrderApi(formdata);
@@ -265,242 +259,208 @@ export default function PaymentAndAddress() {
   };
 
   return (
-    <>
-      <div className="lg:my-[50px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[10px] sm:mx-[10px] md:mx-[30px] flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-start gap-8">
-        <div className="lg:w-[70%] w-[100%] sm:w-[100%] md:w-[100%] rounded-3xl p-[20px]">
-          <form
-            onSubmit={onEditAddress}
-            style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-            className="w-[100%] rounded-3xl p-[20px]"
-          >
-            <div className="flex items-center">
-              <IoLocationOutline color="#777777" className="md:size-10 size-7 mr-3" />
-              <p className="md:text-[40px] text-lg font-medium">Shipping Address</p>
+    <div className="container mx-auto px-4 py-8 md:py-12 lg:py-16">
+      <div className="flex flex-wrap -mx-4">
+        <div className="w-full lg:w-2/3 px-4 mb-8 lg:mb-0">
+          <form onSubmit={onEditAddress} className="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div className="flex items-center mb-6">
+              <IoLocationOutline className="text-gray-500 text-2xl mr-3" />
+              <h2 className="text-2xl font-semibold">Shipping Address</h2>
             </div>
 
-            <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center gap-4 mt-6">
-              <div className="flex-col ">
-                <label className="text-[16px] font-normal text-[#777777]">
-                  First Name
-                </label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                 <input
                   name="recipient_name"
                   defaultValue={addressDetail?.recipient_name}
-                  className="border-[1px] mt-[9px] border-[#777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
-
-              <div className="flex-col ">
-                <label className="text-[16px] font-normal text-[#777777]">
-                  Last Name
-                </label>
-
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
                 <input
                   name="address_label"
                   defaultValue={addressDetail?.address_label}
-                  className="border-[1px] mt-[9px] border-[#777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
             </div>
 
-            <div className="flex-col mt-6">
-              <label className="text-[16px] font-normal text-[#777777]">
-                Street Address
-              </label>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
               <input
                 name="address"
                 defaultValue={addressDetail?.address}
-                className="border-[1px] mt-[9px] border-[#777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
 
-            <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center gap-4 mt-6">
-              <div className="flex-col ">
-                <label className="text-[16px] font-normal text-[#777777]">
-                  Phone
-                </label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                 <input
                   name="recipient_phone"
                   defaultValue={addressDetail?.recipient_phone}
-                  className="border-[1px] mt-[9px] border-[#777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
-
-              <div className="flex-col">
-                <label className="text-[16px] font-normal text-[#777777]">
-                  Note
-                </label>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>
                 <input
                   name="note"
                   defaultValue={addressDetail?.note}
-                  className="border-[1px] mt-[9px] border-[#777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
             </div>
 
-            <div className="mt-7 flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center">
-              <button
-                type="button"
-                disabled={isPending}
-                className="lg:mr-4 mr-0 disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none bg-[#D2D4DA] rounded-md h-[50px] lg:w-[150px] w-[100%] sm:w-[100%] text-[18px] font-medium text-white"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isPending}
-                className="bg-[#F70000] disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none mt-4 lg:mt-0 rounded-md h-[50px] lg:w-[210px] w-[100%] sm:w-[100%] text-[18px] font-medium text-white"
-              >
-                Use this Address
-              </button>
+            <div className="flex flex-wrap -mx-2">
+              <div className="w-full md:w-auto px-2 mb-4 md:mb-0">
+                <button
+                  type="button"
+                  disabled={isPending}
+                  className="w-full md:w-auto px-6 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors disabled:bg-gray-100 disabled:text-gray-400"
+                >
+                  Cancel
+                </button>
+              </div>
+              <div className="w-full md:w-auto px-2">
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="w-full md:w-auto px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors disabled:bg-red-300"
+                >
+                  Use this Address
+                </button>
+              </div>
             </div>
           </form>
 
-          <div
-            style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-            className="w-[100%] rounded-3xl p-[20px] mt-4 "
-          >
+          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
             {delivery ? (
-              <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center">
                 <MdKeyboardArrowLeft
                   size={22}
                   onClick={() => setDelivery(false)}
-                  className="cursor-pointer"
+                  className="cursor-pointer mr-2"
                 />
-                <div
-                  onClick={() => setDelivery(false)}
-                  className="flex items-center gap-2 mt-2"
-                >
-                  <Image
-                    src={FedEx}
-                    alt="Delivery"
-                    className="w-auto h-[25px]"
-                  />
-                  <p className="md:text-lg text-base font-medium ">
-                    FedEx Company
-                  </p>
-                </div>
+                <Image
+                  src={FedEx}
+                  alt="Delivery"
+                  className="w-auto h-6 mr-2"
+                />
+                <p className="text-lg font-medium">FedEx Company</p>
               </div>
             ) : (
               <div
                 onClick={() => setDelivery(true)}
                 className="flex items-center justify-between cursor-pointer"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center">
                   <Image
                     src={Delivery}
                     alt="Delivery"
-                    className="w-[35px] h-[25px]"
+                    className="w-8 h-6 mr-2"
                   />
-                  <p className="md:text-lg text-base font-medium ">
-                    Delivery Partner
-                  </p>
+                  <p className="text-lg font-medium">Delivery Partner</p>
                 </div>
-
                 <MdKeyboardArrowRight size={22} />
               </div>
             )}
           </div>
 
-          {/* Payment method form */}
-          <form
-            onSubmit={onPayment}
-            style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-            className="w-[100%] rounded-3xl p-[20px] mt-4"
-          >
-            <div className="flex items-center gap-2 mt-2">
-              <Image src={card} alt="Card" className="w-[30px] h-[30px] mr-2" />
-              <p className="lg:text-[30px] text-[20px] sm:text-[24px] font-medium">
-                All Payment Options
-              </p>
+          <form onSubmit={onPayment} className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center mb-6">
+              <Image src={card} alt="Card" className="w-8 h-8 mr-3" />
+              <h2 className="text-2xl font-semibold">All Payment Options</h2>
             </div>
 
-            {/* Payment options */}
             <div
               onClick={() => setPaymentMethod("creditcard")}
-              className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${paymentMethod === "creditcard" ? "border-[#F70000]" : "border-[#777777]"
+              className={`flex items-center justify-between p-4 border rounded-lg mb-4 cursor-pointer transition-colors ${paymentMethod === "creditcard" ? "border-red-500 bg-red-50" : "border-gray-300 hover:bg-gray-50"
                 }`}
             >
-              <div className="flex items-center gap-2">
-                <p className="text-lg text-[#2284b5] font-medium ml-2">CC</p>
+              <div className="flex items-center">
+                <p className="text-lg font-medium text-blue-600 mr-2">CC</p>
                 <p className="font-medium">Avenue</p>
               </div>
               <Radio
+                checked={paymentMethod === "creditcard"}
                 sx={{
                   color: "#F70000",
-                  "& .MuiSvgIcon-root": { fontSize: 24 },
-                  "&.Mui-checked": { color: "#F70000" },
+                  '&.Mui-checked': {
+                    color: "#F70000",
+                  },
                 }}
-                checked={paymentMethod === "creditcard"}
               />
             </div>
 
             <div
               onClick={() => setPaymentMethod("phonepe")}
-              className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${paymentMethod === "phonepe" ? "border-[#F70000]" : "border-[#777777]"
+              className={`flex items-center justify-between p-4 border rounded-lg mb-4 cursor-pointer transition-colors ${paymentMethod === "phonepe" ? "border-red-500 bg-red-50" : "border-gray-300 hover:bg-gray-50"
                 }`}
             >
-              <div className="flex items-center gap-2"
-              >
-                <p className="text-lg text-[#5f259f] font-medium ml-2">PhonePe</p>
-              </div>
+              <p className="text-lg font-medium text-purple-600">PhonePe</p>
               <Radio
+                checked={paymentMethod === "phonepe"}
                 sx={{
                   color: "#F70000",
-                  "& .MuiSvgIcon-root": { fontSize: 24 },
-                  "&.Mui-checked": { color: "#F70000" },
+                  '&.Mui-checked': {
+                    color: "#F70000",
+                  },
                 }}
-                checked={paymentMethod === "phonepe"}
               />
             </div>
 
             <div
               onClick={() => setPaymentMethod("cod")}
-
-              className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${paymentMethod === "cod" ? "border-[#F70000]" : "border-[#777777]"
+              className={`flex items-center justify-between p-4 border rounded-lg mb-4 cursor-pointer transition-colors ${paymentMethod === "cod" ? "border-red-500 bg-red-50" : "border-gray-300 hover:bg-gray-50"
                 }`}
             >
               <div className="flex items-center">
-                <Radio
-                  sx={{
-                    color: "#F70000",
-                    "& .MuiSvgIcon-root": { fontSize: 24 },
-                    "&.Mui-checked": { color: "#F70000" },
-                  }}
-                  checked={paymentMethod === "cod"}
-                />
-                <p className="">Cash on Delivery</p>
+                <p className="font-medium mr-2">Cash on Delivery</p>
+                <Image src={Cash} alt="Cash" className="w-10 h-7" />
               </div>
-              <Image src={Cash} alt="Cash" className="w-[43px] h-[30px] mr-2" />
+              <Radio
+                checked={paymentMethod === "cod"}
+                sx={{
+                  color: "#F70000",
+                  '&.Mui-checked': {
+                    color: "#F70000",
+                  },
+                }}
+              />
             </div>
-
 
             <button
               type="submit"
               disabled={isPending || !agreedTerms || paymentMethod === ""}
-              className="mt-10 bg-[#F70000] disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none rounded-md h-[50px] w-[100%] text-[18px] font-medium text-white"
+              className="w-full py-3 bg-red-600 text-white rounded-md font-medium text-lg hover:bg-red-700 transition-colors disabled:bg-gray-300 disabled:text-gray-500 mt-6"
             >
               {paymentMethod === "cod" ? (
                 "Place Order"
               ) : (
                 <>Pay ₹{cartTotal.toFixed(0)}</>
               )}
-              {loading && <BiLoader className="animate-spin h-6 w-6 ml-4 inline" />}
+              {loading && <BiLoader className="inline-block ml-2 animate-spin" />}
             </button>
 
-            <div className="mt-3 flex items-center">
+            <div className="mt-4 flex items-center">
               <Checkbox
+                checked={agreedTerms}
+                onChange={(e) => setAgreedTerms(e.target.checked)}
                 sx={{
                   color: "#FF8A1D",
-                  "& .MuiSvgIcon-root": { fontSize: 24 },
-                  "&.Mui-checked": { color: "#FF8A1D" },
+                  '&.Mui-checked': {
+                    color: "#FF8A1D",
+                  },
                 }}
-                onChange={(e) => setAgreedTerms(e.target.checked)}
               />
-              <p className="text-black font-normal text-sm">
+              <p className="text-sm text-gray-600">
                 By clicking, I agree to all terms of services and{' '}
                 <span
-                  className="text-blue-500 cursor-pointer"
+                  className="text-blue-500 cursor-pointer hover:underline"
                   onClick={() => router.push('/Terms&Conditions')}
                 >
                   Privacy & Policy
@@ -510,145 +470,107 @@ export default function PaymentAndAddress() {
           </form>
         </div>
 
-        {/* Cart Summary */}
-        <div className="lg:w-[30%] w-[100%] sm:w-[100%] md:w-[100%] h-auto">
-          <div
-            style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-            className="w-full rounded-3xl p-5"
-          >
-            <p className="text-sm font-medium text-[#777777]">
+        <div className="w-full lg:w-1/3 px-4">
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <p className="text-sm font-medium text-gray-600 mb-4">
               We will contact you to confirm order
             </p>
             <input
-              className="border-[1px] mt-4 border-[#0000061] w-full rounded-xl h-[50px] p-3 focus:outline-none placeholder:text-[#777777]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
               placeholder="Name"
               name="username"
               onChange={onChangeFields}
             />
           </div>
 
-          <div
-            style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-            className="w-full rounded-3xl p-5 mt-5 relative"
-          >
-            <p className="text-[16px] font-medium text-[#777777]">
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <p className="text-base font-medium text-gray-600 mb-4">
               Have a Coupon
             </p>
-            <button
-              onClick={() => toast.success("Coupon Added")}
-              className="absolute bg-[#F70000] right-8 top-[68px] rounded-md h-[35px] w-[70px] text-[18px] font-medium text-white"
-            >
-              Add
-            </button>
-            <input
-              name="coupon_code"
-              onChange={onChangeFields}
-              className="border-[1px] mt-4 border-[#0000061] w-full rounded-xl h-[50px] p-3 focus:outline-none placeholder:text-[#777777]"
-              placeholder="Add Coupon"
-            />
+            <div className="relative">
+              <input
+                name="coupon_code"
+                onChange={onChangeFields}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 pr-20"
+                placeholder="Add Coupon"
+              />
+              <button
+                onClick={() => toast.success("Coupon Added")}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-red-600 text-white px-4 py-1 rounded-md text-sm hover:bg-red-700 transition-colors"
+              >
+                Add
+              </button>
+            </div>
           </div>
 
-          <div
-            style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-            className="w-full h-full rounded-3xl p-5 mt-5 relative"
-          >
-            {cartProducts?.map((item: any, index: number) => (
-              <div
-                key={item.id}
-                className={`flex items-center justify-between ${index !== 0 ? "mt-[10px]" : "mt-[0px]"
-                  } mb-[20px]`}
-              >
-                <div className="relative w-[90px] h-[90px] mr-2">
-                  <Badge
-                    badgeContent={item.qty}
-                    color="primary"
-                    className="mr-3"
-                  >
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
+            {cartProducts?.map((item, index) => (
+              <div key={item.id} className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <Badge badgeContent={item.qty} color="primary" className="mr-3">
                     {item.featured_image ? (
                       <Image
                         src={item.featured_image}
                         height={50}
                         width={50}
                         alt={item.title}
-                        className="rounded-2xl w-full h-full"
+                        className="rounded-md"
                       />
                     ) : (
-                      <div className="w-[50px] h-[50px] flex items-center text-center justify-center bg-gray-200 rounded-xl">
+                      <div className="w-[50px] h-[50px] flex items-center justify-center bg-gray-200 rounded-md">
                         <span className="text-xs text-gray-500">No Image</span>
                       </div>
                     )}
                   </Badge>
+                  <div>
+                    <p className="font-medium">{item.title}</p>
+                    <p className="text-sm text-gray-500">Qty: {item.qty}</p>
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <p className="text-[16px] font-medium text-black mr-2">
-                    {item.title}
-                  </p>
-                </div>
-                <p className="text-[16px] font-medium text-[#777777]">
-                  ₹{Number(item.discountPrice * item.qty).toFixed(0)}
-                </p>
+                <p className="font-medium">₹{Number(item.discountPrice * item.qty).toFixed(0)}</p>
               </div>
             ))}
 
-            <div className="mt-5 border-b-[1px] border-[#777777]"></div>
-            <p className="text-[24px] font-medium text-black mt-2">
-              Cart Total
-            </p>
-            <div className="flex items-center mt-4 justify-between">
-              <p className="text-[18px] font-medium text-[#777777]">
-                Cart Subtotal
-              </p>
-              <p className="text-[18px] font-bold text-[#777777]">
-                ₹{Number(cartTotal).toFixed(0)}
-              </p>
-            </div>
-            <div className="flex items-center mt-4 justify-between">
-              <p className="text-[18px] font-medium text-[#777777]">Shipping</p>
-              <p className="text-[18px] font-bold text-black">Free</p>
-            </div>
-            <div className="flex items-center mt-4 justify-between">
-              <p className="text-[18px] font-medium text-[#777777]">Discount</p>
-              <p className="text-[18px] font-bold text-black">
-                ₹{Number(cartDiscount).toFixed(0)}
-              </p>
-            </div>
-            <div className="my-5 border-b-[1px] border-[#777777]"></div>
-            <div className="flex items-center mt-4 justify-between">
-              <p className="text-[18px] font-bold text-black">Cart Total</p>
-              <p className="text-[18px] font-bold text-[#777777]">
-                ₹{(cartTotal).toFixed(0)}
-              </p>
+            <div className="border-t border-gray-200 pt-4 mt-4">
+              <div className="flex justify-between mb-2">
+                <p className="text-gray-600">Subtotal</p>
+                <p className="font-medium">₹{Number(cartTotal).toFixed(0)}</p>
+              </div>
+              <div className="flex justify-between mb-2">
+                <p className="text-gray-600">Shipping</p>
+                <p className="font-medium">Free</p>
+              </div>
+              <div className="flex justify-between mb-2">
+                <p className="text-gray-600">Discount</p>
+                <p className="font-medium">₹{Number(cartDiscount).toFixed(0)}</p>
+              </div>
+              <div className="flex justify-between font-semibold text-lg mt-4">
+                <p>Total</p>
+                <p>₹{(cartTotal).toFixed(0)}</p>
+              </div>
             </div>
           </div>
         </div>
-
-        <CustomModal isOpen={showSuccessModal} onClose={handleCloseSuccessModal}>
-          <div className="flex flex-col justify-center items-center w-full h-full">
-            <div className="flex flex-col justify-center items-center w-full max-w-[400px] h-auto p-4 bg-white rounded-lg sm:max-h-[90vh] sm:overflow-y-auto">
-              <div className="flex justify-center mb-[22px]">
-                <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
-                <FaCircleCheck className="text-[#E24C4B] h-[105px] mx-[16px] w-[105px] sm:h-[80px] sm:w-[80px]" />
-                <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
-              </div>
-              <p className="mt-5 text-[32px] text-center font-semibold text-[#434343] sm:text-[24px]">
-                Your order has been successfully placed
-              </p>
-              <p className="mt-3 text-[16px] text-center font-semibold text-[#434343] sm:text-[14px]">
-                We will be sending you an email confirmation to your email
-                shortly
-              </p>
-              <div className="flex mt-[30px] gap-4 justify-center">
-                <button
-                  className="bg-[#F69B26] rounded-lg h-[50px] w-[300px] text-white font-medium sm:h-[40px] sm:w-full"
-                  onClick={handleCloseSuccessModal}
-                >
-                  Back to Home
-                </button>
-              </div>
-            </div>
-          </div>
-        </CustomModal>
       </div>
-    </>
+
+      <CustomModal isOpen={showSuccessModal} onClose={handleCloseSuccessModal}>
+        <div className="flex flex-col items-center">
+          <div className="mb-4 text-center">
+            <FaCircleCheck className="text-red-600 h-16 w-16 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Order Placed Successfully!</h2>
+            <p className="text-gray-600">
+              We'll send a confirmation email to you shortly.
+            </p>
+          </div>
+          <button
+            className="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+            onClick={handleCloseSuccessModal}
+          >
+            Back to Home
+          </button>
+        </div>
+      </CustomModal>
+    </div>
   );
 }
