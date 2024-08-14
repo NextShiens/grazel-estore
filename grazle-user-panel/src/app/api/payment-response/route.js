@@ -25,8 +25,8 @@ export async function POST(request) {
       log("Extracted encResp from request body", { encResp });
 
       // Use the current request's origin for the redirect URL
-      const origin = request.headers.get('origin') || new URL(request.url).origin;
-      const redirectUrl = `${origin}/payment-response?encResp=${encodeURIComponent(encResp)}`;
+      const origin = request.headers.get('host') || new URL(request.url).origin;
+      const redirectUrl = `https://grazle.co.in/payment-response?encResp=${encodeURIComponent(encResp)}`;
       log("Redirecting to frontend", { redirectUrl });
 
       return NextResponse.redirect(redirectUrl);
