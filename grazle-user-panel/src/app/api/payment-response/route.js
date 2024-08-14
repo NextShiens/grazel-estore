@@ -8,7 +8,7 @@ const log = (message, data = {}) => {
     }));
 };
 // In-memory store
-let encRespStore = {};
+
 export async function POST(request) {
   log("Received POST request to /api/payment-response", {
       headers: Object.fromEntries(request.headers),
@@ -23,7 +23,7 @@ export async function POST(request) {
           return NextResponse.json({ error: 'Missing encResp parameter' }, { status: 400 });
       }
       log("Extracted encResp from request body", { encResp });
-      redirectUrl = `/payment-response?encResp=${encodeURIComponent(encResp)}`;
+      const redirectUrl = `/payment-response?encResp=${encodeURIComponent(encResp)}`;
       log("Redirecting to frontend", { redirectUrl });
 
       return NextResponse.redirect(new URL(redirectUrl, request.url));
