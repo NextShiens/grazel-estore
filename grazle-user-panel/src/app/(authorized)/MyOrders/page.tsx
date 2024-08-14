@@ -94,7 +94,7 @@ export default function MyAccount() {
       const { data } = await getBuyerOrdersApi();
       setOrders(data.orders);
       setMeta(data.meta);
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const profileDataHandler = (e: any) => {
@@ -169,7 +169,7 @@ export default function MyAccount() {
       } else {
         toast.error(
           response.data?.message ||
-            "Failed to deactivate account. Please try again."
+          "Failed to deactivate account. Please try again."
         );
       }
     } catch (error) {
@@ -363,61 +363,55 @@ export default function MyAccount() {
           >
             <div
               onClick={() => handleSectionChange("Personal Info")}
-              className={`cursor-pointer pl-5 text-[14px] font-medium cursor-pointer ${
-                activeSection === "Personal Info"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "Personal Info"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Personal Information
             </div>
             <div
               onClick={() => handleSectionChange("Orders")}
-              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${
-                activeSection === "Orders"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B]"
-              }`}
+              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${activeSection === "Orders"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B]"
+                }`}
             >
               My Orders
             </div>
             <div
               onClick={() => handleSectionChange("Manage Address")}
-              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${
-                activeSection === "Manage Address"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${activeSection === "Manage Address"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Manage Address
             </div>
             <div
               onClick={() => handleSectionChange("Password Manager")}
-              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
-                activeSection === "Password Manager"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "Password Manager"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Password Manager
             </div>
             <div
               onClick={handelLogout}
-              className={`cursor-pointer  mt-[40px] pl-5  text-[14px] font-medium cursor-pointer   ${
-                activeSection === "Logouts"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer  mt-[40px] pl-5  text-[14px] font-medium cursor-pointer   ${activeSection === "Logouts"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Logouts
             </div>
             <div
               onClick={() => router.push("/")}
-              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
-                activeSection === "nothing"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "nothing"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Go Back
             </div>
@@ -524,7 +518,7 @@ export default function MyAccount() {
                     </label>
                     <input
                       onChange={profileDataHandler}
-                      placeholder="country" 
+                      placeholder="country"
                       name="country"
                       defaultValue={currentUser?.profile?.country}
                       className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
@@ -544,17 +538,17 @@ export default function MyAccount() {
                   </div>
                 </div>
                 <div className="flex-col mt-[30px] lg:w-[50%] w-[100%] sm:w-[100%] md:w-[100%]">
-                    <label className="text-[16px] font-semibold">
-                      City *
-                    </label>
-                    <input
-                      onChange={profileDataHandler}
-                      placeholder="city "
-                      name="city"
-                      defaultValue={currentUser?.profile?.city}
-                      className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                    />
-                  </div>
+                  <label className="text-[16px] font-semibold">
+                    City *
+                  </label>
+                  <input
+                    onChange={profileDataHandler}
+                    placeholder="city "
+                    name="city"
+                    defaultValue={currentUser?.profile?.city}
+                    className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                  />
+                </div>
                 {/* <div className="flex-col mt-[30px]">
                   <label className="text-[16px] font-semibold"> Gender *</label>
                   <select
@@ -671,33 +665,30 @@ export default function MyAccount() {
                   >
                     <p
                       onClick={() => handleSectionChanges("Active")}
-                      className={`lg:text-[16px] text-[10px] md:text-[14px]  font-normal cursor-pointer bold ${
-                        activeSections === "Active"
-                          ? "border-b-[4px] border-[#F70000] font-semibold"
-                          : "text-[#8B8B8B]"
-                      }`}
+                      className={`lg:text-[16px] text-[10px] md:text-[14px]  font-normal cursor-pointer bold ${activeSections === "Active"
+                        ? "border-b-[4px] border-[#F70000] font-semibold"
+                        : "text-[#8B8B8B]"
+                        }`}
                     >
                       Active orders
                     </p>
 
                     <p
                       onClick={() => handleSectionChanges("Completed")}
-                      className={`lg:text-[16px] text-[10px] md:text-[14px] font-normal cursor-pointer bold ${
-                        activeSections === "Completed"
-                          ? "border-b-[4px] border-[#F70000] font-semibold"
-                          : "text-[#8B8B8B]"
-                      }`}
+                      className={`lg:text-[16px] text-[10px] md:text-[14px] font-normal cursor-pointer bold ${activeSections === "Completed"
+                        ? "border-b-[4px] border-[#F70000] font-semibold"
+                        : "text-[#8B8B8B]"
+                        }`}
                     >
                       Completed orders
                     </p>
 
                     <p
                       onClick={() => handleSectionChanges("Cancelled")}
-                      className={`lg:text-[16px] text-[10px] md:text-[14px] font-normal cursor-pointer ${
-                        activeSections === "Cancelled"
-                          ? "border-b-[4px] border-[#F70000] font-semibold"
-                          : "text-[#8B8B8B]"
-                      }`}
+                      className={`lg:text-[16px] text-[10px] md:text-[14px] font-normal cursor-pointer ${activeSections === "Cancelled"
+                        ? "border-b-[4px] border-[#F70000] font-semibold"
+                        : "text-[#8B8B8B]"
+                        }`}
                     >
                       Cancelled orders
                     </p>
@@ -713,7 +704,7 @@ export default function MyAccount() {
                         orders.map((order: any) => {
                           return (
                             <MyorderCard
-                              key={order.id}
+                              key={order?.id}
                               status={["in_progress", "new", "shipped"]}
                               order={order}
                               getMyAllOrders={getMyAllOrders}
@@ -726,24 +717,25 @@ export default function MyAccount() {
 
                   {activeSections === "Completed" && (
                     <>
-                      {!orders?.length ? (
+                      {orders?.filter((order: any) => order.status === "completed").length === 0 ? (
                         <p className="text-center text-gray-500 text-lg mt-4">
                           No completed orders found...
                         </p>
                       ) : (
-                        orders.map((order: any) => {
-                          return (
-                            <MyorderCard
-                              key={order.id}
-                              status={["completed"]}
-                              order={order}
-                            />
-                          );
-                        })
+                        orders
+                          .filter((order: any) => order.status === "completed")
+                          .map((order: any) => {
+                            return (
+                              <MyorderCard
+                                key={order.id}
+                                status={["completed"]}
+                                order={order}
+                              />
+                            );
+                          })
                       )}
                     </>
                   )}
-
                   {activeSections === "Cancelled" && (
                     <>
                       {!orders?.length ? (
@@ -842,11 +834,10 @@ export default function MyAccount() {
                           <div className="flex items-center justify-center border-[1px] border-[#BABABA] rounded-md w-[55px] h-[35px] mr-3">
                             {editEnabled !== item?.id ? (
                               <FiEdit
-                                className={`${
-                                  editEnabled === item?.id
-                                    ? "text-[#F70000]"
-                                    : "text-[#BABABA]"
-                                } h-[20px] w-[20px]  cursor-pointer`}
+                                className={`${editEnabled === item?.id
+                                  ? "text-[#F70000]"
+                                  : "text-[#BABABA]"
+                                  } h-[20px] w-[20px]  cursor-pointer`}
                                 onClick={() => setEditEnabled(item?.id)}
                               />
                             ) : (
