@@ -6,7 +6,7 @@ import { FaCircleCheck, FaSpinner } from "react-icons/fa6";
 import Dots from "@/assets/Group 1820549907.png";
 import { clearCart } from "@/features/features";
 import { useDispatch } from "react-redux";
-import { sendPaymentApiencResponse } from "@/api";
+import { sendPaymentApiencResponse } from "@/apis";
 
 const log = (message, data = {}) => {
   console.log(JSON.stringify({
