@@ -38,21 +38,29 @@ export default function AddressPage() {
     setAddressId(id);
   };
 
-  const onCreateAddress = async (formdata: any) => {
+  const onCreateAddress = async (event) => {
+    event.preventDefault();
     try {
+      debugger
       const token = localStorage.getItem("token");
       if (!token) return toast.error("Please login to continue");
       setPending(true);
-      const res: any = await createAddressApi(formdata, token);
+
+      const formData = new FormData(event.target);
+      const data = Object.fromEntries(formData);
+      console.log('Form data:', data);
+
+      const res = await createAddressApi(data, token);
       setAllAddress([...allAddress, res?.data?.address]);
       toast.success("Address has been created");
-    } catch (error: any) {
+      setAddress(false); // Close the form after successful submission
+    } catch (error) {
+      console.error('Error creating address:', error);
       toast.error(error?.response?.data?.message || "Something went wrong");
     } finally {
       setPending(false);
     }
   };
-
   const onEditAddress = async (id: any) => {
     try {
       setPending(true);
@@ -67,7 +75,8 @@ export default function AddressPage() {
   };
 
   const onDeleteAddress = async (id: any) => {
-    if (!addressId) return toast.error("Please select the address");
+    debugger
+    if (!id) return toast.error("Please select the address");
     try {
       setPending(true);
       await deleteAddressApi(id);
