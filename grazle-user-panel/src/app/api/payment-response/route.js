@@ -28,10 +28,10 @@ export async function POST(request) {
         log("Extracted encResp from request body", { encResp });
 
         // Redirect to the frontend page with encResp as a query parameter
-         redirectUrl = `/payment-response?encResp=${encodeURIComponent(encResp)}`;
+        redirectUrl = `/payment-response?encResp=${encodeURIComponent(encResp)}`;
         log("Redirecting to frontend", { redirectUrl });
 
-        return NextResponse.redirect(new URL(redirectUrl, request.url));
+        return NextResponse.redirect(new URL(redirectUrl, request.url), 307);
     } catch (error) {
         log("Error processing payment response", { error: error.message, stack: error.stack });
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -40,7 +40,7 @@ export async function POST(request) {
 
 export async function GET(request) {
     log("Received GET request to /api/payment-response");
-  return NextResponse.json({ redirectUrl });
+    return NextResponse.json({ redirectUrl });
 }
 
 export async function PUT(request) {
