@@ -37,7 +37,10 @@ export default function PaymentResponsePage() {
 
       try {
         log("Sending payment response to API", { encResp });
-        const response = await sendPaymentApiencResponse({ encResp });
+        const formData = new FormData();
+        formData.append('encResp', encResp);
+        
+        const response = await sendPaymentApiencResponse(formData);
         log("Received API response", { response: response.data });
 
         if (response.data.success) {
