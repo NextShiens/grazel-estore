@@ -7,7 +7,8 @@ const log = (message, data = {}) => {
         ...data
     }));
 };
-let redirectUrl = null;
+// In-memory store
+let encRespStore = {};
 
 export async function POST(request) {
     log("Received POST request to /api/payment-response", {
@@ -27,11 +28,14 @@ export async function POST(request) {
 
         log("Extracted encResp from request body", { encResp });
 
+        // Store encResp in the in-memory store
+        encRespStore["123456"] = encResp;
+
         // Redirect to the frontend page with encResp as a query parameter
-        redirectUrl = `/payment-response?encResp=${encodeURIComponent(encResp)}`;
+        const redirectUrl = `/payment-response`;
         log("Redirecting to frontend", { redirectUrl });
 
-        return NextResponse.redirect(new URL(redirectUrl, request.url), 307);
+        return NextResponse.redirect(new URL(redirectUrl), 307);
     } catch (error) {
         log("Error processing payment response", { error: error.message, stack: error.stack });
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -40,7 +44,16 @@ export async function POST(request) {
 
 export async function GET(request) {
     log("Received GET request to /api/payment-response");
-    return NextResponse.json({ redirectUrl });
+
+    // Retrieve encResp from the in-memory store
+    const encResp = encRespStore["123456"];
+
+    if (!encResp) {
+        log("No encResp found in store");
+        return NextResponse.json({ error: 'No encResp found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ encResp });
 }
 
 export async function PUT(request) {

@@ -22,6 +22,22 @@ export default function PaymentResponsePage() {
   const [paymentDetails, setPaymentDetails] = useState(null);
   const [error, setError] = useState(null);
 
+  const [encResp, setEncResp] = useState(null);
+
+  useEffect(() => {
+      async function fetchEncResp() {
+          const response = await fetch('/api/payment-response', {
+              headers: {
+                  'x-request-id': 'unique-request-id', 
+              },
+          });
+          const data = await response.json();
+          setEncResp(data.encResp);
+      }
+
+      fetchEncResp();
+  }, []);
+
   useEffect(() => {
     const handlePaymentResponse = async () => {
       if (!sessionStorage.getItem('pageReloaded')) {
@@ -30,17 +46,17 @@ export default function PaymentResponsePage() {
         return;
       }
 
-      log("Payment response page loaded", {
-        searchParams: Object.fromEntries(searchParams),
-      });
+      // log("Payment response page loaded", {
+      //   searchParams: Object.fromEntries(searchParams),
+      // });
 
-      const encResp = searchParams.get('encResp');
-      if (!encResp) {
-        log("No encResp found in search params");
-        setStatus('error');
-        setError('Missing encResp parameter');
-        return;
-      }
+      // const encResp = searchParams.get('encResp');
+      // if (!encResp) {
+      //   log("No encResp found in search params");
+      //   setStatus('error');
+      //   setError('Missing encResp parameter');
+      //   return;
+      // }
 
       try {
         log("Sending payment response to API", { encResp });
