@@ -182,44 +182,59 @@ export default function PaymentAndAddress() {
   };
 
   const handleCCAvenue = async () => {
-    const formdata = new FormData();
-    formdata.append("order_id", generateRandomOrderId());
-    formdata.append("amount", cartTotal.toString());
-    formdata.append("redirect_url", `${window.location.origin}/payment-success`);
-    formdata.append("cancel_url", `${window.location.origin}/payment-failure`);
-    formdata.append("currency", "INR");
-
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("order_id", generateRandomOrderId());
+    formData.append("amount", cartTotal.toString());
+    formData.append("redirect_url", `${window.location.origin}/api/payment-response`);
+    formData.append("cancel_url", `${window.location.origin}/api/payment-response`);
+    formData.append("currency", "INR");
+  
     try {
-      const checkOutResponse = await ccavCheckoutApi(formdata);
+      const checkOutResponse = await ccavCheckoutApi(formData);
       console.info("CCAvenue payment initiation response:", checkOutResponse);
+      debugger
+  
+      // if (checkOutResponse.data && checkOutResponse.data.ccavenueUrl) {
+      //   const form = document.createElement('form');
+      //   form.method = 'POST';
+      //   form.action = checkOutResponse.data.ccavenueUrl;
+  
+      //   const encRequestInput = document.createElement('input');
+      //   encRequestInput.type = 'hidden';
+      //   encRequestInput.name = 'encRequest';
+      //   encRequestInput.value = checkOutResponse.data.encRequest;
+      //   form.appendChild(encRequestInput);
+  
+      //   const accessCodeInput = document.createElement('input');
+      //   accessCodeInput.type = 'hidden';
+      //   accessCodeInput.name = 'access_code';
+      //   accessCodeInput.value = checkOutResponse.data.accessCode;
+      //   form.appendChild(accessCodeInput);
+  
+      //   document.body.appendChild(form);
+      //   form.submit();
+      //   document.body.removeChild(form);
+  
+      //   toast.success("Redirecting to payment gateway...");
+      
+      if (checkOutResponse.data && checkOutResponse.data.ccavenueUrl) {
+        const { ccavenueUrl, encRequest, accessCode } = checkOutResponse.data;
+        const url = `${ccavenueUrl}&encRequest=${encRequest}&access_code=${accessCode}`;
 
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = checkOutResponse.data.ccavenueUrl;
+        window.location.href = url;
 
-      const encRequestInput = document.createElement('input');
-      encRequestInput.type = 'hidden';
-      encRequestInput.name = 'encRequest';
-      encRequestInput.value = checkOutResponse.data.encRequest;
-      form.appendChild(encRequestInput);
-
-      const accessCodeInput = document.createElement('input');
-      accessCodeInput.type = 'hidden';
-      accessCodeInput.name = 'access_code';
-      accessCodeInput.value = checkOutResponse.data.accessCode;
-      form.appendChild(accessCodeInput);
-
-      document.body.appendChild(form);
-      form.submit();
-      document.body.removeChild(form);
-
-      toast.success("Redirecting to payment gateway...");
+        toast.success("Redirecting to payment gateway...");
+      } else {
+        throw new Error('Invalid response from payment initiation');
+      }
     } catch (error) {
       console.error("CCAvenue payment initiation failed:", error);
       toast.error("Failed to initiate CCAvenue payment");
+    } finally {
+      setLoading(false);
     }
   };
-
   const handlePhonePe = async () => {
     try {
       const formData = new FormData();
