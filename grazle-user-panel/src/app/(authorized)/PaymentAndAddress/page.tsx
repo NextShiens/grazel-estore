@@ -185,8 +185,8 @@ export default function PaymentAndAddress() {
     const formdata = new FormData();
     formdata.append("order_id", generateRandomOrderId());
     formdata.append("amount", cartTotal.toString());
-    formdata.append("redirect_url", `${window.location.origin}/payment-success`);
-    formdata.append("cancel_url", `${window.location.origin}/payment-failure`);
+    formdata.append("redirect_url", `${window.location.origin}/api/payment-response`);
+    formdata.append("cancel_url", `${window.location.origin}/api/payment-response`);
     formdata.append("currency", "INR");
 
     try {
