@@ -223,7 +223,9 @@ export default function PaymentAndAddress() {
   const handlePhonePe = async () => {
     try {
       const formData = new FormData();
-      formData.append("user_id", String(otherFields.username || "14"));
+      const user = localStorage.getItem('theUser');
+      console.log('User:', user);
+      formData.append("user_id", String(user?.id));
       formData.append("amount", String(cartTotal));
       formData.append("redirect_url", `${window.location.origin}/payment-success`);
       formData.append("redirect_mode", "REDIRECT");

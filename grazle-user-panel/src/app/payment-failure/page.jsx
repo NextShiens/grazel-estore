@@ -1,10 +1,10 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { FaCircleXmark } from "react-icons/fa6";
+import { FaCircleXmark, FaSpinner } from "react-icons/fa6";
 import Dots from "@/assets/Group 1820549907.png";
-import { sendPaymentApiencResponse } from "@/apis";
+import { sendPaymentApiencResponse } from "@/api";
+
 const log = (message, data = {}) => {
   console.log(JSON.stringify({
     timestamp: new Date().toISOString(),
@@ -12,39 +12,38 @@ const log = (message, data = {}) => {
     ...data
   }));
 };
+
 export default function PaymentFailurePage() {
   const router = useRouter();
   const [paymentDetails, setPaymentDetails] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const processPayment = async () => {
       log("Payment failure page loaded, starting payment processing");
       try {
-        // Attempt to get the form data
-        const urlParams = new URLSearchParams(window.location.search);
-        const encResp = urlParams.get('encResp');
-        const orderNo = urlParams.get('orderNo');
-        const accessCode = urlParams.get('accessCode');
-
-        if (!encResp) {
-          log("Missing encResp parameter");
-          throw new Error('Missing encResp parameter');
+        const form = document.querySelector('form');
+        if (!form) {
+          throw new Error('Form not found');
         }
-        const datas = {
-          encResp,
-          orderNo,
-          accessCode,
-        };
-        const formData = new FormData(datas);
-        log("Sending payment response to API", { formData });
-        const response = await sendPaymentApiencResponse(formData);
-        log("Received API response", { response: response.data });
+        const formData = new FormData(form);
+        const formDataObj = Object.fromEntries(formData);
 
-        setPaymentDetails(response.data.paymentDetails);
+        log("Sending payment response to API", { formData: formDataObj });
+        const response = await sendPaymentApiencResponse(formDataObj);
+        log("Received API response", { response });
+
+        if (response.success) {
+          setPaymentDetails(response.data);
+        } else {
+          throw new Error(response.message || 'Failed to process payment response');
+        }
       } catch (error) {
         log("Error processing payment response", { error: error.message, stack: error.stack });
         setError('Failed to process payment response. Please contact support.');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -61,43 +60,69 @@ export default function PaymentFailurePage() {
     router.push("/");
   };
 
+  if (loading) {
+    return (
+      <div className="flex flex-col justify-center items-center w-full h-screen bg-gray-100">
+        <FaSpinner className="animate-spin text-4xl text-[#F69B26] mb-4" />
+        <p className="text-lg font-semibold text-gray-600">Processing payment result...</p>
+      </div>
+    );
+  }
+
   if (error) {
-    log("Rendering error state", { error });
-    return <div className="text-red-500">{error}</div>;
-  }
-
-  if (!paymentDetails) {
-    log("Rendering loading state");
-    return <div>Processing payment result...</div>;
-  }
-
-  log("Rendering failure state", { paymentDetails });
-  return (
-    <div className="flex flex-col justify-center items-center w-full h-screen bg-gray-100">
-      <div className="flex flex-col justify-center items-center w-full max-w-[400px] h-auto p-8 bg-white rounded-lg shadow-lg">
-        <div className="flex justify-center mb-[22px]">
-          <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
-          <FaCircleXmark className="text-[#F44336] h-[105px] mx-[16px] w-[105px] sm:h-[80px] sm:w-[80px]" />
-          <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
+    return (
+      <div className="flex flex-col justify-center items-center w-full h-screen bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+          <h1 className="text-2xl font-bold text-red-500 mb-4">Error</h1>
+          <p className="text-gray-700 mb-6">{error}</p>
+          <button
+            className="w-full bg-[#F69B26] text-white font-bold py-2 px-4 rounded hover:bg-[#E58A15] transition duration-300"
+            onClick={handleBackToHome}
+          >
+            Back to Home
+          </button>
         </div>
-        <h1 className="mt-5 text-[32px] text-center font-semibold text-[#434343] sm:text-[24px]">
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col justify-center items-center w-full min-h-screen bg-gray-100 p-4">
+      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+        <div className="flex justify-center mb-6">
+          <Image src={Dots} alt="" className="h-16 w-16" />
+          <FaCircleXmark className="text-[#F44336] h-24 w-24 mx-4" />
+          <Image src={Dots} alt="" className="h-16 w-16" />
+        </div>
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-4">
           Payment Failed
         </h1>
-        <p className="mt-3 text-[16px] text-center font-semibold text-[#434343] sm:text-[14px]">
-          We're sorry, but your payment for order {paymentDetails.orderNo} could not be processed at this time.
-        </p>
-        <p className="mt-2 text-[14px] text-center text-[#777777]">
-          Please try again or choose a different payment method.
-        </p>
-        <div className="flex mt-[30px] gap-4 justify-center w-full">
+        <div className="space-y-4">
+          <p className="text-center text-gray-600">
+            We're sorry, but your payment for order <span className="font-semibold">{paymentDetails.order_id}</span> could not be processed.
+          </p>
+          <div className="bg-gray-50 p-4 rounded-md">
+            <p className="text-sm text-gray-500 mb-2">Transaction Details:</p>
+            <p className="text-sm"><span className="font-medium">Amount:</span> {paymentDetails.currency} {paymentDetails.amount}</p>
+            <p className="text-sm"><span className="font-medium">Date:</span> {paymentDetails.trans_date}</p>
+            <p className="text-sm"><span className="font-medium">Status:</span> {paymentDetails.order_status}</p>
+            {paymentDetails.status_message && (
+              <p className="text-sm"><span className="font-medium">Reason:</span> {paymentDetails.status_message}</p>
+            )}
+          </div>
+          <p className="text-sm text-center text-gray-500">
+            Please try again or choose a different payment method.
+          </p>
+        </div>
+        <div className="mt-8 grid grid-cols-2 gap-4">
           <button
-            className="bg-[#F70000] rounded-lg h-[50px] w-1/2 text-white font-medium sm:h-[40px]"
+            className="w-full bg-[#F44336] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#D32F2F] transition duration-300"
             onClick={handleTryAgain}
           >
             Try Again
           </button>
           <button
-            className="bg-[#F69B26] rounded-lg h-[50px] w-1/2 text-white font-medium sm:h-[40px]"
+            className="w-full bg-[#F69B26] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#E58A15] transition duration-300"
             onClick={handleBackToHome}
           >
             Back to Home
