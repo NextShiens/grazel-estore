@@ -183,32 +183,32 @@ export default function PaymentAndAddress() {
     formData.append("redirect_url", `${window.location.origin}/api/payment-response`);
     formData.append("cancel_url", `${window.location.origin}/api/payment-response`);
     formData.append("currency", "INR");
-
+  
     try {
       const checkOutResponse = await ccavCheckoutApi(formData);
       console.info("CCAvenue payment initiation response:", checkOutResponse);
-
+  
       if (checkOutResponse.data && checkOutResponse.data.ccavenueUrl) {
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = checkOutResponse.data.ccavenueUrl;
-
+  
         const encRequestInput = document.createElement('input');
         encRequestInput.type = 'hidden';
         encRequestInput.name = 'encRequest';
         encRequestInput.value = checkOutResponse.data.encRequest;
         form.appendChild(encRequestInput);
-
+  
         const accessCodeInput = document.createElement('input');
         accessCodeInput.type = 'hidden';
         accessCodeInput.name = 'access_code';
         accessCodeInput.value = checkOutResponse.data.accessCode;
         form.appendChild(accessCodeInput);
-
+  
         document.body.appendChild(form);
         form.submit();
         document.body.removeChild(form);
-
+  
         toast.success("Redirecting to payment gateway...");
       } else {
         throw new Error('Invalid response from payment initiation');

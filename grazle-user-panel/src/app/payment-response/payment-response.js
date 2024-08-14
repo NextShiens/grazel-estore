@@ -1,5 +1,8 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { sendPaymentApiencResponse } from '@/apis';
 import { toast } from 'react-toastify';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
@@ -14,38 +17,20 @@ const log = (message, data = {}) => {
 
 export default function PaymentResponsePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [status, setStatus] = useState('processing');
   const [paymentDetails, setPaymentDetails] = useState(null);
 
   useEffect(() => {
     const handlePaymentResponse = async () => {
-      if (!router.isReady) {
-        log("Router not ready yet");
-        return;
-      }
-
       log("Payment response page loaded", { 
-        query: router.query,
-        asPath: router.asPath,
-        pathname: router.pathname,
-        method: typeof window !== 'undefined' ? window.history.state.options.method : 'Unknown'
+        searchParams: Object.fromEntries(searchParams),
       });
 
-      let encResp;
-
-      if (typeof window !== 'undefined' && window.history.state.options.method === 'POST') {
-        // Handle POST request
-        log("Detected POST request");
-        const urlParams = new URLSearchParams(window.location.search);
-        encResp = urlParams.get('encResp');
-      } else {
-        // Handle GET request
-        log("Detected GET request");
-        encResp = router.query.encResp;
-      }
+      const encResp = searchParams.get('encResp');
 
       if (!encResp) {
-        log("No encResp found in request");
+        log("No encResp found in search params");
         setStatus('error');
         return;
       }
@@ -63,14 +48,14 @@ export default function PaymentResponsePage() {
           throw new Error('Payment was not successful');
         }
       } catch (error) {
-        log("Error processing payment response", { error: error.message, stack: error.stack });
+        log("Error processing payment response", { error: (error).message, stack: (error ).stack });
         setStatus('error');
         toast.error('Payment failed. Please try again.');
       }
     };
 
     handlePaymentResponse();
-  }, [router.isReady, router.query]);
+  }, [searchParams]);
 
   const handleBackToHome = () => {
     log("User clicked 'Back to Home'");
