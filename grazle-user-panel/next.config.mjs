@@ -6,12 +6,13 @@ const nextConfig = {
       {
         source: '/api/payment-response',
         headers: [
-          { key: 'Access-Control-Allow-Origin', value: '*' },
-          { key: 'Access-Control-Allow-Methods', value: 'POST, GET, OPTIONS' },
-          { key: 'Access-Control-Allow-Headers', value: 'Content-Type' },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: 'https://secure.ccavenue.com',
+          },
         ],
       },
-    ];
+    ]
   },
   typescript: {
     ignoreBuildErrors: true,
