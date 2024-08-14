@@ -24,17 +24,16 @@ export default function PaymentFailurePage() {
     const processPayment = async () => {
       log("Payment failure page loaded, starting payment processing");
       try {
-        const form = document.querySelector('form');
-        if (!form) {
-          throw new Error('Form not found');
-        }
-        const formData = new FormData(form);
+        // Access form data from the POST request
+        const formData = new FormData(document.querySelector('form'));
         const formDataObj = Object.fromEntries(formData);
+        
+        log("Extracted form data", { formData: formDataObj });
 
-        log("Sending payment response to API", { formData: formDataObj });
+        // Send the form data to your API
         const response = await sendPaymentApiencResponse(formDataObj);
         log("Received API response", { response });
-
+        
         if (response.success) {
           setPaymentDetails(response.data);
         } else {
@@ -100,13 +99,15 @@ export default function PaymentFailurePage() {
         </h1>
         <div className="space-y-4">
           <p className="text-center text-gray-600">
-            We're sorry, but your payment for order <span className="font-semibold">{paymentDetails.order_id}</span> could not be processed.
+            We're sorry, but your payment for order <span className="font-semibold">{paymentDetails.order_id || paymentDetails.orderNo}</span> could not be processed.
           </p>
           <div className="bg-gray-50 p-4 rounded-md">
             <p className="text-sm text-gray-500 mb-2">Transaction Details:</p>
-            <p className="text-sm"><span className="font-medium">Amount:</span> {paymentDetails.currency} {paymentDetails.amount}</p>
-            <p className="text-sm"><span className="font-medium">Date:</span> {paymentDetails.trans_date}</p>
-            <p className="text-sm"><span className="font-medium">Status:</span> {paymentDetails.order_status}</p>
+            <p className="text-sm"><span className="font-medium">Order No:</span> {paymentDetails.orderNo}</p>
+            <p className="text-sm"><span className="font-medium">Encrypted Response:</span> {paymentDetails.encResp}</p>
+            {paymentDetails.amount && <p className="text-sm"><span className="font-medium">Amount:</span> {paymentDetails.currency} {paymentDetails.amount}</p>}
+            {paymentDetails.trans_date && <p className="text-sm"><span className="font-medium">Date:</span> {paymentDetails.trans_date}</p>}
+            {paymentDetails.order_status && <p className="text-sm"><span className="font-medium">Status:</span> {paymentDetails.order_status}</p>}
             {paymentDetails.status_message && (
               <p className="text-sm"><span className="font-medium">Reason:</span> {paymentDetails.status_message}</p>
             )}

@@ -27,14 +27,13 @@ export default function PaymentSuccessPage() {
     const processPayment = async () => {
       log("Payment success page loaded, starting payment processing");
       try {
-        const form = document.querySelector('form');
-        if (!form) {
-          throw new Error('Form not found');
-        }
-        const formData = new FormData(form);
+        // Access form data from the POST request
+        const formData = new FormData(document.querySelector('form'));
         const formDataObj = Object.fromEntries(formData);
         
-        log("Sending payment response to API", { formData: formDataObj });
+        log("Extracted form data", { formData: formDataObj });
+
+        // Send the form data to your API
         const response = await sendPaymentApiencResponse(formDataObj);
         log("Received API response", { response });
         
@@ -55,7 +54,7 @@ export default function PaymentSuccessPage() {
     };
 
     processPayment();
-  }, [dispatch, router]);
+  }, [dispatch]);
 
   const handleBackToHome = () => {
     log("User clicked 'Back to Home'");
@@ -101,13 +100,14 @@ export default function PaymentSuccessPage() {
         </h1>
         <div className="space-y-4">
           <p className="text-center text-gray-600">
-            Your order <span className="font-semibold">{paymentDetails.order_id}</span> has been successfully placed.
+            Your order <span className="font-semibold">{paymentDetails.order_id || paymentDetails.orderNo}</span> has been successfully placed.
           </p>
           <div className="bg-gray-50 p-4 rounded-md">
             <p className="text-sm text-gray-500 mb-2">Transaction Details:</p>
-            <p className="text-sm"><span className="font-medium">Amount:</span> {paymentDetails.currency} {paymentDetails.amount}</p>
-            <p className="text-sm"><span className="font-medium">Date:</span> {paymentDetails.trans_date}</p>
-            <p className="text-sm"><span className="font-medium">Tracking ID:</span> {paymentDetails.tracking_id}</p>
+            <p className="text-sm"><span className="font-medium">Order No:</span> {paymentDetails.orderNo}</p>
+            <p className="text-sm"><span className="font-medium">Encrypted Response:</span> {paymentDetails.encResp}</p>
+            {paymentDetails.amount && <p className="text-sm"><span className="font-medium">Amount:</span> {paymentDetails.currency} {paymentDetails.amount}</p>}
+            {paymentDetails.trans_date && <p className="text-sm"><span className="font-medium">Date:</span> {paymentDetails.trans_date}</p>}
           </div>
           <p className="text-sm text-center text-gray-500">
             You will receive an email confirmation shortly.
