@@ -608,16 +608,16 @@ export default function Home() {
                 href={`/detailProduct/${offerProducts[0].offer_products[0].id}`}
                 className="flex items-center justify-center md:gap-5 gap-2 w-full"
               >
-                <div className="relative h-[190px] w-[190px] md:h-[190px] md:w-[140px] lg:w-[190px] mr-8 md:mr-6 lg:mr-8">
+                <div className="relative h-[190px] w-[210px] md:h-[190px] md:w-[140px] lg:w-[190px] md:mr-6 lg:mr-8">
                   <Image
                     alt="Product Image"
                     width={190}
                     height={190}
                     src={offerProducts[0].offer_products[0].featured_image}
-                    className="w-full h-full object-cover outline-none rounded-2xl cursor-pointer border"
+                    className="w-full h-full outline-none rounded-2xl cursor-pointer border"
                   />
 
-                  <div className="flex w-full justify-between items-center absolute px-[16px] top-[10px] sm:space-x-4">
+                  <div className="flex w-full justify-between items-center absolute px-[10px] top-[10px] sm:space-x-4">
                     <button className="text-[10px] lg:text-[11px] rounded-3xl text-white bg-[#F70000] py-1 px-2 lg:py-1.5 lg:px-2.5">
                       {offerProducts[0].offer.discount_value}% OFF
                     </button>
@@ -640,8 +640,8 @@ export default function Home() {
                     </IconButton>
                   </div>
                 </div>
-                <div className="flex flex-col lg:gap-3 gap-1 mb-4 lg:mb-0 mb:4">
-                  <span className="md:text-lg text-base font-bold">
+                <div className="flex flex-col lg:gap-3 gap-2 mb-4 ml-3 lg:mb-0">
+                  <span className="md:text-lg text-base">
                     {offerProducts[0].offer_products[0].title}
                   </span>
                   <div className="flex items-center gap-2">
@@ -674,7 +674,7 @@ export default function Home() {
               {/* Add to cart button for small screens */}
               <div className="lg:hidden -mt-12">
                 <button
-                  className="w-[150px] text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg ml-56"
+                  className="w-[150px] text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg ml-40 mt-2"
                   onClick={(e) =>
                     onAddingCart(e, offerProducts[0].offer_products[0])
                   }
