@@ -24,15 +24,22 @@ export default function PaymentResponsePage() {
 
   useEffect(() => {
     const handlePaymentResponse = async () => {
+      if (!sessionStorage.getItem('pageReloaded')) {
+        // Set the flag in sessionStorage
+        sessionStorage.setItem('pageReloaded', 'true');
+        // Reload the page
+        window.location.reload();
+        return;
+    }
+
       log("Payment response page loaded", {
         searchParams: Object.fromEntries(searchParams),
       });
 
       const encResp = searchParams.get('encResp');
       if (encResp) {
-        const redirectUrl = `https://grazle.co.in/payment-response?encResp=${encodeURIComponent(encResp)}`;
-        log("Redirecting to URL", { redirectUrl });
-        window.location.href = redirectUrl;
+        log("Found encResp in search params", { encResp });
+        
       } else if (!encResp) {
         log("No encResp found in search params");
         setStatus('error');
