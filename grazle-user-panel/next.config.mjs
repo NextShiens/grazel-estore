@@ -17,24 +17,16 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    // domains: [API_URL],
     domains: ["api.grazle.co.in"],
   },
   swcMinify: true,
   productionBrowserSourceMaps: false,
   optimizeFonts: false,
-  // async rewrites() {
-  //   return [
-  //     // {
-  //     //   source: "/detailProduct",
-  //     //   destination: `${API_URL}/detailProduct`,
-  //     // },
-  //     {
-  //       source: "/:path*",
-  //       destination: `${API_URL}/:path*`,
-  //     },
-  //   ];
-  // },
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['secure.ccavenue.com', 'grazle.co.in'],
+    },
+  },
 };
 
 export default nextConfig;
