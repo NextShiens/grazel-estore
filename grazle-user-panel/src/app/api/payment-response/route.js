@@ -27,32 +27,32 @@ export async function POST(request) {
         }
         log("Extracted encResp from request body", { encResp });
 
-        // Use the current request's origin for the redirect URL
-        const origin = request.headers.get('host') || new URL(request.url).origin;
+        // Construct the redirect URL
         redirectUrl = `https://grazle.co.in/payment-response?encResp=${encodeURIComponent(encResp)}&orderNo=${formData.get('orderNo')}`;
         log("Redirecting to frontend", { redirectUrl });
 
-        return NextResponse.redirect(302, redirectUrl);
+        // Use NextResponse.redirect correctly
+        return NextResponse.redirect(redirectUrl, 302);
 
     } catch (error) {
         log("Error processing payment response", { error: error.message, stack: error.stack });
-        return NextResponse.redirect(302, redirectUrl);
+
+        return NextResponse.redirect('https://grazle.co.in/payment-response', 302);
     }
 }
 
-
 export async function GET(request) {
-  const encResp = request.cookies.get('encResp');
-  
-  if (!encResp) {
-    return NextResponse.json({ error: 'No encResp found' }, { status: 404 });
-  }
+    const encResp = request.cookies.get('encResp');
 
-  // Clear the cookie after reading it
-  const response = NextResponse.json({ encResp: encResp.value });
-  response.cookies.set('encResp', '', { maxAge: 0 });
+    if (!encResp) {
+        return NextResponse.json({ error: 'No encResp found' }, { status: 404 });
+    }
 
-  return response;
+    // Clear the cookie after reading it
+    const response = NextResponse.json({ encResp: encResp.value });
+    response.cookies.set('encResp', '', { maxAge: 0 });
+
+    return response;
 }
 
 
