@@ -8,7 +8,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import { Checkbox, Rating, Slider, Select, MenuItem } from "@mui/material";
 import axios from "axios";
 import Baner from "@/assets/mainBag.png";
-import MenuIcon from "@/assets/VectorMenu.png";
+import MenuIcon from "@/assets/107799.png";
 import ProductCard from "@/components/ProductCard";
 import { useSelector } from "react-redux";
 
