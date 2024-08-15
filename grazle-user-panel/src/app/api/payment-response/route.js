@@ -9,33 +9,37 @@ const log = (message, data = {}) => {
 };
 // In-memory store
 
-export async function POST(request,response) {
-  log("Received POST request to /api/payment-response", {
-      headers: Object.fromEntries(request.headers),
-  });
-  try {
-      // Parse the request body
-      const formData = await request.formData();
-      log("Received form data", { formData: Object.fromEntries(formData) });
-      const encResp = formData.get('encResp');
-      if (!encResp) {
-          log("No encResp found in request body");
-          return NextResponse.json({ error: 'Missing encResp parameter' }, { status: 400 });
-      }
-      log("Extracted encResp from request body", { encResp });
+export async function POST(request, response) {
+    log("Received POST request to /api/payment-response", {
+        headers: Object.fromEntries(request.headers),
+    });
 
-      // Use the current request's origin for the redirect URL
-      const origin = request.headers.get('host') || new URL(request.url).origin;
-      const redirectUrl = `https://grazle.co.in/payment-response?encResp=${encodeURIComponent(encResp)}&orderNo=${formData.get('orderNo')}`;
-      log("Redirecting to frontend", { redirectUrl });
+    let redirectUrl = '';
 
-      return response.redirect(302,redirectUrl);
-  
-  } catch (error) {
-      log("Error processing payment response", { error: error.message, stack: error.stack });
-      return response.redirect(302,redirectUrl);
-  }
+    try {
+        // Parse the request body
+        const formData = await request.formData();
+        log("Received form data", { formData: Object.fromEntries(formData) });
+        const encResp = formData.get('encResp');
+        if (!encResp) {
+            log("No encResp found in request body");
+            return NextResponse.json({ error: 'Missing encResp parameter' }, { status: 400 });
+        }
+        log("Extracted encResp from request body", { encResp });
+
+        // Use the current request's origin for the redirect URL
+        const origin = request.headers.get('host') || new URL(request.url).origin;
+        redirectUrl = `https://grazle.co.in/payment-response?encResp=${encodeURIComponent(encResp)}&orderNo=${formData.get('orderNo')}`;
+        log("Redirecting to frontend", { redirectUrl });
+
+        return response.redirect(302, redirectUrl);
+
+    } catch (error) {
+        log("Error processing payment response", { error: error.message, stack: error.stack });
+        return response.redirect(302, redirectUrl);
+    }
 }
+
 
 export async function GET(request) {
   const encResp = request.cookies.get('encResp');
