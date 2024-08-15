@@ -157,7 +157,7 @@ const MyorderCard = ({
         >
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
             <div className="flex items-center mb-4 sm:mb-0">
-              <div className="border border-gray-300 rounded-full px-3 py-1 flex items-center">
+              <div className="border border-gray-300 rounded-full px-3 py-1 flex items-center whitespace-nowrap">
                 <IoLockClosed className="w-3 h-3 mr-2 text-gray-500" />
                 <p className="text-xs sm:text-sm text-gray-600">{order.date}</p>
               </div>
@@ -167,22 +167,26 @@ const MyorderCard = ({
               "cancelled" &&
               orderTracking?.status_history?.slice(-1)[0].status !==
                 "completed" && (
-                <div className="flex items-center">
-                  {showCancelMap[order.id] && (
+                <div className="flex items-center justify-end w-full">
+                  <div className="flex items-center">
+                    {showCancelMap[order.id] && (
+                      <button
+                        onClick={() => setIsModalVisible(true)}
+                        className="flex items-center px-3 py-2 rounded-lg bg-white border border-red-500 text-red-500 hover:bg-red-50 active:bg-red-100 transition-colors duration-300 mr-2"
+                      >
+                        <IoCloseSharp className="text-lg mr-1" />
+                        <span className="text-xs sm:text-sm font-medium">
+                          Cancel order
+                        </span>
+                      </button>
+                    )}
                     <button
-                      onClick={() => setIsModalVisible(true)}
-                      className="hidden sm:flex items-center px-4 py-2 rounded-lg bg-white border border-red-500 text-red-500 hover:bg-red-50 transition-colors duration-300 mr-3"
+                      onClick={() => toggleShowCancel(order.id)}
+                      className="p-3 rounded-md border border-gray-200 hover:bg-gray-100 active:bg-gray-200 transition-colors duration-300 touch-manipulation"
                     >
-                      <IoCloseSharp className="text-lg mr-2" />
-                      <span className="text-sm font-medium">Cancel Order</span>
+                      <HiOutlineDotsVertical className="h-5 w-5 text-gray-400" />
                     </button>
-                  )}
-                  <button
-                    onClick={() => toggleShowCancel(order.id)}
-                    className="p-2 rounded-md border border-gray-200 hover:bg-gray-100 transition-colors duration-300"
-                  >
-                    <HiOutlineDotsVertical className="h-4 w-4 text-gray-400" />
-                  </button>
+                  </div>
                 </div>
               )}
           </div>
@@ -203,7 +207,7 @@ const MyorderCard = ({
                 />
               </div>
               <div>
-                <p className="font-medium text-gray-800">{prod.title}</p>
+                <p className=" text-gray-700">{prod.title}</p>
                 <p className="text-sm text-gray-500 mt-1">
                   Quantity: {prod.quantity}
                 </p>
@@ -399,31 +403,31 @@ const MyorderCard = ({
       ))}
 
       <CustomModal showModal={isModalVisible}>
-        <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-xl">
-          <div className="flex flex-col items-center text-center">
+        <div className="md:w-[600px] w-[350px] my-[40px]">
+          <div className="flex flex-col justify-center text-center md:px-0 px-3">
             <Image
               src={close}
               alt="close"
-              className="h-24 w-24 text-red-500 mb-6"
+              className="text-[#E13827] flex m-auto md:h-[162px] h-[100px] md:w-[162px] w-[100px]"
             />
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            <p className="md:text-[32px] text-[20px] text-[#434343]  font-bold mt-6">
               Cancel Order
-            </h2>
-            <p className="text-base text-gray-600 mb-6">
+            </p>
+            <p className="md:text-[20px] text-[15px] text-[#434343]  font-medium mt-6">
               Are you sure you want to cancel the order?
             </p>
-            <div className="flex gap-4">
+            <div className="mt-6 flex justify-center gap-4">
               <button
-                className="px-6 py-2 bg-gray-200 rounded-md text-gray-800 font-medium hover:bg-gray-300 transition-colors duration-300"
+                className=" bg-[#CFCFCF] rounded-md h-[50px]  w-[181px] text-[18px] font-medium text-white"
                 onClick={() => setIsModalVisible(false)}
               >
                 Cancel
               </button>
               <button
-                className="px-6 py-2 bg-red-500 rounded-md text-white font-medium hover:bg-red-600 transition-colors duration-300"
+                className=" bg-[#F70000]  rounded-md h-[50px]  w-[181px] text-[18px] font-medium text-white"
                 onClick={handleOrderCancel}
               >
-                Yes, Cancel Order
+                Yes
               </button>
             </div>
           </div>
