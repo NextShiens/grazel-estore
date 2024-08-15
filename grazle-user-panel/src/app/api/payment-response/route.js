@@ -9,7 +9,7 @@ const log = (message, data = {}) => {
 };
 // In-memory store
 
-export async function POST(request, response) {
+export async function POST(request) {
     log("Received POST request to /api/payment-response", {
         headers: Object.fromEntries(request.headers),
     });
@@ -32,11 +32,11 @@ export async function POST(request, response) {
         redirectUrl = `https://grazle.co.in/payment-response?encResp=${encodeURIComponent(encResp)}&orderNo=${formData.get('orderNo')}`;
         log("Redirecting to frontend", { redirectUrl });
 
-        return response.redirect(302, redirectUrl);
+        return NextResponse.redirect(302, redirectUrl);
 
     } catch (error) {
         log("Error processing payment response", { error: error.message, stack: error.stack });
-        return response.redirect(302, redirectUrl);
+        return NextResponse.redirect(302, redirectUrl);
     }
 }
 
