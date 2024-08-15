@@ -136,6 +136,8 @@ const OfferViewSlider = React.forwardRef(({ Data }, ref) => {
         responsive={responsive}
         itemClass="carousel-item"
         dotListClass="custom-dot-list-style"
+        autoPlaySpeed={2000} // Adjust the speed here (in milliseconds)
+        transitionDuration={500} 
       >
         {loading ? (
           Array(4)

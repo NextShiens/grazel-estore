@@ -64,9 +64,9 @@ const MyorderCard = ({
     setShowLeave((prev) => !prev);
   };
   const toggleShowCancel = (orderId) => {
-    setShowCancelMap(prevState => ({
+    setShowCancelMap((prevState) => ({
       ...prevState,
-      [orderId]: !prevState[orderId]
+      [orderId]: !prevState[orderId],
     }));
   };
 
@@ -151,504 +151,358 @@ const MyorderCard = ({
   return (
     <>
       {order.products.map((prod: any) => (
-        <>
-          <div
-            style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-            className="w-100 rounded-3xl p-6 mt-6 hover:border-[1px] border-[#F70000]"
-          >
-            <div className="flex items-center justify-between">
-              <div className="border-[1px] border-[#777777] rounded-full w-fit px-4 py-2 flex items-center justify-center">
-                <IoLockClosed className="w-[14px] h-[14px] mr-2" />
-                <p className="md:text-[14px] text-[10px] font-normal text-[#777777]">
-                  {order.date}
-                </p>
+        <div
+          key={prod.id}
+          className="w-full rounded-2xl p-4 sm:p-6 mt-4 sm:mt-6 border border-gray-200 hover:border-red-500 transition-colors duration-300 shadow-sm"
+        >
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+            <div className="flex items-center mb-4 sm:mb-0">
+              <div className="border border-gray-300 rounded-full px-3 py-1 flex items-center">
+                <IoLockClosed className="w-3 h-3 mr-2 text-gray-500" />
+                <p className="text-xs sm:text-sm text-gray-600">{order.date}</p>
               </div>
-
-              {orderTracking?.status_history?.slice(-1)[0].status !==
-                "cancelled" &&
-                order.status !== "completed" && (
-                  <div className="flex items-center justify-center">
-                    {showCancelMap[order.id] && (
-                      <>
-                        <button
-                          onClick={() => setIsModalVisible(true)}
-                          className="hidden lg:flex items-center p-2 rounded-lg shadow-lg mr-3  cursor-pointer"
-                        >
-                          <IoCloseSharp className="text-[24px] text-[#FC0005] mr-4 cursor-pointer" />
-                          <p className="text-[#FC0005] text-[16px] font-semibold">
-                            Cancel Order
-                          </p>
-                        </button>
-
-                        {/* <button
-                          onClick={handleOrderCancel}
-                          className="lg:hidden flex items-center p-2 rounded-lg shadow-lg mr-1 cursor-pointer"
-                        >
-                          <FaTrashAlt className="text-[12px] text-[#FC0005] mr-2 cursor-pointer" />
-                          <p className="text-[#FC0005] text-[12px] font-semibold">
-                            Cancel Order2
-                          </p>
-                        </button> */}
-                      </>
-                    )}
-                    <div
-                      onClick={() => toggleShowCancel(order.id)}
-                      className="border-#00000017 border-[1px] rounded-md h-[30px] w-[30px] flex items-center justify-center"
-                    >
-                      <HiOutlineDotsVertical className="h-[15px] w-4 text-[#D9D9D9]" />
-                    </div>
-                  </div>
-                )}
             </div>
 
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between mt-5">
-              <div className="flex items-center">
-                <div className="h-[100px] bg-[#F700000D] flex items-center justify-center w-[100px] rounded-2xl mr-5">
-                  <Image
-                    alt="Product Image"
-                    width={70}
-                    height={70}
-                    src={prod.featured_image}
-                    className="w-[100px] h-[100px] rounded-2xl"
-                    onError={(e: any) => {
-                      console.error("Image failed to load:", e);
-                      e.target.src = "/path/to/fallback-image.jpg";
-                    }}
-                  />
+            {orderTracking?.status_history?.slice(-1)[0].status !==
+              "cancelled" &&
+              orderTracking?.status_history?.slice(-1)[0].status !==
+                "completed" && (
+                <div className="flex items-center">
+                  {showCancelMap[order.id] && (
+                    <button
+                      onClick={() => setIsModalVisible(true)}
+                      className="hidden sm:flex items-center px-4 py-2 rounded-lg bg-white border border-red-500 text-red-500 hover:bg-red-50 transition-colors duration-300 mr-3"
+                    >
+                      <IoCloseSharp className="text-lg mr-2" />
+                      <span className="text-sm font-medium">Cancel Order</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={() => toggleShowCancel(order.id)}
+                    className="p-2 rounded-md border border-gray-200 hover:bg-gray-100 transition-colors duration-300"
+                  >
+                    <HiOutlineDotsVertical className="h-4 w-4 text-gray-400" />
+                  </button>
                 </div>
-                <div>
-                  <p className="text-[18px] font-medium">{prod.title} </p>
+              )}
+          </div>
 
-                  {/* <p className="text-[16px] text-[#777777] mt-3 font-medium">
-                Size 10.5 UK
-              </p> */}
-                </div>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4">
+            <div className="flex items-center">
+              <div className="h-30 w-20 bg-red-50  flex items-center justify-center mr-4">
+                <Image
+                  alt="Product Image"
+                  width={90}
+                  height={90}
+                  src={prod.featured_image}
+                  className="rounded-xl object-cover"
+                  onError={(e: any) => {
+                    console.error("Image failed to load:", e);
+                    e.target.src = "/path/to/fallback-image.jpg";
+                  }}
+                />
               </div>
-              <p className="hidden lg:block lg:text-[20px] text-[18px] mt-3 lg:mt-0 sm:mt-3 md:mt-3 text-[#777777]  font-medium">
-                Quantity {prod.quantity}
-              </p>
+              <div>
+                <p className="font-medium text-gray-800">{prod.title}</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  Quantity: {prod.quantity}
+                </p>
+              </div>
+            </div>
 
-              <p className="hidden lg:block lg:text-[20px] text-[18px] mt-3 lg:mt-0 sm:mt-3 md:mt-3 text-[#777777]  font-medium">
+            <div className="mt-4 sm:mt-0 flex flex-col sm:items-end">
+              <p className="text-lg font-medium text-gray-800">
                 Price:₹{" "}
                 {prod.discounted_price
                   ? prod.discounted_price
                   : prod.price * prod.quantity}
               </p>
-
-              <div className="lg:hidden flex flex-col mt-3 gap-2">
-                <div className="flex items-center gap-2 font-medium text-[15px] text-[#777777]">
-                  <span>Price:</span>
-                  <p>
-                    ₹{" "}
-                    {prod.discounted_price
-                      ? prod.discounted_price
-                      : prod.price * prod.quantity}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-2 font-medium text-[15px] text-[#777777]">
-                    <span>Quantity</span>
-                    <p>{prod.quantity}</p>
-                  </div>
-
-                  <div className="flex item-center gap-3">
-                    <button
-                      className="px-2 bg-[#00F7630F] rounded-2xl h-[40px] outline-[2px] 
-                  outline-[#26F63B] outline-dashed w-fit text-[12px] font-medium text-[#07D459]"
-                    >
-                      {orderTracking?.status_history?.slice(-1)[0].status}
-                    </button>
-                    {orderTracking?.status_history?.slice(-1)[0].status !==
-                      "completed" && (
-                        <button
-                          className="flex items-center justify-center gap-2 bg-[#FFFAF4] outline-[2px] outline-[#F69B26] outline-dashed rounded-2xl h-[40px] lg:w-[160px] w-fit text-[12px] font-medium text-[#F69B26] px-2"
-                          onClick={handleButtonClick}
-                        >
-                          <span>Order Tracking</span>
-                          {isDivVisible ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                        </button>
-                      )}
-
-                    {orderTracking?.status_history?.slice(-1)[0].status ===
-                      "completed" && (
-                        <button
-                          className=" bg-[#FFFAF4] lg:mt-3 mt-0 outline-[2px] outline-[#F69B26] outline-dashed rounded-2xl h-[40px] lg:w-[181px] w-[130px] lg:w-[181px] sm:w-[100px]   lg:text-[18px] text-[14px] sm:text-[14px] font-medium text-[#F69B26]"
-                          onClick={() => {
-                            setProductId(prod.id);
-                            handleRevModal();
-                          }}
-                        >
-                          Leave Review
-                        </button>
-                      )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="hidden lg:block flex-col mt-3 lg:mt-0 sm:mt-3 md:mt-3 flex">
-                <button className="bg-[#be8c8c0f] rounded-2xl h-[40px] outline-[2px] outline-[#F70000] outline-dashed lg:w-[160px] w-[300px] text-[15px] font-medium text-[#F70000]">
-                  {orderTracking?.status_history?.slice(-1)[0].status ===
-                    "cancelled"
-                    ? "Cancelled"
-                    : orderTracking?.status_history?.slice(-1)[0].status}
+              <div className="mt-2 flex flex-wrap gap-2">
+                <button
+                  className={`px-4 py-2 rounded-full text-sm font-medium border ${
+                    orderTracking?.status_history?.slice(-1)[0].status ===
+                    "completed"
+                      ? "bg-green-50 text-green-600 border-green-200"
+                      : "bg-red-50 text-red-600 border-red-200"
+                  }`}
+                >
+                  {orderTracking?.status_history?.slice(-1)[0].status}
                 </button>
                 {orderTracking?.status_history?.slice(-1)[0].status !==
-                  "completed" &&
-                  orderTracking?.status_history?.slice(-1)[0].status !==
-                  "cancelled" && (
-                    <button
-                      className="flex items-center justify-center gap-2 bg-[#FFFAF4] mt-3 
-      outline-[2px] outline-[#F69B26] outline-dashed rounded-2xl h-[40px] 
-      lg:w-[160px] w-[300px] text-[15px] font-medium text-[#F69B26]"
-                      onClick={handleButtonClick}
-                    >
-                      <span>Order Tracking</span>
-                      {isDivVisible ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                    </button>
-                  )}
-
+                  "completed" && (
+                  <button
+                    className="flex items-center px-4 py-2 bg-orange-50 rounded-full text-sm font-medium text-orange-500 border border-orange-200"
+                    onClick={handleButtonClick}
+                  >
+                    <span>Order Tracking</span>
+                    {isDivVisible ? (
+                      <IoIosArrowUp className="ml-1" />
+                    ) : (
+                      <IoIosArrowDown className="ml-1" />
+                    )}
+                  </button>
+                )}
                 {orderTracking?.status_history?.slice(-1)[0].status ===
                   "completed" && (
-                    <button
-                      className="bg-[#FFFAF4] rounded-2xl h-[40px] outline-[2px] outline-[#F69B26] outline-dashed lg:w-[160px] w-[300px] text-[15px] font-medium text-[#F69B26]"
-                      style={{ marginLeft: "15px" }}
-                      onClick={() => {
-                        setProductId(prod.id);
-                        handleRevModal();
-                      }}
-                    >
-                      Leave Review
-                    </button>
-                  )}
+                  <button
+                    className="px-4 py-2 bg-yellow-50 rounded-full text-sm font-medium text-yellow-600 border border-yellow-200"
+                    onClick={() => {
+                      setProductId(prod.id);
+                      handleRevModal();
+                    }}
+                  >
+                    Leave Review
+                  </button>
+                )}
               </div>
             </div>
-
-            {isDivVisible && (
-              <>
-                <div className="mt-4">
-                  <p className="text-[16px] font-semibold">Delivery Details</p>
-                </div>
-                <div className="flex md:flex-row flex-col lg:gap-8 gap-2 sm:gap-2 mt-5">
-                  <div className="flex items-center">
-                    <p className="text-[14px] text-[#909198] font-normal">
-                      Expected Delivery Date:
-                    </p>
-                    <p className="text-[14px]  sm:ml-7 lg:ml-7  ml-10 text-black font-semibold">
-                      {orderTracking.expected_delivery_date}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center">
-                    <p className="text-[14px] text-[#909198] font-normal">
-                      Tracking ID:
-                    </p>
-                    <p className="text-[14px] sm:ml-7 lg:ml-7  ml-10 text-black font-semibold">
-                      {orderTracking.tracking_id}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <p className="text-[16px] font-semibold">Order Status</p>
-                </div>
-                <div className="lg:flex  sm:hidden md:hidden hidden  gap-8 mt-5">
-                  <div className="flex items-center gap-4 lg:w-auto w-[100%] sm: w-[100%] md: w-[100%]">
-                    <Image src={AAA} alt="" className="w-[32px] h-[32px]" />
-                    <div>
-                      <p className="text-[14px] text-black font-semibold">
-                        Order placed
-                      </p>
-                      <p className="text-[14px] text-[#909198] font-normal">
-                        {orderTracking.date}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <Image src={BBB} alt="" className="w-[32px] h-[32px]" />
-                    <div>
-                      <p className="text-[14px] text-black font-semibold">
-                        In Progress
-                      </p>
-                      <p className="text-[14px] text-[#909198] font-normal">
-                        {inProgressOrder
-                          ? new Date(
-                            inProgressOrder.changed_at
-                          ).toLocaleString()
-                          : "Not available"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <Image src={CCC} alt="" className="w-[32px] h-[32px]" />
-                    <div>
-                      <p className="text-[14px] text-black font-semibold">
-                        Shipped
-                      </p>
-                      <p className="text-[14px] text-[#909198] font-normal">
-                        {shippedOrder
-                          ? new Date(shippedOrder.changed_at).toLocaleString()
-                          : "Not available"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <Image src={DDD} alt="" className="w-[32px] h-[32px]" />
-                    <div>
-                      <p className="text-[14px] text-black font-semibold">
-                        Delivered
-                      </p>
-                      <p className="text-[14px] text-[#909198] font-normal">
-                        {deliveredOrder
-                          ? new Date(deliveredOrder.changed_at).toLocaleString()
-                          : "Not available"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="lg:flex  sm:hidden md:hidden hidden items-center  gap-3 mt-5">
-                  <FaCheckCircle className="text-[#F70000] h-[24px] w-[24px]" />
-                  <div
-                    className={`${inProgressOrder ? "border-[#F70000]" : "border-[#D2D4DA]"
-                      } border-t-[2px] w-[200px] `}
-                  />
-                  <FaCheckCircle
-                    className={`${inProgressOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
-                      } h-[24px] w-[24px]`}
-                  />
-                  <div
-                    className={`${shippedOrder ? "border-[#F70000]" : "border-[#D2D4DA]"
-                      } border-t-[2px] w-[200px] `}
-                  />
-                  <FaCheckCircle
-                    className={`${shippedOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
-                      } h-[24px] w-[24px]`}
-                  />
-                  <div
-                    className={`${deliveredOrder ? "border-[#F70000]" : "border-[#D2D4DA]"
-                      } border-t-[2px] w-[200px] `}
-                  />
-                  <FaCheckCircle
-                    className={`${deliveredOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
-                      } h-[24px] w-[24px]`}
-                  />{" "}
-                </div>
-
-                <div className="mt-5 sm:block block lg:hidden">
-                  <div className="flex gap-3 items-start">
-                    <div className="mt-2 ">
-                      <FaCheckCircle className="text-[#F70000] h-[24px] w-[24px]" />
-
-                      <div
-                        className={`${inProgressOrder
-                          ? "border-[#F70000]"
-                          : "border-[#D2D4DA]"
-                          } ml-3 mt-2 border-l-[2px] h-[100px] `}
-                      ></div>
-                    </div>
-                    <div className="flex items-center gap-4 lg:w-auto w-[100%] sm: w-[100%] md: w-[100%]">
-                      <Image src={AAA} alt="" className="w-[32px] h-[32px]" />
-                      <div>
-                        <p className="text-[14px] text-black font-semibold">
-                          Order placed
-                        </p>
-                        <p className="text-[14px] text-[#909198] font-normal">
-                          {orderTracking.date}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex gap-3 items-start">
-                    <div className="mt-2 ">
-                      <FaCheckCircle
-                        className={`${inProgressOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
-                          } h-[24px] w-[24px]`}
-                      />{" "}
-                      <div
-                        className={`${shippedOrder ? "border-[#F70000]" : "border-[#D2D4DA]"
-                          } ml-3 mt-2 border-l-[2px] h-[100px] `}
-                      ></div>{" "}
-                    </div>
-                    <div className="flex items-center gap-4 lg:w-auto w-[100%] sm: w-[100%] md: w-[100%]">
-                      <Image src={BBB} alt="" className="w-[32px] h-[32px]" />
-                      <div>
-                        <p className="text-[14px] text-black font-semibold">
-                          In Progress
-                        </p>
-                        <p className="text-[14px] text-[#909198] font-normal">
-                          {inProgressOrder
-                            ? new Date(
-                              inProgressOrder.changed_at
-                            ).toLocaleString()
-                            : "Not available"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex gap-3 items-start">
-                    <div className="mt-2 ">
-                      <FaCheckCircle
-                        className={`${shippedOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
-                          } h-[24px] w-[24px]`}
-                      />{" "}
-                      <div
-                        className={`${deliveredOrder
-                          ? "border-[#F70000]"
-                          : "border-[#D2D4DA]"
-                          } ml-3 mt-2 border-l-[2px] h-[100px] `}
-                      ></div>{" "}
-                    </div>
-                    <div className="flex items-center gap-4 lg:w-auto w-[100%] sm: w-[100%] md: w-[100%]">
-                      <Image src={CCC} alt="" className="w-[32px] h-[32px]" />
-                      <div>
-                        <p className="text-[14px] text-black font-semibold">
-                          Shipped
-                        </p>
-                        <p className="text-[14px] text-[#909198] font-normal">
-                          {shippedOrder
-                            ? new Date(shippedOrder.changed_at).toLocaleString()
-                            : "Not available"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex gap-3 items-start">
-                    <div className="mt-2 ">
-                      <FaCheckCircle
-                        className={`${deliveredOrder ? "text-[#F70000]" : "text-[#D2D4DA]"
-                          } h-[24px] w-[24px]`}
-                      />{" "}
-                    </div>
-                    <div className="flex items-center gap-4 lg:w-auto w-[100%] sm: w-[100%] md: w-[100%]">
-                      <Image src={DDD} alt="" className="w-[32px] h-[32px]" />
-                      <div>
-                        <p className="text-[14px] text-black font-semibold">
-                          Delivered
-                        </p>
-                        <p className="text-[14px] text-[#909198] font-normal">
-                          {deliveredOrder
-                            ? new Date(
-                              deliveredOrder.changed_at
-                            ).toLocaleString()
-                            : "Not available"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
           </div>
-          <CustomModal showModal={isModalVisible}>
-            <div className="md:w-[600px] w-[350px] my-[40px]">
-              <div className="flex flex-col justify-center text-center md:px-0 px-3">
-                <Image
-                  src={close}
-                  alt="close"
-                  className="text-[#E13827] flex m-auto md:h-[162px] h-[100px] md:w-[162px] w-[100px]"
-                />
-                <p className="md:text-[32px] text-[20px] text-[#434343]  font-bold mt-6">
-                  Cancel Order
+
+          {isDivVisible && (
+            <div className="mt-6 border-t border-gray-200 pt-4">
+              <div className="mb-4">
+                <p className="text-base font-semibold text-gray-800">
+                  Delivery Details
                 </p>
-                <p className="md:text-[20px] text-[15px] text-[#434343]  font-medium mt-6">
-                  Are you sure you want to cancel the order?
-                </p>
-                <div className="mt-6 flex justify-center gap-4">
-                  <button
-                    className=" bg-[#CFCFCF] rounded-md h-[50px]  w-[181px] text-[18px] font-medium text-white"
-                    onClick={() => setIsModalVisible(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className=" bg-[#F70000]  rounded-md h-[50px]  w-[181px] text-[18px] font-medium text-white"
-                    onClick={handleOrderCancel}
-                  >
-                    Yes
-                  </button>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:gap-8 gap-2 mb-4">
+                <div className="flex items-center">
+                  <p className="text-sm text-gray-600 mr-2">
+                    Expected Delivery Date:
+                  </p>
+                  <p className="text-sm font-medium text-gray-800">
+                    {orderTracking.expected_delivery_date}
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  <p className="text-sm text-gray-600 mr-2">Tracking ID:</p>
+                  <p className="text-sm font-medium text-gray-800">
+                    {orderTracking.tracking_id}
+                  </p>
                 </div>
               </div>
-            </div>
-          </CustomModal>
 
-          <CustomModal showModal={showleave}>
-            <div className="flex-col justify-center w-[400px]">
-              <div className="w-full rounded-[20px] p-[24px] bg-white shadow-lg">
-                <h2 className="text-[24px] font-semibold text-gray-800 mb-4">
-                  Write a Review
-                </h2>
-                <h3 className="text-[16px] font-medium text-gray-700 mb-2">
-                  Rate the Product
-                </h3>
-                <Rating
-                  name="product-rating"
-                  defaultValue={5}
-                  value={rating}
-                  onChange={(_, val) => setRating(val as number)}
-                  sx={{
-                    "& .MuiSvgIcon-root": {
-                      fontSize: 32,
-                    },
-                  }}
-                />
+              <div className="mb-4">
+                <p className="text-base font-semibold text-gray-800">
+                  Order Status
+                </p>
+              </div>
 
-                <div className="mt-4">
-                  <label className="text-[14px] font-medium text-gray-600 block mb-1">
-                    Your Review
-                  </label>
-                  <textarea
-                    onChange={(e) => setComment(e.target.value)}
-                    className="border border-gray-300 w-full rounded-md h-[80px] p-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
-                    placeholder="Share your thoughts..."
-                  />
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2 mt-4">
-                  {selectedImages.map((image, index) => (
-                    <Image
-                      key={index}
-                      src={image}
-                      width={60}
-                      height={60}
-                      className="rounded-lg object-cover"
-                      alt={`Review image ${index + 1}`}
-                    />
-                  ))}
-                  <div className="w-[60px] h-[60px] border-2 rounded-lg border-red-500 flex justify-center items-center">
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      className="hidden"
-                      onChange={handleFileChange}
-                      accept="image/*"
-                      multiple
-                    />
-                    <PiCameraThin
-                      className="h-[36px] w-[36px] text-red-500 cursor-pointer"
-                      onClick={handleIconClick}
-                    />
+              <div className="hidden sm:flex justify-between mb-4">
+                {[
+                  {
+                    icon: AAA,
+                    label: "Order placed",
+                    date: orderTracking.date,
+                  },
+                  {
+                    icon: BBB,
+                    label: "In Progress",
+                    date: inProgressOrder
+                      ? new Date(inProgressOrder.changed_at).toLocaleString()
+                      : "Not available",
+                  },
+                  {
+                    icon: CCC,
+                    label: "Shipped",
+                    date: shippedOrder
+                      ? new Date(shippedOrder.changed_at).toLocaleString()
+                      : "Not available",
+                  },
+                  {
+                    icon: DDD,
+                    label: "Delivered",
+                    date: deliveredOrder
+                      ? new Date(deliveredOrder.changed_at).toLocaleString()
+                      : "Not available",
+                  },
+                ].map((step, index) => (
+                  <div key={index} className="flex items-center">
+                    <Image src={step.icon} alt="" className="w-8 h-8 mr-3" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-800">
+                        {step.label}
+                      </p>
+                      <p className="text-xs text-gray-600">{step.date}</p>
+                    </div>
                   </div>
-                </div>
+                ))}
+              </div>
 
-                <div className="flex justify-between mt-6">
-                  <button
-                    className="bg-red-600 hover:bg-red-700 rounded-lg px-4 py-2 text-[14px] font-medium text-white transition duration-300"
-                    onClick={revSubHandler}
-                  >
-                    Submit Review
-                  </button>
-                  <button
-                    className="bg-gray-200 hover:bg-gray-300 rounded-lg px-4 py-2 text-[14px] font-medium text-gray-800 transition duration-300"
-                    onClick={handleRevModal}
-                  >
-                    Cancel
-                  </button>
-                </div>
+              <div className="sm:hidden space-y-4">
+                {[
+                  {
+                    icon: AAA,
+                    label: "Order placed",
+                    date: orderTracking.date,
+                    status: true,
+                  },
+                  {
+                    icon: BBB,
+                    label: "In Progress",
+                    date: inProgressOrder
+                      ? new Date(inProgressOrder.changed_at).toLocaleString()
+                      : "Not available",
+                    status: inProgressOrder,
+                  },
+                  {
+                    icon: CCC,
+                    label: "Shipped",
+                    date: shippedOrder
+                      ? new Date(shippedOrder.changed_at).toLocaleString()
+                      : "Not available",
+                    status: shippedOrder,
+                  },
+                  {
+                    icon: DDD,
+                    label: "Delivered",
+                    date: deliveredOrder
+                      ? new Date(deliveredOrder.changed_at).toLocaleString()
+                      : "Not available",
+                    status: deliveredOrder,
+                  },
+                ].map((step, index, array) => (
+                  <div key={index} className="flex">
+                    <div className="mr-3 flex flex-col items-center">
+                      <FaCheckCircle
+                        className={`h-6 w-6 ${
+                          step.status ? "text-red-500" : "text-gray-300"
+                        }`}
+                      />
+                      {index < array.length - 1 && (
+                        <div
+                          className={`h-full w-0.5 ${
+                            array[index + 1].status
+                              ? "bg-red-500"
+                              : "bg-gray-300"
+                          }`}
+                        />
+                      )}
+                    </div>
+                    <div className="flex items-center">
+                      <Image src={step.icon} alt="" className="w-8 h-8 mr-3" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-800">
+                          {step.label}
+                        </p>
+                        <p className="text-xs text-gray-600">{step.date}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          </CustomModal>
-        </>
+          )}
+        </div>
       ))}
+
+      <CustomModal showModal={isModalVisible}>
+        <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-xl">
+          <div className="flex flex-col items-center text-center">
+            <Image
+              src={close}
+              alt="close"
+              className="h-24 w-24 text-red-500 mb-6"
+            />
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Cancel Order
+            </h2>
+            <p className="text-base text-gray-600 mb-6">
+              Are you sure you want to cancel the order?
+            </p>
+            <div className="flex gap-4">
+              <button
+                className="px-6 py-2 bg-gray-200 rounded-md text-gray-800 font-medium hover:bg-gray-300 transition-colors duration-300"
+                onClick={() => setIsModalVisible(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-6 py-2 bg-red-500 rounded-md text-white font-medium hover:bg-red-600 transition-colors duration-300"
+                onClick={handleOrderCancel}
+              >
+                Yes, Cancel Order
+              </button>
+            </div>
+          </div>
+        </div>
+      </CustomModal>
+      <CustomModal showModal={showleave}>
+        <div className="flex-col justify-center w-[400px]">
+          <div className="w-full rounded-[20px] p-[24px] bg-white shadow-lg">
+            <h2 className="text-[24px] font-semibold text-gray-800 mb-4">
+              Write a Review
+            </h2>
+            <h3 className="text-[16px] font-medium text-gray-700 mb-2">
+              Rate the Product
+            </h3>
+            <Rating
+              name="product-rating"
+              defaultValue={5}
+              value={rating}
+              onChange={(_, val) => setRating(val as number)}
+              sx={{
+                "& .MuiSvgIcon-root": {
+                  fontSize: 32,
+                },
+              }}
+            />
+
+            <div className="mt-4">
+              <label className="text-[14px] font-medium text-gray-600 block mb-1">
+                Your Review
+              </label>
+              <textarea
+                onChange={(e) => setComment(e.target.value)}
+                className="border border-gray-300 w-full rounded-md h-[80px] p-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                placeholder="Share your thoughts..."
+              />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 mt-4">
+              {selectedImages.map((image, index) => (
+                <Image
+                  key={index}
+                  src={image}
+                  width={60}
+                  height={60}
+                  className="rounded-lg object-cover"
+                  alt={`Review image ${index + 1}`}
+                />
+              ))}
+              <div className="w-[60px] h-[60px] border-2 rounded-lg border-red-500 flex justify-center items-center">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  multiple
+                />
+                <PiCameraThin
+                  className="h-[36px] w-[36px] text-red-500 cursor-pointer"
+                  onClick={handleIconClick}
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-between mt-6">
+              <button
+                className="bg-red-600 hover:bg-red-700 rounded-lg px-4 py-2 text-[14px] font-medium text-white transition duration-300"
+                onClick={revSubHandler}
+              >
+                Submit Review
+              </button>
+              <button
+                className="bg-gray-200 hover:bg-gray-300 rounded-lg px-4 py-2 text-[14px] font-medium text-gray-800 transition duration-300"
+                onClick={handleRevModal}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </CustomModal>
     </>
   );
 };
