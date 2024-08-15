@@ -184,11 +184,14 @@ export default function PaymentAndAddress() {
   const handleCCAvenue = async () => {
     setLoading(true);
     const formData = new FormData();
-    formData.append("order_id", generateRandomOrderId());
+    const ordereID = generateRandomOrderId();
+    formData.append("order_id", ordereID);
     formData.append("amount", cartTotal.toString());
     formData.append("redirect_url", `${window.location.origin}/api/payment-response`);
     formData.append("cancel_url", `${window.location.origin}/api/payment-response`);
     formData.append("currency", "INR");
+    formData.append("merchant_param1", ordereID);
+
   
     try {
       const checkOutResponse = await ccavCheckoutApi(formData);

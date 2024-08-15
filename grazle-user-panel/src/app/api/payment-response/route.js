@@ -9,7 +9,7 @@ const log = (message, data = {}) => {
 };
 // In-memory store
 
-export async function POST(request) {
+export async function POST(request,response) {
   log("Received POST request to /api/payment-response", {
       headers: Object.fromEntries(request.headers),
   });
@@ -29,11 +29,11 @@ export async function POST(request) {
       const redirectUrl = `https://grazle.co.in/payment-response?encResp=${encodeURIComponent(encResp)}&orderNo=${formData.get('orderNo')}`;
       log("Redirecting to frontend", { redirectUrl });
 
-      return NextResponse.redirect(redirectUrl);
+      return response.redirect(302,redirectUrl);
   
   } catch (error) {
       log("Error processing payment response", { error: error.message, stack: error.stack });
-      return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+      return response.redirect(302,redirectUrl);
   }
 }
 
