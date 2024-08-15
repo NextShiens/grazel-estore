@@ -1,99 +1,103 @@
 "use client";
+
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import BBB from "@/assets/Box.png";
-import close from "@/assets/close.png";
 import { Rating } from "@mui/material";
 import { toast } from "react-toastify";
-import CustomModal from "./CustomModel";
-import CCC from "@/assets/Shipping.png";
-import { FaTrashAlt } from "react-icons/fa";
-import DDD from "@/assets/sort by time.png";
-import AAA from "@/assets/Health Report.png";
+import { FaTrashAlt, FaCheckCircle } from "react-icons/fa";
 import { PiCameraThin } from "react-icons/pi";
-import { FaCheckCircle } from "react-icons/fa";
-import { HiOutlineDotsVertical } from "react-icons/hi";
-import React, { useEffect, useRef, useState } from "react";
 import { IoCloseSharp, IoLockClosed } from "react-icons/io5";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { HiOutlineDotsVertical } from "react-icons/hi";
 import { addReviewApi, cancelOrderApi, getOrderTrackingApi } from "@/apis";
 
-const MyorderCard = ({
+import BBB from "@/assets/Box.png";
+import CCC from "@/assets/Shipping.png";
+import DDD from "@/assets/sort by time.png";
+import AAA from "@/assets/Health Report.png";
+import close from "@/assets/close.png";
+
+import CustomModal from "./CustomModel";
+
+interface OrderProduct {
+  id: string;
+  title: string;
+  quantity: number;
+  featured_image: string;
+  discounted_price: number;
+  price: number;
+}
+
+interface Order {
+  id: string;
+  date: string;
+  products: OrderProduct[];
+}
+
+interface OrderTracking {
+  expected_delivery_date: string;
+  tracking_id: string;
+  status_history: {
+    status: string;
+    changed_at: string;
+  }[];
+}
+
+interface MyorderCardProps {
+  order: Order;
+  status?: string[];
+  setHasOrderCanceled?: React.Dispatch<React.SetStateAction<boolean>>;
+  getMyAllOrders: () => void;
+}
+
+const MyorderCard: React.FC<MyorderCardProps> = ({
   order,
   status,
   setHasOrderCanceled,
   getMyAllOrders,
-}: {
-  order: any;
-  status?: any;
-  setHasOrderCanceled?: any;
-  getMyAllOrders: () => void;
 }) => {
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState("");
-  const [productId, setProductId] = useState("");
-  const [showleave, setShowLeave] = useState(false);
-  const [showcancel, setShowcancel] = useState(false);
-  const [orderTracking, setOrderTracking] = useState({});
-  const [isDivVisible, setIsDivVisible] = useState(false);
-  const [showSendModel, setShowSendModel] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [showCancelMap, setShowCancelMap] = useState({});
+  const [rating, setRating] = useState<number>(0);
+  const [comment, setComment] = useState<string>("");
+  const [productId, setProductId] = useState<string>("");
+  const [showReview, setShowReview] = useState<boolean>(false);
+  const [orderTracking, setOrderTracking] = useState<OrderTracking | null>(null);
+  const [isTrackingVisible, setIsTrackingVisible] = useState<boolean>(false);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [showCancelMap, setShowCancelMap] = useState<Record<string, boolean>>({});
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  console.log(order, status, "status");
-
-  useEffect(() => {
-    (async () => {
-      const { data } = await getOrderTrackingApi(order.id);
-      setOrderTracking(data.order);
-    })();
-  }, [order.id]);
-
-  const handleOpeneModel = () => {
-    setShowSendModel(true);
-  };
-
-  const handleCloseModel = () => {
-    setShowSendModel(false);
-  };
-
-  const handleButtonClick = () => {
-    setIsDivVisible((prev) => !prev);
-  };
-
-  const handleRevModal = () => {
-    setShowLeave((prev) => !prev);
-  };
-  const toggleShowCancel = (orderId) => {
-    setShowCancelMap((prevState) => ({
-      ...prevState,
-      [orderId]: !prevState[orderId],
-    }));
-  };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleIconClick = () => {
-    fileInputRef?.current?.click();
+  useEffect(() => {
+    const fetchOrderTracking = async () => {
+      try {
+        const { data } = await getOrderTrackingApi(order.id);
+        setOrderTracking(data.order);
+      } catch (error) {
+        console.error("Failed to fetch order tracking:", error);
+        toast.error("Failed to fetch order tracking");
+      }
+    };
+
+    fetchOrderTracking();
+  }, [order.id]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    const imagePreviews = files.map((file) => URL.createObjectURL(file));
+    setSelectedImages(imagePreviews);
   };
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = Array.from(event.target.files);
-    if (files.length > 0) {
-      const imagePreviews = files.map((file) => URL.createObjectURL(file));
-      setSelectedImages(imagePreviews);
-    }
-  };
-
-  const revSubHandler = async () => {
-    const files = fileInputRef?.current?.files;
+  const handleReviewSubmit = async () => {
+    const files = fileInputRef.current?.files;
     const formData = new FormData();
+
     if (files && files.length > 0) {
       Array.from(files).forEach((file) => {
         formData.append("images", file);
       });
     }
+
     formData.append("comment", comment);
     formData.append("rating", String(rating));
     formData.append("product_id", productId);
@@ -102,9 +106,7 @@ const MyorderCard = ({
       const { data } = await addReviewApi(formData);
       if (data.success) {
         toast.success("Review has been added");
-        // Close the modal
-        setShowLeave(false);
-        // Reset the form state
+        setShowReview(false);
         setRating(0);
         setComment("");
         setSelectedImages([]);
@@ -121,140 +123,158 @@ const MyorderCard = ({
       const { data } = await cancelOrderApi(order.id);
       getMyAllOrders();
       if (data.success) {
-        // setHasOrderCanceled((prev) => !prev);
         toast.success("Order has been cancelled");
       }
     } catch (error) {
-      toast.error("failed to cancel order");
+      toast.error("Failed to cancel order");
     }
   };
 
-  const orderPlaced = orderTracking?.status_history?.find((status: any) => {
-    return status.status === "new";
-  });
-  const inProgressOrder = orderTracking?.status_history?.find((status: any) => {
-    return status.status === "in_progress";
-  });
+  const toggleCancelOption = (orderId: string) => {
+    setShowCancelMap((prevState) => ({
+      ...prevState,
+      [orderId]: !prevState[orderId],
+    }));
+  };
 
-  const shippedOrder = orderTracking?.status_history?.find((status: any) => {
-    return status.status === "shipped";
-  });
-  const deliveredOrder = orderTracking?.status_history?.find((status: any) => {
-    return status.status === "completed";
-  });
-  // console.log("iam updated", orderTracking);
+  const renderOrderStatus = () => {
+    const statuses = [
+      { icon: AAA, label: "Order placed", date: order.date },
+      { icon: BBB, label: "In Progress", status: "in_progress" },
+      { icon: CCC, label: "Shipped", status: "shipped" },
+      { icon: DDD, label: "Delivered", status: "completed" },
+    ];
 
-  const orderStatus = orderTracking?.status_history?.slice(-1)[0]?.status;
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-6">
+        {statuses.map((step, index) => {
+          const statusInfo = orderTracking?.status_history.find(
+            (s) => s.status === step.status
+          );
+          const isCompleted = statusInfo || (index === 0 && orderTracking);
+          const date = statusInfo
+            ? new Date(statusInfo.changed_at).toLocaleString()
+            : step.date || "Not available";
 
-  if (status?.length > 0 && !status.includes(orderStatus)) return null;
+          return (
+            <div key={index} className="flex items-center">
+              <div className="mr-4 relative">
+                <FaCheckCircle
+                  className={`h-8 w-8 ${isCompleted ? "text-green-500" : "text-gray-300"
+                    }`}
+                />
+                {index < statuses.length - 1 && (
+                  <div
+                    className={`absolute top-full left-1/2 transform -translate-x-1/2 w-0.5 h-full ${isCompleted ? "bg-green-500" : "bg-gray-300"
+                      }`}
+                  />
+                )}
+              </div>
+              <div>
+                <Image src={step.icon} alt="" className="w-8 h-8 mb-2" />
+                <p className="text-sm font-medium text-gray-800">
+                  {step.label}
+                </p>
+                <p className="text-xs text-gray-600">{date}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const currentStatus = orderTracking?.status_history.slice(-1)[0]?.status;
+
+  if (status?.length > 0 && !status.includes(currentStatus)) return null;
 
   return (
     <>
-      {order.products.map((prod: any) => (
+      {order.products.map((prod: OrderProduct) => (
         <div
           key={prod.id}
-          className="w-full rounded-2xl p-4 sm:p-6 mt-4 sm:mt-6 border border-gray-200 hover:border-red-500 transition-colors duration-300 shadow-sm"
+          className="w-full rounded-2xl p-6 mt-6 border border-gray-200 hover:border-red-500 transition-all duration-300 shadow-md hover:shadow-lg"
         >
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4">
             <div className="flex items-center mb-4 sm:mb-0">
-              <div className="border border-gray-300 rounded-full px-3 py-1 flex items-center whitespace-nowrap">
-                <IoLockClosed className="w-3 h-3 mr-2 text-gray-500" />
-                <p className="text-xs sm:text-sm text-gray-600">{order.date}</p>
+              <div className="border border-gray-300 rounded-full px-3 py-1 flex items-center">
+                <IoLockClosed className="w-4 h-4 mr-2 text-gray-500" />
+                <p className="text-sm text-gray-600">{order.date}</p>
               </div>
             </div>
 
-            {orderTracking?.status_history?.slice(-1)[0].status !==
-              "cancelled" &&
-              orderTracking?.status_history?.slice(-1)[0].status !==
-                "completed" && (
-                <div className="flex items-center justify-end w-full">
-                  <div className="flex items-center">
-                    {showCancelMap[order.id] && (
-                      <button
-                        onClick={() => setIsModalVisible(true)}
-                        className="flex items-center px-3 py-2 rounded-lg bg-white border border-red-500 text-red-500 hover:bg-red-50 active:bg-red-100 transition-colors duration-300 mr-2"
-                      >
-                        <IoCloseSharp className="text-lg mr-1" />
-                        <span className="text-xs sm:text-sm font-medium">
-                          Cancel order
-                        </span>
-                      </button>
-                    )}
-                    <button
-                      onClick={() => toggleShowCancel(order.id)}
-                      className="p-3 rounded-md border border-gray-200 hover:bg-gray-100 active:bg-gray-200 transition-colors duration-300 touch-manipulation"
-                    >
-                      <HiOutlineDotsVertical className="h-5 w-5 text-gray-400" />
-                    </button>
-                  </div>
-                </div>
-              )}
+            {currentStatus !== "cancelled" && currentStatus !== "completed" && (
+              <div className="flex items-center">
+                {showCancelMap[order.id] && (
+                  <button
+                    onClick={() => setIsModalVisible(true)}
+                    className="flex items-center px-3 py-2 rounded-lg bg-white border border-red-500 text-red-500 hover:bg-red-50 active:bg-red-100 transition-colors duration-300 mr-2"
+                  >
+                    <IoCloseSharp className="text-lg mr-1" />
+                    <span className="text-sm font-medium">Cancel order</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => toggleCancelOption(order.id)}
+                  className="p-2 rounded-md border border-gray-200 hover:bg-gray-100 active:bg-gray-200 transition-colors duration-300"
+                >
+                  <HiOutlineDotsVertical className="h-5 w-5 text-gray-400" />
+                </button>
+              </div>
+            )}
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4">
-            <div className="flex items-center">
-              <div className="h-30 w-20 bg-red-50  flex items-center justify-center mr-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between">
+            <div className="flex items-center mb-4 sm:mb-0">
+              <div className="h-24 w-24 bg-gray-100 rounded-lg flex items-center justify-center mr-4 overflow-hidden">
                 <Image
                   alt="Product Image"
-                  width={90}
-                  height={90}
+                  width={96}
+                  height={96}
                   src={prod.featured_image}
-                  className="rounded-xl object-cover"
-                  onError={(e: any) => {
-                    console.error("Image failed to load:", e);
-                    e.target.src = "/path/to/fallback-image.jpg";
-                  }}
+                  className="object-cover w-full h-full"
                 />
               </div>
               <div>
-                <p className=" text-gray-700">{prod.title}</p>
+                <p className="text-lg font-semibold text-gray-800">{prod.title}</p>
                 <p className="text-sm text-gray-500 mt-1">
                   Quantity: {prod.quantity}
                 </p>
               </div>
             </div>
 
-            <div className="mt-4 sm:mt-0 flex flex-col sm:items-end">
-              <p className="text-lg font-medium text-gray-800">
-                Price:₹{" "}
-                {prod.discounted_price
-                  ? prod.discounted_price
-                  : prod.price * prod.quantity}
+            <div className="flex flex-col sm:items-end">
+              <p className="text-xl font-bold text-gray-800">
+                ₹ {prod.discounted_price || prod.price * prod.quantity}
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
-                <button
-                  className={`px-4 py-2 rounded-full text-sm font-medium border ${
-                    orderTracking?.status_history?.slice(-1)[0].status ===
-                    "completed"
-                      ? "bg-green-50 text-green-600 border-green-200"
-                      : "bg-red-50 text-red-600 border-red-200"
-                  }`}
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${currentStatus === "completed"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
+                    }`}
                 >
-                  {orderTracking?.status_history?.slice(-1)[0].status}
-                </button>
-                {orderTracking?.status_history?.slice(-1)[0].status !==
-                  "completed" &&
-                  orderTracking?.status_history?.slice(-1)[0].status !==
-                    "cancelled" && (
-                    <button
-                      className="flex items-center px-4 py-2 bg-orange-50 rounded-full text-sm font-medium text-orange-500 border border-orange-200"
-                      onClick={handleButtonClick}
-                    >
-                      <span>Order Tracking</span>
-                      {isDivVisible ? (
-                        <IoIosArrowUp className="ml-1" />
-                      ) : (
-                        <IoIosArrowDown className="ml-1" />
-                      )}
-                    </button>
-                  )}
-                {orderTracking?.status_history?.slice(-1)[0].status ===
-                  "completed" && (
+                  {currentStatus}
+                </span>
+                {currentStatus !== "completed" && currentStatus !== "cancelled" && (
                   <button
-                    className="px-4 py-2 bg-yellow-50 rounded-full text-sm font-medium text-yellow-600 border border-yellow-200"
+                    className="flex items-center px-3 py-1 bg-blue-100 rounded-full text-xs font-medium text-blue-800"
+                    onClick={() => setIsTrackingVisible(!isTrackingVisible)}
+                  >
+                    <span>Order Tracking</span>
+                    {isTrackingVisible ? (
+                      <IoIosArrowUp className="ml-1" />
+                    ) : (
+                      <IoIosArrowDown className="ml-1" />
+                    )}
+                  </button>
+                )}
+                {currentStatus === "completed" && (
+                  <button
+                    className="px-3 py-1 bg-yellow-100 rounded-full text-xs font-medium text-yellow-800"
                     onClick={() => {
                       setProductId(prod.id);
-                      handleRevModal();
+                      setShowReview(true);
                     }}
                   >
                     Leave Review
@@ -264,208 +284,111 @@ const MyorderCard = ({
             </div>
           </div>
 
-          {isDivVisible && (
+          {isTrackingVisible && (
             <div className="mt-6 border-t border-gray-200 pt-4">
               <div className="mb-4">
-                <p className="text-base font-semibold text-gray-800">
+                <p className="text-lg font-semibold text-gray-800">
                   Delivery Details
                 </p>
               </div>
-              <div className="flex flex-col sm:flex-row sm:gap-8 gap-2 mb-4">
-                <div className="flex items-center">
-                  <p className="text-sm text-gray-600 mr-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div>
+                  <p className="text-sm text-gray-600">
                     Expected Delivery Date:
                   </p>
                   <p className="text-sm font-medium text-gray-800">
-                    {orderTracking.expected_delivery_date}
+                    {orderTracking?.expected_delivery_date}
                   </p>
                 </div>
-                <div className="flex items-center">
-                  <p className="text-sm text-gray-600 mr-2">Tracking ID:</p>
+                <div>
+                  <p className="text-sm text-gray-600">Tracking ID:</p>
                   <p className="text-sm font-medium text-gray-800">
-                    {orderTracking.tracking_id}
+                    {orderTracking?.tracking_id}
                   </p>
                 </div>
               </div>
 
               <div className="mb-4">
-                <p className="text-base font-semibold text-gray-800">
+                <p className="text-lg font-semibold text-gray-800">
                   Order Status
                 </p>
               </div>
 
-              <div className="hidden sm:flex justify-between mb-4">
-                {[
-                  {
-                    icon: AAA,
-                    label: "Order placed",
-                    date: orderTracking.date,
-                  },
-                  {
-                    icon: BBB,
-                    label: "In Progress",
-                    date: inProgressOrder
-                      ? new Date(inProgressOrder.changed_at).toLocaleString()
-                      : "Not available",
-                  },
-                  {
-                    icon: CCC,
-                    label: "Shipped",
-                    date: shippedOrder
-                      ? new Date(shippedOrder.changed_at).toLocaleString()
-                      : "Not available",
-                  },
-                  {
-                    icon: DDD,
-                    label: "Delivered",
-                    date: deliveredOrder
-                      ? new Date(deliveredOrder.changed_at).toLocaleString()
-                      : "Not available",
-                  },
-                ].map((step, index) => (
-                  <div key={index} className="flex items-center">
-                    <Image src={step.icon} alt="" className="w-8 h-8 mr-3" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-800">
-                        {step.label}
-                      </p>
-                      <p className="text-xs text-gray-600">{step.date}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="sm:hidden space-y-4">
-                {[
-                  {
-                    icon: AAA,
-                    label: "Order placed",
-                    date: orderTracking.date,
-                    status: true,
-                  },
-                  {
-                    icon: BBB,
-                    label: "In Progress",
-                    date: inProgressOrder
-                      ? new Date(inProgressOrder.changed_at).toLocaleString()
-                      : "Not available",
-                    status: inProgressOrder,
-                  },
-                  {
-                    icon: CCC,
-                    label: "Shipped",
-                    date: shippedOrder
-                      ? new Date(shippedOrder.changed_at).toLocaleString()
-                      : "Not available",
-                    status: shippedOrder,
-                  },
-                  {
-                    icon: DDD,
-                    label: "Delivered",
-                    date: deliveredOrder
-                      ? new Date(deliveredOrder.changed_at).toLocaleString()
-                      : "Not available",
-                    status: deliveredOrder,
-                  },
-                ].map((step, index, array) => (
-                  <div key={index} className="flex">
-                    <div className="mr-3 flex flex-col items-center">
-                      <FaCheckCircle
-                        className={`h-6 w-6 ${
-                          step.status ? "text-red-500" : "text-gray-300"
-                        }`}
-                      />
-                      {index < array.length - 1 && (
-                        <div
-                          className={`h-full w-0.5 ${
-                            array[index + 1].status
-                              ? "bg-red-500"
-                              : "bg-gray-300"
-                          }`}
-                        />
-                      )}
-                    </div>
-                    <div className="flex items-center">
-                      <Image src={step.icon} alt="" className="w-8 h-8 mr-3" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-800">
-                          {step.label}
-                        </p>
-                        <p className="text-xs text-gray-600">{step.date}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {renderOrderStatus()}
             </div>
           )}
         </div>
       ))}
 
-      <CustomModal showModal={isModalVisible}>
-        <div className="md:w-[600px] w-[350px] my-[40px]">
-          <div className="flex flex-col justify-center text-center md:px-0 px-3">
+      <CustomModal showModal={isModalVisible} onClose={() => setIsModalVisible(false)}>
+        <div className="w-full max-w-md p-6">
+          <div className="text-center">
             <Image
               src={close}
               alt="close"
-              className="text-[#E13827] flex m-auto md:h-[162px] h-[100px] md:w-[162px] w-[100px]"
+              className="mx-auto h-24 w-24 text-red-600"
             />
-            <p className="md:text-[32px] text-[20px] text-[#434343]  font-bold mt-6">
+            <h3 className="mt-4 text-2xl font-bold text-gray-900">
               Cancel Order
-            </p>
-            <p className="md:text-[20px] text-[15px] text-[#434343]  font-medium mt-6">
+            </h3>
+            <p className="mt-2 text-sm text-gray-500">
               Are you sure you want to cancel the order?
             </p>
-            <div className="mt-6 flex justify-center gap-4">
+            <div className="mt-4 flex justify-center gap-4">
               <button
-                className=" bg-[#CFCFCF] rounded-md h-[50px]  w-[181px] text-[18px] font-medium text-white"
+                className="px-4 py-2 bg-gray-200 rounded-md text-gray-800 font-medium hover:bg-gray-300 transition-colors duration-300"
                 onClick={() => setIsModalVisible(false)}
               >
-                Cancel
+                No, Keep Order
               </button>
               <button
-                className=" bg-[#F70000]  rounded-md h-[50px]  w-[181px] text-[18px] font-medium text-white"
+                className="px-4 py-2 bg-red-600 rounded-md text-white font-medium hover:bg-red-700 transition-colors duration-300"
                 onClick={handleOrderCancel}
               >
-                Yes
+                Yes, Cancel Order
               </button>
             </div>
           </div>
         </div>
       </CustomModal>
-      <CustomModal showModal={showleave}>
-        <div className="flex-col justify-center w-[400px]">
-          <div className="w-full rounded-[20px] p-[24px] bg-white shadow-lg">
-            <h2 className="text-[24px] font-semibold text-gray-800 mb-4">
-              Write a Review
-            </h2>
-            <h3 className="text-[16px] font-medium text-gray-700 mb-2">
+
+      <CustomModal showModal={showReview} onClose={() => setShowReview(false)}>
+        <div className="w-full max-w-md p-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Write a Review
+          </h2>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Rate the Product
-            </h3>
+            </label>
             <Rating
               name="product-rating"
-              defaultValue={5}
               value={rating}
-              onChange={(_, val) => setRating(val as number)}
-              sx={{
-                "& .MuiSvgIcon-root": {
-                  fontSize: 32,
-                },
-              }}
+              onChange={(_, value) => setRating(value || 0)}
+              size="large"
             />
-
-            <div className="mt-4">
-              <label className="text-[14px] font-medium text-gray-600 block mb-1">
-                Your Review
-              </label>
-              <textarea
-                onChange={(e) => setComment(e.target.value)}
-                className="border border-gray-300 w-full rounded-md h-[80px] p-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
-                placeholder="Share your thoughts..."
-              />
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 mt-4">
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="review-comment"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Your Review
+            </label>
+            <textarea
+              id="review-comment"
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              placeholder="Share your thoughts..."
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Add Photos
+            </label>
+            <div className="flex flex-wrap items-center gap-2">
               {selectedImages.map((image, index) => (
                 <Image
                   key={index}
@@ -476,36 +399,35 @@ const MyorderCard = ({
                   alt={`Review image ${index + 1}`}
                 />
               ))}
-              <div className="w-[60px] h-[60px] border-2 rounded-lg border-red-500 flex justify-center items-center">
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="hidden"
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  multiple
-                />
-                <PiCameraThin
-                  className="h-[36px] w-[36px] text-red-500 cursor-pointer"
-                  onClick={handleIconClick}
-                />
+              <div
+                className="w-16 h-16 border-2 rounded-lg border-red-500 flex justify-center items-center cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <PiCameraThin className="h-8 w-8 text-red-500" />
               </div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                onChange={handleFileChange}
+                accept="image/*"
+                multiple
+              />
             </div>
-
-            <div className="flex justify-between mt-6">
-              <button
-                className="bg-red-600 hover:bg-red-700 rounded-lg px-4 py-2 text-[14px] font-medium text-white transition duration-300"
-                onClick={revSubHandler}
-              >
-                Submit Review
-              </button>
-              <button
-                className="bg-gray-200 hover:bg-gray-300 rounded-lg px-4 py-2 text-[14px] font-medium text-gray-800 transition duration-300"
-                onClick={handleRevModal}
-              >
-                Cancel
-              </button>
-            </div>
+          </div>
+          <div className="flex justify-end gap-4">
+            <button
+              className="px-4 py-2 bg-gray-200 rounded-md text-gray-800 font-medium hover:bg-gray-300 transition-colors duration-300"
+              onClick={() => setShowReview(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="px-4 py-2 bg-red-600 rounded-md text-white font-medium hover:bg-red-700 transition-colors duration-300"
+              onClick={handleReviewSubmit}
+            >
+              Submit Review
+            </button>
           </div>
         </div>
       </CustomModal>
