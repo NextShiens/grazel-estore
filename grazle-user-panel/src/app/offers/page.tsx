@@ -163,7 +163,7 @@ const Offers = () => {
 
   return (
     <>
-      <div className="container mx-auto lg:mx-[150px] md:mx-[60px] lg:px-0 md:px-3">
+      <div className="container mx-auto lg:mx-[88px] md:mx-[60px] lg:px-0 md:px-3">
         <MainSlider banners={positionOneBanners} />
       </div>
 
