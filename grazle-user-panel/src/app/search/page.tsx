@@ -8,7 +8,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import { Checkbox, Rating, Slider, Select, MenuItem } from "@mui/material";
 import axios from "axios";
 import Baner from "@/assets/mainBag.png";
-import MenuIcon from "@/assets/VectorMenu.png";
+import MenuIcon from "@/assets/107799.png";
 import ProductCard from "@/components/ProductCard";
 import { useSelector } from "react-redux";
 
@@ -61,7 +61,7 @@ export default function StoreProductPage() {
     price: false,
     rating: false,
     sort: false,
-  });
+  });             
 
   useEffect(() => {
     setCategoriesFilter(selectedCategory);
@@ -498,6 +498,7 @@ export default function StoreProductPage() {
           )}
 
           <div>
+          <p className="text-gray-600 mb-4">Total Products: ({meta.totalItems})</p>
             {products.length > 0 ? (
               <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
                 {products.map((product) => (

@@ -2,11 +2,12 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { FaCircleCheck } from "react-icons/fa6";
+import { FaCircleCheck, FaSpinner } from "react-icons/fa6";
 import Dots from "@/assets/Group 1820549907.png";
 import { clearCart } from "@/features/features";
 import { useDispatch } from "react-redux";
 import { sendPaymentApiencResponse } from "@/apis";
+
 const log = (message, data = {}) => {
   console.log(JSON.stringify({
     timestamp: new Date().toISOString(),
@@ -14,49 +15,41 @@ const log = (message, data = {}) => {
     ...data
   }));
 };
+
 export default function PaymentSuccessPage() {
   const router = useRouter();
   const dispatch = useDispatch();
   const [paymentDetails, setPaymentDetails] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const processPayment = async () => {
       log("Payment success page loaded, starting payment processing");
       try {
-        // Attempt to get the form data
-        const urlParams = new URLSearchParams(window.location.search);
-        const encResp = urlParams.get('encResp');
-        const orderNo = urlParams.get('orderNo');
-        const accessCode = urlParams.get('accessCode');
+        // Access form data from the POST request
+        const formData = new FormData(document.querySelector('form'));
+        const formDataObj = Object.fromEntries(formData);
+        
+        log("Extracted form data", { formData: formDataObj });
 
-        if (!encResp) {
-          log("Missing encResp parameter");
-          throw new Error('Missing encResp parameter');
-        }
-
-        const datas = {
-          encResp,
-          orderNo,
-          accessCode,
-        };
-        const formData = new FormData(datas);
-
-        log("Sending payment response to API", { formData });
-        const response = await sendPaymentApiencResponse(formData);
-        log("Received API response", { response: response.data });
-
-        if (response.data.success) {
-          log("Payment successful, updating state", { paymentDetails: response.data.paymentDetails });
-          setPaymentDetails(response.data.paymentDetails);
+        // Send the form data to your API
+        const response = await sendPaymentApiencResponse(formDataObj);
+        log("Received API response", { response });
+        
+        if (response.success) {
+          log("Payment successful, updating state", { paymentDetails: response.data });
+          setPaymentDetails(response.data);
           dispatch(clearCart());
           log("Cart cleared");
         } else {
-          throw new Error('Payment was not successful');
+          throw new Error(response.message || 'Payment was not successful');
         }
       } catch (error) {
         log("Error processing payment", { error: error.message, stack: error.stack });
         setError('Failed to process payment. Please try again.');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -68,36 +61,60 @@ export default function PaymentSuccessPage() {
     router.push("/");
   };
 
+  if (loading) {
+    return (
+      <div className="flex flex-col justify-center items-center w-full h-screen bg-gray-100">
+        <FaSpinner className="animate-spin text-4xl text-[#F69B26] mb-4" />
+        <p className="text-lg font-semibold text-gray-600">Processing payment...</p>
+      </div>
+    );
+  }
+
   if (error) {
-    log("Rendering error state", { error });
-    return <div className="text-red-500">{error}</div>;
-  }
-
-  if (!paymentDetails) {
-    log("Rendering loading state");
-    return <div>Processing payment...</div>;
-  }
-
-  log("Rendering success state", { paymentDetails });
-  return (
-    <div className="flex flex-col justify-center items-center w-full h-screen bg-gray-100">
-      <div className="flex flex-col justify-center items-center w-full max-w-[400px] h-auto p-8 bg-white rounded-lg shadow-lg">
-        <div className="flex justify-center mb-[22px]">
-          <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
-          <FaCircleCheck className="text-[#4CAF50] h-[105px] mx-[16px] w-[105px] sm:h-[80px] sm:w-[80px]" />
-          <Image src={Dots} alt="" className="h-[64px] w-[64px]" />
+    return (
+      <div className="flex flex-col justify-center items-center w-full h-screen bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+          <h1 className="text-2xl font-bold text-red-500 mb-4">Payment Error</h1>
+          <p className="text-gray-700 mb-6">{error}</p>
+          <button
+            className="w-full bg-[#F69B26] text-white font-bold py-2 px-4 rounded hover:bg-[#E58A15] transition duration-300"
+            onClick={() => router.push("/CartPage")}
+          >
+            Return to Cart
+          </button>
         </div>
-        <h1 className="mt-5 text-[32px] text-center font-semibold text-[#434343] sm:text-[24px]">
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col justify-center items-center w-full min-h-screen bg-gray-100 p-4">
+      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+        <div className="flex justify-center mb-6">
+          <Image src={Dots} alt="" className="h-16 w-16" />
+          <FaCircleCheck className="text-[#4CAF50] h-24 w-24 mx-4" />
+          <Image src={Dots} alt="" className="h-16 w-16" />
+        </div>
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-4">
           Payment Successful!
         </h1>
-        <p className="mt-3 text-[16px] text-center font-semibold text-[#434343] sm:text-[14px]">
-          Your order {paymentDetails.orderNo} has been successfully placed and payment has been received.
-        </p>
-        <p className="mt-2 text-[14px] text-center text-[#777777]">
-          You will receive an email confirmation shortly.
-        </p>
+        <div className="space-y-4">
+          <p className="text-center text-gray-600">
+            Your order <span className="font-semibold">{paymentDetails.order_id || paymentDetails.orderNo}</span> has been successfully placed.
+          </p>
+          <div className="bg-gray-50 p-4 rounded-md">
+            <p className="text-sm text-gray-500 mb-2">Transaction Details:</p>
+            <p className="text-sm"><span className="font-medium">Order No:</span> {paymentDetails.orderNo}</p>
+            <p className="text-sm"><span className="font-medium">Encrypted Response:</span> {paymentDetails.encResp}</p>
+            {paymentDetails.amount && <p className="text-sm"><span className="font-medium">Amount:</span> {paymentDetails.currency} {paymentDetails.amount}</p>}
+            {paymentDetails.trans_date && <p className="text-sm"><span className="font-medium">Date:</span> {paymentDetails.trans_date}</p>}
+          </div>
+          <p className="text-sm text-center text-gray-500">
+            You will receive an email confirmation shortly.
+          </p>
+        </div>
         <button
-          className="mt-[30px] bg-[#F69B26] rounded-lg h-[50px] w-full text-white font-medium sm:h-[40px]"
+          className="mt-8 w-full bg-[#F69B26] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#E58A15] transition duration-300"
           onClick={handleBackToHome}
         >
           Back to Home
@@ -106,4 +123,3 @@ export default function PaymentSuccessPage() {
     </div>
   );
 }
-

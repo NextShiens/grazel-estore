@@ -4,68 +4,171 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Radio, Checkbox } from "@mui/material";
 import { toast } from "react-toastify";
-import { FaCircleCheck } from "react-icons/fa6";
+import axios from "axios";
 
-import { ccavCheckoutApi,purchaseMembershipPlanApi,confirmPlanPaymentApi } from "@/apis";
+import { ccavCheckoutApi } from "@/apis";
 import CustomModal from "@/components/CustomModel";
 
 import card from "@/assets/credit-card (3) 1.png";
 import Pay from "@/assets/Group 1820550001.png";
-import Dots from "@/assets/Group 1820549907.png";
 
 export default function Payment() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
-  const [showSendModel, setShowSendModel] = useState(false);
+
   const [loading, setLoading] = useState(false);
-  const [isPending, setPending] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [agreedTerms, setAgreedTerms] = useState(false);
   const [paymentData, setPaymentData] = useState(null);
 
   useEffect(() => {
-    const encodedData = searchParams.get('data');
+    const encodedData = searchParams.get("data");
     if (encodedData) {
-      const decodedData = JSON.parse(decodeURIComponent(encodedData));
-      setPaymentData(decodedData);
-      console.log("Payment Data", decodedData);
+      try {
+        const decodedData = JSON.parse(decodeURIComponent(encodedData));
+        setPaymentData(decodedData);
+        console.log("Payment Data", decodedData);
+      } catch (error) {
+        console.error("Error parsing payment data:", error);
+        toast.error("Invalid payment data");
+      }
     }
   }, [searchParams]);
 
-  const onPayment = async (event) => {
-    event.preventDefault();
-    try {
-      setLoading(true);
-      const billingData = new FormData();
-      const { username, planPrice, planId,  address } = paymentData;
-
-      billingData.append("order_id", planId);
-      billingData.append("name", username);
-      billingData.append("amount", planPrice);
-      billingData.append("plan_id", planId);
-      billingData.append("address", address);
-      billingData.append("currency", "INR");
-
-      const response = await ccavCheckoutApi(billingData);
-      if (response.data && response.data.url) {
-        window.location.href = response.data.url;
-        const res = await purchaseMembershipPlanApi(planId);
-        if(!res.data || !res.data.membership) {
-          toast.error("Failed to initiate CCAvenue payment");
-          return;
-        }else{
-      // For this example, let's assume we immediately confirm the payment
-      await confirmPlanPaymentApi(res.data.membership.id, "dummy_transaction_id", "paid");
+  const purchaseMembershipPlan = async () => {
+    if (!paymentData?.planId) {
+      toast.error("Invalid plan ID");
+      return false;
     }
+  
+    try {
+      const formData = new FormData();
+      formData.append("membership_plan_id", paymentData.planId);
+  
+      const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+      const response = await axios.post(`${BASE_URL}/purchase-membership-plan`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+  
+      if (response.data.success && response.data.membership) {
+        const membershipId = response.data.membership.id;
+        console.log("Membership plan purchased successfully, ID:", membershipId);
+        toast.success("Membership plan purchased successfully");
+        return membershipId;
       } else {
-        toast.error("Failed to initiate CCAvenue payment");
+        throw new Error("Membership data not found in response");
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Error purchasing membership plan:", error);
+      toast.error("Failed to purchase membership plan");
+      return false;
+    }
+  };
+
+  const onPayment = async (e) => {
+    e.preventDefault();
+    if (!paymentData || !paymentMethod) {
+      toast.error("Missing payment data or payment method");
+      return;
+    }
+  
+    setLoading(true);
+    try {
+      // First, purchase the membership plan
+      const membershipId = await purchaseMembershipPlan();
+      if (!membershipId) {
+        throw new Error("Failed to purchase membership plan");
+      }
+  
+      console.log("Membership ID:", membershipId);
+  
+      // Then proceed with the payment only if membershipId is present
+      if (membershipId) {
+        if (paymentMethod === "ccavenue") {
+          await handleCCAvenue(membershipId);
+        } else if (paymentMethod === "phonepe") {
+          await handlePhonePe();
+        } else {
+          throw new Error("Invalid payment method");
+        }
+      } else {
+        throw new Error("Invalid membership ID");
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCCAvenue = async (membershipId) => {
+    // alert(membershipId, 'membershipId')
+    const formData = new FormData();
+    formData.append("order_id", membershipId);
+    formData.append("amount", paymentData?.planPrice?.toString());
+    formData.append(
+      "redirect_url",
+      `${window.location.origin}/api/payment-response-membership`
+    );
+    formData.append(
+      "cancel_url",
+      `${window.location.origin}/api/payment-response-membership`
+    );
+    formData.append("currency", "INR");
+    formData.append("merchant_param1", membershipId);
+    formData.append("merchant_param2", "true");
+
+    try {
+      const checkOutResponse = await ccavCheckoutApi(formData);
+      if (checkOutResponse.data && checkOutResponse.data.ccavenueUrl) {
+        const { ccavenueUrl, encRequest, accessCode } = checkOutResponse.data;
+        const url = `${ccavenueUrl}&encRequest=${encRequest}&access_code=${accessCode}`;
+        window.location.href = url;
+        toast.success("Redirecting to payment gateway...");
+      } else {
+        throw new Error("Invalid response from payment initiation");
+      }
+    } catch (error) {
+      console.error("CCAvenue payment initiation failed:", error);
+      toast.error("Failed to initiate CCAvenue payment");
+    }
+  };
+
+  const handlePhonePe = async () => {
+    try {
+      const formData = new FormData();
+      const user = JSON.parse(localStorage.getItem("theUser"));
+      formData.append("user_id", user?.id || "12");
+      formData.append("amount", paymentData.planPrice.toString());
+      formData.append(
+        "redirect_url",
+        `${window.location.origin}/payment-success`
+      );
+      formData.append("redirect_mode", "REDIRECT");
+
+      const response = await axios.post(
+        "https://api.grazle.co.in/api/phonepe/initiate-payment",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.data.success) {
+        toast.success("Payment initiated");
+        router.replace(response.data.data.payment_url);
+      } else {
+        toast.error("Failed to initiate payment");
+      }
+    } catch (error) {
+      console.error("Error initiating payment:", error);
+      toast.error("An error occurred while initiating payment");
     }
   };
 
@@ -80,7 +183,9 @@ export default function Payment() {
               <Image src={Pay} alt="" className="h-[29px] w-[29px]" />
             </div>
             <div className="text-[#777777] text-start ml-[32px]">
-              <p className="text-[24px] font-medium">{paymentData.planName || "Plan"}</p>
+              <p className="text-[24px] font-medium">
+                {paymentData.planName || "Plan"}
+              </p>
               <p className="text-[15px] font-medium">
                 {paymentData.planDescription || "Plan details"}
               </p>
@@ -99,13 +204,15 @@ export default function Payment() {
           <div className="flex items-center gap-2 mt-2">
             <Image src={card} alt="Airpod" className="w-[30px] h-[30px] mr-2" />
             <p className="lg:text-[30px] text-[20px] sm:text-[24px] font-medium">
-              All Payment Options
+              All Payment Options Payment Plan
             </p>
           </div>
 
           <div
             className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${
-              paymentMethod === "ccavenue" ? "border-[#F70000]" : "border-[#777777]"
+              paymentMethod === "ccavenue"
+                ? "border-[#F70000]"
+                : "border-[#777777]"
             }`}
           >
             <div className="flex items-center gap-2">
@@ -123,12 +230,33 @@ export default function Payment() {
             />
           </div>
 
+          <div
+            className={`border-[1px] mt-4 p-3 flex items-center justify-between rounded-xl w-full ${
+              paymentMethod === "phonepe"
+                ? "border-[#F70000]"
+                : "border-[#777777]"
+            }`}
+          >
+            <p className="text-lg font-medium text-purple-600">PhonePe</p>
+            <Radio
+              sx={{
+                color: "#F70000",
+                "& .MuiSvgIcon-root": { fontSize: 24 },
+                "&.Mui-checked": { color: "#F70000" },
+              }}
+              checked={paymentMethod === "phonepe"}
+              onChange={() => setPaymentMethod("phonepe")}
+            />
+          </div>
+
           <button
             type="submit"
-            disabled={isPending || !agreedTerms || paymentMethod === ""}
+            disabled={loading || !agreedTerms || paymentMethod === ""}
             className="mt-10 bg-[#F70000] disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none rounded-md h-[50px] w-[100%] text-[18px] font-medium text-white"
           >
-            Pay ₹{paymentData ? paymentData.planPrice : "nothing"}
+            {loading
+              ? "Processing..."
+              : `Pay ₹${paymentData ? paymentData.planPrice : "0"}`}
           </button>
 
           <div className="mt-3 flex items-center">
@@ -140,14 +268,15 @@ export default function Payment() {
               }}
               onChange={(e) => setAgreedTerms(e.target.checked)}
             />
-           <p className="text-black font-normal text-sm">
-              By Clicking I agree to all terms of services and{' '}
+            <p className="text-black font-normal text-sm">
+              By Clicking I agree to all terms of services and{" "}
               <span
                 className="text-blue-500 cursor-pointer"
-                onClick={() => router.push('/Terms&Conditions')}
+                onClick={() => router.push("/Terms&Conditions")}
               >
                 Privacy & Policy
-              </span>.
+              </span>
+              .
             </p>
           </div>
         </form>

@@ -280,3 +280,5 @@ export const getActiveMembershipPlanApi = async () =>
 
 export const sendPaymentApiencResponse = async (data) =>
   await axios.post("/ccavenue/checkout/response", data);
+export const sendPaymentApiencResponseMembership = async (data) =>
+  await axios.post("ccavenue/checkout/response/membership-plan", data);
