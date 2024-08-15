@@ -191,6 +191,7 @@ export default function PaymentAndAddress() {
     formData.append("cancel_url", `${window.location.origin}/api/payment-response`);
     formData.append("currency", "INR");
     formData.append("merchant_param1", ordereID);
+    formData.append("merchant_param2", "sample for memebrship type check i can send this true in case of memebership payment");
 
   
     try {
