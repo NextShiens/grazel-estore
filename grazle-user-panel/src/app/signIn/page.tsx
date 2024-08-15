@@ -38,6 +38,13 @@ const Login = () => {
     try {
       setLoading(true);
       const { data } = await loginApi(formdata);
+      debugger
+      if (data?.user?.role === "seller") {
+        toast.warning("Seller account cannot login here");
+        setLoading(false);
+        window.location.href = "https://seller.grazle.co.in/";
+        return;
+      }
       dispatch(updateUser(data?.user));
       if (typeof window !== "undefined") {
         // console.log(JSON.stringify(data?.user))
