@@ -36,11 +36,11 @@ const CustomModal = ({ isOpen, onClose, children }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md transform transition-all duration-300 ease-in-out">
         <div className="border-b border-gray-200 px-6 py-4">
-          <h3 className="text-lg font-medium text-gray-900">Order Confirmation</h3>
+          <h3 className="text-lg font-medium text-gray-900">
+            Order Confirmation
+          </h3>
         </div>
-        <div className="px-6 py-4">
-          {children}
-        </div>
+        <div className="px-6 py-4">{children}</div>
         <div className="bg-gray-50 px-6 py-4 rounded-b-lg flex justify-end">
           {/* <button
             className="mr-2 px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
@@ -93,7 +93,7 @@ export default function PaymentAndAddress() {
   };
 
   async function onEditAddress(event: any) {
-    debugger
+    debugger;
     event.preventDefault();
     const addressId = searchParams.get("addressId");
     if (!addressId) return;
@@ -101,7 +101,7 @@ export default function PaymentAndAddress() {
       setPending(true);
       const formData = new FormData(event.target);
       const dataFormObj = Object.fromEntries(formData);
-      console.log('Form data:', dataFormObj);
+      console.log("Form data:", dataFormObj);
 
       const { data } = await editAddressApi(dataFormObj, addressId);
       setAddressDetail(data?.address);
@@ -141,7 +141,12 @@ export default function PaymentAndAddress() {
 
     try {
       const addressId = searchParams.get("addressId");
-      if (!addressId || !paymentMethod || !productQty.length || !productIds.length) {
+      if (
+        !addressId ||
+        !paymentMethod ||
+        !productQty.length ||
+        !productIds.length
+      ) {
         toast.error("Missing address / payment method / product detail");
         setLoading(false);
         return;
@@ -149,15 +154,16 @@ export default function PaymentAndAddress() {
 
       formdata.append("address_id", addressId);
       formdata.append("payment_type", paymentMethod);
-      const transactionId = otherFields?.transaction_id || generateRandomTransactionId();
+      const transactionId =
+        otherFields?.transaction_id || generateRandomTransactionId();
 
-      formdata.append("quantities", productQty.join(','));
-      formdata.append("coupon_code", otherFields?.coupon_code || '');
-      formdata.append("discount", otherFields?.discount || '0');
+      formdata.append("quantities", productQty.join(","));
+      formdata.append("coupon_code", otherFields?.coupon_code || "");
+      formdata.append("discount", otherFields?.discount || "0");
       formdata.append("payment", "notpaid");
       formdata.append("transaction_id", transactionId);
-      formdata.append("product_ids", productIds.join(','));
-      formdata.append("prices", prices.join(','));
+      formdata.append("product_ids", productIds.join(","));
+      formdata.append("prices", prices.join(","));
 
       if (paymentMethod === "creditcard") {
         await handleCCAvenue(formdata);
@@ -166,7 +172,6 @@ export default function PaymentAndAddress() {
       } else if (paymentMethod === "cod") {
         handleCOD(formdata);
       }
-
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");
@@ -188,13 +193,21 @@ export default function PaymentAndAddress() {
 
     formData.append("order_id", data?.order?.id);
     formData.append("amount", cartTotal.toString());
-    formData.append("redirect_url", `${window.location.origin}/api/payment-response`);
-    formData.append("cancel_url", `${window.location.origin}/api/payment-response`);
+    formData.append(
+      "redirect_url",
+      `${window.location.origin}/api/payment-response`
+    );
+    formData.append(
+      "cancel_url",
+      `${window.location.origin}/api/payment-response`
+    );
     formData.append("currency", "INR");
     formData.append("merchant_param1", data?.order?.id);
-    formData.append("merchant_param2", "sample for memebrship type check i can send this true in case of memebership payment");
+    formData.append(
+      "merchant_param2",
+      "sample for memebrship type check i can send this true in case of memebership payment"
+    );
 
-  
     try {
       const checkOutResponse = await ccavCheckoutApi(formData);
       console.info("CCAvenue payment initiation response:", checkOutResponse);
@@ -202,25 +215,25 @@ export default function PaymentAndAddress() {
       //   const form = document.createElement('form');
       //   form.method = 'POST';
       //   form.action = checkOutResponse.data.ccavenueUrl;
-  
+
       //   const encRequestInput = document.createElement('input');
       //   encRequestInput.type = 'hidden';
       //   encRequestInput.name = 'encRequest';
       //   encRequestInput.value = checkOutResponse.data.encRequest;
       //   form.appendChild(encRequestInput);
-  
+
       //   const accessCodeInput = document.createElement('input');
       //   accessCodeInput.type = 'hidden';
       //   accessCodeInput.name = 'access_code';
       //   accessCodeInput.value = checkOutResponse.data.accessCode;
       //   form.appendChild(accessCodeInput);
-  
+
       //   document.body.appendChild(form);
       //   form.submit();
       //   document.body.removeChild(form);
-  
+
       //   toast.success("Redirecting to payment gateway...");
-      
+
       if (checkOutResponse.data && checkOutResponse.data.ccavenueUrl) {
         const { ccavenueUrl, encRequest, accessCode } = checkOutResponse.data;
         const url = `${ccavenueUrl}&encRequest=${encRequest}&access_code=${accessCode}`;
@@ -229,7 +242,7 @@ export default function PaymentAndAddress() {
 
         toast.success("Redirecting to payment gateway...");
       } else {
-        throw new Error('Invalid response from payment initiation');
+        throw new Error("Invalid response from payment initiation");
       }
     } catch (error) {
       console.error("CCAvenue payment initiation failed:", error);
@@ -241,19 +254,26 @@ export default function PaymentAndAddress() {
   const handlePhonePe = async () => {
     try {
       const formData = new FormData();
-      const user = localStorage.getItem('theUser');
-      console.log('User:', user);
+      const user = localStorage.getItem("theUser");
+      console.log("User:", user);
       formData.append("user_id", String(user?.id));
       formData.append("amount", String(cartTotal));
-      formData.append("redirect_url", `${window.location.origin}/payment-success`);
+      formData.append(
+        "redirect_url",
+        `${window.location.origin}/payment-success`
+      );
       formData.append("redirect_mode", "REDIRECT");
 
-      const response = await axios.post("https://api.grazle.co.in/api/phonepe/initiate-payment", formData, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await axios.post(
+        "https://api.grazle.co.in/api/phonepe/initiate-payment",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       if (response.data.success) {
         toast.success("Payment initiated");
@@ -288,7 +308,10 @@ export default function PaymentAndAddress() {
     <div className="container mx-auto px-4 py-8 md:py-12 lg:py-16">
       <div className="flex flex-wrap -mx-4">
         <div className="w-full lg:w-2/3 px-4 mb-8 lg:mb-0">
-          <form onSubmit={onEditAddress} className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <form
+            onSubmit={onEditAddress}
+            className="bg-white rounded-lg shadow-md p-6 mb-8"
+          >
             <div className="flex items-center mb-6">
               <IoLocationOutline className="text-gray-500 text-2xl mr-3" />
               <h2 className="text-2xl font-semibold">Shipping Address</h2>
@@ -296,7 +319,9 @@ export default function PaymentAndAddress() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  First Name
+                </label>
                 <input
                   name="recipient_name"
                   defaultValue={addressDetail?.recipient_name}
@@ -304,7 +329,9 @@ export default function PaymentAndAddress() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Last Name
+                </label>
                 <input
                   name="address_label"
                   defaultValue={addressDetail?.address_label}
@@ -314,7 +341,9 @@ export default function PaymentAndAddress() {
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Street Address
+              </label>
               <input
                 name="address"
                 defaultValue={addressDetail?.address}
@@ -324,7 +353,9 @@ export default function PaymentAndAddress() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone
+                </label>
                 <input
                   name="recipient_phone"
                   defaultValue={addressDetail?.recipient_phone}
@@ -332,7 +363,9 @@ export default function PaymentAndAddress() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Note
+                </label>
                 <input
                   name="note"
                   defaultValue={addressDetail?.note}
@@ -371,11 +404,7 @@ export default function PaymentAndAddress() {
                   onClick={() => setDelivery(false)}
                   className="cursor-pointer mr-2"
                 />
-                <Image
-                  src={FedEx}
-                  alt="Delivery"
-                  className="w-auto h-6 mr-2"
-                />
+                <Image src={FedEx} alt="Delivery" className="w-auto h-6 mr-2" />
                 <p className="text-lg font-medium">FedEx Company</p>
               </div>
             ) : (
@@ -396,7 +425,10 @@ export default function PaymentAndAddress() {
             )}
           </div>
 
-          <form onSubmit={onPayment} className="bg-white rounded-lg shadow-md p-6">
+          <form
+            onSubmit={onPayment}
+            className="bg-white rounded-lg shadow-md p-6"
+          >
             <div className="flex items-center mb-6">
               <Image src={card} alt="Card" className="w-8 h-8 mr-3" />
               <h2 className="text-2xl font-semibold">All Payment Options</h2>
@@ -404,8 +436,11 @@ export default function PaymentAndAddress() {
 
             <div
               onClick={() => setPaymentMethod("creditcard")}
-              className={`flex items-center justify-between p-4 border rounded-lg mb-4 cursor-pointer transition-colors ${paymentMethod === "creditcard" ? "border-red-500 bg-red-50" : "border-gray-300 hover:bg-gray-50"
-                }`}
+              className={`flex items-center justify-between p-4 border rounded-lg mb-4 cursor-pointer transition-colors ${
+                paymentMethod === "creditcard"
+                  ? "border-red-500 bg-red-50"
+                  : "border-gray-300 hover:bg-gray-50"
+              }`}
             >
               <div className="flex items-center">
                 <p className="text-lg font-medium text-blue-600 mr-2">CC</p>
@@ -415,7 +450,7 @@ export default function PaymentAndAddress() {
                 checked={paymentMethod === "creditcard"}
                 sx={{
                   color: "#F70000",
-                  '&.Mui-checked': {
+                  "&.Mui-checked": {
                     color: "#F70000",
                   },
                 }}
@@ -424,15 +459,18 @@ export default function PaymentAndAddress() {
 
             <div
               onClick={() => setPaymentMethod("phonepe")}
-              className={`flex items-center justify-between p-4 border rounded-lg mb-4 cursor-pointer transition-colors ${paymentMethod === "phonepe" ? "border-red-500 bg-red-50" : "border-gray-300 hover:bg-gray-50"
-                }`}
+              className={`flex items-center justify-between p-4 border rounded-lg mb-4 cursor-pointer transition-colors ${
+                paymentMethod === "phonepe"
+                  ? "border-red-500 bg-red-50"
+                  : "border-gray-300 hover:bg-gray-50"
+              }`}
             >
               <p className="text-lg font-medium text-purple-600">PhonePe</p>
               <Radio
                 checked={paymentMethod === "phonepe"}
                 sx={{
                   color: "#F70000",
-                  '&.Mui-checked': {
+                  "&.Mui-checked": {
                     color: "#F70000",
                   },
                 }}
@@ -441,8 +479,11 @@ export default function PaymentAndAddress() {
 
             <div
               onClick={() => setPaymentMethod("cod")}
-              className={`flex items-center justify-between p-4 border rounded-lg mb-4 cursor-pointer transition-colors ${paymentMethod === "cod" ? "border-red-500 bg-red-50" : "border-gray-300 hover:bg-gray-50"
-                }`}
+              className={`flex items-center justify-between p-4 border rounded-lg mb-4 cursor-pointer transition-colors ${
+                paymentMethod === "cod"
+                  ? "border-red-500 bg-red-50"
+                  : "border-gray-300 hover:bg-gray-50"
+              }`}
             >
               <div className="flex items-center">
                 <p className="font-medium mr-2">Cash on Delivery</p>
@@ -452,7 +493,7 @@ export default function PaymentAndAddress() {
                 checked={paymentMethod === "cod"}
                 sx={{
                   color: "#F70000",
-                  '&.Mui-checked': {
+                  "&.Mui-checked": {
                     color: "#F70000",
                   },
                 }}
@@ -469,7 +510,9 @@ export default function PaymentAndAddress() {
               ) : (
                 <>Pay ₹{cartTotal.toFixed(0)}</>
               )}
-              {loading && <BiLoader className="inline-block ml-2 animate-spin" />}
+              {loading && (
+                <BiLoader className="inline-block ml-2 animate-spin" />
+              )}
             </button>
 
             <div className="mt-4 flex items-center">
@@ -478,19 +521,20 @@ export default function PaymentAndAddress() {
                 onChange={(e) => setAgreedTerms(e.target.checked)}
                 sx={{
                   color: "#FF8A1D",
-                  '&.Mui-checked': {
+                  "&.Mui-checked": {
                     color: "#FF8A1D",
                   },
                 }}
               />
               <p className="text-sm text-gray-600">
-                By clicking, I agree to all terms of services and{' '}
+                By clicking, I agree to all terms of services and{" "}
                 <span
                   className="text-blue-500 cursor-pointer hover:underline"
-                  onClick={() => router.push('/Terms&Conditions')}
+                  onClick={() => router.push("/Terms&Conditions")}
                 >
                   Privacy & Policy
-                </span>.
+                </span>
+                .
               </p>
             </div>
           </form>
@@ -529,51 +573,74 @@ export default function PaymentAndAddress() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
-            {cartProducts?.map((item, index) => (
-              <div key={item.id} className="flex items-center justify-between mb-4">
-                <div className="flex items-center">
-                  <Badge badgeContent={item.qty} color="primary" className="mr-3">
-                    {item.featured_image ? (
-                      <Image
-                        src={item.featured_image}
-                        height={50}
-                        width={50}
-                        alt={item.title}
-                        className="rounded-md"
-                      />
-                    ) : (
-                      <div className="w-[50px] h-[50px] flex items-center justify-center bg-gray-200 rounded-md">
-                        <span className="text-xs text-gray-500">No Image</span>
-                      </div>
-                    )}
-                  </Badge>
-                  <div>
-                    <p className="font-medium">{item.title}</p>
-                    <p className="text-sm text-gray-500">Qty: {item.qty}</p>
-                  </div>
-                </div>
-                <p className="font-medium">₹{Number(item.discountPrice * item.qty).toFixed(0)}</p>
-              </div>
-            ))}
+          <div className="bg-white rounded-xl shadow-lg p-8 max-w-md mx-auto my-8">
+            <h2 className="text-3xl font-bold mb-6 text-gray-800">
+              Order Summary
+            </h2>
 
-            <div className="border-t border-gray-200 pt-4 mt-4">
-              <div className="flex justify-between mb-2">
-                <p className="text-gray-600">Subtotal</p>
-                <p className="font-medium">₹{Number(cartTotal).toFixed(0)}</p>
+            <div className="space-y-6 mb-8">
+              {cartProducts?.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between py-4 border-b border-gray-100 last:border-b-0"
+                >
+                  <div className="flex items-center space-x-4">
+                    <Badge
+                      badgeContent={item.qty}
+                      color="primary"
+                      className="mr-3"
+                    >
+                      {item.featured_image ? (
+                        <Image
+                          src={item.featured_image}
+                          height={70}
+                          width={70}
+                          alt={item.title}
+                          className="rounded-lg object-cover"
+                        />
+                      ) : (
+                        <div className="w-[70px] h-[70px] flex items-center justify-center bg-gray-100 rounded-lg">
+                          <span className="text-xs text-gray-400">
+                            No Image
+                          </span>
+                        </div>
+                      )}
+                    </Badge>
+                    <div>
+                      <p className="font-light text-gray-800">{item.title}</p>
+                      <p className="text-sm text-gray-500">Qty: {item.qty}</p>
+                    </div>
+                  </div>
+                  <p className="font-semibold text-gray-800">
+                    ₹
+                    {Number(item.discountPrice * item.qty).toLocaleString(
+                      "en-IN"
+                    )}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="border-t border-gray-200 pt-6 space-y-4">
+              <div className="flex justify-between text-gray-600">
+                <p>Subtotal</p>
+                <p className="font-semibold">
+                  ₹{Number(cartTotal).toLocaleString("en-IN")}
+                </p>
               </div>
-              <div className="flex justify-between mb-2">
-                <p className="text-gray-600">Shipping</p>
-                <p className="font-medium">Free</p>
+              <div className="flex justify-between text-gray-600">
+                <p>Shipping</p>
+                <p className="font-semibold text-green-600">Free</p>
               </div>
-              <div className="flex justify-between mb-2">
-                <p className="text-gray-600">Discount</p>
-                <p className="font-medium">₹{Number(cartDiscount).toFixed(0)}</p>
+              <div className="flex justify-between text-gray-600">
+                <p>Discount</p>
+                <p className="font-semibold text-red-600">
+                  -₹{Number(cartDiscount).toLocaleString("en-IN")}
+                </p>
               </div>
-              <div className="flex justify-between font-semibold text-lg mt-4">
+              <div className="flex justify-between font-bold text-2xl mt-6 pt-4 border-t border-gray-200">
                 <p>Total</p>
-                <p>₹{(cartTotal).toFixed(0)}</p>
+                <p>₹{Number(cartTotal).toLocaleString("en-IN")}</p>
               </div>
             </div>
           </div>
@@ -584,7 +651,9 @@ export default function PaymentAndAddress() {
         <div className="flex flex-col items-center">
           <div className="mb-4 text-center">
             <FaCircleCheck className="text-red-600 h-16 w-16 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Order Placed Successfully!</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Order Placed Successfully!
+            </h2>
             <p className="text-gray-600">
               We'll send a confirmation email to you shortly.
             </p>
