@@ -229,19 +229,21 @@ const MyorderCard = ({
                   {orderTracking?.status_history?.slice(-1)[0].status}
                 </button>
                 {orderTracking?.status_history?.slice(-1)[0].status !==
-                  "completed" && (
-                  <button
-                    className="flex items-center px-4 py-2 bg-orange-50 rounded-full text-sm font-medium text-orange-500 border border-orange-200"
-                    onClick={handleButtonClick}
-                  >
-                    <span>Order Tracking</span>
-                    {isDivVisible ? (
-                      <IoIosArrowUp className="ml-1" />
-                    ) : (
-                      <IoIosArrowDown className="ml-1" />
-                    )}
-                  </button>
-                )}
+                  "completed" &&
+                  orderTracking?.status_history?.slice(-1)[0].status !==
+                    "cancelled" && (
+                    <button
+                      className="flex items-center px-4 py-2 bg-orange-50 rounded-full text-sm font-medium text-orange-500 border border-orange-200"
+                      onClick={handleButtonClick}
+                    >
+                      <span>Order Tracking</span>
+                      {isDivVisible ? (
+                        <IoIosArrowUp className="ml-1" />
+                      ) : (
+                        <IoIosArrowDown className="ml-1" />
+                      )}
+                    </button>
+                  )}
                 {orderTracking?.status_history?.slice(-1)[0].status ===
                   "completed" && (
                   <button
