@@ -21,6 +21,8 @@ import { FaChevronDown } from "react-icons/fa6";
 import Location from "@/assets/location-icon.png";
 import { FaFacebook, FaPinterest, FaTwitter } from "react-icons/fa";
 import { getAllCategoriesApi } from "@/apis";
+import { useDispatch } from "react-redux";
+import { updateCart, setSelectedCategory } from "@/features/features";
 
 interface FAQData {
   header: string;
@@ -44,13 +46,17 @@ export default function Footer() {
   ];
 
   const [expanded, setExpanded] = useState<number | null>(null);
+  const dispatch = useDispatch();
 
   const handleAccordionChange =
     (panelIndex: number) =>
-      (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
-        setExpanded(isExpanded ? panelIndex : null);
-      };
-
+    (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panelIndex : null);
+    };
+  const handleCategoryClick = (category) => {
+    console.log(category, "category");
+    dispatch(setSelectedCategory(category));
+  };
   return (
     <>
       <div className="lg:px-[150px] md:px-[60px] px-[16px] py-[63px] bg-[#F8F8F8] lg:flex sm:hidden hidden items-start lg:items-start justify-between">
@@ -62,18 +68,34 @@ export default function Footer() {
           />
 
           <div className="flex items-center gap-2 justify-center lg:justify-start mt-[40px]">
-          <Link href="https://x.com/GrazleHomeware" target="_blank" rel="noopener noreferrer">
-            <FaTwitter className="text-[24px] text-[#434343]" />
-          </Link>
-          <Link href="https://www.facebook.com/grazlefb/" target="_blank" rel="noopener noreferrer">
-            <FaFacebook className="text-[24px] text-[#434343]" />
-          </Link>
-          <Link href="https://www.linkedin.com/company/grazle" target="_blank" rel="noopener noreferrer">
-            <SiLinkedin className="text-[24px] text-[#434343]" />
-          </Link>
-          <Link href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA==" target="_blank" rel="noopener noreferrer">
-            <GrInstagram className="text-[24px] text-[#434343]" />
-          </Link>
+            <Link
+              href="https://x.com/GrazleHomeware"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaTwitter className="text-[24px] text-[#434343]" />
+            </Link>
+            <Link
+              href="https://www.facebook.com/grazlefb/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaFacebook className="text-[24px] text-[#434343]" />
+            </Link>
+            <Link
+              href="https://www.linkedin.com/company/grazle"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <SiLinkedin className="text-[24px] text-[#434343]" />
+            </Link>
+            <Link
+              href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA=="
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <GrInstagram className="text-[24px] text-[#434343]" />
+            </Link>
           </div>
         </div>
 
@@ -84,6 +106,7 @@ export default function Footer() {
               <Link
                 href={`/search?category=${category?.id}`}
                 className="text-[14px] font-normal mt-[12px] w-full"
+                onClick={() => handleCategoryClick(category)}
               >
                 {category?.name}
               </Link>
@@ -178,14 +201,16 @@ export default function Footer() {
               className="w-[32px] h-[32px] mr-[8px]"
             />
             <p className="text-base font-medium">
-             MAHIPALPUR EXTN OPP. -APRAVTO MARUTI SHOWROOM, NEW DELHI 110037
+              MAHIPALPUR EXTN OPP. -APRAVTO MARUTI SHOWROOM, NEW DELHI 110037
             </p>
           </div>
         </div>
       </div>
 
-      <div className="px-[16px] border-t-2 hidden lg:block lg:px-[150px] bg-[#F8F8F8] 
-        py-6 md:px-[60px] flex-wrap lg:flex sm:flex-wrap items-center justify-between">
+      <div
+        className="px-[16px] border-t-2 hidden lg:block lg:px-[150px] bg-[#F8F8F8] 
+        py-6 md:px-[60px] flex-wrap lg:flex sm:flex-wrap items-center justify-between"
+      >
         <p className="text-[14px] font-normal lg:text-start text-center">
           © 2024 Grazzle. All rights reserved
         </p>
@@ -216,16 +241,32 @@ export default function Footer() {
         </p>
 
         <div className="flex items-center gap-6 mt-4">
-          <Link href="https://x.com/GrazleHomeware" target="_blank" rel="noopener noreferrer">
+          <Link
+            href="https://x.com/GrazleHomeware"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <FaTwitter className="text-[24px] text-[#434343]" />
           </Link>
-          <Link href="https://www.facebook.com/grazlefb/" target="_blank" rel="noopener noreferrer">
+          <Link
+            href="https://www.facebook.com/grazlefb/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <FaFacebook className="text-[24px] text-[#434343]" />
           </Link>
-          <Link href="https://www.linkedin.com/company/grazle" target="_blank" rel="noopener noreferrer">
+          <Link
+            href="https://www.linkedin.com/company/grazle"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <SiLinkedin className="text-[24px] text-[#434343]" />
           </Link>
-          <Link href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA==" target="_blank" rel="noopener noreferrer">
+          <Link
+            href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA=="
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <GrInstagram className="text-[24px] text-[#434343]" />
           </Link>
         </div>
@@ -294,37 +335,61 @@ export default function Footer() {
                     </>
                   )}
                   {index === 1 && (
-                    <div  >
-                      <Link href="/Terms&Conditions" className="text-[14px] font-medium block mt-[8px]">
+                    <div>
+                      <Link
+                        href="/Terms&Conditions"
+                        className="text-[14px] font-medium block mt-[8px]"
+                      >
                         About
                       </Link>
-                      <Link href="/ContactSupport" className="text-[14px] font-medium block mt-[8px]">
+                      <Link
+                        href="/ContactSupport"
+                        className="text-[14px] font-medium block mt-[8px]"
+                      >
                         Contact
                       </Link>
                     </div>
                   )}
                   {index === 2 && (
                     <>
-                      <Link href="/ContactSupport" className="text-[14px] font-medium block ">
+                      <Link
+                        href="/ContactSupport"
+                        className="text-[14px] font-medium block "
+                      >
                         Help Center
                       </Link>
-                      <Link href="/ContactSupport" className="text-[14px] font-medium block">
+                      <Link
+                        href="/ContactSupport"
+                        className="text-[14px] font-medium block"
+                      >
                         Safety Center
                       </Link>
                     </>
                   )}
                   {index === 3 && (
                     <>
-                      <Link href="/privacy-policy" className="text-[14px] font-medium block">
+                      <Link
+                        href="/privacy-policy"
+                        className="text-[14px] font-medium block"
+                      >
                         Privacy Policy
                       </Link>
-                      <Link href="/terms-of-service" className="text-[14px] font-medium block">
+                      <Link
+                        href="/terms-of-service"
+                        className="text-[14px] font-medium block"
+                      >
                         Terms of Service
                       </Link>
-                      <Link href="/cancellation-policy" className="text-[14px] font-medium block">
+                      <Link
+                        href="/cancellation-policy"
+                        className="text-[14px] font-medium block"
+                      >
                         Cancellation Policy
                       </Link>
-                      <Link href="/refund-policy" className="text-[14px] font-medium block">
+                      <Link
+                        href="/refund-policy"
+                        className="text-[14px] font-medium block"
+                      >
                         Refund Policy
                       </Link>
                     </>
@@ -332,10 +397,8 @@ export default function Footer() {
                 </Typography>
               </AccordionDetails>
             </Accordion>
-
           ))}
         </div>
-
 
         <div className="px-[16px] lg:hidden items-center md:px-[60px] my-4">
           <div className="flex items-center lg:justify-start justify-center">
@@ -359,7 +422,7 @@ export default function Footer() {
         <p className="text-[12px] font-normal text-center text-[#949494]">
           © 2024 Grazle. All rights reserved
         </p>
-      </div >
+      </div>
     </>
   );
 }
