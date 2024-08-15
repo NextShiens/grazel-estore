@@ -160,9 +160,9 @@ export default function PaymentAndAddress() {
       formdata.append("prices", prices.join(','));
 
       if (paymentMethod === "creditcard") {
-        await handleCCAvenue();
+        await handleCCAvenue(formdata);
       } else if (paymentMethod === "phonepe") {
-        await handlePhonePe();
+        await handlePhonePe(formdata);
       } else if (paymentMethod === "cod") {
         handleCOD(formdata);
       }
@@ -181,24 +181,23 @@ export default function PaymentAndAddress() {
     return `ORD-${timestamp}-${randomNum}`;
   };
 
-  const handleCCAvenue = async () => {
+  const handleCCAvenue = async (formdata) => {
     setLoading(true);
+    const { data } = await placeOrderApi(formdata);
     const formData = new FormData();
-    const ordereID = generateRandomOrderId();
-    formData.append("order_id", ordereID);
+
+    formData.append("order_id", data?.order?.id);
     formData.append("amount", cartTotal.toString());
     formData.append("redirect_url", `${window.location.origin}/api/payment-response`);
     formData.append("cancel_url", `${window.location.origin}/api/payment-response`);
     formData.append("currency", "INR");
-    formData.append("merchant_param1", ordereID);
+    formData.append("merchant_param1", data?.order?.id);
     formData.append("merchant_param2", "sample for memebrship type check i can send this true in case of memebership payment");
 
   
     try {
       const checkOutResponse = await ccavCheckoutApi(formData);
       console.info("CCAvenue payment initiation response:", checkOutResponse);
-      debugger
-  
       // if (checkOutResponse.data && checkOutResponse.data.ccavenueUrl) {
       //   const form = document.createElement('form');
       //   form.method = 'POST';

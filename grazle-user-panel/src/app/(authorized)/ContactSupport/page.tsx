@@ -23,7 +23,7 @@ const SocialLink = ({ href, icon, alt }) => (
   </a>
 );
 
-const InputField = ({ id, label, type = "text", value, onChange, placeholder }) => (
+const InputField = ({ id, label, type = "text", value, onChange, placeholder, name }) => (
   <div className="mb-4">
     <label htmlFor={id} className="block text-base font-semibold mb-2">
       {label} *
@@ -34,6 +34,7 @@ const InputField = ({ id, label, type = "text", value, onChange, placeholder }) 
       value={value}
       onChange={onChange}
       placeholder={placeholder}
+      name={name}
       className="border border-[#777777] w-full rounded-md h-12 px-3 focus:outline-none focus:ring-2 focus:ring-[#F70000] transition-all"
     />
   </div>
@@ -69,13 +70,14 @@ export default function ContactSupport() {
       return;
     }
 
-    const formDataToSend = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      formDataToSend.append(key, value);
-    });
+    const formdata = new FormData();
+    formdata.append("name", formData.name);
+    formdata.append("message", formData.message);
+    formdata.append("subject", formData.subject);
+    formdata.append("email", formData.email);
 
     try {
-      const { data } = await contactSupportApi(formDataToSend);
+      const { data } = await contactSupportApi(formdata);
       console.log(data);
       setSuccess("Message sent successfully! Our team will get back to you soon.");
       setFormData({ name: "", email: "", subject: "", message: "" });
