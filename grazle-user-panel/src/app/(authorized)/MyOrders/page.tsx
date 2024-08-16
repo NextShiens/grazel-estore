@@ -232,24 +232,6 @@ export default function MyAccount() {
       }, 500);
     }
   }
-  async function onCreateAddress(formdata: any) {
-    try {
-      setPending(true);
-      const res = await createAddressApi(formdata);
-      setAllAddress([...allAddress, res?.data?.address]);
-      toast.success("Address has been created");
-    } catch (error) {
-      if (error?.response?.status === 400) {
-        toast.error(error?.response?.data?.message);
-      } else {
-        toast.error("Something went wrong");
-      }
-    } finally {
-      setTimeout(() => {
-        setPending(false);
-      }, 500);
-    }
-  }
   async function onLogout() {
     try {
       await logout();
@@ -262,7 +244,6 @@ export default function MyAccount() {
   }
 
   async function onEditAddress(formdata: any) {
-    console.log(addressId);
     try {
       setPending(true);
       const res = await editAddressApi(formdata, addressId);
@@ -315,7 +296,28 @@ export default function MyAccount() {
       }
     });
   };
+  const onCreateAddress = async (event) => {
+    event.preventDefault();
+    try {
 
+      const token = localStorage.getItem("token");
+      if (!token) return toast.error("Please login to continue");
+      setPending(true);
+
+      const formData = new FormData(event.target);
+      const data = Object.fromEntries(formData);
+      console.log('Form data:', data);
+
+      const res = await createAddressApi(data, token);
+      setAllAddress([...allAddress, res?.data?.address]);
+      toast.success("Address has been created");
+    } catch (error) {
+      console.error('Error creating address:', error);
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setPending(false);
+    }
+  };
   async function onEditProfile(e) {
     e.preventDefault();
     const formdata = new FormData();
@@ -821,14 +823,14 @@ export default function MyAccount() {
                       </div>
                       <div className="flex items-center justify-between mt-4">
                         <div className="flex items-center ">
-                          <Image
+                          {/* <Image
                             src={Location}
                             alt=""
                             className="w-[18px] h-[23px] mr-2"
                           />
                           <p className="text-[14px] font-medium text-[#777777] ">
                             New, York
-                          </p>
+                          </p> */}
                         </div>
                         <div className="flex items-center ">
                           <div className="flex items-center justify-center border-[1px] border-[#BABABA] rounded-md w-[55px] h-[35px] mr-3">
@@ -858,74 +860,61 @@ export default function MyAccount() {
                     </div>
                   ))}
                 </form>
-                <form
-                  action={onCreateAddress}
-                  style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-                  className="rounded-3xl p-[30px] w-full mt-6 "
-                >
-                  <p className="text-[24px] font-semibold">Add New Address</p>
-                  <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap   items-center gap-4  ">
-                    <div className="flex-col mt-[30px] lg:w-[50%] w-[100%] sm:w-[100%] md:w-[100%]">
-                      <label className="text-[16px] font-semibold">Name</label>
+                <form onSubmit={onCreateAddress} className="mt-8 bg-white rounded-lg p-6 shadow-md">
+                  <h2 className="text-xl font-semibold mb-4">Add New Address</h2>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Name</label>
                       <input
-                        placeholder="Enter Your Name "
                         name="recipient_name"
                         required
-                        className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                        placeholder="Enter Your Name"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Address Title</label>
+                      <input
+                        name="address_label"
+                        required
+                        placeholder="Address Title e.g Home/Office etc"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Street Address</label>
+                      <input
+                        name="address"
+                        required
+                        placeholder="Address"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Phone Number</label>
+                      <input
+                        name="recipient_phone"
+                        required
+                        placeholder="Phone Number"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Note</label>
+                      <input
+                        name="note"
+                        placeholder="Note"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
                       />
                     </div>
                   </div>
-                  <div className="flex-col mt-[30px]">
-                    <label className="text-[16px] font-semibold">
-                      Address Title
-                    </label>
-                    <input
-                      placeholder="Address Title e.g Home/Office etc"
-                      required
-                      name="address_label"
-                      className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                    />
-                  </div>
-                  <div className="flex-col mt-[30px]">
-                    <label className="text-[16px] font-semibold">
-                      Street Address
-                    </label>
-                    <input
-                      placeholder="Address"
-                      name="address"
-                      required
-                      className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                    />
-                  </div>
-                  <div className="flex-col mt-[30px]">
-                    <label className="text-[16px] font-semibold">
-                      Phone Number
-                    </label>
-                    <input
-                      placeholder="Phone Number"
-                      name="recipient_phone"
-                      required
-                      className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                    />
-                  </div>
-                  <div className="flex-col mt-[30px]">
-                    <label className="text-[16px] font-semibold">Note</label>
-                    <input
-                      placeholder="Note"
-                      name="note"
-                      required
-                      className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                    />
-                  </div>
-                  <div className=" mt-[30px]">
-                    <button
-                      disabled={isPending}
-                      type="submit"
-                      className=" bg-[#F70000] disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none rounded-2xl h-[50px]  w-[181px] text-[18px] font-medium text-white"
-                    >
-                      Add Address
-                    </button>
-                  </div>
+                  <button
+                    type="submit"
+                    disabled={isPending}
+                    className="mt-6 w-full bg-red-600 text-white py-3 rounded-md font-medium disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 hover:bg-red-700"
+                  >
+                    Add Address
+                  </button>
                 </form>
               </>
             )}

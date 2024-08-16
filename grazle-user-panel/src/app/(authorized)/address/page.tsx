@@ -41,7 +41,7 @@ export default function AddressPage() {
   const onCreateAddress = async (event) => {
     event.preventDefault();
     try {
-      debugger
+      
       const token = localStorage.getItem("token");
       if (!token) return toast.error("Please login to continue");
       setPending(true);
@@ -75,7 +75,6 @@ export default function AddressPage() {
   };
 
   const onDeleteAddress = async (id: any) => {
-    debugger
     if (!id) return toast.error("Please select the address");
     try {
       setPending(true);

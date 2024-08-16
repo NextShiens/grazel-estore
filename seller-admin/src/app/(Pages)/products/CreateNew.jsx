@@ -57,7 +57,11 @@ const AddProduct = ({ setSelectedTab }) => {
     };
     getAllBrands();
   }, []);
+  const MAX_FILE_SIZE = 1 * 1024 * 1024;
 
+  const isFileSizeValid = (file) => {
+    return file.size <= MAX_FILE_SIZE;
+  };
   const randomId = Math.floor(Math.random() * 1000);
 
   async function onAddProduct(e) {
@@ -81,7 +85,7 @@ const AddProduct = ({ setSelectedTab }) => {
       formData.append("size", e.target.size.value);
       formData.append("color", e.target.color.value);
       formData.append("discount", e.target.discount.value);
-      formData.append("product_info", e.target.product_info.value); 
+      formData.append("product_info", e.target.product_info.value);
 
       faqs.forEach((faq, i) => {
         formData.append(`answers[${i}]`, faq.answer);
@@ -367,7 +371,12 @@ const AddProduct = ({ setSelectedTab }) => {
                       name="featured_image"
                       required
                       onChange={(e) => {
-                        setProductImage([e.target.files[0]]);
+                        const file = e.target.files[0];
+                        if (isFileSizeValid(file)) {
+                          setProductImage([file]);
+                        } else {
+                          toast.error("Image size should not exceed 1 MB");
+                        }
                       }}
                     />
                     <div className="flex flex-col gap-2 mt-3">
@@ -414,7 +423,11 @@ const AddProduct = ({ setSelectedTab }) => {
                       multiple
                       onChange={(e) => {
                         const filesArray = Array.from(e.target.files);
-                        setGalleryImage([...galleryImage, ...filesArray]);
+                        const validFiles = filesArray.filter(file => isFileSizeValid(file));
+                        if (validFiles.length !== filesArray.length) {
+                          toast.error("Some images were not added as they exceed 1 MB size limit");
+                        }
+                        setGalleryImage([...galleryImage, ...validFiles]);
                       }}
                     />
                     <div className="flex flex-col gap-2 mt-3">

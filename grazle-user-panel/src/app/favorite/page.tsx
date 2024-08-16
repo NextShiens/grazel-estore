@@ -36,9 +36,14 @@ const Favorite = () => {
   if (loading) {
     return <div>Loading favorite products...</div>;
   }
-
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return (
+      <div className="flex items-center justify-center h-[50vh]">
+        <div className="text-red-500 text-center">
+          {error}
+        </div>
+      </div>
+    );
   }
 
   return (

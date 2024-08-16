@@ -93,7 +93,7 @@ export default function PaymentAndAddress() {
   };
 
   async function onEditAddress(event: any) {
-    debugger
+    
     event.preventDefault();
     const addressId = searchParams.get("addressId");
     if (!addressId) return;
