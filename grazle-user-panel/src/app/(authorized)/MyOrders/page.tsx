@@ -717,24 +717,22 @@ export default function MyAccount() {
                     </>
                   )}
 
-                  {activeSections === "Completed" && (
+{activeSections === "Completed" && (
                     <>
-                      {orders?.filter((order: any) => order.status === "completed").length === 0 ? (
+                      {!orders?.length ? (
                         <p className="text-center text-gray-500 text-lg mt-4">
                           No completed orders found...
                         </p>
                       ) : (
-                        orders
-                          .filter((order: any) => order.status === "completed")
-                          .map((order: any) => {
-                            return (
-                              <MyorderCard
-                                key={order.id}
-                                status={["completed"]}
-                                order={order}
-                              />
-                            );
-                          })
+                        orders.map((order: any) => {
+                          return (
+                            <MyorderCard
+                              key={order.id}
+                              status={["completed"]}
+                              order={order}
+                            />
+                          );
+                        })
                       )}
                     </>
                   )}

@@ -168,9 +168,9 @@ export default function Home() {
       }
     };
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -225,7 +225,7 @@ export default function Home() {
   const seventyFivePercentSaleProducts: any = allProducts.filter(
     (product: any) =>
       product?.offer?.discount_type?.toLowerCase() ===
-      "percentage".toLowerCase() &&
+        "percentage".toLowerCase() &&
       product?.offer?.discount_value?.toLowerCase() === "75.00".toLowerCase()
   );
   const seventyFiveEndDate: any = new Date(
@@ -249,7 +249,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchFiftyPercentSaleProducts() {
       try {
-        // actually we use 70% offer products instead 50 keep in mind 
+        // actually we use 70% offer products instead 50 keep in mind
         const { data } = await fiftyPercentSaleProductsApi();
         setFiftyPercentSaleProducts(data?.offers[0]?.offer_products || []);
       } catch (error) {
@@ -332,11 +332,7 @@ export default function Home() {
           onClick={goToCreditLimit}
           disabled={loading}
         >
-          {loading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            "Get Now"
-          )}
+          {loading ? <CircularProgress size={24} color="inherit" /> : "Get Now"}
         </button>
       </div>
 
@@ -458,8 +454,8 @@ export default function Home() {
             {timeLeft?.days > 0
               ? timeLeft?.days + "d"
               : timeLeft?.hours > 0
-                ? timeLeft?.hours
-                : 0}
+              ? timeLeft?.hours
+              : 0}
           </span>
           <span>:</span>
           <span className="p-2 bg-[#F81F1F] rounded-sm text-white md:text-base text-xs">
@@ -472,8 +468,10 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto "
-        style={{ padding: "10px" }}>
+      <div
+        className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto "
+        style={{ padding: "10px" }}
+      >
         {offerProducts?.length > 0 ? (
           <div>
             <OfferViewSlider Data={offerProducts} ref={sliderRef6} />
@@ -509,10 +507,11 @@ export default function Home() {
             disabled={click?.name === item?.name || loading}
             key={index}
             onClick={() => handleClickCategory(item)}
-            className={`${item?.name === click?.name
+            className={`${
+              item?.name === click?.name
                 ? "border border-[#FC3030] text-[#FC3030]"
                 : "bg-[#F8F8F8]"
-              } lg:text-sm text-xs py-2 px-3 rounded-md whitespace-nowrap`}
+            } lg:text-sm text-xs py-2 px-3 rounded-md whitespace-nowrap`}
           >
             {item?.name?.toUpperCase()}
           </button>
@@ -564,7 +563,7 @@ export default function Home() {
         >
           <p
             className="md:text-2xl text-lg font-semibold ml-2"
-          // style={{ marginRight: "10px" }}
+            // style={{ marginRight: "10px" }}
           >
             Dynamic View
           </p>
@@ -600,130 +599,111 @@ export default function Home() {
         <Image src={banner} alt="banner" style={{ width: "100%" }} />
       </div>
       {/* sale product */}
-      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto flex lg:flex-row flex-col my-[24px] border border-[#E5E7EB] py-5  lg:px-6 px-1 rounded-md">
+      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto flex lg:flex-row flex-col my-[24px] border border-[#E5E7EB] py-5 lg:px-6 px-1 rounded-md">
         {offerProducts[0]?.offer_products?.length > 0 && (
           <>
-            <div className="flex flex-col lg:w-[60%] w-[100%] lg:border-r lg:border-[#77777740]">
-              <Link
-                href={`/detailProduct/${offerProducts[0].offer_products[0].id}`}
-                className="flex items-center justify-center md:gap-5 gap-2 w-full"
-              >
-                <div className="relative h-[190px] w-[190px] md:h-[190px] md:w-[140px] lg:w-[190px] mr-8 md:mr-6 lg:mr-8">
-                  <Image
-                    alt="Product Image"
-                    width={190}
-                    height={190}
-                    src={offerProducts[0].offer_products[0].featured_image}
-                    className="w-full h-full object-cover outline-none rounded-2xl cursor-pointer border"
-                  />
-
-                  <div className="flex w-full justify-between items-center absolute px-[16px] top-[10px] sm:space-x-4">
-                    <button className="text-[10px] lg:text-[11px] rounded-3xl text-white bg-[#F70000] py-1 px-2 lg:py-1.5 lg:px-2.5">
-                      {offerProducts[0].offer.discount_value}% OFF
-                    </button>
-                    <IconButton
-                      size="small"
-                      onClick={(e) =>
-                        onLiked(e, offerProducts[0].offer_products[0].id)
-                      }
-                      disabled={isPending}
-                      className="bg-white bg-opacity-70 hover:bg-opacity-100"
-                    >
-                      {favoriteProducts &&
+            {/* Large Screen Layout */}
+            <div className="hidden lg:flex lg:flex-row w-full">
+              <div className="flex flex-col w-[60%] border-r border-[#77777740]">
+                <Link
+                  href={`/detailProduct/${offerProducts[0].offer_products[0].id}`}
+                  className="flex items-center justify-center gap-5 w-full"
+                >
+                  <div className="relative h-[190px] w-[190px] mr-8">
+                    <Image
+                      alt="Product Image"
+                      width={190}
+                      height={190}
+                      src={offerProducts[0].offer_products[0].featured_image}
+                      className="w-full h-full outline-none rounded-2xl cursor-pointer border"
+                    />
+                    <div className="flex w-full justify-between items-center absolute px-[10px] top-[10px] space-x-4">
+                      <button className="text-[11px] rounded-3xl text-white bg-[#F70000] py-1.5 px-2.5">
+                        {offerProducts[0].offer.discount_value}% OFF
+                      </button>
+                      <IconButton
+                        size="small"
+                        onClick={(e) =>
+                          onLiked(e, offerProducts[0].offer_products[0].id)
+                        }
+                        disabled={isPending}
+                        className="bg-white bg-opacity-70 hover:bg-opacity-100"
+                      >
+                        {favoriteProducts &&
                         favoriteProducts.includes(
                           offerProducts[0].offer_products[0].id
                         ) ? (
-                        <FaHeart className="text-[#F70000]" />
-                      ) : (
-                        <Image src={heart} alt="like" width={20} height={20} />
-                      )}
-                    </IconButton>
+                          <FaHeart className="text-[#F70000]" />
+                        ) : (
+                          <Image
+                            src={heart}
+                            alt="like"
+                            width={20}
+                            height={20}
+                          />
+                        )}
+                      </IconButton>
+                    </div>
                   </div>
-                </div>
-                <div className="flex flex-col lg:gap-3 gap-1 mb-4 lg:mb-0 mb:4">
-                  <span className="md:text-lg text-base font-bold">
-                    {offerProducts[0].offer_products[0].title}
+                  <div className="flex flex-col gap-3">
+                    <span>{offerProducts[0].offer_products[0].title}</span>
+                    <div className="flex items-center gap-2">
+                      <Rating
+                        precision={0.5}
+                        name="read-only"
+                        readOnly
+                        value={Number(
+                          offerProducts[0].offer_products[0].rating
+                        )}
+                        defaultValue={Number(
+                          offerProducts[0].offer_products[0].rating
+                        )}
+                        className="text-xl"
+                      />
+                      <span className="text-sm text-[#434343]">
+                        {offerProducts[0].offer_products[0].reviewCount}
+                      </span>
+                    </div>
+                    <div className="flex gap-4 items-center mt-1">
+                      <span className="text-lg text-[#F70000] font-semibold">
+                        ₹{offerProducts[0].offer_products[0].discounted_price}
+                      </span>
+                      <span className="text-[#949494] text-sm line-through">
+                        ₹{offerProducts[0].offer_products[0].price}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+              <div className="flex flex-col gap-4 px-10 justify-center w-[40%]">
+                <div className="flex items-center gap-2 bg-[#F7000014] w-fit rounded-full py-2 px-3 text-[#FC3030]">
+                  <Image src={sale} alt="sale" />
+                  <span className="">
+                    {offerProducts[0].offer.name.toUpperCase()}
                   </span>
-                  <div className="flex items-center gap-2">
-                    <Rating
-                      precision={0.5}
-                      name="read-only"
-                      readOnly
-                      value={Number(offerProducts[0].offer_products[0].rating)}
-                      defaultValue={Number(
-                        offerProducts[0].offer_products[0].rating
-                      )}
-                      className="lg:text-xl text-sm"
-                    />
-
-                    <span className="text-sm text-[#434343]">
-                      {offerProducts[0].offer_products[0].reviewCount}
-                    </span>
-                  </div>
-                  <div className="flex gap-4 items-center lg:mt-1 mt-2">
-                    <span className="md:text-lg text-sm text-[#F70000] font-semibold">
-                      ₹{offerProducts[0].offer_products[0].discounted_price}
-                    </span>
-                    <span className="text-[#949494] text-sm line-through">
-                      ₹{offerProducts[0].offer_products[0].price}
-                    </span>
-                  </div>
                 </div>
-              </Link>
-
-              {/* Add to cart button for small screens */}
-              <div className="lg:hidden -mt-12">
-                <button
-                  className="w-[150px] text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg ml-56"
-                  onClick={(e) =>
-                    onAddingCart(e, offerProducts[0].offer_products[0])
-                  }
-                >
-                  <div className="flex items-center justify-center">
-                    <p className="font-semibold text-[14px]">Add to cart</p>
-                    <Image
-                      alt="cart"
-                      src={Cart}
-                      className="w-[20px] h-[20px] ml-[12px]"
-                    />
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-4 lg:px-10 px-0 justify-center lg:w-[40%] w-[100%]">
-              <div className="flex items-center gap-2 bg-[#F7000014] w-fit rounded-full py-2 px-3 text-[#FC3030] sm:mt-2">
-                <Image src={sale} alt="sale" />
-                <span className="uppercase text-sm font-medium">
-                  {offerProducts[0].offer.name.toUpperCase()}
-                </span>
-              </div>
-
-              <div className="flex text-sm items-center gap-2">
-                <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
-                  {timeLeft?.days > 0
-                    ? timeLeft?.days + "d"
-                    : timeLeft?.hours > 0
+                <div className="flex text-sm items-center gap-2">
+                  <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
+                    {timeLeft?.days > 0
+                      ? timeLeft?.days + "d"
+                      : timeLeft?.hours > 0
                       ? timeLeft?.hours
                       : 0}
-                </span>
-                <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
-                  {timeLeft?.days > 0
-                    ? timeLeft?.hours + "h"
-                    : timeLeft?.minutes}
-                </span>
-                <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
-                  {timeLeft?.days > 0
-                    ? timeLeft?.minutes + "m"
-                    : timeLeft?.seconds}
-                </span>
-                <span className="mr-2 text-[#949494]">
-                  Remains until the end of the offer
-                </span>
-              </div>
-
-              {/* Add to cart button for large screens */}
-              <div className="hidden lg:block">
+                  </span>
+                  <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
+                    {timeLeft?.days > 0
+                      ? timeLeft?.hours + "h"
+                      : timeLeft?.minutes}
+                  </span>
+                  <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
+                    {timeLeft?.days > 0
+                      ? timeLeft?.minutes + "m"
+                      : timeLeft?.seconds}
+                  </span>
+                  <span className="mr-2 text-[#949494]">
+                    Remains until the end of the offer
+                  </span>
+                </div>
                 <button
                   className="w-[300px] text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg"
                   onClick={(e) =>
@@ -741,11 +721,126 @@ export default function Home() {
                 </button>
               </div>
             </div>
+
+            {/* Small Screen Layout */}
+            <div className="lg:hidden flex flex-col w-full">
+              <Link
+                href={`/detailProduct/${offerProducts[0].offer_products[0].id}`}
+                className="flex items-start gap-4 w-full"
+              >
+                <div className="relative h-[190px] w-[300px] md:h-[190px] md:w-[300px]">
+                  <Image
+                    alt="Product Image"
+                    width={300}
+                    height={190}
+                    src={offerProducts[0].offer_products[0].featured_image}
+                    className="h-[190px] w-[300px] outline-none rounded-2xl cursor-pointer border"
+                  />
+                  <div className="flex w-full justify-between items-center absolute px-[10px] top-[10px] sm:space-x-4">
+                    <button className="text-[10px] rounded-3xl text-white bg-[#F70000] py-1 px-2">
+                      {offerProducts[0].offer.discount_value}% OFF
+                    </button>
+                    <IconButton
+                      size="small"
+                      onClick={(e) =>
+                        onLiked(e, offerProducts[0].offer_products[0].id)
+                      }
+                      disabled={isPending}
+                      className="bg-white bg-opacity-70 hover:bg-opacity-100"
+                    >
+                      {favoriteProducts &&
+                      favoriteProducts.includes(
+                        offerProducts[0].offer_products[0].id
+                      ) ? (
+                        <FaHeart className="text-[#F70000]" />
+                      ) : (
+                        <Image src={heart} alt="like" width={20} height={20} />
+                      )}
+                    </IconButton>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-3 mt-2">
+                  <span className="">
+                    {offerProducts[0].offer_products[0].title}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <Rating
+                      precision={0.5}
+                      name="read-only"
+                      readOnly
+                      value={Number(offerProducts[0].offer_products[0].rating)}
+                      defaultValue={Number(
+                        offerProducts[0].offer_products[0].rating
+                      )}
+                      className="text-sm"
+                    />
+                    <span className="text-sm text-[#434343]">
+                      {offerProducts[0].offer_products[0].reviewCount}
+                    </span>
+                  </div>
+                  <div className="flex gap-4 items-center">
+                    <span className="text-sm text-[#F70000] font-semibold">
+                      ₹{offerProducts[0].offer_products[0].discounted_price}
+                    </span>
+                    <span className="text-[#949494] text-sm line-through">
+                      ₹{offerProducts[0].offer_products[0].price}
+                    </span>
+                  </div>
+                  <button
+                    className="w-[150px] text-[#F70000] py-3 border-[1px] border-[#F70001] rounded-lg mt-2"
+                    onClick={(e) =>
+                      onAddingCart(e, offerProducts[0].offer_products[0])
+                    }
+                  >
+                    <div className="flex items-center justify-center">
+                      <p className="font-semibold text-[10px]">Add to cart</p>
+                      <Image
+                        alt="cart"
+                        src={Cart}
+                        className="w-[15px] h-[15px] ml-[12px]"
+                      />
+                    </div>
+                  </button>
+                </div>
+              </Link>
+              <div className="flex flex-col gap-4 px-0 justify-center w-[100%] mt-4">
+                <div className="flex items-center gap-2 bg-[#F7000014] w-fit rounded-full py-2 px-3 text-[#FC3030]">
+                  <Image src={sale} alt="sale" />
+                  <span className="uppercase text-sm">
+                    {offerProducts[0].offer.name.toUpperCase()}
+                  </span>
+                </div>
+                <div className="flex text-sm items-center gap-2">
+                  <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
+                    {timeLeft?.days > 0
+                      ? timeLeft?.days + "d"
+                      : timeLeft?.hours > 0
+                      ? timeLeft?.hours
+                      : 0}
+                  </span>
+                  <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
+                    {timeLeft?.days > 0
+                      ? timeLeft?.hours + "h"
+                      : timeLeft?.minutes}
+                  </span>
+                  <span className="p-2 bg-[#E5E7EB] rounded-md font-bold">
+                    {timeLeft?.days > 0
+                      ? timeLeft?.minutes + "m"
+                      : timeLeft?.seconds}
+                  </span>
+                  <span className="mr-2 text-[#949494]">
+                    Remains until the end of the offer
+                  </span>
+                </div>
+              </div>
+            </div>
           </>
         )}
       </div>
-      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto flex justify-between items-center md:mt-14 mt-5"
-        style={{ padding: "10px" }}>
+      <div
+        className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto flex justify-between items-center md:mt-14 mt-5"
+        style={{ padding: "10px" }}
+      >
         <span className="text-xl font-semibold">70% off Products</span>
         <button
           className="flex items-center gap-3 border border-[#FC3030] text-[#FC3030] text-sm rounded-lg py-2 px-4"
@@ -767,10 +862,11 @@ export default function Home() {
         </button>
       </div>
 
-
       {/* 50% off */}
-      <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto"
-        style={{ padding: "10px" }}>
+      <div
+        className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto"
+        style={{ padding: "10px" }}
+      >
         {/* <h2 className="text-2xl font-bold mb-4 text-center lg:text-left">
           Minimum 70% OFF Products
         </h2> */}

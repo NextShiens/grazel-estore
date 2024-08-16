@@ -1,56 +1,86 @@
 "use client";
 import Image from "next/image";
-import fb from "@/assets/fb.png";
 import React, { useState } from "react";
-import whatapp from "@/assets/whatapp.png";
-import support from "@/assets/support.png";
 import { contactSupportApi } from "@/apis";
-import Tiwtter from "@/assets/Vector (5).png";
-import web from "@/assets/Group 1820549998.png";
 import { AiFillInstagram } from "react-icons/ai";
-import Insta from "@/assets/Group 1820550000.png";
-import Google from "@/assets/Group 1820549999.png";
 import { FaFacebookF, FaPinterestP, FaTwitter } from "react-icons/fa";
 
+// Import images (assuming these imports are correct)
+import fb from "@/assets/fb.png";
+import whatapp from "@/assets/whatapp.png";
+import support from "@/assets/support.png";
+import Tiwtter from "@/assets/Vector (5).png";
+import web from "@/assets/Group 1820549998.png";
+import Insta from "@/assets/Group 1820550000.png";
+import Google from "@/assets/Group 1820549999.png";
+
+const SocialLink = ({ href, icon, alt }) => (
+  <a href={href} target="_blank" rel="noopener noreferrer" className="w-full">
+    <div className="w-full rounded-lg border border-[#777777] p-3 flex items-center mb-3 transition-colors hover:bg-gray-100">
+      <Image src={icon} alt={alt} className="w-5 h-5 mr-3" />
+      <p className="text-base font-normal">{alt}</p>
+    </div>
+  </a>
+);
+
+const InputField = ({ id, label, type = "text", value, onChange, placeholder, name }) => (
+  <div className="mb-4">
+    <label htmlFor={id} className="block text-base font-semibold mb-2">
+      {label} *
+    </label>
+    <input
+      id={id}
+      type={type}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      name={name}
+      className="border border-[#777777] w-full rounded-md h-12 px-3 focus:outline-none focus:ring-2 focus:ring-[#F70000] transition-all"
+    />
+  </div>
+);
+
 export default function ContactSupport() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [subject, setSubject] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    if (!name || !email || !message || !subject) {
+    if (Object.values(formData).some(field => !field)) {
       setError("All fields are required");
       return;
     }
 
-    if (!/\S+@\S+\.\S+/.test(email)) {
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
       setError("Please enter a valid email address");
       return;
     }
 
     const formdata = new FormData();
-    formdata.append("name", name);
-    formdata.append("message", message);
-    formdata.append("subject", subject);
-    formdata.append("email", email);
+    formdata.append("name", formData.name);
+    formdata.append("message", formData.message);
+    formdata.append("subject", formData.subject);
+    formdata.append("email", formData.email);
 
     try {
       const { data } = await contactSupportApi(formdata);
       console.log(data);
-      setSuccess(
-        "Message sent successfully! our team will get back to you soon."
-      );
-      setName("");
-      setEmail("");
-      setMessage("");
-      setSubject("");
+      setSuccess("Message sent successfully! Our team will get back to you soon.");
+      setFormData({ name: "", email: "", subject: "", message: "" });
     } catch (error) {
       console.error("Error sending message:", error);
       setError("Failed to send message. Please try again later.");
@@ -58,264 +88,128 @@ export default function ContactSupport() {
   };
 
   return (
-    <>
-      <div className="mx-4 md:mx-8 lg:mx-[150px] my-8 md:my-[80px]">
-        <div className="flex flex-col md:flex-row items-stretch gap-6">
-          <div
-            style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-            className="rounded-3xl p-4 md:p-[20px] w-full md:w-[25%] mb-6 md:mb-0"
-          >
-            <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
-              <Image
-                src={support}
-                alt=""
-                className="w-[18px] h-[18px] mr-[10px]"
-              />
-              <p className="text-[18px] font-normal">Contact Support</p>
-            </div>
-
-            <a
-              href="https://www.grazle.co.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
-                <Image
-                  src={web}
-                  alt=""
-                  className="w-[18px] h-[18px] mr-[10px]"
-                />
-                <p className="text-[18px] font-normal">Website</p>
-              </div>
-            </a>
-            <a
-              href="https://www.facebook.com/grazlefb/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
-                <Image
-                  src={fb}
-                  alt=""
-                  className="w-[18px] h-[18px] mr-[10px]"
-                />
-                <p className="text-[18px] font-normal">Facebook</p>
-              </div>
-            </a>
-
-            <a
-              href="https://www.grazle.co.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
-                <Image
-                  src={Google}
-                  alt=""
-                  className="w-[18px] h-[18px] mr-[10px]"
-                />
-                <p className="text-[18px] font-normal">Google</p>
-              </div>
-            </a>
-
-            <a
-              href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA=="
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
-                <Image
-                  src={Insta}
-                  alt=""
-                  className="w-[18px] h-[18px] mr-[10px]"
-                />
-                <p className="text-[18px] font-normal">Instagram</p>
-              </div>
-            </a>
-
-            <a
-              href="https://x.com/GrazleHomeware"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center mb-3">
-                <Image
-                  src={Tiwtter}
-                  alt=""
-                  className="w-[18px] h-[18px] mr-[10px]"
-                />
-                <p className="text-[18px] font-normal">Twitter</p>
-              </div>
-            </a>
-
-            <div className="w-full rounded-lg border border-[#777777] p-[10px] flex items-center">
-              <Image
-                src={whatapp}
-                alt=""
-                className="w-[18px] h-[18px] mr-[10px]"
-              />
-              <p className="text-[18px] font-normal">WhatsApp</p>
+    <div className="bg-gray-50 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="w-full lg:w-1/4 space-y-6">
+            <div className="bg-white rounded-2xl shadow-md p-6">
+              <h2 className="text-xl font-semibold mb-4">Contact Options</h2>
+              <SocialLink href="#" icon={support} alt="Contact Support" />
+              <SocialLink href="https://www.grazle.co.in/" icon={web} alt="Website" />
+              <SocialLink href="https://www.facebook.com/grazlefb/" icon={fb} alt="Facebook" />
+              <SocialLink href="https://www.grazle.co.in/" icon={Google} alt="Google" />
+              <SocialLink href="https://www.instagram.com/homewarebygrazle" icon={Insta} alt="Instagram" />
+              <SocialLink href="https://x.com/GrazleHomeware" icon={Tiwtter} alt="Twitter" />
+              <SocialLink href="#" icon={whatapp} alt="WhatsApp" />
             </div>
           </div>
 
-          <form
-            onSubmit={submitForm}
-            style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-            className="rounded-3xl p-4 md:p-[30px] w-full md:w-[50%] mb-6 md:mb-0"
-          >
-            <h2 className="text-2xl font-bold mb-4">Get in Touch</h2>
-            <p className="text-base font-normal mb-6 text-[#777777]">
-              Your email address will not be published. Required fields are
-              marked*
-            </p>
+          <div className="w-full lg:w-1/2">
+            <form onSubmit={submitForm} className="bg-white rounded-2xl shadow-md p-8">
+              <h2 className="text-2xl font-bold mb-6">Get in Touch</h2>
+              <p className="text-base text-gray-600 mb-6">
+                Your email address will not be published. Required fields are marked*
+              </p>
 
-            {error && <p className="text-red-500 mb-4">{error}</p>}
-            {success && <p className="text-green-500 mb-4">{success}</p>}
+              {error && <p className="text-red-500 mb-4">{error}</p>}
+              {success && <p className="text-green-500 mb-4">{success}</p>}
 
-            <div className="mb-4">
-              <label
-                htmlFor="name"
-                className="block text-base font-semibold mb-2"
-              >
-                Name *
-              </label>
-              <input
+              <InputField
                 id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Name"
-                className="border border-[#777777] w-full rounded-md h-12 px-3 focus:outline-none focus:ring-2 focus:ring-[#F70000]"
+                label="Name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Your Name"
+                name="name"
               />
-            </div>
-
-            <div className="mb-4">
-              <label
-                htmlFor="email"
-                className="block text-base font-semibold mb-2"
-              >
-                Email *
-              </label>
-              <input
+              <InputField
                 id="email"
+                label="Email"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-                className="border border-[#777777] w-full rounded-md h-12 px-3 focus:outline-none focus:ring-2 focus:ring-[#F70000]"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Your Email"
+                name="email"
               />
-            </div>
-
-            <div className="mb-4">
-              <label
-                htmlFor="subject"
-                className="block text-base font-semibold mb-2"
-              >
-                Subject *
-              </label>
-              <input
+              <InputField
                 id="subject"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                placeholder="Subject"
-                className="border border-[#777777] w-full rounded-md h-12 px-3 focus:outline-none focus:ring-2 focus:ring-[#F70000]"
+                label="Subject"
+                value={formData.subject}
+                onChange={handleChange}
+                placeholder="Message Subject"
+                name="subject"
               />
-            </div>
 
-            <div className="mb-6">
-              <label
-                htmlFor="message"
-                className="block text-base font-semibold mb-2"
+              <div className="mb-6">
+                <label htmlFor="message" className="block text-base font-semibold mb-2">
+                  Message *
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  placeholder="Your Message"
+                  className="border border-[#777777] resize-none w-full rounded-md h-32 p-3 focus:outline-none focus:ring-2 focus:ring-[#F70000] transition-all"
+                  value={formData.message}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="bg-[#F70000] rounded-full py-3 px-6 font-medium text-white hover:bg-[#D60000] transition-colors duration-300 w-full sm:w-auto"
               >
-                Message *
-              </label>
-              <textarea
-                id="message"
-                placeholder="Message"
-                className="border border-[#777777] resize-none w-full rounded-md h-24 p-3 focus:outline-none focus:ring-2 focus:ring-[#F70000]"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              />
-            </div>
+                Send Message
+              </button>
+            </form>
+          </div>
 
-            <button
-              type="submit"
-              className="bg-[#F70000] rounded-full h-12 w-full md:w-[275px] font-medium text-white hover:bg-[#D60000] transition-colors duration-300"
-            >
-              Send Message
-            </button>
-          </form>
+          <div className="w-full lg:w-1/4">
+            <div className="bg-[#5F0505] text-white rounded-2xl shadow-md p-6 space-y-6">
+              <div>
+                <h3 className="text-xl font-semibold mb-3">Address</h3>
+                <p className="text-sm">
+                  S/O Mr. RISHI PAL S/O SH. RISHI PAL MHP NO. 5306 K-819 G/F
+                  MAHIPALPUR EXTN OPP. -APRAVTO MARUTI SHOWROOM, NEW DELHI 110037
+                </p>
+              </div>
 
-          <div
-            style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-            className="rounded-3xl p-4 md:p-[20px] w-full md:w-[25%] bg-[#5F0505] text-white"
-          >
-            <div className="mb-6">
-              <h3 className="text-2xl font-semibold mb-3">Address</h3>
-              <p className="text-base font-medium">
-                S/O Mr. RISHI PAL S/O SH. RISHI PAL MHP NO. 5306 K-819 G/F
-                MAHIPALPUR EXTN OPP. -APRAVTO MARUTI SHOWROOM, NEW DELHI 1 10037
-              </p>
-            </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-3">Contact</h3>
+                <p className="text-sm mb-1">Phone: +9108202334</p>
+                <p className="text-sm">Email: www.grazle.co.in</p>
+              </div>
 
-            <div className="mb-6">
-              <h3 className="text-2xl font-semibold mb-3">Contact</h3>
-              <p className="text-base font-medium mb-2">Phone : +9108202334</p>
-              <p className="text-base font-medium">Email : www.grazle.co.in</p>
-            </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-3">Open Time</h3>
+                <p className="text-sm mb-1">Monday - Friday: 11:00 - 22:00</p>
+                <p className="text-sm">Saturday - Sunday: 11:00 - 22:00</p>
+              </div>
 
-            <div className="mb-6">
-              <h3 className="text-2xl font-semibold mb-3">Open Time</h3>
-              <p className="text-base font-medium mb-2">
-                Monday - Friday : 11:00 - 22:00
-              </p>
-              <p className="text-base font-medium">
-                Saturday - Sunday : 11:00 - 22:00
-              </p>
-            </div>
-
-            <h3 className="text-2xl font-semibold mb-4">Social Media</h3>
-
-            <div className="flex items-center gap-4">
-              <a
-                href="https://www.facebook.com/grazlefb/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div className="h-[46px] w-[46px] rounded-full bg-[#F70000] flex items-center justify-center">
-                  <FaFacebookF className="text-[20px]" />
+              <div>
+                <h3 className="text-xl font-semibold mb-4">Social Media</h3>
+                <div className="flex items-center gap-4">
+                  {[
+                    { href: "https://www.facebook.com/grazlefb/", Icon: FaFacebookF },
+                    { href: "https://x.com/GrazleHomeware", Icon: FaTwitter },
+                    { href: "https://www.instagram.com/homewarebygrazle", Icon: AiFillInstagram },
+                    { href: "https://www.linkedin.com/company/grazle", Icon: FaPinterestP },
+                  ].map(({ href, Icon }, index) => (
+                    <a
+                      key={index}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="h-10 w-10 rounded-full bg-[#F70000] flex items-center justify-center hover:bg-[#D60000] transition-colors duration-300"
+                    >
+                      <Icon className="text-lg" />
+                    </a>
+                  ))}
                 </div>
-              </a>
-              <a
-                href="https://x.com/GrazleHomeware"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div className="h-[46px] w-[46px] rounded-full bg-[#F70000] flex items-center justify-center">
-                  <FaTwitter className="text-[20px]" />
-                </div>
-              </a>
-              <a
-                href="https://www.instagram.com/homewarebygrazle?igsh=MXYxbXN0eG40MWtuNA=="
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div className="h-[46px] w-[46px] rounded-full bg-[#F70000] flex items-center justify-center">
-                  <AiFillInstagram className="text-[20px]" />
-                </div>
-              </a>
-              <a
-                href="https://www.linkedin.com/company/grazle"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div className="h-[46px] w-[46px] rounded-full bg-[#F70000] flex items-center justify-center">
-                  <FaPinterestP className="text-[20px]" />
-                </div>
-              </a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

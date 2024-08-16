@@ -583,8 +583,8 @@ export default function ProductDetail() {
           More from frequently Our Store
         </p>
       </div>
-      <div className="p-6 overflow-x-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 ml-10">
-        {storeProductsDetails.slice(0, 5).map((item) => (
+      <div className="container lg:!w-[80%] sm:!w-full justify-center m-auto p-4 overflow-x-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+        {storeProductsDetails?.map((item) => (
           <ProductCard width="25" key={item.id} product={item} />
         ))}
       </div>

@@ -60,7 +60,11 @@ const Dashboard = () => {
 
   const renderPageNumbers = () => {
     const pageNumbers = [];
-    const ellipsis = <span key="ellipsis" className="mx-1">...</span>;
+    const ellipsis = (
+      <span key="ellipsis" className="mx-1">
+        ...
+      </span>
+    );
 
     if (totalPages <= 4) {
       for (let i = 1; i <= totalPages; i++) {
@@ -134,7 +138,7 @@ const Dashboard = () => {
           <div className="flex-1 mt-[30px] p-[10px] sm:px-[25px]">
             <Section1 ordersLength={totalOrders} />
             <div className="my-[30px] px-[25px] py-[20px] bg-white rounded-[8px] shadow-sm overflow-x-auto w-[94vw] md:w-[67vw] lg:w-[75vw] xl:w-auto">
-              <h2 className="text-lg font-bold my-2">Recent Orders</h2>
+              <h2 className="text-lg font-bold my-2">Recent Orders </h2>
               {isLoading ? (
                 <p>Loading orders...</p>
               ) : (
@@ -144,6 +148,7 @@ const Dashboard = () => {
                       <tr className="font-[500] text-[var(--text-color-body)] text-[15px]">
                         <td>Order No</td>
                         <td>Product Name</td>
+                        <td></td>
                         <td>Price</td>
                         <td>Date</td>
                         <td>Status</td>
@@ -157,7 +162,9 @@ const Dashboard = () => {
                     </tbody>
                   </table>
                   {orders.length === 0 && (
-                    <h3 className="text-center text-red-500">No orders found</h3>
+                    <h3 className="text-center text-red-500">
+                      No orders found
+                    </h3>
                   )}
                   {orders.length > 0 && (
                     <div className="flex flex-col items-center mt-4">
@@ -179,7 +186,8 @@ const Dashboard = () => {
                         </button>
                       </div>
                       <div className="mt-2 text-sm text-gray-600">
-                        Page {currentPage} of {totalPages} | Total Orders: {totalOrders}
+                        Page {currentPage} of {totalPages} | Total Orders:{" "}
+                        {totalOrders}
                       </div>
                     </div>
                   )}

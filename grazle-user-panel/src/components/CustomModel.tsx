@@ -1,39 +1,49 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
+import React from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { Fragment } from "react";
 
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  // width: 400,
-  border: "3px solid white",
-  bgcolor: "background.paper",
-  borderRadius: "24px!important",
-  boxShadow: 24,
+interface CustomModalProps {
+  showModal: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+}
+
+const CustomModal: React.FC<CustomModalProps> = ({ showModal, onClose, children }) => {
+  return (
+    <Transition appear show={showModal} as={Fragment}>
+      <Dialog as="div" className="relative z-10" onClose={onClose}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black bg-opacity-25" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                {children}
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition>
+  );
 };
 
-interface Props {
-  showModal: any;
-  children: any;
-}
-
-export default function CustomModal(props: Partial<Props>) {
-  const { showModal, children } = props;
-  const [open, setOpen] = React.useState(false);
-
-  return (
-    <div>
-      <Modal
-        style={{ border: "none", outline: "none" }}
-        open={showModal}
-        onClose={() => setOpen(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>{children}</Box>
-      </Modal>
-    </div>
-  );
-}
+export default CustomModal;

@@ -149,6 +149,8 @@ const RecentViewSlider = React.forwardRef((props: Partial<Props>, ref: any) => {
         responsive={responsive}
         itemClass="carousel-item"
         dotListClass="custom-dot-list-style"
+        autoPlaySpeed={2000} // Adjust the speed here (in milliseconds)
+        transitionDuration={500} // Adjust the transition duration here (in milliseconds)
       >
         {loading ? (
           Array(4)
