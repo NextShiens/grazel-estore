@@ -83,7 +83,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
       }
     } catch (error) {
       console.error("Error in liking product:", error);
-      toast.error("An error occurred while updating favorite status");
+      toast.error("Please log in first to add the product to favorites");
     } finally {
       setPending(false);
     }

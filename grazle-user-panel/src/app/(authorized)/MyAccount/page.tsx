@@ -86,6 +86,8 @@ export default function MyAccount() {
   const userRedux = useSelector((state) => state.user);
   const router = useRouter();
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+  
+  const [showAddress, setAddress] = useState(false);
 
   const profileDataHandler = (e) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
@@ -224,7 +226,7 @@ export default function MyAccount() {
       } else {
         toast.error(
           response.data?.message ||
-            "Failed to deactivate account. Please try again."
+          "Failed to deactivate account. Please try again."
         );
       }
     } catch (error) {
@@ -289,26 +291,29 @@ export default function MyAccount() {
       }, 500);
     }
   }
-  async function onCreateAddress(formdata) {
+  const onCreateAddress = async (event) => {
+    event.preventDefault();
     try {
+      
+      const token = localStorage.getItem("token");
+      if (!token) return toast.error("Please login to continue");
       setPending(true);
 
-      const res = await createAddressApi(formdata);
+      const formData = new FormData(event.target);
+      const data = Object.fromEntries(formData);
+      console.log('Form data:', data);
 
+      const res = await createAddressApi(data, token);
       setAllAddress([...allAddress, res?.data?.address]);
       toast.success("Address has been created");
+      setAddress(false); // Close the form after successful submission
     } catch (error) {
-      if (error?.response?.status === 400) {
-        toast.error(error?.response?.data?.message);
-      } else {
-        toast.error("Something went wrong");
-      }
+      console.error('Error creating address:', error);
+      toast.error(error?.response?.data?.message || "Something went wrong");
     } finally {
-      setTimeout(() => {
-        setPending(false);
-      }, 500);
+      setPending(false);
     }
-  }
+  };
   async function onLogout() {
     try {
       await logout();
@@ -322,7 +327,8 @@ export default function MyAccount() {
   async function onEditAddress(formdata) {
     try {
       setPending(true);
-      const res = await editAddressApi(formdata, addressId);
+      const token = localStorage.getItem("token");
+      const res = await editAddressApi(formdata, token);
       console.log(res);
       toast.success("Address has been updated");
     } catch (error) {
@@ -432,31 +438,28 @@ export default function MyAccount() {
           >
             <div
               onClick={() => handleSectionChange("Personal Info")}
-              className={`cursor-pointer pl-5 text-[14px] font-medium cursor-pointer ${
-                activeSection === "Personal Info"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "Personal Info"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Personal Information
             </div>
             <div
               onClick={() => handleSectionChange("Orders")}
-              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${
-                activeSection === "Orders"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B]"
-              }`}
+              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${activeSection === "Orders"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B]"
+                }`}
             >
               My Orders
             </div>
             <div
               onClick={() => handleSectionChange("Manage Address")}
-              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${
-                activeSection === "Manage Address"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer pl-5  mt-[40px] text-[14px] font-medium cursor-pointer ${activeSection === "Manage Address"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Manage Address
             </div>
@@ -472,43 +475,39 @@ export default function MyAccount() {
           </div> */}
             <div
               onClick={() => handleSectionChange("Password Manager")}
-              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
-                activeSection === "Password Manager"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "Password Manager"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Password Manager
             </div>
 
             <div
               onClick={() => handleSectionChange("referral")}
-              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
-                activeSection === "referral"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "referral"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Referrals
             </div>
 
             <div
               onClick={handelLogout}
-              className={`cursor-pointer  mt-[40px] pl-5  text-[14px] font-medium cursor-pointer   ${
-                activeSection === "Logouts"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer  mt-[40px] pl-5  text-[14px] font-medium cursor-pointer   ${activeSection === "Logouts"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Logouts
             </div>
             <div
               onClick={() => router.push("/")}
-              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${
-                activeSection === "nothing"
-                  ? "border-l-[4px] border-[#F70000] pl-2"
-                  : "text-[#8B8B8B] "
-              }`}
+              className={`cursor-pointer  mt-[40px] pl-5 text-[14px] font-medium cursor-pointer ${activeSection === "nothing"
+                ? "border-l-[4px] border-[#F70000] pl-2"
+                : "text-[#8B8B8B] "
+                }`}
             >
               Go Back
             </div>
@@ -738,7 +737,7 @@ export default function MyAccount() {
               </form>
             )}
 
-{activeSection === "Orders" &&
+            {activeSection === "Orders" &&
               (userOrders && userOrders.length > 0 ? (
                 userOrders.map((item, index) => (
                   <MyorderCard
@@ -749,8 +748,8 @@ export default function MyAccount() {
                 ))
               ) : (
                 <div className="text-center text-gray-500 mt-5">
-                No orders Found...
-              </div>
+                  No orders Found...
+                </div>
               ))}
 
             {activeSection === "Manage Address" && (
@@ -827,11 +826,10 @@ export default function MyAccount() {
                           <div className="flex items-center justify-center border-[1px] border-[#BABABA] rounded-md w-[55px] h-[35px] mr-3">
                             {editEnabled !== item?.id ? (
                               <FiEdit
-                                className={`${
-                                  editEnabled === item?.id
-                                    ? "text-[#F70000]"
-                                    : "text-[#BABABA]"
-                                } h-[20px] w-[20px]  cursor-pointer`}
+                                className={`${editEnabled === item?.id
+                                  ? "text-[#F70000]"
+                                  : "text-[#BABABA]"
+                                  } h-[20px] w-[20px]  cursor-pointer`}
                                 onClick={() => setEditEnabled(item?.id)}
                               />
                             ) : (
@@ -852,119 +850,61 @@ export default function MyAccount() {
                     </div>
                   ))}
                 </form>
-                <form
-                  action={onCreateAddress}
-                  style={{ boxShadow: "0px 4px 29px 0px #0000000A" }}
-                  className="rounded-3xl p-[30px] w-full mt-6 "
-                >
-                  <p className="text-[24px] font-semibold">Add New Address</p>
-                  <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap   items-center gap-4  ">
-                    <div className="flex-col mt-[30px] lg:w-[50%] w-[100%] sm:w-[100%] md:w-[100%]">
-                      <label className="text-[16px] font-semibold">Name</label>
+                <form onSubmit={onCreateAddress} className="mt-8 bg-white rounded-lg p-6 shadow-md">
+                  <h2 className="text-xl font-semibold mb-4">Add New Address</h2>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Name</label>
                       <input
-                        placeholder="Enter Your Name "
                         name="recipient_name"
                         required
-                        className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
+                        placeholder="Enter Your Name"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Address Title</label>
+                      <input
+                        name="address_label"
+                        required
+                        placeholder="Address Title e.g Home/Office etc"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Street Address</label>
+                      <input
+                        name="address"
+                        required
+                        placeholder="Address"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Phone Number</label>
+                      <input
+                        name="recipient_phone"
+                        required
+                        placeholder="Phone Number"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Note</label>
+                      <input
+                        name="note"
+                        placeholder="Note"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
                       />
                     </div>
                   </div>
-                  <div className="flex-col mt-[30px]">
-                    <label className="text-[16px] font-semibold">
-                      Address Title
-                    </label>
-                    <input
-                      placeholder="Address Title e.g Home/Office etc"
-                      required
-                      name="address_label"
-                      className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                    />
-                  </div>
-                  {/* <div className="flex-col mt-[30px]">
-                  <label className="text-[16px] font-semibold">
-                    
-                    Country 
-                  </label>
-                  <select className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none">
-                    <option>Pakistan</option>
-                    <option>China</option>
-                  </select>
-                </div> */}
-                  <div className="flex-col mt-[30px]">
-                    <label className="text-[16px] font-semibold">
-                      Street Address
-                    </label>
-                    <input
-                      placeholder="Address"
-                      name="address"
-                      required
-                      className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                    />
-                  </div>
-                  {/* <div className="flex-col mt-[30px]">
-                  <label className="text-[16px] font-semibold"> City *</label>
-                  <select className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none">
-                    <option>Lahore</option>
-                    <option>Multan</option>
-                  </select>
-                </div> */}
-                  {/* <div className="flex-col mt-[30px]">
-                  <label className="text-[16px] font-semibold">
-                  
-                    State * *
-                  </label>
-                  <select className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none">
-                    <option>State *A</option>
-                    <option>State *B</option>
-                  </select>
-                </div> */}
-                  {/* <div className="flex-col mt-[30px]">
-                  <label className="text-[16px] font-semibold">
-                    Zip Code *
-                  </label>
-                  <input
-                    placeholder="Zip Code *"
-                    className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                  />
-                </div> */}
-                  <div className="flex-col mt-[30px]">
-                    <label className="text-[16px] font-semibold">
-                      Phone Number
-                    </label>
-                    <input
-                      placeholder="Phone Number"
-                      name="recipient_phone"
-                      required
-                      className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                    />
-                  </div>
-                  <div className="flex-col mt-[30px]">
-                    <label className="text-[16px] font-semibold">Note</label>
-                    <input
-                      placeholder="Note"
-                      name="note"
-                      required
-                      className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                    />
-                  </div>
-                  {/* <div className="flex-col mt-[30px]">
-                  <label className="text-[16px] font-semibold">
-                    Email Address
-                  </label>
-                  <input
-                    placeholder="Email Address"
-                    className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
-                  />
-                </div> */}
-                  <div className=" mt-[30px]">
-                    <button
-                      disabled={isPending}
-                      type="submit"
-                      className=" bg-[#F70000] disabled:bg-zinc-400 disabled:text-zinc-200 disabled:border-none rounded-2xl h-[50px]  w-[181px] text-[18px] font-medium text-white"
-                    >
-                      Add Address
-                    </button>
-                  </div>
+                  <button
+                    type="submit"
+                    disabled={isPending}
+                    className="mt-6 w-full bg-red-600 text-white py-3 rounded-md font-medium disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 hover:bg-red-700"
+                  >
+                    Add Address
+                  </button>
                 </form>
               </>
             )}
