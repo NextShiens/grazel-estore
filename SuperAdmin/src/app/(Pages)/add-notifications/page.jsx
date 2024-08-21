@@ -44,99 +44,116 @@ const AdminNotificationComponent = () => {
       dispatch(updatePageLoader(false));
     }
   };
+  const options = [
+    { label: "Offers Page", value: "Offers" },
+    { label: "Categories Page", value: "Categories" },
+    { label: "Product related with category Page", value: "CategoryListing" },
+    { label: "Home", value: "Home" }
+  ];
+  const handleSelectionChange = (event) => {
+    const selectedOption = options.find(option => option.value === event.target.value);
+    setFormData({
+      ...formData,
+      page: selectedOption.value,
+      id: selectedOption.requiresId ? "" : undefined
+    });
+  };
 
   return (
     <>
-    <Loading />
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <Navbar />
-      <div className="flex-1 flex">
-        <Sidebar />
-        <div className="flex-1 mt-[30px] px-[10px] sm:px-[22px]">
-          <SearchOnTop showButton={false} />
-    <div className="mt-[20px] bg-white rounded-[8px] shadow-sm p-[30px]">
-      <h2 className="text-2xl font-semibold mb-6">Send Notification</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="title" className="block mb-2 font-medium">
-            Title
-          </label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
-            required
-          />
+      <Loading />
+      <div className="flex flex-col min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex-1 flex">
+          <Sidebar />
+          <div className="flex-1 mt-[30px] px-[10px] sm:px-[22px]">
+            <SearchOnTop showButton={false} />
+            <div className="mt-[20px] bg-white rounded-[8px] shadow-sm p-[30px]">
+              <h2 className="text-2xl font-semibold mb-6">Send Notification</h2>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label htmlFor="title" className="block mb-2 font-medium">
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="body" className="block mb-2 font-medium">
+                    Body
+                  </label>
+                  <textarea
+                    id="body"
+                    name="body"
+                    value={formData.body}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                    rows="4"
+                    required
+                  ></textarea>
+                </div>
+                <div>
+                  <label htmlFor="data" className="block mb-2 font-medium">
+                    Data (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    id="data"
+                    name="data"
+                    value={formData.data}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="thumbnail" className="block mb-2 font-medium">
+                    Thumbnail (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    id="thumbnail"
+                    name="thumbnail"
+                    value={formData.thumbnail}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+                <label htmlFor="page" className="block mb-2 font-medium">
+                  Select Page
+                </label>
+                <select
+                  id="page"
+                  name="page"
+                  value={formData.page}
+                  onChange={handleSelectionChange}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                >
+                  {options.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+                >
+                  Send Notification
+                </button>
+              </form>
+
+            </div>
+          </div>
         </div>
-        <div>
-          <label htmlFor="body" className="block mb-2 font-medium">
-            Body
-          </label>
-          <textarea
-            id="body"
-            name="body"
-            value={formData.body}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
-            rows="4"
-            required
-          ></textarea>
-        </div>
-        <div>
-          <label htmlFor="data" className="block mb-2 font-medium">
-            Data (Optional)
-          </label>
-          <input
-            type="text"
-            id="data"
-            name="data"
-            value={formData.data}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
-          />
-        </div>
-        <div>
-          <label htmlFor="thumbnail" className="block mb-2 font-medium">
-            Thumbnail (Optional)
-          </label>
-          <input
-            type="text"
-            id="thumbnail"
-            name="thumbnail"
-            value={formData.thumbnail}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
-          />
-        </div>
-        <div>
-          <label htmlFor="url" className="block mb-2 font-medium">
-            URL (Optional)
-          </label>
-          <input
-            type="text"
-            id="url"
-            name="url"
-            value={formData.url}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
-          />
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
-        >
-          Send Notification
-        </button>
-      </form>
-    
-    </div>
-    </div>
-    </div>
-    </div>
-    </> 
+      </div>
+    </>
   );
 };
 
