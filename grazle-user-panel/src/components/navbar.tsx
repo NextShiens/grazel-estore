@@ -93,49 +93,76 @@ const SearchBar = ({
           </button>
         )}
         {isOpenSearch && (
-          <div className="absolute top-full left-0 right-0 bg-white z-50 mt-2 shadow-lg border border-gray-200 rounded-lg">
-            <div className="p-4">
-              <IoClose
-                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 cursor-pointer"
-                size={24}
-                onClick={() => setIsOpenSearch(false)}
-              />
-              {searchResult && searchResult.length > 0 ? (
-                searchResult.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-3 my-3 cursor-pointer"
-                    onClick={() => onClickDetail(item)}
-                  >
-                    <Image
-                      src={Search}
-                      alt="Search"
-                      className="w-[36px] h-[36px]"
-                    />
-                    <div className="w-full">
-                      <p className="text-black text-[14px] font-normal">
-                        {item}
-                      </p>
-                      <hr />
+          <>
+            <div
+              className="fixed inset-0 bg-black bg-opacity-10 z-40"
+              onClick={() => setIsOpenSearch(false)}
+            ></div>
+            <div className="absolute top-full left-0 right-0 bg-white z-50 mt-2 shadow-lg border border-gray-200 rounded-lg">
+              <div className="p-4">
+                <IoClose
+                  className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 cursor-pointer"
+                  size={24}
+                  onClick={() => setIsOpenSearch(false)}
+                />
+                {searchResult && searchResult.length > 0 ? (
+                  searchResult.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-3 my-3 cursor-pointer"
+                      onClick={() => onClickDetail(item)}
+                    >
+                      <Image
+                        src={Search}
+                        alt="Search"
+                        className="w-[36px] h-[36px]"
+                      />
+                      <div className="w-full">
+                        <p className="text-black text-[14px] font-normal">
+                          {item}
+                        </p>
+                        <hr />
+                      </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-gray-500">No suggestions available</p>
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-4">
-                  <p className="text-gray-500">No suggestions available</p>
-                </div>
-              )}
+                )}
 
-              {recentSearches.length > 0 && (
-                <>
-                  <div className="flex gap-3 items-center mt-4">
-                    <PiClockCountdownThin className="text-black text-[#777777]" />
-                    <p className="text-black text-[16px] font-semibold">
-                      Recent Searches
-                    </p>
-                  </div>
-                  <div className="rounded-xl mt-3 bg-[#F8F8F8] p-3">
-                    {recentSearches.map((search, index) => (
+                {recentSearches.length > 0 && (
+                  <>
+                    <div className="flex gap-3 items-center mt-4">
+                      <PiClockCountdownThin className="text-black text-[#777777]" />
+                      <p className="text-black text-[16px] font-semibold">
+                        Recent Searches
+                      </p>
+                    </div>
+                    <div className="rounded-xl mt-3 bg-[#F8F8F8] p-3">
+                      {recentSearches.map((search, index) => (
+                        <div key={index} className="flex gap-3 mt-3">
+                          <Link
+                            href={`/search?keyword=${encodeURIComponent(
+                              search
+                            )}`}
+                            className="text-black text-[14px] font-normal"
+                          >
+                            {search}
+                          </Link>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                <div className="rounded-xl mt-3 bg-[#F8F8F8] p-3">
+                  <p className="text-black text-[16px] font-semibold">
+                    Popular Searches
+                  </p>
+                  {Array.isArray(popularSearches) &&
+                  popularSearches.length > 0 ? (
+                    popularSearches.map((search, index) => (
                       <div key={index} className="flex gap-3 mt-3">
                         <Link
                           href={`/search?keyword=${encodeURIComponent(search)}`}
@@ -144,38 +171,20 @@ const SearchBar = ({
                           {search}
                         </Link>
                       </div>
-                    ))}
-                  </div>
-                </>
-              )}
-
-              <div className="rounded-xl mt-3 bg-[#F8F8F8] p-3">
-                <p className="text-black text-[16px] font-semibold">
-                  Popular Searches
-                </p>
-                {Array.isArray(popularSearches) &&
-                  popularSearches.length > 0 ? (
-                  popularSearches.map((search, index) => (
-                    <div key={index} className="flex gap-3 mt-3">
-                      <Link
-                        href={`/search?keyword=${encodeURIComponent(search)}`}
-                        className="text-black text-[14px] font-normal"
-                      >
-                        {search}
-                      </Link>
-                    </div>
-                  ))
-                ) : (
-                  <span className="text-sm">No Popular Searches Found</span>
-                )}
+                    ))
+                  ) : (
+                    <span className="text-sm">No Popular Searches Found</span>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>
   );
 };
+
 const MobileSearchBar = ({
   searchValue,
   setSearchValue,
@@ -194,8 +203,8 @@ const MobileSearchBar = ({
   useEffect(() => {
     setIsDropdownOpen(
       searchValue !== "" ||
-      recentSearches.length > 0 ||
-      popularSearches.length > 0
+        recentSearches.length > 0 ||
+        popularSearches.length > 0
     );
   }, [searchValue, searchResult, recentSearches, popularSearches]);
 
@@ -341,104 +350,143 @@ const MobileSearchBar = ({
   );
 };
 
-const UserMenu = ({ user, handleToggle, isOpen, router, handleLogout }) => (
-  <>
-    <div
-      className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer"
-      onClick={handleToggle}
-    >
-      {user?.profile?.image ? (
-        <Image
-          src={user.profile.image}
-          alt="User"
-          width={32}
-          height={32}
-          className="w-8 h-8 rounded-full"
-        />
-      ) : (
-        <BiUser className="text-gray-600" />
-      )}
-    </div>
-    {isOpen && (
-      <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-20 p-4">
-        <Link
-          href="/MyAccount"
-          className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
-        >
-          {user?.profile?.image ? (
-            <Image
-              src={user.profile.image}
-              alt="User"
-              width={16}
-              height={16}
-              className="w-5 h-5 rounded-full"
-            />
-          ) : (
-            <div className="w-5 h-5 bg-gray-200" />
-          )}
-          <span className="text-sm">Your Account</span>
-        </Link>
-        <div
-          onClick={() => router.push("/MyOrders")}
-          className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
-        >
-          <Image src={order} alt="" width={18} height={18} />
-          <span className="text-sm">My Orders</span>
-        </div>
-        <div
-          onClick={() => router.push("/favorite")}
-          className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
-        >
-          <Image src={Fav} alt="Favorites" width={20} height={20} />
-          <span className="text-sm">Favorites</span>
-        </div>
-        <div
-          onClick={() => router.push("/CreditLimit")}
-          className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
-        >
-          <Image src={card} alt="Credit" width={20} height={20} />
-          <span className="text-sm">Credit Limit</span>
-        </div>
-        <div
-          onClick={() => router.push("/PaymentPlan")}
-          className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
-        >
-          <Image src={crown} alt="Referral" width={20} height={20} />
-          <span className="text-sm">Payment Plan</span>
-        </div>
-        <div
-          onClick={() => router.push("/ReferralRanking")}
-          className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
-        >
-          <Image src={bulid} alt="Referral" width={20} height={20} />
-          <span className="text-sm">Referral Ranking</span>
-        </div>
-        <div className="border-t my-2"></div>
-        <div
-          onClick={() => router.push("/FAQs")}
-          className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
-        >
-          <Image src={FAQ} alt="FAQ" width={20} height={20} />
-          <span className="text-sm">FAQs</span>
-        </div>
-        <div
-          onClick={() => router.push("/privacy-policy")}
-          className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
-        >
-          <Image src={Privcy} alt="Privacy" width={20} height={20} />
-          <span className="text-sm">Privacy Policy</span>
-        </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded w-full text-left"
-        >
-          <BiLogOut className="w-5 h-5" />
-          <span className="text-sm">Logout</span>
-        </button>
+const UserMenu = ({ user, handleToggle, isOpen, router, handleLogout }) => {
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        handleToggle(false); // Close menu when clicking outside
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  return (
+    <>
+      <div
+        className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer z-50"
+        onClick={() => handleToggle(!isOpen)}
+      >
+        {user?.profile?.image ? (
+          <Image
+            src={user.profile.image}
+            alt="User"
+            width={32}
+            height={32}
+            className="w-8 h-8 rounded-full"
+          />
+        ) : (
+          <BiUser className="text-gray-600" />
+        )}
       </div>
-    )}
-  </>
-);
+      {isOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-10 z-40"
+            onClick={() => handleToggle(false)}
+          ></div>
+          <div
+            ref={menuRef}
+            className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-50 p-4"
+            style={{zIndex: '10000'}}
+          >
+            <IoClose
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 cursor-pointer"
+              size={24}
+              onClick={() => handleToggle(false)}
+            />
+            <Link
+              href="/MyAccount"
+              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded"
+            >
+              {user?.profile?.image ? (
+                <Image
+                  src={user.profile.image}
+                  alt="User"
+                  width={16}
+                  height={16}
+                  className="w-5 h-5 rounded-full"
+                />
+              ) : (
+                <div className="w-5 h-5 bg-gray-200" />
+              )}
+              <span className="text-sm">Your Account</span>
+            </Link>
+            <div
+              onClick={() => router.push("/MyOrders")}
+              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
+            >
+              <Image src={order} alt="" width={18} height={18} />
+              <span className="text-sm">My Orders</span>
+            </div>
+            <div
+              onClick={() => router.push("/favorite")}
+              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
+            >
+              <Image src={Fav} alt="Favorites" width={20} height={20} />
+              <span className="text-sm">Favorites</span>
+            </div>
+            <div
+              onClick={() => router.push("/CreditLimit")}
+              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
+            >
+              <Image src={card} alt="Credit" width={20} height={20} />
+              <span className="text-sm">Credit Limit</span>
+            </div>
+            <div
+              onClick={() => router.push("/PaymentPlan")}
+              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
+            >
+              <Image src={crown} alt="Referral" width={20} height={20} />
+              <span className="text-sm">Payment Plan</span>
+            </div>
+            <div
+              onClick={() => router.push("/ReferralRanking")}
+              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
+            >
+              <Image src={bulid} alt="Referral" width={20} height={20} />
+              <span className="text-sm">Referral Ranking</span>
+            </div>
+            <div className="border-t my-2"></div>
+            <div
+              onClick={() => router.push("/FAQs")}
+              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
+            >
+              <Image src={FAQ} alt="FAQ" width={20} height={20} />
+              <span className="text-sm">FAQs</span>
+            </div>
+            <div
+              onClick={() => router.push("/privacy-policy")}
+              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
+            >
+              <Image src={Privcy} alt="Privacy" width={20} height={20} />
+              <span className="text-sm">Privacy Policy</span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded w-full text-left"
+            >
+              <BiLogOut className="w-5 h-5" />
+              <span className="text-sm">Logout</span>
+            </button>
+          </div>
+        </>
+      )}
+    </>
+  );
+};
+
+
 
 const MobileMenu = ({
   menuBar,
