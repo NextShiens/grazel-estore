@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -10,12 +10,15 @@ import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 import { updatePageLoader, updatePageNavigation } from "@/features/features";
 import { axiosPrivate } from "@/axios";
+
 const options = [
   { label: "Offers Page", value: "Offers" },
   { label: "Categories Page", value: "Categories" },
   { label: "Product related with category Page", value: "CategoryListing" },
-  { label: "Home", value: "Home" }
+  { label: "Home", value: "Home" },
+  { label: "Product Detail", value: "ProductDetail" }
 ];
+
 const AdminNotificationComponent = () => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
@@ -24,7 +27,27 @@ const AdminNotificationComponent = () => {
     data: '',
     thumbnail: '',
     url: options[0].value,
+    categoryId: '',
+    productId: ''
   });
+  const [allCategories, setAllCategories] = useState([]);
+
+  useEffect(() => {
+    const getAllCategories = async () => {
+      try {
+        const { data } = await axiosPrivate.get("/categories", {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+        setAllCategories(data?.categories);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        toast.error('Failed to fetch categories');
+      }
+    };
+    getAllCategories();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,14 +57,28 @@ const AdminNotificationComponent = () => {
     e.preventDefault();
     try {
       dispatch(updatePageLoader(true));
-      await axiosPrivate.post('/admin/push-notification', formData, {
+      const dataToSend = { ...formData };
+      if (formData.url === 'Categories' && formData.categoryId) {
+        dataToSend.data = formData.categoryId;
+      } else if (formData.url === 'ProductDetail' && formData.productId) {
+        dataToSend.data = formData.productId;
+      }
+      await axiosPrivate.post('/admin/push-notification', dataToSend, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
           'Content-Type': 'multipart/form-data',
         },
       });
       toast.success('Notification sent successfully');
-      setFormData({ title: '', body: '', data: '', thumbnail: '', url: '' });
+      setFormData({ 
+        title: '', 
+        body: '', 
+        data: '', 
+        thumbnail: '', 
+        url: options[0].value, 
+        categoryId: '',
+        productId: '' 
+      });
     } catch (error) {
       console.error('Error sending notification:', error);
       toast.error('Failed to send notification');
@@ -51,8 +88,14 @@ const AdminNotificationComponent = () => {
   };
 
   const handleSelectionChange = (event) => {
-    setFormData({ ...formData, url: event.target.value });
+    setFormData({ 
+      ...formData, 
+      url: event.target.value, 
+      categoryId: '', 
+      productId: '' 
+    });
   };
+
   return (
     <>
       <div className="flex flex-col min-h-screen bg-gray-50">
@@ -118,22 +161,63 @@ const AdminNotificationComponent = () => {
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
                 </div>
-                <label htmlFor="url" className="block mb-2 font-medium">
-                  Select Page
-                </label>
-                <select
-                  id="url"
-                  name="url"
-                  value={formData.url}
-                  onChange={handleSelectionChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                >
-                  {options.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                <div>
+                  <label htmlFor="url" className="block mb-2 font-medium">
+                    Select Page
+                  </label>
+                  <select
+                    id="url"
+                    name="url"
+                    value={formData.url}
+                    onChange={handleSelectionChange}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  >
+                    {options.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {formData.url === 'Categories' && (
+                  <div>
+                    <label htmlFor="categoryId" className="block mb-2 font-medium">
+                      Select Category
+                    </label>
+                    <select
+                      id="categoryId"
+                      name="categoryId"
+                      value={formData.categoryId}
+                      onChange={handleChange}
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      required
+                    >
+                      <option value="">Select a category</option>
+                      {allCategories.map(category => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                {formData.url === 'ProductDetail' && (
+                  <div>
+                    <label htmlFor="productId" className="block mb-2 font-medium">
+                      Product ID
+                    </label>
+                    <input
+                      type="text"
+                      id="productId"
+                      name="productId"
+                      value={formData.productId}
+                      onChange={handleChange}
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                      required
+                      placeholder="Enter Product ID"
+                    />
+                  </div>
+                )}
                 <button
                   type="submit"
                   className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
@@ -141,7 +225,6 @@ const AdminNotificationComponent = () => {
                   Send Notification
                 </button>
               </form>
-
             </div>
           </div>
         </div>
