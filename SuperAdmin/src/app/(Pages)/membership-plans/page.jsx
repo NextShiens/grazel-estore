@@ -157,7 +157,7 @@ const MembershipPlans = () => {
                       {plans.map((plan) => (
                         <tr key={plan.id} className="border-b border-gray-200 hover:bg-gray-100">
                           <td className="px-4 py-3">{plan.name}</td>
-                          <td className="px-4 py-3">${plan.price}</td>
+                          <td className="px-4 py-3">₹{plan.price}</td>
                           <td className="px-4 py-3">{plan.duration_months}</td>
                           <td className="px-4 py-3">{plan.discount}%</td>
                           <td className="px-4 py-3 text-sm">

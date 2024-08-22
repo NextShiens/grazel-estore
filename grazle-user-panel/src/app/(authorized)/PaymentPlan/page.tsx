@@ -108,8 +108,8 @@ export default function PaymentPlan() {
               {plan.name}
             </p>
             <p className="text-[35px] text-[#F70000] font-bold">₹{plan.price}</p>
-            {plan.discount_percentage > 0 && (
-              <p className="text-[24px] text-[#777777] font-normal">{plan.discount_percentage}% Off</p>
+            {plan.discount > 0 && (
+              <p className="text-[24px] text-[#777777] font-normal">{plan.discount}% Off</p>
             )}
           </div>
 
