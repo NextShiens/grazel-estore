@@ -16,7 +16,7 @@ const options = [
   { label: "Categories Page", value: "Categories" },
   { label: "Product related with category Page", value: "CategoryListing" },
   { label: "Home", value: "Home" },
-  { label: "Product Detail", value: "ProductDetail" }
+  { label: "Product Detail", value: "productdetail" }
 ];
 
 const AdminNotificationComponent = () => {
@@ -179,7 +179,7 @@ const AdminNotificationComponent = () => {
                     ))}
                   </select>
                 </div>
-                {formData.url === 'Categories' && (
+                {formData.url === 'CategoryListing' && (
                   <div>
                     <label htmlFor="categoryId" className="block mb-2 font-medium">
                       Select Category
