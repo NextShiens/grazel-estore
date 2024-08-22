@@ -5,12 +5,17 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
 import SearchOnTop from "@/components/SearchOnTop";
-import Loading from "@/components/loading";
+
 import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 import { updatePageLoader, updatePageNavigation } from "@/features/features";
 import { axiosPrivate } from "@/axios";
-
+const options = [
+  { label: "Offers Page", value: "Offers" },
+  { label: "Categories Page", value: "Categories" },
+  { label: "Product related with category Page", value: "CategoryListing" },
+  { label: "Home", value: "Home" }
+];
 const AdminNotificationComponent = () => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
@@ -18,7 +23,7 @@ const AdminNotificationComponent = () => {
     body: '',
     data: '',
     thumbnail: '',
-    url: ''
+    url: options[0].value,
   });
 
   const handleChange = (e) => {
@@ -44,24 +49,12 @@ const AdminNotificationComponent = () => {
       dispatch(updatePageLoader(false));
     }
   };
-  const options = [
-    { label: "Offers Page", value: "Offers" },
-    { label: "Categories Page", value: "Categories" },
-    { label: "Product related with category Page", value: "CategoryListing" },
-    { label: "Home", value: "Home" }
-  ];
-  const handleSelectionChange = (event) => {
-    const selectedOption = options.find(option => option.value === event.target.value);
-    setFormData({
-      ...formData,
-      page: selectedOption.value,
-      id: selectedOption.requiresId ? "" : undefined
-    });
-  };
 
+  const handleSelectionChange = (event) => {
+    setFormData({ ...formData, url: event.target.value });
+  };
   return (
     <>
-      <Loading />
       <div className="flex flex-col min-h-screen bg-gray-50">
         <Navbar />
         <div className="flex-1 flex">
@@ -125,13 +118,13 @@ const AdminNotificationComponent = () => {
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
                 </div>
-                <label htmlFor="page" className="block mb-2 font-medium">
+                <label htmlFor="url" className="block mb-2 font-medium">
                   Select Page
                 </label>
                 <select
-                  id="page"
-                  name="page"
-                  value={formData.page}
+                  id="url"
+                  name="url"
+                  value={formData.url}
                   onChange={handleSelectionChange}
                   className="w-full p-2 border border-gray-300 rounded-md"
                 >
