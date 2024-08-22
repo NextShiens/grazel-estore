@@ -5,7 +5,6 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
 import SearchOnTop from "@/components/SearchOnTop";
-
 import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 import { updatePageLoader, updatePageNavigation } from "@/features/features";
@@ -60,7 +59,7 @@ const AdminNotificationComponent = () => {
       const dataToSend = { ...formData };
       if (formData.url === 'Categories' && formData.categoryId) {
         dataToSend.data = formData.categoryId;
-      } else if (formData.url === 'ProductDetail' && formData.productId) {
+      } else if (formData.url === 'productdetail' && formData.productId) {
         dataToSend.data = formData.productId;
       }
       await axiosPrivate.post('/admin/push-notification', dataToSend, {
@@ -201,7 +200,7 @@ const AdminNotificationComponent = () => {
                     </select>
                   </div>
                 )}
-                {formData.url === 'ProductDetail' && (
+                {formData.url === 'productdetail' && (
                   <div>
                     <label htmlFor="productId" className="block mb-2 font-medium">
                       Product ID
