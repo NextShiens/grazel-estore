@@ -21,6 +21,9 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Grazel Website",
   description: "Modern shopping plateform",
+  icons: {
+    icon: '/favicon.png',
+  },
 };
 
 export default function RootLayout({
