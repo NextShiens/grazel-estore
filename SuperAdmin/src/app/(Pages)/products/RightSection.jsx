@@ -13,65 +13,144 @@ const RightSection = ({
   handlePageChange
 }) => {
   return (
-    <div className="bg-white rounded-[8px] shadow-sm p-[20px] flex-1">
-      <p className="text-[24px] font-[600]">Recent Stock</p>
-      <div className="w-[78vw] sm:w-[85vw] md:w-[63vw] lg:w-[48vw] xl:w-full overflow-x-auto">
-        <table className="w-[610px] xl:w-[100%]">
+    <div className="bg-white rounded-lg shadow-sm p-6 flex-1">
+      <h2 className="text-2xl font-semibold mb-4">Recent Stock</h2>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[610px]">
           <thead>
-            <tr className="text-[var(--text-color-body)] font-[500] text-[15px] leading-[45px]">
-              <td>Product Name</td>
-              <td>Seller Name</td>
-              <td>Stock</td>
-              <td>Price</td>
+            <tr className="text-gray-700 font-medium text-sm">
+              <th className="py-3 px-4 text-left">ID</th>
+              <th className="py-3 px-4 text-left">Product Name</th>
+              <th className="py-3 px-4 text-left">Seller Name</th>
+              <th className="py-3 px-4 text-left">Stock</th>
+              <th className="py-3 px-4 text-left">Price</th>
             </tr>
           </thead>
           <tbody>
             {isLoading ? (
-              <tr>
-                <td colSpan="4" className="text-center py-4">Loading products...</td>
-              </tr>
+              <>
+                <tr>
+                  <td colSpan="5" className="text-center py-8">
+                    <div className="horror-loader flex justify-center items-center">
+                      <div className="horror-head">
+                        <div className="horror-eyes">
+                          <div className="horror-eye"></div>
+                          <div className="horror-eye"></div>
+                        </div>
+                        <div className="horror-mouth"></div>
+                      </div>
+                      <p className="ml-4 text-red-600">Loading products...</p>
+                    </div>
+                  </td>
+                </tr>
+
+                <style jsx>{`
+  .horror-loader {
+    display: flex;
+    align-items: center;
+    animation: shake 1.5s infinite;
+  }
+
+  .horror-head {
+    width: 50px;
+    height: 50px;
+    background-color: #2c3e50;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.5);
+  }
+
+  .horror-eyes {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 15px;
+    left: 10px;
+    right: 10px;
+  }
+
+  .horror-eye {
+    width: 10px;
+    height: 10px;
+    background-color: #e74c3c;
+    border-radius: 50%;
+    box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.7);
+  }
+
+  .horror-mouth {
+    width: 20px;
+    height: 5px;
+    background-color: #e74c3c;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.7);
+  }
+
+  @keyframes shake {
+    0%, 100% {
+      transform: translate(0, 0);
+    }
+    25% {
+      transform: translate(-2px, -2px);
+    }
+    50% {
+      transform: translate(2px, 2px);
+    }
+    75% {
+      transform: translate(-2px, 2px);
+    }
+  }
+`}</style>
+              </>
             ) : allProducts?.length > 0 ? (
               allProducts?.map((item, i) => (
-                <tr className="text-[14px] leading-[35px]" key={i}>
-                  <td className="h-[100%] flex gap-1 items-center">
-                    <Image
-                      alt=""
-                      width={30}
-                      height={30}
-                      src={item?.featured_image || product}
-                      className="rounded-full max-h-7"
-                      layout="fixed"
-                    />
-                    <label>{item.title}</label>
+                <tr key={i} className="text-sm border-b border-gray-100 hover:bg-gray-50">
+                  <td className="py-4 px-4">{item.id}</td>
+                  <td className="py-4 px-4">
+                    <div className="flex items-center">
+                      <Image
+                        alt={item.title}
+                        width={40}
+                        height={40}
+                        src={item?.featured_image || product}
+                        className="rounded-full mr-3"
+                        layout="fixed"
+                      />
+                      <span className="font-medium">{item.title}</span>
+                    </div>
                   </td>
-                  <td>{item?.user?.username}</td>
-                  <td>
-                    <p
-                      className={`${
-                        item.active ? "bg-green-200" : "bg-red-200"
-                      } h-[28px] w-[75px] rounded-[5px] text-[10px] text-[var(--text-color-delivered)] font-[500] flex items-center justify-center`}
+                  <td className="py-4 px-4">{item?.user?.username}</td>
+                  <td className="py-4 px-4">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${item.active
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                        }`}
                     >
                       {item.active ? "In Stock" : "Out of Stock"}
-                    </p>
+                    </span>
                   </td>
-                  <td>₹{item.price}</td>
+                  <td className="py-4 px-4 font-medium">₹{item?.price}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="text-center py-4 text-red-500">No products found</td>
+                <td colSpan="5" className="text-center py-8 text-red-500">No products found</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
       {allProducts?.length > 0 && (
-        <div className="flex flex-col items-center mt-4">
-          <div className="flex justify-center items-center">
+        <div className="mt-6 flex flex-col items-center">
+          <div className="flex justify-center items-center space-x-2">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+              className="px-4 py-2 rounded bg-gray-200 text-gray-700 disabled:opacity-50 hover:bg-gray-300 transition-colors"
             >
               Previous
             </button>
@@ -79,12 +158,12 @@ const RightSection = ({
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+              className="px-4 py-2 rounded bg-gray-200 text-gray-700 disabled:opacity-50 hover:bg-gray-300 transition-colors"
             >
               Next
             </button>
           </div>
-          <div className="mt-2 text-sm text-gray-600">
+          <div className="mt-4 text-sm text-gray-600">
             Page {currentPage} of {totalPages} | Total Products: {totalProducts}
           </div>
         </div>
