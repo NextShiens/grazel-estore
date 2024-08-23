@@ -161,7 +161,7 @@ const SearchBar = ({
                     Popular Searches
                   </p>
                   {Array.isArray(popularSearches) &&
-                  popularSearches.length > 0 ? (
+                    popularSearches.length > 0 ? (
                     popularSearches.map((search, index) => (
                       <div key={index} className="flex gap-3 mt-3">
                         <Link
@@ -203,8 +203,8 @@ const MobileSearchBar = ({
   useEffect(() => {
     setIsDropdownOpen(
       searchValue !== "" ||
-        recentSearches.length > 0 ||
-        popularSearches.length > 0
+      recentSearches.length > 0 ||
+      popularSearches.length > 0
     );
   }, [searchValue, searchResult, recentSearches, popularSearches]);
 
@@ -398,7 +398,7 @@ const UserMenu = ({ user, handleToggle, isOpen, router, handleLogout }) => {
           <div
             ref={menuRef}
             className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-50 p-4"
-            style={{zIndex: '10000'}}
+            style={{ zIndex: '10000' }}
           >
             <IoClose
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 cursor-pointer"
@@ -665,7 +665,16 @@ export default function Navbar() {
   const dispatch = useDispatch();
   const router = useRouter();
   const { user: authUser, loading: authLoading, logout } = useAuth();
+  const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
+  const letters = ['G', 'r', 'a', 'z', 'l', 'e'];
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentLetterIndex((prevIndex) => (prevIndex + 1) % letters.length);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [letters.length]);
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("theUser"));
     if (user) {
@@ -828,10 +837,66 @@ export default function Navbar() {
           zIndex: 100000000000000,
         }}
       >
-        <ShoppingLoader />
+               <style>
+          {`
+          .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3));
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+          }
+        
+          .inner-div {
+            font-size: 5rem;
+            font-weight: bold;
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-radius: 10px;
+          }
+        
+          .letter {
+            transition: color 0.5s;
+            animation: move 2s infinite;
+          }
+        
+          .letter-active {
+            color: orange;
+          }
+        
+          .letter-inactive {
+            color: darkred;
+          }
+        
+          @keyframes move {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+          }
+         `}
+        </style>
+        
+        <div className="overlay">
+          <div className="inner-div">
+            {letters.map((letter, index) => (
+              <span
+                key={index}
+                className={`letter ${currentLetterIndex === index ? 'letter-active' : 'letter-inactive'}`}
+              >
+                {letter}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
     );
-    return <ShoppingLoader />;
   }
 
   // useEffect(() => {
