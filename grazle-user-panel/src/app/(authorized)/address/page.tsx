@@ -41,7 +41,6 @@ export default function AddressPage() {
   const onCreateAddress = async (event) => {
     event.preventDefault();
     try {
-      
       const token = localStorage.getItem("token");
       if (!token) return toast.error("Please login to continue");
       setPending(true);
@@ -207,6 +206,15 @@ export default function AddressPage() {
                 name="recipient_phone"
                 required
                 placeholder="Phone Number"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Pin Code</label>
+              <input
+                name="pin_code"
+                required
+                placeholder="Pin Code"
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>

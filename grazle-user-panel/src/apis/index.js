@@ -25,7 +25,15 @@ export const registerApi = async (data) =>
   await axios.post("/auth/register", data);
 export const registerApiStore = async (data) =>
   await axios.post("/auth/register-seller", data);
-export const loginApi = async (data) => await axios.post("/auth/login", data);
+export const loginApi = async (data) => {
+  const formData = new FormData();
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      formData.append(key, data[key]);
+    }
+  }
+  return await axios.post("/auth/login", formData);
+};
 
 export const getAllCategoriesApi = async () =>
   await axios.get("/global/categories");
@@ -122,6 +130,7 @@ export const createAddressApi = async (data, token) => {
   formData.append('note', data.note || '');
   formData.append('recipient_name', data.recipient_name || '');
   formData.append('recipient_phone', data.recipient_phone || '');
+  formData.append('pin_code', data.pin_code || '');
 
   return axios.post("/addresses", formData, {
     headers: {
