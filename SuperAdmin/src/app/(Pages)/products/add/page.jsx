@@ -282,7 +282,7 @@ const Products = () => {
                 </div>
                 <div className="flex flex-col gap-1">
                   <label className="text-[#777777]">Variants</label>
-                  <div className="ReactTags__tags flex justify-start align-center ">
+                  <div className="ReactTags__tags flex justify-center items-center">
                     <ReactTags
                       tags={tags}
                       handleDelete={handleDelete}
@@ -293,9 +293,17 @@ const Products = () => {
                         tagInput: "focus:outline-none border-none",
                         tagInputField: "focus:outline-none border-none",
                         selected: "focus:outline-none border-none",
-                        tag: "focus:outline-none border-none",
-                        remove: "focus:outline-none border-none",
+                        tag: "focus:outline-none border-none flex items-center",
+                        remove: "focus:outline-none border-none ml-2 cursor-pointer",
                       }}
+                      renderTag={(props) => (
+                        <span className="tag flex items-center">
+                          {props.tag.text}
+                          <span className="remove ml-2 cursor-pointer" onClick={props.onDelete}>
+                            &#x2715; {/* Cross icon */}
+                          </span>
+                        </span>
+                      )}
                     />
                   </div>
                 </div>

@@ -61,7 +61,7 @@ const Login = () => {
     }
     console.log("login data", data);
     toast.success("Login Successfully");
-    await loginAction(data);
+    await loginAction(data?.user);
     setLoading(false);
     router.push("/");
   }

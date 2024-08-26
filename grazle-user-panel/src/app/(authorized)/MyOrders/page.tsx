@@ -77,6 +77,7 @@ export default function MyAccount() {
     country: "",
     state: "",
     city: "",
+    pin_code: '',
   });
   const [meta, setMeta] = useState({});
   const user = localStorage.getItem("theUser");
@@ -330,6 +331,7 @@ export default function MyAccount() {
     formdata.append("country", profileData.country);
     formdata.append("state", profileData.state);
     formdata.append("city", profileData.city);
+    formdata.append("pin_code", profileData.pin_code);
     try {
       setPending(true);
       if (!currentUser.id) return null;
@@ -551,6 +553,18 @@ export default function MyAccount() {
                     className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
                   />
                 </div>
+                <div className="flex-col mt-[30px] lg:w-[50%] w-[100%] sm:w-[100%] md:w-[100%]">
+                  <label className="text-[16px] font-semibold">
+                    Pin Code *
+                  </label>
+                  <input
+                    onChange={profileDataHandler}
+                    placeholder="pin code"
+                    name="pin_code"
+                    defaultValue={currentUser?.profile?.pin_code}
+                    className="border-[1px] mt-[9px] border-[#7777777] w-full rounded-md h-[50px] p-3 focus:outline-none"
+                  />
+                </div>
                 {/* <div className="flex-col mt-[30px]">
                   <label className="text-[16px] font-semibold"> Gender *</label>
                   <select
@@ -717,7 +731,7 @@ export default function MyAccount() {
                     </>
                   )}
 
-{activeSections === "Completed" && (
+                  {activeSections === "Completed" && (
                     <>
                       {!orders?.length ? (
                         <p className="text-center text-gray-500 text-lg mt-4">
@@ -894,6 +908,15 @@ export default function MyAccount() {
                         name="recipient_phone"
                         required
                         placeholder="Phone Number"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Pin Code</label>
+                      <input
+                        name="pin_code"
+                        required
+                        placeholder="Pin Code"
                         className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
                       />
                     </div>
