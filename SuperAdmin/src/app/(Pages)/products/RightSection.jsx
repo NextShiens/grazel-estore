@@ -1,6 +1,8 @@
 import Image from "next/image";
 import React from "react";
 import product from "@/assets/document-image.png";
+import { axiosPrivate } from "@/axios";
+import { toast } from "react-toastify";
 
 const RightSection = ({
   allProducts,
@@ -10,8 +12,26 @@ const RightSection = ({
   currentPage,
   totalPages,
   totalProducts,
-  handlePageChange
+  handlePageChange,
 }) => {
+  const handleDeleteProduct = async (id) => {
+    debugger
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      try {
+        await axiosPrivate.delete(`/admin/products/${id}`,
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          }
+        );
+        toast.success("Product has been deleted");
+      } catch (error) {
+        console.error("Failed to delete product", error);
+        toast.error("Failed to delete product");
+      }
+    }
+  };
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 flex-1">
       <h2 className="text-2xl font-semibold mb-4">Recent Stock</h2>
@@ -45,69 +65,73 @@ const RightSection = ({
                 </tr>
 
                 <style jsx>{`
-  .horror-loader {
-    display: flex;
-    align-items: center;
-    animation: shake 1.5s infinite;
-  }
+                  .horror-loader {
+                    display: flex;
+                    align-items: center;
+                    animation: shake 1.5s infinite;
+                  }
 
-  .horror-head {
-    width: 50px;
-    height: 50px;
-    background-color: #2c3e50;
-    border-radius: 50%;
-    position: relative;
-    box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.5);
-  }
+                  .horror-head {
+                    width: 50px;
+                    height: 50px;
+                    background-color: #2c3e50;
+                    border-radius: 50%;
+                    position: relative;
+                    box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.5);
+                  }
 
-  .horror-eyes {
-    display: flex;
-    justify-content: space-between;
-    position: absolute;
-    top: 15px;
-    left: 10px;
-    right: 10px;
-  }
+                  .horror-eyes {
+                    display: flex;
+                    justify-content: space-between;
+                    position: absolute;
+                    top: 15px;
+                    left: 10px;
+                    right: 10px;
+                  }
 
-  .horror-eye {
-    width: 10px;
-    height: 10px;
-    background-color: #e74c3c;
-    border-radius: 50%;
-    box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.7);
-  }
+                  .horror-eye {
+                    width: 10px;
+                    height: 10px;
+                    background-color: #e74c3c;
+                    border-radius: 50%;
+                    box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.7);
+                  }
 
-  .horror-mouth {
-    width: 20px;
-    height: 5px;
-    background-color: #e74c3c;
-    border-radius: 5px;
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.7);
-  }
+                  .horror-mouth {
+                    width: 20px;
+                    height: 5px;
+                    background-color: #e74c3c;
+                    border-radius: 5px;
+                    position: absolute;
+                    bottom: 10px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.7);
+                  }
 
-  @keyframes shake {
-    0%, 100% {
-      transform: translate(0, 0);
-    }
-    25% {
-      transform: translate(-2px, -2px);
-    }
-    50% {
-      transform: translate(2px, 2px);
-    }
-    75% {
-      transform: translate(-2px, 2px);
-    }
-  }
-`}</style>
+                  @keyframes shake {
+                    0%,
+                    100% {
+                      transform: translate(0, 0);
+                    }
+                    25% {
+                      transform: translate(-2px, -2px);
+                    }
+                    50% {
+                      transform: translate(2px, 2px);
+                    }
+                    75% {
+                      transform: translate(-2px, 2px);
+                    }
+                  }
+                `}</style>
               </>
             ) : allProducts?.length > 0 ? (
               allProducts?.map((item, i) => (
-                <tr key={i} className="text-sm border-b border-gray-100 hover:bg-gray-50">
+                <tr
+                  key={i}
+                  className="text-sm border-b border-gray-100 hover:bg-gray-50"
+                >
                   <td className="py-4 px-4">{item.id}</td>
                   <td className="py-4 px-4">
                     <div className="flex items-center">
@@ -125,20 +149,32 @@ const RightSection = ({
                   <td className="py-4 px-4">{item?.user?.username}</td>
                   <td className="py-4 px-4">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${item.active
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                        }`}
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        item.active
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
                     >
                       {item.active ? "In Stock" : "Out of Stock"}
                     </span>
                   </td>
                   <td className="py-4 px-4 font-medium">₹{item?.price}</td>
+                  <td>
+                    <button
+                      type="button"
+                      onClick={()=>handleDeleteProduct(item.id)}
+                      className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    >
+                      Delete Product
+                    </button>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="text-center py-8 text-red-500">No products found</td>
+                <td colSpan="5" className="text-center py-8 text-red-500">
+                  No products found
+                </td>
               </tr>
             )}
           </tbody>
