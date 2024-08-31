@@ -15,7 +15,6 @@ const RightSection = ({
   handlePageChange,
 }) => {
   const handleDeleteProduct = async (id) => {
-    debugger
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
         await axiosPrivate.delete(`/admin/products/${id}`,
