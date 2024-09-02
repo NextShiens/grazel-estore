@@ -65,7 +65,7 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
                 console.error('Image failed to load:', e);
                 e.target.src = 'https://via.placeholder.com/26x26?text=No+Image+Available';
               }}
-              className="h-[26px] w-[26px]"
+              className=" w-[26px]"
             />
             {order?.products?.map(
               (pro, index) =>
@@ -142,7 +142,7 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
                   console.error('Image failed to load:', e);
                   e.target.src = 'https://via.placeholder.com/26x26?text=No+Image+Available';
                 }}
-                className="h-[26px] w-[26px] rounded-[5px]"
+                className=" w-[26px] rounded-[5px]"
               />
               {order?.customer?.username}
             </td>
@@ -159,7 +159,7 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
                   console.error('Image failed to load:', e);
                   e.target.src = 'https://via.placeholder.com/26x26?text=No+Image+Available';
                 }}
-                className="h-[26px] w-[26px]"
+                className=" w-[26px]"
               />
               {order?.products?.map(
                 (pro, index) =>

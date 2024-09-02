@@ -17,9 +17,7 @@ import { User } from "../../entities/Users";
 import { ReviewImage } from "../../entities/ReviewImage";
 import { v4 as uuidv4 } from "uuid";
 
-const BASE_URL =
-  process.env.IMAGE_PATH ||
-  "https://ecommerce-backend-api-production-84b3.up.railway.app/api/";
+const BASE_URL = process.env.IMAGE_PATH || "https://api.grazle.co.in/";
 
 interface ProductWithoutTimestamps {
   id: number;
@@ -90,6 +88,16 @@ const omitGalleryTimestamps = (
   return { id, image: addBaseUrlToImage(image) };
 };
 
+// Utility function to check if a file exists
+const fileExists = (filePath: string): boolean => {
+  try {
+    return fs.existsSync(filePath);
+  } catch (err) {
+    console.error("Error checking file existence:", err);
+    return false;
+  }
+};
+
 export class ProductController {
   // Create Product
   async createProduct(req: Request, res: Response) {
@@ -154,6 +162,14 @@ export class ProductController {
         (req as any).files?.gallery_images?.map((file: any) =>
           file.path.replace(/\\/g, "/")
         ) || [];
+
+      // Check if gallery images exceed the limit
+      if (gallery_images.length > 7) {
+        return res.status(400).json({
+          success: false,
+          message: "You can upload a maximum of 7 gallery images.",
+        });
+      }
 
       const productRepository = appDataSource.getRepository(Product);
       const galleryRepository = appDataSource.getRepository(ProductsGallery);
@@ -271,97 +287,6 @@ export class ProductController {
       });
     }
   }
-
-  // Get All Products
-  // async getProducts(req: Request, res: Response) {
-  //   try {
-  //     const { categoryId, brandId, page = 1, limit = 10 } = req.query;
-
-  //     const productRepository = appDataSource.getRepository(Product);
-  //     const reviewRepository = appDataSource.getRepository(Review);
-
-  //     const queryBuilder = productRepository
-  //       .createQueryBuilder("product")
-  //       .leftJoinAndSelect("product.gallery", "gallery")
-  //       .orderBy("product.created_at", "DESC");
-
-  //     if (categoryId) {
-  //       queryBuilder.andWhere("product.category_id = :categoryId", {
-  //         categoryId: Number(categoryId),
-  //       });
-  //     }
-
-  //     if (brandId) {
-  //       queryBuilder.andWhere("product.brand_id = :brandId", {
-  //         brandId: Number(brandId),
-  //       });
-  //     }
-
-  //     const pagination = await paginate<Product>(queryBuilder, {
-  //       page: Number(page),
-  //       limit: Number(limit),
-  //     });
-
-  //     // Fetch reviews for each product
-  //     const productsWithReviews = await Promise.all(
-  //       pagination.items.map(async (product) => {
-  //         const reviews = await reviewRepository.find({
-  //           where: { product_id: product.id },
-  //           order: { created_at: "DESC" },
-  //         });
-
-  //         const totalReviews = reviews.length;
-  //         const averageRating =
-  //           totalReviews > 0
-  //             ? reviews.reduce((sum, review) => sum + review.rating, 0) /
-  //               totalReviews
-  //             : 0;
-
-  //         // Attach reviews, average rating, and total reviews to the product
-  //         const productWithReviews = {
-  //           ...product,
-  //           rating: averageRating.toFixed(1),
-  //           reviews: totalReviews,
-  //         };
-
-  //         // Attach base URL to featured_image and gallery images
-  //         if (productWithReviews.featured_image) {
-  //           productWithReviews.featured_image = `${BASE_URL}${productWithReviews.featured_image}`;
-  //         }
-
-  //         if (
-  //           productWithReviews.gallery &&
-  //           productWithReviews.gallery.length > 0
-  //         ) {
-  //           productWithReviews.gallery = productWithReviews.gallery.map(
-  //             (galleryItem) => ({
-  //               ...galleryItem,
-  //               image: `${BASE_URL}${galleryItem.image}`,
-  //             })
-  //           );
-  //         }
-
-  //         return productWithReviews;
-  //       })
-  //     );
-
-  //     res.status(200).json({
-  //       products: productsWithReviews,
-  //       total: pagination.meta.totalItems,
-  //       page: pagination.meta.currentPage,
-  //       limit: pagination.meta.itemsPerPage,
-  //       totalPages: pagination.meta.totalPages,
-  //       success: true,
-  //       message: "Products retrieved successfully!",
-  //     });
-  //   } catch (error: any) {
-  //     res.status(500).json({
-  //       success: false,
-  //       message: "Failed to retrieve user's products",
-  //       error: error.message,
-  //     });
-  //   }
-  // }
 
   async getProducts(req: Request, res: Response) {
     try {
@@ -510,7 +435,7 @@ export class ProductController {
       const reviews = await reviewRepository.find({
         where: { product_id: product.id },
         order: { created_at: "DESC" },
-        take: 10, // Limit to fetch only latest 10 reviews
+        take: 10,
       });
 
       // Fetch review images associated with each review
@@ -692,15 +617,29 @@ export class ProductController {
   async updateProduct(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const { category_id, brand_id, title, price, description, tags } =
-        req.body;
+      const {
+        category_id,
+        brand_id,
+        title,
+        price,
+        discount,
+        description,
+        tags,
+        color,
+        product_info,
+        questions,
+        answers,
+        variants,
+      } = req.body;
 
       const productRepository = appDataSource.getRepository(Product);
       const galleryRepository = appDataSource.getRepository(ProductsGallery);
+      const faqsRepository = appDataSource.getRepository(ProductFaqs);
+      const variantRepository = appDataSource.getRepository(ProductVariant);
 
       const product = await productRepository.findOne({
         where: { id: parseInt(id) },
-        relations: ["gallery"],
+        relations: ["gallery", "faqs", "variants"],
       });
 
       if (!product) {
@@ -716,6 +655,17 @@ export class ProductController {
       product.price = price || product.price;
       product.description = description || product.description;
       product.tags = tags || product.tags;
+      product.color = color || product.color;
+      product.product_info = product_info || product.product_info;
+
+      if (discount && !isNaN(parseFloat(discount))) {
+        product.discount = parseFloat(discount);
+        const discountAmount = parseFloat(discount) / 100;
+        product.discounted_price = product.price * (1 - discountAmount);
+      } else {
+        product.discount = null;
+        product.discounted_price = product.price;
+      }
 
       const featured_image = (
         req as any
@@ -729,57 +679,93 @@ export class ProductController {
         if (product.featured_image) {
           const oldImagePath = path.join(
             __dirname,
-            "../../bucket/product",
-            path.basename(product.featured_image)
+            "../../..",
+            product.featured_image
           );
-          try {
-            fs.unlinkSync(oldImagePath);
-            console.log("Old image deleted successfully");
-          } catch (err) {
-            console.error("Failed to delete old image:", err);
-          }
+          fs.unlink(oldImagePath, (err) => {
+            if (err) console.error("Failed to delete old image:", err);
+          });
         }
         product.featured_image = featured_image;
+      }
+
+      // Check gallery image limit
+      const existingGalleryCount = product.gallery ? product.gallery.length : 0;
+      const newGalleryCount = gallery_images.length;
+
+      if (existingGalleryCount + newGalleryCount > 7) {
+        return res.status(400).json({
+          success: false,
+          message: `You cannot upload more than 7 gallery images. Current count: ${existingGalleryCount}, New images: ${newGalleryCount}`,
+        });
       }
 
       await productRepository.save(product);
 
       if (gallery_images.length > 0) {
-        const galleryEntries = gallery_images.map((image: string) => {
+        const newGalleryEntries = gallery_images.map((image: string) => {
           const galleryEntry = new ProductsGallery();
-          galleryEntry.product = product;
+          galleryEntry.product_id = product.id;
           galleryEntry.image = image;
           return galleryEntry;
         });
 
-        await galleryRepository.save(galleryEntries);
+        await galleryRepository.save(newGalleryEntries);
       }
 
-      // Reload the product to get the updated gallery images
+      // Updating FAQs
+      if (questions && answers && questions.length === answers.length) {
+        const existingFaqs = product.faqs || [];
+
+        await faqsRepository.remove(existingFaqs);
+
+        const faqEntries = questions.map((question: string, index: number) => {
+          const faqEntry = new ProductFaqs();
+          faqEntry.product = product;
+          faqEntry.question = question;
+          faqEntry.answer = answers[index];
+          return faqEntry;
+        });
+
+        await faqsRepository.save(faqEntries);
+      }
+
+      // Updating Variants
+      if (variants && Array.isArray(variants) && variants.length > 0) {
+        const existingVariants = product.variants || [];
+
+        await variantRepository.remove(existingVariants);
+
+        const variantEntries = variants.map((variant: any) => {
+          const productVariant = new ProductVariant();
+          productVariant.variant = variant.variant;
+          productVariant.price = variant.price;
+          productVariant.color = variant.color;
+          productVariant.measurements = variant.measurements;
+          productVariant.product = product;
+          return productVariant;
+        });
+
+        await variantRepository.save(variantEntries);
+      }
+
       const updatedProduct = await productRepository.findOne({
-        where: { id: parseInt(id) },
-        relations: ["gallery"],
+        where: { id: product.id },
+        relations: ["gallery", "faqs", "variants"],
       });
 
-      if (!updatedProduct) {
-        return res.status(404).json({
+      if (updatedProduct) {
+        res.status(200).json({
+          product: updatedProduct,
+          success: true,
+          message: "Product updated successfully!",
+        });
+      } else {
+        res.status(500).json({
           success: false,
-          message: "Failed to retrieve updated product",
+          message: "Failed to fetch updated product details",
         });
       }
-
-      res.status(200).json({
-        // product: omitProductTimestamps(updatedProduct),
-        product: {
-          ...omitProductTimestamps(product),
-          gallery: gallery_images.map((image: string, index: number) => ({
-            id: index, // Since the gallery entry might not have an id yet
-            image: addBaseUrlToImage(image),
-          })),
-        },
-        success: true,
-        message: "Product updated successfully!",
-      });
     } catch (error: any) {
       res.status(500).json({
         success: false,
@@ -901,10 +887,13 @@ export class ProductController {
       const { id } = req.params;
       const productRepository = appDataSource.getRepository(Product);
       const galleryRepository = appDataSource.getRepository(ProductsGallery);
+      const faqsRepository = appDataSource.getRepository(ProductFaqs);
+      const variantRepository = appDataSource.getRepository(ProductVariant);
 
+      // Load the product and its related records
       const product = await productRepository.findOne({
         where: { id: parseInt(id) },
-        relations: ["gallery"],
+        relations: ["gallery", "faqs", "variants"],
       });
 
       if (!product) {
@@ -914,7 +903,51 @@ export class ProductController {
         });
       }
 
-      await galleryRepository.delete({ product });
+      // Delete related files
+      if (product.featured_image) {
+        const oldImagePath = path.join(
+          __dirname,
+          "../../..",
+          product.featured_image
+        );
+        if (fileExists(oldImagePath)) {
+          fs.unlink(oldImagePath, (err) => {
+            if (err) console.error("Failed to delete old image:", err);
+          });
+        } else {
+          console.warn("Featured image file does not exist:", oldImagePath);
+        }
+      }
+
+      if (product.gallery && product.gallery.length > 0) {
+        for (const galleryItem of product.gallery) {
+          const oldGalleryPath = path.join(
+            __dirname,
+            "../../..",
+            galleryItem.image
+          );
+          if (fileExists(oldGalleryPath)) {
+            fs.unlink(oldGalleryPath, (err) => {
+              if (err)
+                console.error("Failed to delete old gallery image:", err);
+            });
+          } else {
+            console.warn("Gallery image file does not exist:", oldGalleryPath);
+          }
+          await galleryRepository.remove(galleryItem);
+        }
+      }
+
+      // Remove related records before deleting the product
+      if (product.faqs && product.faqs.length > 0) {
+        await faqsRepository.remove(product.faqs);
+      }
+
+      if (product.variants && product.variants.length > 0) {
+        await variantRepository.remove(product.variants);
+      }
+
+      // Delete the product
       await productRepository.remove(product);
 
       res.status(200).json({
@@ -925,6 +958,100 @@ export class ProductController {
       res.status(500).json({
         success: false,
         message: "Failed to delete product",
+        error: error.message,
+      });
+    }
+  }
+
+  // Delete Product FAQ
+  async deleteProductFaq(req: Request, res: Response) {
+    try {
+      const { productId, faqId } = req.params;
+      const productRepository = appDataSource.getRepository(Product);
+      const faqsRepository = appDataSource.getRepository(ProductFaqs);
+
+      // Find the product
+      const product = await productRepository.findOne({
+        where: { id: parseInt(productId) },
+        relations: ["faqs"],
+      });
+
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: "Product not found",
+        });
+      }
+
+      // Find the FAQ
+      const faq = product.faqs.find((faq) => faq.id === parseInt(faqId));
+
+      if (!faq) {
+        return res.status(404).json({
+          success: false,
+          message: "FAQ not found in product",
+        });
+      }
+
+      // Remove the FAQ
+      await faqsRepository.remove(faq);
+
+      res.status(200).json({
+        success: true,
+        message: "FAQ deleted successfully from product!",
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to delete FAQ",
+        error: error.message,
+      });
+    }
+  }
+
+  // Delete Product Variant
+  async deleteProductVariant(req: Request, res: Response) {
+    try {
+      const { productId, variantId } = req.params;
+      const productRepository = appDataSource.getRepository(Product);
+      const variantRepository = appDataSource.getRepository(ProductVariant);
+
+      // Find the product
+      const product = await productRepository.findOne({
+        where: { id: parseInt(productId) },
+        relations: ["variants"],
+      });
+
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: "Product not found",
+        });
+      }
+
+      // Find the variant
+      const variant = product.variants.find(
+        (variant) => variant.id === parseInt(variantId)
+      );
+
+      if (!variant) {
+        return res.status(404).json({
+          success: false,
+          message: "Variant not found in product",
+        });
+      }
+
+      // Remove the variant
+      await variantRepository.remove(variant);
+
+      res.status(200).json({
+        success: true,
+        message: "Variant deleted successfully from product!",
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to delete variant",
         error: error.message,
       });
     }

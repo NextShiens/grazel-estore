@@ -16,6 +16,7 @@
     "@mui/icons-material": "^5.16.5",
     "@mui/joy": "^5.0.0-beta.36",
     "@mui/material": "^5.16.5",
+    "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.2.5",
     "axios": "^1.7.2",
     "country-state-city": "^3.2.1",

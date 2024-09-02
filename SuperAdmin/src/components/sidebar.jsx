@@ -22,7 +22,7 @@ import { PiRankingLight } from "react-icons/pi";
 import { IoMdPhotos } from "react-icons/io";
 import { BiCategory } from "react-icons/bi";
 import { CiLogout } from "react-icons/ci";
-import { MdCardMembership } from "react-icons/md"; // Added for Membership Plans icon
+import { MdCardMembership, MdCircleNotifications } from "react-icons/md"; // Added for Membership Plans icon
 import { login, logout } from "@/lib";
 import { toast } from "react-toastify";
 
@@ -144,6 +144,12 @@ const Sidebar = () => {
           }
           label={"Feedback"}
           navigateTo={"feedback"}
+          handleNavigation={handleNavigation}
+        />
+        <SidebarPageTemplate
+          icon={<MdCircleNotifications className="w-[20px] h-[19px]" />}
+          label={" Add Notifications"}
+          navigateTo={"add-notifications"}
           handleNavigation={handleNavigation}
         />
         <SidebarPageTemplate

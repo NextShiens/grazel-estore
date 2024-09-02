@@ -15,7 +15,7 @@ interface MulterRequest extends Request {
 }
 
 const BASE_URL =
-  "https://ecommerce-backend-api-production-84b3.up.railway.app/api/";
+  "https://api.grazle.co.in/";
 
 export class ProfileController {
   async getProfile(req: Request, res: Response) {

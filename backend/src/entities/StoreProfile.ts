@@ -20,7 +20,7 @@ export class StoreProfile {
   @Column({ nullable: true })
   store_image: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   store_description: string;
 
   @Column({ nullable: true })

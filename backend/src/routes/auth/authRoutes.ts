@@ -12,7 +12,7 @@ const authController = new AuthController();
 const storage = multer.diskStorage({
   destination: function (req: any, file: any, cb: any) {
     // Set the destination directory for file uploads
-    cb(null, "bucket/store"); 
+    cb(null, "bucket/store");
   },
   filename: function (req: any, file: any, cb: any) {
     // Set the filename for uploaded files
@@ -46,7 +46,6 @@ const storeImageUploader = multer({
   { name: "tax_id", maxCount: 1 },
   { name: "proof_of_address", maxCount: 1 },
 ]);
-
 
 router.post(
   "/register",
@@ -91,6 +90,7 @@ router.post(
     body("store_description")
       .notEmpty()
       .withMessage("The store_description field is required"),
+
     body("account_name")
       .notEmpty()
       .withMessage("The account_name field is required"),

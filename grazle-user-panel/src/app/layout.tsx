@@ -19,8 +19,11 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Grazel Website",
+  title: "Grazle Website",
   description: "Modern shopping plateform",
+  icons: {
+    icon: '/favicon.png',
+  },
 };
 
 export default function RootLayout({

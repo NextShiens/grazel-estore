@@ -18,6 +18,10 @@ const router = Router();
 const productListingController = new ProductListingController();
 
 router.get("/products", productListingController.getAllProducts);
+router.get(
+  "/products-default",
+  productListingController.getAllProductsWithoutPagination
+);
 router.get("/products/:slug", productListingController.getProductBySlug);
 router.get("/products/details/:id", productListingController.getProductById);
 router.get(
@@ -28,9 +32,27 @@ router.get("/products-dynamic", getProductsDynamically);
 router.get("/related-product", productListingController.relatedProduct);
 router.get("/product-offers", productListingController.getAllProductsWithOffer);
 router.get(
+  "/product-offers-default",
+  productListingController.getAllProductsWithOfferWithoutPagination
+);
+router.get(
   "/product-offers/:userId",
   productListingController.getProductsByUserIdWithOffer
 );
+router.get(
+  "/product-by-percentage-offers/fifty",
+  productListingController.getProductsWithFiftyPercentOffer
+);
+router.get(
+  "/product-by-percentage-offers/seventy",
+  productListingController.getProductsWithSeventyPercentOffer
+);
+
+router.get(
+  "/products-by-offer/:offer_id",
+  productListingController.getProductsByOfferId
+);
+
 router.get(
   "/discounted-products",
   productListingController.getAllProductsWithDiscounts
@@ -78,6 +100,11 @@ router.get("/brands/details/:id", brandListingController.getBrandById);
 const searchController = new SearchController();
 
 router.get("/search-results", searchController.getSearchResults);
+router.get(
+  "/search-results-default",
+  searchController.getSearchResultsWithoutPagination
+);
+router.get("/search-suggestion", searchController.getSuggestedKeywords);
 router.get("/popular-searches", searchController.getPopularSearches);
 
 // Store Routes
@@ -85,6 +112,10 @@ router.get("/popular-searches", searchController.getPopularSearches);
 const storeController = new StoreController();
 
 router.get("/store/:id/products", storeController.getStoreDetailsWithProducts);
+router.get(
+  "/store-default/:id/products",
+  storeController.getStoreDetailsWithProductsWithoutPagination
+);
 
 // Store Routes
 const customerSupportController = new CustomerSupportPublic();
@@ -104,7 +135,7 @@ router.post(
 
 const bannerController = new BannerController();
 
-router.get("/banners/:position", bannerController.getBannersByPosition);
+router.get("/banners/:position/:type", bannerController.getBannersByPosition);
 
 // States Cities Routes
 
@@ -115,6 +146,5 @@ router.get("/cities-by-state/:id", statesCitiesController.findCitiesByState);
 router.get("/cities", statesCitiesController.findAllCities);
 router.get("/states/:id", statesCitiesController.findOneState);
 router.get("/cities/:id", statesCitiesController.findOneCity);
-
 
 export default router;

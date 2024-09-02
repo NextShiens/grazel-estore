@@ -11,6 +11,46 @@
 			"name": "Auth",
 			"item": [
 				{
+					"name": "Google",
+					"item": [
+						{
+							"name": "Google Auth",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImE0OTM5MWJmNTJiNThjMWQ1NjAyNTVjMmYyYTA0ZTU5ZTIyYTdiNjUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI3ODI2NDEzNDAwMDYtcDY2NzNmNWppazFzZXEyMWpvbmlicTZndW84MmlxaW0uYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI3ODI2NDEzNDAwMDYtcDY2NzNmNWppazFzZXEyMWpvbmlicTZndW84MmlxaW0uYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTUxMDQ5Nzc1NjIzNDY1Mjg3OTAiLCJlbWFpbCI6ImFyc2xhbnphZmFycjcxQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYmYiOjE3MjQ0Nzk2MjYsIm5hbWUiOiJBcnNsYW4gWmFmYXJyIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0l0SVF3S3hsS3k0RlRDNkVuamVob28wSEs3YnFMb01uZ1NiMThyUkg0cFdDQnFhcDA9czk2LWMiLCJnaXZlbl9uYW1lIjoiQXJzbGFuIiwiZmFtaWx5X25hbWUiOiJaYWZhcnIiLCJpYXQiOjE3MjQ0Nzk5MjYsImV4cCI6MTcyNDQ4MzUyNiwianRpIjoiN2UzMWM3ODE0ODgzODliNmJkZmNjNjA5ZDkxMGVlNmQ4ZDVjMzI2YiJ9.iB0jujVyKshxMPvzvo6MLvKv-i6hndT3FyScJbs3ptRvgevsgvIznVeNwVkL8BNX7Bbwm8PhzKNVXQM9FaH7Y_fpR2iD3j6r9z_zFWTNd_Z3wde5JctYGd0JEs1s3y6qyQqWJw5RKQSgk-gM8_eWrYOn5e4TE1BhknWxUjkdVESyi4JotCkRBHzBGzKSrd7ulH5Q6WlNRA2gwuLeINGQc6PDAkdCTfNO26jTqjzBR8iJRVeiB0c2oBGOJTW83axVpId7rBwkIKbTd366gn0VDjKutvAr-8krSUB5H3Bcaq_EOgI3OBpGULYvGc33QK44Qa0T33BmKZbAmqGjvFCpGQ",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/auth/google",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"auth",
+										"google"
+									],
+									"query": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjgsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyNDQ3MzM3NSwiZXhwIjoxNzI1NjgyOTc1fQ.I5qwRzuJnlpvz0vwEZ0tGVbqbkIHmoJLua7ilKWfb3c",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "Login",
 					"request": {
 						"method": "POST",
@@ -61,7 +101,7 @@
 								},
 								{
 									"key": "email",
-									"value": "buyer@test.com",
+									"value": "arslanzafarr71@gmail.com",
 									"description": "required",
 									"type": "text"
 								},
@@ -509,7 +549,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjM2MTAwOTIsImV4cCI6MTcyMzg2OTI5Mn0.Eeek4ENghLxrxu1tW-jfaGtgN-z5Kijcm7T4SzbwFoY",
 											"type": "string"
 										}
 									]
@@ -1002,7 +1042,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/global/search-results?keywords=shirt",
+									"raw": "{{BASE_URL}}/global/search-results?keywords=el&limit=20",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1013,7 +1053,11 @@
 									"query": [
 										{
 											"key": "keywords",
-											"value": "shirt"
+											"value": "el"
+										},
+										{
+											"key": "limit",
+											"value": "20"
 										}
 									]
 								}
@@ -1026,7 +1070,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/global/search-suggestion?keyword=Memory",
+									"raw": "{{BASE_URL}}/global/search-suggestion?keyword=camera",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1037,7 +1081,7 @@
 									"query": [
 										{
 											"key": "keyword",
-											"value": "Memory"
+											"value": "camera"
 										}
 									]
 								}
@@ -3955,6 +3999,16 @@
 						{
 							"name": "All plans",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyNDMyMDQ5NCwiZXhwIjoxNzI0NTc5Njk0fQ.FBoJUCKI0uc0m2m5pFrlIMaoIQqzRwhsXZlmx0-M-G8",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
@@ -4003,7 +4057,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InRlYWNoZXIiLCJpYXQiOjE3MjIwNzk4NDUsImV4cCI6MTcyMjA4MzQ0NX0.28p8K_QivQnodzQ75rI69RRkcpr-yI5GPUpvUkH6wdQ",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyNDMyMDMzMywiZXhwIjoxNzI0NTc5NTMzfQ.yvV9HTIouGztsAnsetcLstZA3rwFOwww7ZhpS4MPzII",
 											"type": "string"
 										}
 									]
@@ -4015,22 +4069,22 @@
 									"formdata": [
 										{
 											"key": "name",
-											"value": "",
+											"value": "silver",
 											"type": "text"
 										},
 										{
 											"key": "price",
-											"value": "",
+											"value": "200",
 											"type": "text"
 										},
 										{
 											"key": "duration_months",
-											"value": "",
+											"value": "6",
 											"type": "text"
 										},
 										{
 											"key": "discount",
-											"value": "",
+											"value": "10",
 											"type": "text"
 										}
 									]
@@ -4111,6 +4165,16 @@
 						{
 							"name": "Delete Plan",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyNDMyMDQ5NCwiZXhwIjoxNzI0NTc5Njk0fQ.FBoJUCKI0uc0m2m5pFrlIMaoIQqzRwhsXZlmx0-M-G8",
+											"type": "string"
+										}
+									]
+								},
 								"method": "DELETE",
 								"header": [],
 								"url": {
@@ -4127,7 +4191,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "4"
 										}
 									]
 								}
@@ -4432,6 +4496,54 @@
 											"key": "id",
 											"value": ""
 										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Push Notification",
+					"item": [
+						{
+							"name": "Send Notification",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyNDA0MzE5NywiZXhwIjoxNzI0MzAyMzk3fQ.IMGGvsQebaeCvvVe_TapTPce04Ughqcb4pfAHkiZ1zs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "title",
+											"value": "Hi",
+											"type": "text"
+										},
+										{
+											"key": "body",
+											"value": "Notification",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/admin/push-notification",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"admin",
+										"push-notification"
 									]
 								}
 							},
@@ -4826,7 +4938,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMzMDEwNjQsImV4cCI6MTcyMzU2MDI2NH0.11LC9sstLDf_FS856BYaL-hjyRUJzNUa3u8gUN7iZ8o",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjM3MjU1MzEsImV4cCI6MTcyMzk4NDczMX0.1npbNjRiY4eGD1J2FBUG_uukQYAuoAec755XpO62mP4",
 											"type": "string"
 										}
 									]
@@ -4889,7 +5001,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMzNDc5MTgsImV4cCI6MTcyMzYwNzExOH0.ea7CaC_IDjIDgP7kBc-SNVqlmZ_UWcmPJg-O01pjJtQ",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjQzODU2NjksImV4cCI6MTcyNDY0NDg2OX0.40PSqoAKPrA12wN13ZzCZEbUIPwBvIZZJiBFu1ehjK0",
 											"type": "string"
 										}
 									]
@@ -4926,59 +5038,84 @@
 											"type": "text"
 										},
 										{
-											"key": "tags",
-											"value": "2024",
-											"type": "text"
-										},
-										{
 											"key": "product_info",
-											"value": "{\"info\": \"value\"} (optional)",
-											"type": "text"
-										},
-										{
-											"key": "questions[0]",
-											"value": "What is this?",
-											"type": "text"
-										},
-										{
-											"key": "questions[1]",
-											"value": "How does it work?",
-											"type": "text"
-										},
-										{
-											"key": "answers[0]",
-											"value": "This is a sample product.",
-											"type": "text"
-										},
-										{
-											"key": "answers[1]",
-											"value": "It works well.",
-											"type": "text"
-										},
-										{
-											"key": "variants[0][variant]",
-											"value": "size",
-											"type": "text"
-										},
-										{
-											"key": "variants[0][price]",
-											"value": "100",
-											"type": "text"
-										},
-										{
-											"key": "variants[0][measurements]",
-											"value": "M",
+											"value": "Additional product info",
 											"type": "text"
 										},
 										{
 											"key": "featured_image",
 											"type": "file",
-											"src": "/C:/Users/Ubaid Computers/Downloads/review-removebg-preview.png"
+											"src": "/C:/Users/Ubaid Computers/OneDrive/Pictures/Saved Pictures/brand-3.png"
 										},
 										{
 											"key": "gallery_images",
 											"type": "file",
-											"src": "/C:/Users/Ubaid Computers/Downloads/e8dbf3973a8918dcdf9e7e61daae70f71581003303 (1).jpg"
+											"src": "/C:/Users/Ubaid Computers/OneDrive/Pictures/Saved Pictures/dress-7.jpg"
+										},
+										{
+											"key": "questions[0]",
+											"value": "What is the warranty?",
+											"type": "text"
+										},
+										{
+											"key": "answers[0]",
+											"value": "2 years",
+											"type": "text"
+										},
+										{
+											"key": "dimensions[length]",
+											"value": "31.0",
+											"type": "text"
+										},
+										{
+											"key": "dimensions[width]",
+											"value": "21.0",
+											"type": "text"
+										},
+										{
+											"key": "dimensions[height]",
+											"value": "10.5",
+											"type": "text"
+										},
+										{
+											"key": "dimensions[weight]",
+											"value": "0.55",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][variant]",
+											"value": "Size M",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][price]",
+											"value": "89.99",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][color]",
+											"value": "Blue",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][dimensions][length]",
+											"value": "30.0",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][dimensions][width]",
+											"value": "20.0",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][dimensions][height]",
+											"value": "10.0",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][dimensions][weight]",
+											"value": "0.5",
+											"type": "text"
 										}
 									]
 								},
@@ -5003,7 +5140,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMyNjQzNTUsImV4cCI6MTcyMzUyMzU1NX0.2N5wMoLiVs8LLQzQOJBDPwS4si-bstuo-Sn2HwET7AA",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjQ0MTU4MzQsImV4cCI6MTcyNDY3NTAzNH0.yoqfsci2rFy5QyY9DcwYtJVyqQMyWx4Ai6P1rh0YQHc",
 											"type": "string"
 										}
 									]
@@ -5055,6 +5192,71 @@
 											"key": "discount",
 											"value": "30",
 											"type": "text"
+										},
+										{
+											"key": "questions[0]",
+											"value": "What is the warranty?",
+											"type": "text"
+										},
+										{
+											"key": "answers[0]",
+											"value": "2 Year",
+											"type": "text"
+										},
+										{
+											"key": "dimensions[length]",
+											"value": "3",
+											"type": "text"
+										},
+										{
+											"key": "dimensions[width]",
+											"value": "2",
+											"type": "text"
+										},
+										{
+											"key": "dimensions[height]",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "dimensions[weight]",
+											"value": "2",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][variant]",
+											"value": "Size M",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][price]",
+											"value": "89.99",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][color]",
+											"value": "Blue",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][dimensions][length]",
+											"value": "3",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][dimensions][width]",
+											"value": "2",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][dimensions][height]",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "variants[0][dimensions][weight]",
+											"value": "0.5",
+											"type": "text"
 										}
 									]
 								},
@@ -5071,7 +5273,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "20"
+											"value": "2"
 										}
 									]
 								}
@@ -5121,7 +5323,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjMzMDEwNjQsImV4cCI6MTcyMzU2MDI2NH0.11LC9sstLDf_FS856BYaL-hjyRUJzNUa3u8gUN7iZ8o",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3MjM3MjU1MzEsImV4cCI6MTcyMzk4NDczMX0.1npbNjRiY4eGD1J2FBUG_uukQYAuoAec755XpO62mP4",
 											"type": "string"
 										}
 									]
@@ -5141,7 +5343,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "22"
+											"value": "114"
 										}
 									]
 								}
@@ -6125,9 +6327,52 @@
 					"item": [
 						{
 							"name": "All Addresses",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0LCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MjM4MTQ3MTIsImV4cCI6MTcyNDA3MzkxMn0.AUEPwwO2w3adO3OiVfvBdEs40EWc1vvA4MbTE1pJ9S8",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "address",
+											"value": "update",
+											"type": "text"
+										},
+										{
+											"key": "address_label",
+											"value": "update",
+											"type": "text"
+										},
+										{
+											"key": "note",
+											"value": "update",
+											"type": "text"
+										},
+										{
+											"key": "recipient_name",
+											"value": "upate",
+											"type": "text"
+										},
+										{
+											"key": "recipient_phone",
+											"value": "1234",
+											"type": "text"
+										}
+									]
+								},
 								"url": {
 									"raw": "{{BASE_URL}}/addresses",
 									"host": [
@@ -6172,7 +6417,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTg0NDkzOTAsImV4cCI6MTcxODUzNTc5MH0.e_jilraprQ0GvwlmYc6BF-1mzY0GoAYWjPEg5GaOw2A",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInJvbGUiOiJidXllciIsImlhdCI6MTcyNDQxNDc2MSwiZXhwIjoxNzI0NjczOTYxfQ.0UVaCTcR9awAYt3eUYsDTJFqYubrF9weCbJnlG4HuI0",
 											"type": "string"
 										}
 									]
@@ -6184,12 +6429,12 @@
 									"formdata": [
 										{
 											"key": "address",
-											"value": "",
+											"value": "third",
 											"type": "text"
 										},
 										{
 											"key": "address_label",
-											"value": "",
+											"value": "primary",
 											"type": "text"
 										},
 										{
@@ -6199,12 +6444,27 @@
 										},
 										{
 											"key": "recipient_name",
-											"value": "",
+											"value": "arslan",
 											"type": "text"
 										},
 										{
 											"key": "recipient_phone",
+											"value": "1234",
+											"type": "text"
+										},
+										{
+											"key": "city",
 											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "state",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "pin_code",
+											"value": "123456",
 											"type": "text"
 										}
 									]
@@ -6224,6 +6484,16 @@
 						{
 							"name": "Update Address",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0LCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MjM4MTQ3MTIsImV4cCI6MTcyNDA3MzkxMn0.AUEPwwO2w3adO3OiVfvBdEs40EWc1vvA4MbTE1pJ9S8",
+											"type": "string"
+										}
+									]
+								},
 								"method": "PUT",
 								"header": [],
 								"body": {
@@ -6231,27 +6501,27 @@
 									"formdata": [
 										{
 											"key": "address",
-											"value": "",
+											"value": "update",
 											"type": "text"
 										},
 										{
 											"key": "address_label",
-											"value": "",
+											"value": "update",
 											"type": "text"
 										},
 										{
 											"key": "note",
-											"value": "",
+											"value": "update",
 											"type": "text"
 										},
 										{
 											"key": "recipient_name",
-											"value": "",
+											"value": "update",
 											"type": "text"
 										},
 										{
 											"key": "recipient_phone",
-											"value": "",
+											"value": "1234",
 											"type": "text"
 										}
 									]
@@ -6268,7 +6538,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "18"
 										}
 									]
 								}
@@ -6367,7 +6637,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTkzMjc4NjIsImV4cCI6MTcxOTQxNDI2Mn0.Wh9hAwbkvx7qyTc4-dp-LsCNO-dLIiy_bqWwcGz6DtU",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInJvbGUiOiJidXllciIsImlhdCI6MTcyNDM3OTk4NCwiZXhwIjoxNzI0NjM5MTg0fQ.b4C8b2zAh5D-zo2srRJebMvIOxYj6S7Eos3coOBScXA",
 											"type": "string"
 										}
 									]
@@ -6375,13 +6645,19 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/buyer/orders",
+									"raw": "{{BASE_URL}}/buyer/orders?status=cancelled",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
 										"buyer",
 										"orders"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "cancelled"
+										}
 									]
 								}
 							},
@@ -6450,6 +6726,16 @@
 						{
 							"name": "Single Order Details By Id",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInJvbGUiOiJidXllciIsImlhdCI6MTcyNDM3OTk4NCwiZXhwIjoxNzI0NjM5MTg0fQ.b4C8b2zAh5D-zo2srRJebMvIOxYj6S7Eos3coOBScXA",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
@@ -6465,7 +6751,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": ""
+											"value": "4"
 										}
 									]
 								}
@@ -6557,7 +6843,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwLCJyb2xlIjoiYnV5ZXIiLCJpYXQiOjE3MTk5MDA5MDMsImV4cCI6MTcxOTk4NzMwM30.VpP_lZMLFODhMZr1WS2M4Bu0q3kTQX8S3saCoHnb0XI",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInJvbGUiOiJidXllciIsImlhdCI6MTcyNDM3OTk4NCwiZXhwIjoxNzI0NjM5MTg0fQ.b4C8b2zAh5D-zo2srRJebMvIOxYj6S7Eos3coOBScXA",
 											"type": "string"
 										}
 									]
@@ -6566,44 +6852,7 @@
 								"header": [],
 								"body": {
 									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "address_id",
-											"value": "1",
-											"type": "text"
-										},
-										{
-											"key": "payment_type",
-											"value": "",
-											"description": "payment types :   cod ,  creditcard , paypal",
-											"type": "text"
-										},
-										{
-											"key": "quantity",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "coupon_code",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "discount",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "payment",
-											"value": "",
-											"type": "text"
-										},
-										{
-											"key": "transaction_id",
-											"value": "",
-											"type": "text"
-										}
-									]
+									"formdata": []
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/buyer/orders/:id/cancel",
@@ -6619,7 +6868,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "38"
+											"value": "4"
 										}
 									]
 								}
@@ -7423,6 +7672,11 @@
 													"key": "cancel_url",
 													"value": "https://grazle.co.in/failed",
 													"type": "text"
+												},
+												{
+													"key": "merchant_param1",
+													"value": "12",
+													"type": "text"
 												}
 											]
 										},
@@ -7450,7 +7704,7 @@
 											"formdata": [
 												{
 													"key": "encResp",
-													"value": "qnStn10mi0a+9ZNu2rDElM/ZbPSAnz/5E7WSR+CbI2FYL2UGX44TUb8HiLl+4UeSQ4bWIPvKCSoTiVVoumv2Zx3f8bizytGh5vEDuLKqkO3q7At7R4AvjDwtLrjveIznB2I2fCAsVL2T2jWfffV8zH9g85isy80FITF/jEqLZ7y5sWBGYAd7uGeKEMq9PADsJ1t7Ze6htFiBT9s0Xyzy2g==",
+													"value": "6caa1ecefcfb81fce5d3ebf4eafedfb35654376556482741e1d78b3537fa910468448a27d204c6fa6d530b51dc35d72128f50cafe23269f91991daddeefebfaa9c393089cc283b61c30cd0e665c738bc103b909291055219f161a6889fd6566e68853d268f41c936d71546e6e7257a3eb8287451fed718469cb3446be6339338e3d1b93c106bb3e860a6e04f78cd9249168f34cd56c3abc4de00bf858d90c5b7af6b848e0b59590299b42e4c395d929d2150e8449b71d51679548a4867417a5e4495b0e3e799db2aad43af3a4633873dc398b88c412f1c472099996063d29401a3d528995b6eec5f6aa281ab1afa1f129c9a42f42b5c83c009cc1ae6f4c355d1c530cf205572cbc4dcbea04965e690091afb9b1b243009a879eac68bcdc392e54ac0183d623956d74388c6391668bfd7a8ed26d1d1b518e219c978be6b0bd9ce67b31fe6eee96fa9acbf4120deba377232d3bdcaf4d10befe8075ce20c5e9a1ed5f05bfd67ef6bdfc36a31f05f3da5a0aca64bc718fa8135ca8685cbd301b3abf542598b990e9b3df7fc2861a3f74bd66356544a662e2b1df5e937556bf58de12e92a2ec32bbd13d89d7868727ec463ee817d949d3a44e526689189c4ac2fd03380831a8f1b0124cf61410c96ae6cc8f9b76ece60439fe0bc2708096b82bb852b8e5ea89fc3fb81fe093a47c1064d3a5f8a1b7a451f91eea8dd55e8aeea0e2a7234b32571ad2b57380df26e199dccb0d05333c3b5db14c097e6ff3db14537547add26d0cd79fd8ef7aba402813f0360d0ce6f899b3bc40f91002235125c3614791a0fdda075be1c625fe36d522ac8fa76a612fddd04a875e86db029d96ddb075b52499acc5acf3c2f3246ffb28dd6aefc92e91b2d90575f411eb4c01e1420f93272472e149651d2c6bbfa847d15e82507421465c54605b1c7367dad3eae63d3ef333623346e6a5a37fd2cfd3c700c88e07e4506ed7d3914e02b9f6ea984cb14f9bcfbd2e9e39ad6e860a0f3d9e4020543628a974dbb65d7e17e0b1f6d73a67fc65540a41f9a78a97412aedde910e23a1&orderNo=92",
 													"type": "text"
 												}
 											]
@@ -7464,6 +7718,36 @@
 												"ccavenue",
 												"checkout",
 												"response"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Payment Response Copy",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "encResp",
+													"value": "6caa1ecefcfb81fce5d3ebf4eafedfb35654376556482741e1d78b3537fa910468448a27d204c6fa6d530b51dc35d72128f50cafe23269f91991daddeefebfaa9c393089cc283b61c30cd0e665c738bc103b909291055219f161a6889fd6566e68853d268f41c936d71546e6e7257a3eb8287451fed718469cb3446be6339338e3d1b93c106bb3e860a6e04f78cd9249168f34cd56c3abc4de00bf858d90c5b7af6b848e0b59590299b42e4c395d929d2150e8449b71d51679548a4867417a5e4495b0e3e799db2aad43af3a4633873dc398b88c412f1c472099996063d29401a3d528995b6eec5f6aa281ab1afa1f129c9a42f42b5c83c009cc1ae6f4c355d1c530cf205572cbc4dcbea04965e690091afb9b1b243009a879eac68bcdc392e54ac0183d623956d74388c6391668bfd7a8ed26d1d1b518e219c978be6b0bd9ce67b31fe6eee96fa9acbf4120deba377232d3bdcaf4d10befe8075ce20c5e9a1ed5f05bfd67ef6bdfc36a31f05f3da5a0aca64bc718fa8135ca8685cbd301b3abf542598b990e9b3df7fc2861a3f74bd66356544a662e2b1df5e937556bf58de12e92a2ec32bbd13d89d7868727ec463ee817d949d3a44e526689189c4ac2fd03380831a8f1b0124cf61410c96ae6cc8f9b76ece60439fe0bc2708096b82bb852b8e5ea89fc3fb81fe093a47c1064d3a5f8a1b7a451f91eea8dd55e8aeea0e2a7234b32571ad2b57380df26e199dccb0d05333c3b5db14c097e6ff3db14537547add26d0cd79fd8ef7aba402813f0360d0ce6f899b3bc40f91002235125c3614791a0fdda075be1c625fe36d522ac8fa76a612fddd04a875e86db029d96ddb075b52499acc5acf3c2f3246ffb28dd6aefc92e91b2d90575f411eb4c01e1420f93272472e149651d2c6bbfa847d15e82507421465c54605b1c7367dad3eae63d3ef333623346e6a5a37fd2cfd3c700c88e07e4506ed7d3914e02b9f6ea984cb14f9bcfbd2e9e39ad6e860a0f3d9e4020543628a974dbb65d7e17e0b1f6d73a67fc65540a41f9a78a97412aedde910e23a1&orderNo=92",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/ccavenue/checkout/response/membership-plan",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"ccavenue",
+												"checkout",
+												"response",
+												"membership-plan"
 											]
 										}
 									},
@@ -7660,6 +7944,118 @@
 							],
 							"path": [
 								"top-referrals"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Push Notification",
+			"item": [
+				{
+					"name": "Store Device Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "token",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/save-device-token",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"save-device-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Token",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "token",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/get-device-token/:user_id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"get-device-token",
+								":user_id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Shipping",
+			"item": [
+				{
+					"name": "Push Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "order_id",
+									"value": "4",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/shipping/push-order",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"shipping",
+								"push-order"
 							]
 						}
 					},

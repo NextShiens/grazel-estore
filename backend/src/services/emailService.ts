@@ -5,13 +5,113 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT as string, 10),
+  host: "smtp.hostinger.com",
+  port: 465,
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: "info@grazle.co.in",
+    pass: "Hemant@12#%$#^5q26",
   },
 });
+
+export const sendOrderConfirmationEmail = async (
+  email: string,
+  tracking_id: string
+) => {
+  const emailText = `Dear Customer,
+
+  We are delighted to confirm your order. Your order has been successfully placed, and your tracking ID is ${tracking_id}. You can use this ID to track the status of your order.
+
+  Thank you for shopping with us.
+
+  Best regards,
+  The Grazle Team`;
+
+  const emailHtml = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+      <h2 style="color: #333;">Order Confirmation</h2>
+      <p>Dear Customer,</p>
+      <p>We are delighted to confirm your order.</p>
+      <p>Your order has been successfully placed, and your tracking ID is <strong>${tracking_id}</strong>. You can use this ID to track the status of your order.</p>
+      <p>Thank you for shopping with us.</p>
+      <p>Best regards,</p>
+      <p><strong>The Grazle Team</strong></p>
+    </div>
+  `;
+
+  const mailOptions = {
+    from: '"Grazle" <info@grazle.co.in>',
+    to: email,
+    subject: "Order Confirmation",
+    text: emailText,
+    html: emailHtml,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Order confirmation email sent successfully");
+  } catch (error) {
+    console.error("Error sending order confirmation email:", error);
+  }
+};
+
+export const sendMembershipActivationEmail = async (
+  email: string,
+  membershipPlanName: string,
+  startDate: Date,
+  endDate: Date
+) => {
+  const formattedStartDate = startDate.toLocaleDateString();
+  const formattedEndDate = endDate.toLocaleDateString();
+
+  const emailText = `Dear Customer,
+
+  We are excited to confirm the activation of your membership plan: ${membershipPlanName}. Your membership is now active.
+
+  Membership Details:
+  - Plan: ${membershipPlanName}
+  - Start Date: ${formattedStartDate}
+  - End Date: ${formattedEndDate}
+
+  Thank you for being a valued member of our community.
+
+  Best regards,
+  The Grazle Team`;
+
+  const emailHtml = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+      <h2 style="color: #333;">Membership Activation Confirmation</h2>
+      <p>Dear Customer,</p>
+      <p>We are excited to confirm the activation of your membership plan: <strong>${membershipPlanName}</strong>. Your membership is now active.</p>
+      <p><strong>Membership Details:</strong></p>
+      <ul>
+        <li>Plan: ${membershipPlanName}</li>
+        <li>Start Date: ${formattedStartDate}</li>
+        <li>End Date: ${formattedEndDate}</li>
+      </ul>
+      <p>Thank you for being a valued member of our community.</p>
+      <p>Best regards,</p>
+      <p><strong>The Grazle Team</strong></p>
+    </div>
+  `;
+
+  const mailOptions = {
+    from: '"Grazle" <info@grazle.co.in>',
+    to: email,
+    subject: "Membership Plan Activation Confirmation",
+    text: emailText,
+    html: emailHtml,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Membership activation confirmation email sent successfully");
+  } catch (error) {
+    console.error(
+      "Error sending membership activation confirmation email:",
+      error
+    );
+  }
+};
 
 export const sendOrderStatusUpdateEmail = async (
   email: string,
@@ -123,7 +223,7 @@ export const sendOrderStatusUpdateEmail = async (
   }
 
   const mailOptions = {
-    from: '"Grazle" <grazle@info.com>',
+    from: '"Grazle" <info@grazle.co.in>',
     to: email,
     subject: "Order Status Update",
     text: emailText,
@@ -166,7 +266,7 @@ export const sendOrderCancellationEmailToSeller = async (
     `;
 
   const mailOptions = {
-    from: '"Grazle" <grazle@info.com>',
+    from: '"Grazle" <info@grazle.co.in>',
     to: email,
     subject: "Order Cancellation Notification",
     text: emailText,
@@ -212,7 +312,7 @@ The Grazle Team`;
   `;
 
   const mailOptions = {
-    from: '"Grazle" <grazle@info.com>',
+    from: '"Grazle" <info@grazle.co.in>',
     to: email,
     subject: "Store Profile Status Update",
     text: emailText,

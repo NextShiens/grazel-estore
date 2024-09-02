@@ -92,6 +92,9 @@ const uploader = multer({
       cb(null, file.fieldname + "-" + Date.now() + ".jpg");
     },
   }),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5 MB in bytes
+  },
 });
 
 router.get("/vendor/products", sellerMiddleware, productController.getProducts);
@@ -107,7 +110,6 @@ router.post(
     body("category_id")
       .notEmpty()
       .withMessage("The category id field is required"),
-    body("brand_id").notEmpty().withMessage("The brand id field is required"),
     body("title").notEmpty().withMessage("The title field is required"),
     body("price").notEmpty().withMessage("The price field is required"),
   ],
@@ -147,6 +149,18 @@ router.delete(
   "/vendor/products/:productId/gallery/:imageId",
   sellerMiddleware,
   productController.deleteProductImage
+);
+
+router.delete(
+  "/vendor/products-faq/:productId/faqs/:faqId",
+  sellerMiddleware,
+  productController.deleteProductFaq
+);
+
+router.delete(
+  "/vendor/products-variant/:productId/variants/:variantId",
+  sellerMiddleware,
+  productController.deleteProductVariant
 );
 
 const orderController = new SellerOrderController();

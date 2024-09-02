@@ -30,6 +30,15 @@ export const decrypt = async (input) => {
   }
 };
 export async function loginAction(formdata) {
+  if (!(formdata instanceof FormData)) {
+    const newFormData = new FormData();
+    for (const key in formdata) {
+      if (formdata.hasOwnProperty(key)) {
+        newFormData.append(key, formdata[key]);
+      }
+    }
+    formdata = newFormData;
+  }
   const user = formdata.get("email");
   const expires = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
   const session = await encrypt({ user, expires });

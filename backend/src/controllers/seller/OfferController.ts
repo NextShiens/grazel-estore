@@ -4,6 +4,8 @@ import { Offer } from "../../entities/Offer";
 import { Product } from "../../entities/Product";
 import { appDataSource } from "../../config/db";
 import { In } from "typeorm";
+import { UserDeviceToken } from "../../entities/UserDeviceToken";
+import { sendPushNotification } from "../../services/notificationService";
 
 export class OfferController {
   async createOffer(req: Request, res: Response) {
@@ -285,9 +287,8 @@ export class OfferController {
       const user = (req as any).user;
       const userId = user.id;
 
-      const offerId = parseInt(req.params.offer_id, 10); // Parse offer_id from params as integer
-      const productId = parseInt(req.body.product_id, 10); // Get product_id from request body
-
+      const offerId = parseInt(req.params.offer_id, 10);
+      const productId = parseInt(req.body.product_id, 10);
       // Validate offerId presence and validity
       if (isNaN(offerId)) {
         return res.status(400).json({
@@ -306,6 +307,7 @@ export class OfferController {
 
       const offerRepository = appDataSource.getRepository(Offer);
       const productRepository = appDataSource.getRepository(Product);
+      const deviceTokenRepo = appDataSource.getRepository(UserDeviceToken);
 
       // Ensure the offer exists and belongs to the user
       const offer = await offerRepository.findOne({
@@ -339,6 +341,31 @@ export class OfferController {
       product.offer = offer;
       await productRepository.save(product);
 
+      // Fetch all device tokens
+      const deviceTokens = await deviceTokenRepo.find();
+
+      if (deviceTokens.length > 0) {
+        // Extract tokens from the records
+        const tokens = deviceTokens.map(
+          (tokenRecord) => tokenRecord.device_token
+        );
+
+        // Send push notification
+        const notificationTitle = "Exclusive Offer Available";
+        const notificationMessage = `We are excited to inform you that a new offer has been applied to selected products. Explore the latest promotions and take advantage of these exclusive deals today!`;
+
+        await Promise.all(
+          tokens.map((token) =>
+            sendPushNotification(
+              token,
+              notificationTitle,
+              notificationMessage,
+              { Offer: offer.name }
+            )
+          )
+        );
+      }
+
       res.status(200).json({
         success: true,
         message: `Offer applied successfully to product ${product.id}.`,
@@ -359,8 +386,8 @@ export class OfferController {
       const user = (req as any).user;
       const userId = user.id;
 
-      const offerId = parseInt(req.params.offer_id, 10); // Parse offer_id from params as integer
-      const productIds = JSON.parse(req.body.product_ids); // Parse product_ids from request body
+      const offerId = parseInt(req.params.offer_id, 10);
+      const productIds = JSON.parse(req.body.product_ids);
 
       // Validate offerId presence and validity
       if (isNaN(offerId)) {
@@ -383,6 +410,7 @@ export class OfferController {
 
       const offerRepository = appDataSource.getRepository(Offer);
       const productRepository = appDataSource.getRepository(Product);
+      const deviceTokenRepo = appDataSource.getRepository(UserDeviceToken);
 
       // Ensure the offer exists and belongs to the user
       const offer = await offerRepository.findOne({
@@ -418,6 +446,31 @@ export class OfferController {
         product.offer = offer;
         await productRepository.save(product);
         updatedProducts.push(product);
+      }
+
+      // Fetch all device tokens
+      const deviceTokens = await deviceTokenRepo.find();
+
+      if (deviceTokens.length > 0) {
+        // Extract tokens from the records
+        const tokens = deviceTokens.map(
+          (tokenRecord) => tokenRecord.device_token
+        );
+
+        // Send push notification
+        const notificationTitle = "Exclusive Offer Available";
+        const notificationMessage = `We are excited to inform you that a new offer has been applied to selected products. Explore the latest promotions and take advantage of these exclusive deals today!`;
+
+        await Promise.all(
+          tokens.map((token) =>
+            sendPushNotification(
+              token,
+              notificationTitle,
+              notificationMessage,
+              { Offer: offer.name }
+            )
+          )
+        );
       }
 
       res.status(200).json({

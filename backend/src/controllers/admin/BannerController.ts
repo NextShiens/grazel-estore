@@ -3,9 +3,7 @@ import { validationResult } from "express-validator";
 import { appDataSource } from "../../config/db";
 import { Banner } from "../../entities/Banners";
 
-const BASE_URL =
-  process.env.IMAGE_PATH ||
-  "https://ecommerce-backend-api-production-84b3.up.railway.app/api/";
+const BASE_URL = process.env.IMAGE_PATH || "https://api.grazle.co.in/";
 
 function getFullUrl(path: string | null): string | null {
   if (!path) {
@@ -23,10 +21,19 @@ function transformBanner(banner: Banner): Banner {
 }
 
 export class BannerController {
+
   async getAllBanners(req: Request, res: Response) {
     try {
+      const { type } = req.query;
       const BannerRepo = appDataSource.getRepository(Banner);
-      let banners = await BannerRepo.find();
+
+      // Build the query based on the presence of the type query parameter
+      let banners;
+      if (type) {
+        banners = await BannerRepo.find({ where: { type: type as any } });
+      } else {
+        banners = await BannerRepo.find();
+      }
 
       banners = banners.map(transformBanner);
 
@@ -96,7 +103,7 @@ export class BannerController {
         return res.status(400).json(errorResponse);
       }
 
-      const { title, position } = req.body;
+      const { title, position, type } = req.body;
       const banner_image = (req as any).files?.banner_image?.[0]?.path.replace(
         /\\/g,
         "/"
@@ -110,6 +117,7 @@ export class BannerController {
       newBanner.position = position;
       newBanner.image = banner_image;
       newBanner.video = video;
+      newBanner.type = type; // Set the type
 
       const createdBanner = await BannerRepo.save(newBanner);
 
@@ -122,6 +130,77 @@ export class BannerController {
       res.status(500).json({
         success: false,
         message: "Failed to create banner",
+        error: error,
+      });
+    }
+  }
+
+  async edit(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const parsedId = parseInt(id, 10);
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        const result = errors.mapped();
+        const formattedErrors: Record<string, string[]> = {};
+        for (const key in result) {
+          formattedErrors[key.charAt(0).toLowerCase() + key.slice(1)] = [
+            result[key].msg,
+          ];
+        }
+
+        const errorCount = Object.keys(result).length;
+        const errorSuffix =
+          errorCount > 1
+            ? ` (and ${errorCount - 1} more error${errorCount > 2 ? "s" : ""})`
+            : "";
+
+        const errorResponse = {
+          success: false,
+          message: `${result[Object.keys(result)[0]].msg}${errorSuffix}`,
+          errors: formattedErrors,
+        };
+
+        return res.status(400).json(errorResponse);
+      }
+
+      const BannerRepo = appDataSource.getRepository(Banner);
+      const banner = await BannerRepo.findOne({ where: { id: parsedId } });
+
+      if (!banner) {
+        return res.status(404).json({
+          error: "Banner not found",
+          success: false,
+          message: "Banner not found with the provided ID",
+        });
+      }
+
+      const { title, position, type } = req.body;
+      if (title) banner.title = title;
+      if (position) banner.position = position;
+      if (type) banner.type = type; // Update the type
+      if ((req as any).files?.banner_image) {
+        banner.image = (req as any).files?.banner_image?.[0]?.path.replace(
+          /\\/g,
+          "/"
+        );
+      }
+      if ((req as any).files?.video) {
+        banner.video = (req as any).files?.video?.[0]?.path.replace(/\\/g, "/");
+      }
+
+      const updatedBanner = await BannerRepo.save(banner);
+
+      res.status(200).json({
+        banner: transformBanner(updatedBanner),
+        success: true,
+        message: "Banner updated successfully!",
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to update banner",
         error: error,
       });
     }

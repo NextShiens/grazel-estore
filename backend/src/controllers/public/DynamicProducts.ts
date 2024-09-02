@@ -5,7 +5,7 @@ import { Review } from "../../entities/Review";
 
 const BASE_URL =
   process.env.IMAGE_PATH ||
-  "https://ecommerce-backend-api-production-84b3.up.railway.app/api/";
+  "https://api.grazle.co.in/";
 
 async function getRandomProducts(limit: number): Promise<Product[]> {
   const productRepository = appDataSource.getRepository(Product);
