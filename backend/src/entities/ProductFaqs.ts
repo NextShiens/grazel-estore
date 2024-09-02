@@ -32,7 +32,9 @@ export class ProductFaqs {
   @UpdateDateColumn({ type: "timestamp" })
   updated_at: Date;
 
-  @ManyToOne(() => Product, (product) => product.faqs)
+  @ManyToOne(() => Product, (product) => product.faqs, {
+    cascade: ["remove"],
+  })
   @JoinColumn({ name: "product_id" })
   product: Product;
 }

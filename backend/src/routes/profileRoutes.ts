@@ -37,14 +37,13 @@ router.get("/", authMiddleware, profileController.getProfile);
 router.put(
   "/:id/edit",
   authMiddleware,
-
   upload,
   profileController.editProfile
 );
 router.post(
   "/change-password",
-  parsing,
   authMiddleware,
+  parsing,
   changePasswordValidator,
   profileController.changePassword
 );

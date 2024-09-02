@@ -91,6 +91,9 @@ router.put(
     body("payment_status")
       .notEmpty()
       .withMessage("The payment_status field is required"),
+      body("transaction_id")
+      .notEmpty()
+      .withMessage("The transaction_id field is required"),
   ],
   orderController.updatePaymentStatus
 );

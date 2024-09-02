@@ -53,9 +53,9 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
   return (
     <>
       {type === "orders" && (
-        <tr key={order?.id} className="h-[50px] text-[14px]">
+        <tr key={order?.id} className=" text-[14px] ">
           <td>{order?.id}</td>
-          <td className="flex items-center gap-1.5 h-[50px] capitalize">
+          <td className="flex items-start gap-1.5  capitalize w-[320px] p-3 ">
             <Image
               width={26}
               height={26}
@@ -65,7 +65,7 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
                 console.error('Image failed to load:', e);
                 e.target.src = 'https://via.placeholder.com/26x26?text=No+Image+Available';
               }}
-              className="h-[26px] w-[26px]"
+              className=" w-[26px]"
             />
             {order?.products?.map(
               (pro, index) =>
@@ -131,8 +131,8 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
 
       {type === "customers" && (
         <>
-          <tr key={order?.id} className="h-[50px] text-[14px]">
-            <td className="flex items-center gap-1.5 h-[50px]">
+          <tr key={order?.id} className=" text-[14px] mt-2">
+            <td className="flex items-center gap-1.5">
               <Image
                 alt=""
                 width={26}
@@ -142,14 +142,14 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
                   console.error('Image failed to load:', e);
                   e.target.src = 'https://via.placeholder.com/26x26?text=No+Image+Available';
                 }}
-                className="h-[26px] w-[26px] rounded-[5px]"
+                className=" w-[26px] rounded-[5px]"
               />
               {order?.customer?.username}
             </td>
 
             <td>{order?.customer?.email}</td>
             <td>{order?.customer_address.recipient_phone}</td>
-            <td className="flex items-center gap-1.5 h-[50px] capitalize">
+            <td className="flex items-center gap-1.5  capitalize w-[733px]">
               <Image
                 width={26}
                 height={26}
@@ -159,7 +159,7 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
                   console.error('Image failed to load:', e);
                   e.target.src = 'https://via.placeholder.com/26x26?text=No+Image+Available';
                 }}
-                className="h-[26px] w-[26px]"
+                className=" w-[26px]"
               />
               {order?.products?.map(
                 (pro, index) =>

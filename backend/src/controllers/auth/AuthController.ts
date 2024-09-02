@@ -13,9 +13,7 @@ import { StoreProfile } from "../../entities/StoreProfile";
 import { NotificationSettings } from "../../entities/NotificationSettings";
 const ms = require("ms");
 
-const BASE_URL =
-  process.env.IMAGE_PATH ||
-  "https://ecommerce-backend-api-production-84b3.up.railway.app/api/";
+const BASE_URL = process.env.IMAGE_PATH || "https://api.grazle.co.in/";
 
 export class AuthController {
   async register(req: Request, res: Response) {
@@ -104,7 +102,7 @@ export class AuthController {
         storeProfile = await appDataSource.manager.save(newStoreProfile);
       }
 
-      const expiresInOneDay = ms("3d");
+      const expiresInOneDay = ms("14d");
 
       const token = jwt.sign({ userId: newUser.id, role: role }, JWT_SECRET, {
         expiresIn: expiresInOneDay / 1000,
@@ -539,18 +537,18 @@ export class AuthController {
       });
 
       const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT as string, 10),
+        host: "smtp.hostinger.com",
+        port: 465,
         auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
+          user: "info@grazle.co.in",
+          pass: "Hemant@12#%$#^5q26",
         },
       });
 
-      const resetUrl = `http://yourapp.com/reset-password?token=${resetToken}`;
+      const resetUrl = `https://grazle.co.in/ResetPassword?token=${resetToken}`;
 
       const mailOptions = {
-        from: '"Grazle" <no-reply@yourapp.com>',
+        from: '"Grazle" <info@grazle.co.in>',
         to: email,
         subject: "Password Reset",
         text: `You requested a password reset. Use the following link to reset your password: ${resetUrl}`,

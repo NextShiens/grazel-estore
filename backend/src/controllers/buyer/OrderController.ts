@@ -10,18 +10,22 @@ import { Category } from "../../entities/Category";
 import { Brand } from "../../entities/Brand";
 import { User } from "../../entities/Users";
 import { IPaginationOptions, paginate } from "nestjs-typeorm-paginate";
-import { sendOrderCancellationEmailToSeller } from "../../services/emailService";
+import {
+  sendOrderCancellationEmailToSeller,
+  sendOrderConfirmationEmail,
+  sendOrderStatusUpdateEmail,
+} from "../../services/emailService";
 import { OrderProduct } from "../../entities/OrderProduct";
 import { OrderStatusHistory } from "../../entities/OrderHistory";
+import { UserDeviceToken } from "../../entities/UserDeviceToken";
+import { sendPushNotification } from "../../services/notificationService";
 
 const omitTimestamps = (order: Order) => {
   const { created_at, updated_at, ...rest } = order;
   return rest;
 };
 
-const BASE_URL =
-  process.env.IMAGE_PATH ||
-  "https://ecommerce-backend-api-production-84b3.up.railway.app/api/";
+const BASE_URL = process.env.IMAGE_PATH || "https://api.grazle.co.in/";
 
 const omitSensitiveUserInfo = (order: any) => {
   // Create a shallow copy of the order object
@@ -45,139 +49,6 @@ function generateTrackingId(): string {
 }
 
 export class OrderController {
-  // async createOrder(req: Request, res: Response) {
-  //   const user = (req as any).user;
-  //   const userId = user.id;
-
-  //   // Validation Error Handling
-  //   const errors = validationResult(req);
-  //   if (!errors.isEmpty()) {
-  //     const result = errors.mapped();
-
-  //     const formattedErrors: Record<string, string[]> = {};
-  //     for (const key in result) {
-  //       formattedErrors[key.charAt(0).toLowerCase() + key.slice(1)] = [
-  //         result[key].msg,
-  //       ];
-  //     }
-
-  //     const errorCount = Object.keys(result).length;
-  //     const errorSuffix =
-  //       errorCount > 1
-  //         ? ` (and ${errorCount - 1} more error${errorCount > 2 ? "s" : ""})`
-  //         : "";
-
-  //     const errorResponse = {
-  //       success: false,
-  //       message: `${result[Object.keys(result)[0]].msg}${errorSuffix}`,
-  //       errors: formattedErrors,
-  //     };
-
-  //     return res.status(400).json(errorResponse);
-  //   }
-
-  //   const {
-  //     address_id,
-  //     payment_type,
-  //     quantities,
-  //     coupon_code,
-  //     discount,
-  //     status = "new",
-  //     payment,
-  //     transaction_id,
-  //     product_ids,
-  //   } = req.body;
-
-  //   const referenceId = uuidv4();
-  //   const date = new Date();
-  //   const trackingId = generateTrackingId();
-
-  //   try {
-  //     // Create a new order instance
-  //     const orderRepository = appDataSource.getRepository(Order);
-  //     const order = new Order();
-  //     order.user_id = userId;
-  //     order.date = date;
-  //     order.address_id = address_id;
-  //     order.reference_id = referenceId;
-  //     order.payment_type = payment_type;
-  //     order.coupon_code = coupon_code || null;
-  //     order.discount = discount || null;
-  //     order.tracking_id = trackingId;
-  //     order.payment = payment;
-  //     order.transaction_id = transaction_id;
-
-  //     // Save the order to get the generated order id
-  //     await orderRepository.save(order);
-
-  //     // Create initial order status history
-  //     const statusHistoryRepository =
-  //       appDataSource.getRepository(OrderStatusHistory);
-  //     const statusHistory = new OrderStatusHistory();
-  //     statusHistory.status = status;
-  //     statusHistory.order = order;
-  //     await statusHistoryRepository.save(statusHistory);
-
-  //     // Handle order products
-  //     const orderProducts: OrderProduct[] = [];
-
-  //     // Split product_ids and quantities into arrays
-  //     const productIdArray = product_ids
-  //       .split(",")
-  //       .map((id: string) => parseInt(id.trim(), 10));
-  //     const quantityArray = quantities
-  //       .split(",")
-  //       .map((qty: string) => parseInt(qty.trim(), 10));
-
-  //     // Fetch products from the database and create OrderProduct entries
-  //     const productRepository = appDataSource.getRepository(Product);
-
-  //     for (let i = 0; i < productIdArray.length; i++) {
-  //       const productId = productIdArray[i];
-  //       const quantity = quantityArray[i];
-
-  //       // Fetch product by productId
-  //       const product = await productRepository.findOne({
-  //         where: { id: productId },
-  //       });
-
-  //       if (!product) {
-  //         return res
-  //           .status(404)
-  //           .json({ message: `Product with id ${productId} not found` });
-  //       }
-
-  //       const orderProduct = new OrderProduct();
-  //       orderProduct.order = order;
-  //       orderProduct.product = product;
-  //       orderProduct.quantity = quantity;
-  //       orderProduct.price = product.price;
-
-  //       orderProducts.push(orderProduct);
-  //     }
-
-  //     // Save all order products
-  //     const orderProductRepository = appDataSource.getRepository(OrderProduct);
-  //     await orderProductRepository.save(orderProducts);
-
-  //     // Fetch the order with its related order products
-  //     const savedOrder = await orderRepository.findOne({
-  //       where: { id: order.id },
-  //       relations: ["orderProducts", "orderProducts.product", "status_history"],
-  //     });
-
-  //     // Respond with the created order
-  //     res.status(201).json({
-  //       success: true,
-  //       message: "Order Placed Successfully",
-  //       order: savedOrder,
-  //     });
-  //   } catch (error) {
-  //     console.error("Error creating order:", error);
-  //     res.status(500).json({ message: "Failed to create order" });
-  //   }
-  // }
-
   async createOrder(req: Request, res: Response) {
     const user = (req as any).user;
     const userId = user.id;
@@ -216,7 +87,7 @@ export class OrderController {
       prices,
       coupon_code,
       discount,
-      status = "new",
+      status = "in_progress",
       payment,
       transaction_id,
       product_ids,
@@ -237,6 +108,8 @@ export class OrderController {
     try {
       // Create a new order instance
       const orderRepository = appDataSource.getRepository(Order);
+      const deviceTokenRepo = appDataSource.getRepository(UserDeviceToken);
+
       const order = new Order();
       order.user_id = userId;
       order.date = date;
@@ -312,6 +185,46 @@ export class OrderController {
         relations: ["orderProducts", "orderProducts.product", "status_history"],
       });
 
+      console.log("Saved Order:", savedOrder);
+
+      const order_user_id = savedOrder?.user_id;
+
+      // Send email notification
+      const userRepo = appDataSource.getRepository(User);
+      const user = await userRepo.findOne({ where: { id: order_user_id } });
+
+      if (payment_type === "cod" && user && user.email) {
+        await sendOrderConfirmationEmail(
+          user.email,
+          savedOrder?.tracking_id || ""
+        );
+
+        // Convert user_id to string if necessary
+        const userId = user?.id?.toString();
+
+        if (userId) {
+          // Find the device token for the user
+          const deviceTokenRecord = await deviceTokenRepo.findOne({
+            where: { user_id: userId },
+          });
+
+          if (deviceTokenRecord) {
+            const token = deviceTokenRecord.device_token;
+
+            // Send push notification
+            await sendPushNotification(
+              token,
+              "Order Placed",
+              `Your order with ID ${savedOrder?.tracking_id} has been placed successfully.`,
+              { orderId: savedOrder?.tracking_id }
+            );
+          } else {
+            // No device token found
+            console.log("No device token found for user:", userId);
+          }
+        }
+      }
+
       // Respond with the created order
       res.status(201).json({
         success: true,
@@ -329,7 +242,7 @@ export class OrderController {
       const user = (req as any).user;
       const userId = user.id;
 
-      const { page = 1, limit = 10, status } = req.query; // Retrieve page, limit, and status query parameters
+      const { page = 1, limit = 10, status } = req.query;
 
       const orderRepo = appDataSource.getRepository(Order);
 
@@ -352,7 +265,6 @@ export class OrderController {
       ];
       if (status && validStatuses.includes(status as string)) {
         queryBuilder.andWhere("statusHistory.status = :status", { status });
-        // queryBuilder = queryBuilder.andWhere("order.status = :status", {  status, });
       }
 
       // Define pagination options
@@ -997,7 +909,7 @@ export class OrderController {
   async updatePaymentStatus(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const { payment_status } = req.body;
+      const { payment_status, transaction_id } = req.body;
 
       const validStatuses = ["paid", "notpaid"];
       if (!validStatuses.includes(payment_status)) {
@@ -1009,6 +921,7 @@ export class OrderController {
       }
 
       const orderRepo = appDataSource.getRepository(Order);
+      const deviceTokenRepo = appDataSource.getRepository(UserDeviceToken);
 
       // Fetch the order to update
       let order = await orderRepo.findOne({
@@ -1025,10 +938,48 @@ export class OrderController {
 
       // Update the payment status and timestamp
       order.payment = payment_status;
+      order.transaction_id = transaction_id;
       order.updated_at = new Date();
 
       // Save the updated order
       const updatedOrder = await orderRepo.save(order);
+
+      const userRepo = appDataSource.getRepository(User);
+      const user = await userRepo.findOne({
+        where: { id: updatedOrder.user_id },
+      });
+
+      if (payment_status === "paid" && user && user.email) {
+        await sendOrderConfirmationEmail(
+          user.email,
+          updatedOrder?.tracking_id || ""
+        );
+
+        // Convert user_id to string if necessary
+        const userId = user?.id?.toString();
+
+        if (userId) {
+          // Find the device token for the user
+          const deviceTokenRecord = await deviceTokenRepo.findOne({
+            where: { user_id: userId },
+          });
+
+          if (deviceTokenRecord) {
+            const token = deviceTokenRecord.device_token;
+
+            // Send push notification
+            await sendPushNotification(
+              token,
+              "Order Placed",
+              `Your order with ID ${updatedOrder.tracking_id} has been placed successfully.`,
+              { orderId: updatedOrder.tracking_id }
+            );
+          } else {
+            // No device token found
+            console.log("No device token found for user:", userId);
+          }
+        }
+      }
 
       res.status(200).json({
         // order: updatedOrder,

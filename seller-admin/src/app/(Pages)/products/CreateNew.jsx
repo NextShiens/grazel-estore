@@ -24,6 +24,12 @@ const AddProduct = ({ setSelectedTab }) => {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [title, setTitle] = useState("");
+  const [dimensions, setDimensions] = useState({
+    length: "",
+    width: "",
+    height: "",
+    weight: "",
+  });
   useEffect(() => {
     dispatch(updatePageNavigation("products"));
   }, [dispatch]);
@@ -96,6 +102,9 @@ const AddProduct = ({ setSelectedTab }) => {
         formData.append(`variants[${i}][price]`, variant.price);
         formData.append(`variants[${i}][variant]`, variant.variant);
       });
+      Object.entries(dimensions).forEach(([key, value]) => {
+        formData.append(`dimensions[${key}]`, value);
+      });
 
       const { data } = await axiosPrivate.post("/vendor/products", formData, {
         headers: {
@@ -116,6 +125,10 @@ const AddProduct = ({ setSelectedTab }) => {
     } catch (error) {
       toast.error("Something went wrong");
     }
+  };
+  const handleDimensionChange = (e) => {
+    const { name, value } = e.target;
+    setDimensions(prev => ({ ...prev, [name]: value }));
   };
   const handleTitleChange = (e) => {
     const newTitle = e.target.value;
@@ -242,6 +255,60 @@ const AddProduct = ({ setSelectedTab }) => {
                 </div>
               </div>
             </section>
+            <section className="mb-[30px]">
+              <h2 className="text-[20px] font-[600] mb-[15px]">Dimensions</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Length (cm)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    placeholder="Length"
+                    name="length"
+                    value={dimensions.length}
+                    onChange={handleDimensionChange}
+                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Width (cm)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    placeholder="Width"
+                    name="width"
+                    value={dimensions.width}
+                    onChange={handleDimensionChange}
+                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Height (cm)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    placeholder="Height"
+                    name="height"
+                    value={dimensions.height}
+                    onChange={handleDimensionChange}
+                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#777777]">Weight (kg)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder="Weight"
+                    name="weight"
+                    value={dimensions.weight}
+                    onChange={handleDimensionChange}
+                    className="focus:outline-none border-[2px] border-gray-200 rounded-[8px] px-[15px] h-[50px] text-[15px]"
+                  />
+                </div>
+              </div>
+            </section>
+
 
             <section className="mb-[30px]">
               <h2 className="text-[20px] font-[600] mb-[15px]">FAQs</h2>

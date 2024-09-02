@@ -6,6 +6,11 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
+enum BannerType {
+  WEB = "web",
+  MOBILE = "mobile",
+}
+
 @Entity("banners")
 export class Banner {
   @PrimaryGeneratedColumn()
@@ -17,15 +22,21 @@ export class Banner {
   @Column()
   title: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: "varchar", nullable: true })
   image: string | null;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: "varchar", nullable: true })
   video: string | null;
-
 
   @Column({ default: false })
   active: boolean;
+
+  @Column({
+    type: "enum",
+    enum: BannerType,
+    default: BannerType.WEB,
+  })
+  type: BannerType;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;

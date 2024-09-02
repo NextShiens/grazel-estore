@@ -10,6 +10,8 @@ import { User } from "../../entities/Users";
 import { IPaginationOptions, paginate } from "nestjs-typeorm-paginate";
 import { sendOrderStatusUpdateEmail } from "../../services/emailService";
 import { OrderStatusHistory } from "../../entities/OrderHistory";
+import { UserDeviceToken } from "../../entities/UserDeviceToken";
+import { sendPushNotification } from "../../services/notificationService";
 
 const omitTimestamps = (order: Order) => {
   const { created_at, updated_at, ...rest } = order;
@@ -429,6 +431,7 @@ export class SellerOrderController {
 
       const orderRepo = appDataSource.getRepository(Order);
       const statusHistoryRepo = appDataSource.getRepository(OrderStatusHistory);
+      const deviceTokenRepo = appDataSource.getRepository(UserDeviceToken);
 
       // Fetch the order to update
       const order = await orderRepo.findOne({
@@ -468,6 +471,58 @@ export class SellerOrderController {
           order.reference_id,
           status
         );
+      }
+
+      // Convert user_id to string if necessary
+      const userId = user?.id?.toString();
+
+      if (userId) {
+        // Find the device token for the user
+        const deviceTokenRecord = await deviceTokenRepo.findOne({
+          where: { user_id: userId },
+        });
+
+        if (deviceTokenRecord) {
+          const token = deviceTokenRecord.device_token;
+
+          // Determine push notification message based on status
+          let notificationTitle = "Order Status Update";
+          let notificationMessage = "";
+
+          switch (status) {
+            case "new":
+              notificationMessage = `Your order with ID ${order.tracking_id} has been placed successfully.`;
+              break;
+            case "shipped":
+              notificationMessage = `Your order with ID ${order.tracking_id} has been shipped.`;
+              break;
+            case "in_progress":
+              notificationMessage = `Your order with ID ${order.tracking_id} is currently in progress.`;
+              break;
+            case "completed":
+              notificationMessage = `Your order with ID ${order.tracking_id} has been completed.`;
+              break;
+            case "cancelled":
+              notificationMessage = `Your order with ID ${order.tracking_id} has been cancelled.`;
+              break;
+            case "return":
+              notificationMessage = `Your order with ID ${order.tracking_id} is being returned.`;
+              break;
+            default:
+              notificationMessage = `Your order with ID ${order.tracking_id} has been updated.`;
+          }
+
+          // Send push notification
+          await sendPushNotification(
+            token,
+            notificationTitle,
+            notificationMessage,
+            { orderId: order.tracking_id }
+          );
+        } else {
+          // No device token found
+          console.log("No device token found for user:", userId);
+        }
       }
 
       res.status(200).json({

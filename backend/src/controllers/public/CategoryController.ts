@@ -5,7 +5,7 @@ import { paginate } from "nestjs-typeorm-paginate";
 
 const BASE_URL =
   process.env.IMAGE_PATH ||
-  "https://ecommerce-backend-api-production-84b3.up.railway.app/api/";
+  "https://api.grazle.co.in/";
 
 const omitTimestamps = (category: Category) => {
   const { created_at, updated_at, ...rest } = category;

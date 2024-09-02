@@ -125,18 +125,11 @@ export class UserMembershipController {
         });
       }
 
-      // Calculate start and end date
-      // const startDate = new Date();
-      // const endDate = new Date();
-      // endDate.setMonth(endDate.getMonth() + membershipPlan.duration_months);
-
       // Create new membership
       const newMembership = new UserMembership();
       newMembership.user = user;
       newMembership.membership_plan = membershipPlan;
-      // newMembership.start_date = startDate;
-      // newMembership.end_date = endDate;
-      newMembership.payment_status = "notpaid"; // Update to "paid" after payment confirmation
+      newMembership.payment_status = "notpaid";
 
       const createdMembership = await userMembershipRepo.save(newMembership);
       res.status(201).json({

@@ -37,7 +37,7 @@ const Dashboard = () => {
         limit: itemsPerPage.toString(),
       });
 
-      const { data } = await axiosPrivate.get(`/admin/orders?${params}`, {
+      const { data } = await axiosPrivate.get(`/admin/orders?${params}?page=1&limit=10`, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },

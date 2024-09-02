@@ -29,7 +29,9 @@ export class ProductsGallery {
   @UpdateDateColumn({ type: "timestamp" })
   updated_at: Date;
 
-  @ManyToOne(() => Product, (product) => product.gallery)
+  @ManyToOne(() => Product, (product) => product.gallery, {
+    cascade: ["remove"],
+  })
   @JoinColumn({ name: "product_id" })
   product: Product;
 }

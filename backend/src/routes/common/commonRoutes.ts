@@ -13,7 +13,6 @@ import { FeedbackController } from "../../controllers/public/FeedbackController"
 import { NotificationController } from "../../controllers/common/NotificationController";
 import path from "path";
 import fs from "fs";
-// import { UserMembershipController } from "../../controllers/common/MembershipPurchaseController";
 
 const multer = require("multer");
 const router = Router();
@@ -212,6 +211,22 @@ router.get(
   notificationController.getUserNotificationSettings
 );
 
+// User Device Token Routes
 
+import { TokenController } from "../../controllers/common/UserDeviceTokenController";
+
+// Route to save or update device token
+router.post(
+  "/save-device-token",
+  parsing,
+  [
+    body("user_id").notEmpty().withMessage("The user_id field is required"),
+    body("token").notEmpty().withMessage("The token field is required"),
+  ],
+  TokenController.saveDeviceToken
+);
+
+// Route to get device token
+router.get("/get-device-token/:user_id", TokenController.getDeviceToken);
 
 export default router;

@@ -18,6 +18,13 @@ export class ProductVariant {
   @Column({ type: "varchar", length: 255, nullable: true })
   measurements: string;
 
-  @ManyToOne(() => Product, (product) => product.variants)
+  @ManyToOne(
+    () => Product,
+    (product) => product.variants,
+
+    {
+      cascade: ["remove"],
+    }
+  )
   product: Product;
 }

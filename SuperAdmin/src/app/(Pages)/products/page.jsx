@@ -23,6 +23,7 @@ const Products = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(40);
+
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {

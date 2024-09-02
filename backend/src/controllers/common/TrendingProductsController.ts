@@ -10,6 +10,12 @@ import { Profile } from "../../entities/Profiles";
 import { Review } from "../../entities/Review";
 import { Offer } from "../../entities/Offer";
 
+
+const BASE_URL =
+  process.env.IMAGE_PATH ||
+  "https://api.grazle.co.in/";
+
+
 export class TrendingProductsController {
   async getTrendingProducts(req: Request, res: Response) {
     try {
@@ -101,6 +107,11 @@ export class TrendingProductsController {
 
           return {
             ...product,
+
+            featured_image: product.featured_image
+            ? `${BASE_URL}${product.featured_image}`
+            : null,
+
             rating: averageRating.toFixed(1),
             reviews: totalReviews,
             user: {
@@ -231,6 +242,10 @@ export class TrendingProductsController {
 
           return {
             ...product,
+            featured_image: product.featured_image
+            ? `${BASE_URL}${product.featured_image}`
+            : null,
+
             rating: averageRating.toFixed(1),
             reviews: totalReviews,
             user: {
@@ -354,6 +369,10 @@ export class TrendingProductsController {
 
           return {
             ...product,
+            featured_image: product.featured_image
+            ? `${BASE_URL}${product.featured_image}`
+            : null,
+
             user: {
               ...user,
               profile: userProfile, // Attach profile to user object

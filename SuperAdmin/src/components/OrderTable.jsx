@@ -40,28 +40,28 @@ const OrderTable = ({ order, type, status }) => {
   if (status?.length > 0 && !status.includes(orderStatus)) return null;
   return (
     <>
-     <tr key={order?.id} className="h-[63px] text-[13px]">
-  <td>{order?.id}</td>
-  <td className="flex items-center gap-1.5 h-[80px] w-[230px] py-1 -px-8 my-4">
-    <Image
-      width={26}
-      height={26}
-      alt=""
-      src={order?.products[0]?.featured_image || electronicLED}
-      className="h-[26px] w-[26px] rounded-md"
-    />
-    {order?.products?.map(
-      (pro, index) =>
-        `${pro?.title}${index < order.products.length - 1 ? ", " : ""}`
-    )}
-  </td>
+      <tr key={order?.id} className="text-[12px]">
+        <td>{order?.id}</td>
+        <td className="flex items-start gap-1.5  w-[230px] py-3  my-4">
+          <Image
+            width={26}
+            height={26}
+            alt=""
+            src={order?.products[0]?.featured_image || electronicLED}
+            className="h-[26px] w-[26px] rounded-md"
+          />
+          {order?.products?.map(
+            (pro, index) =>
+              `${pro?.title}${index < order.products.length - 1 ? ", " : ""}`
+          )}
+        </td>
         <td className="w-4 sm:w-8 md:w-12 lg:w-16"></td>
-  <td>
-    ₹{" "}
-    {order?.products?.reduce((acc, pro) => {
-      return acc + pro?.quantity * pro?.price;
-    }, 0)}
-  </td>
+        <td>
+          ₹{" "}
+          {order?.products?.reduce((acc, pro) => {
+            return acc + pro?.quantity * pro?.price;
+          }, 0)}
+        </td>
         <td>{order?.date}</td>
         <td className="w-[130px]">
           <p

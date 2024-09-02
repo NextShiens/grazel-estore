@@ -86,7 +86,7 @@ export default function MyAccount() {
   const userRedux = useSelector((state) => state.user);
   const router = useRouter();
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
-  
+
   const [showAddress, setAddress] = useState(false);
 
   const profileDataHandler = (e) => {
@@ -110,6 +110,7 @@ export default function MyAccount() {
     state: "",
     address: "",
     image: "",
+    pincode: '',
   });
 
   useEffect(() => {
@@ -125,6 +126,7 @@ export default function MyAccount() {
         state: user.profile.state || "",
         address: user.profile.address || "",
         image: user.profile.image || "",
+        pincode: user.profile.pincode || "",
       });
     }
   }, [userRedux]);
@@ -294,7 +296,7 @@ export default function MyAccount() {
   const onCreateAddress = async (event) => {
     event.preventDefault();
     try {
-      
+
       const token = localStorage.getItem("token");
       if (!token) return toast.error("Please login to continue");
       setPending(true);
@@ -640,6 +642,16 @@ export default function MyAccount() {
                     className="border-[1px] mt-[9px] border-[#7777777]  w-full rounded-md h-[50px] p-3 focus:outline-none"
                   />
                 </div>
+                <div className="flex-col mt-[30px]">
+                  <label className="text-[16px] font-semibold">Pincode</label>
+                  <input
+                    onChange={profileDataHandler}
+                    placeholder="Enter Pincode"
+                    name="pincode"
+                    value={profileData.pincode}
+                    className="border-[1px] mt-[9px] border-[#7777777] w-full rounded-md h-[50px] p-3 focus:outline-none"
+                  />
+                </div>
                 <div className="flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center justify-between mt-[30px]">
                   <button
                     type="submit"
@@ -886,6 +898,15 @@ export default function MyAccount() {
                         name="recipient_phone"
                         required
                         placeholder="Phone Number"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Pin Code</label>
+                      <input
+                        name="pin_code"
+                        required
+                        placeholder="Pin Code"
                         className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
                       />
                     </div>

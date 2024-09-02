@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import { appDataSource } from "../../config/db";
 import { validationResult } from "express-validator";
 import { Referral } from "../../entities/Referral";
-import * as CryptoJS from "crypto-js";
 import { User } from "../../entities/Users";
 import { generateRandomString } from "../../helper/uniqueStringGenerator";
+
+const BASE_URL = process.env.IMAGE_PATH || "https://api.grazle.co.in/";
 
 export class ReferralRankingController {
   async createReferral(req: Request, res: Response) {
@@ -141,16 +142,11 @@ export class ReferralRankingController {
       });
 
       if (!referral) {
-        return res.status(404).json({ error: "Referral not found" });
+        return res.status(404).json({
+          success: false,
+          error: "Referral not found",
+        });
       }
-
-      // // Check if referral is already joined
-      // if (referral.status === "joined") {
-      //   return res.status(400).json({
-      //     success: false,
-      //     message: "Referral is already joined",
-      //   });
-      // }
 
       // Update referral status and receiver_id
       referral.status = "joined";
@@ -228,9 +224,10 @@ export class ReferralRankingController {
       });
 
       if (referrals.length === 0) {
-        return res
-          .status(404)
-          .json({ error: "No referrals found for this user" });
+        return res.status(404).json({
+          success: false,
+          error: "No referrals found for this user",
+        });
       }
 
       // Extract unique receiver_user_ids from referrals
@@ -245,12 +242,27 @@ export class ReferralRankingController {
       });
 
       // Attach receiver user information to each referral, filtering fields
-      const referralsWithUsers = referrals.map((referral) => ({
-        ...referral,
-        receiver_user: receiverUsers.find(
+      const referralsWithUsers = referrals.map((referral) => {
+        const receiverUser = receiverUsers.find(
           (user) => user.id === referral.receiver_id
-        ),
-      }));
+        );
+
+        if (
+          receiverUser &&
+          receiverUser.profile &&
+          receiverUser.profile.image
+        ) {
+          // Concatenate the base URL with the image field
+          receiverUser.profile.image = receiverUser.profile.image
+            ? `${BASE_URL}${receiverUser.profile.image}`
+            : "";
+        }
+
+        return {
+          ...referral,
+          receiver_user: receiverUser,
+        };
+      });
 
       res.status(200).json({
         success: true,
@@ -268,15 +280,27 @@ export class ReferralRankingController {
 
       // Fetch top users by score in descending order
       const topUsers = await userRepository.find({
-        select: ["id", "username", "email", "score"],
+        select: ["id", "username", "email", "score", "is_deleted"],
+        where: { is_deleted: false },
+
         order: { score: "DESC" },
         take: 10,
         relations: ["profile"], // Include the profile relation
       });
 
+      // Process the users to add the base URL to the image path
+      const processedUsers = topUsers.map((user) => {
+        if (user.profile && user.profile.image) {
+          user.profile.image = user.profile.image
+            ? `${BASE_URL}${user.profile.image}`
+            : "";
+        }
+        return user;
+      });
+
       res.status(200).json({
         success: true,
-        top_users: topUsers,
+        top_users: processedUsers,
       });
     } catch (error: any) {
       console.error("Error retrieving top users by score:", error.message);
