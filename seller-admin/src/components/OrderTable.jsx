@@ -53,9 +53,9 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
   return (
     <>
       {type === "orders" && (
-        <tr key={order?.id} className=" text-[14px] ">
-          <td>{order?.id}</td>
-          <td className="flex items-start gap-1.5  capitalize w-[320px] p-3 ">
+        <tr key={order?.id} className="h-[50px] text-[14px]">
+          <td className="w-[50px]">{order?.id}</td>
+          <td className="flex items-center gap-1.5 h-[50px] capitalize w-[300px] p-2">
             <Image
               width={26}
               height={26}
@@ -72,7 +72,7 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
                 `${pro?.title}${index < order.products.length - 1 ? ", " : ""}`
             )}
           </td>
-          <td>
+          <td className="w-[100px]">
             ₹
             {order?.products?.reduce((acc, pro) => {
               return (
@@ -86,9 +86,9 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
             }, 0)}
           </td>
           {!action && (
-            <td className="capitalize">{order?.customer?.username}</td>
+            <td className="capitalize w-[150px]">{order?.customer?.username}</td>
           )}
-          <td>{order?.date}</td>
+          <td className="w-[100px]">{order?.date}</td>
           <td className="w-[130px]">
             <span
               style={{
@@ -116,7 +116,7 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
           </td>
 
           {action && (
-            <td className="px-[17px] relative">
+            <td className="px-[17px] relative w-[50px]">
               <Image
                 alt=""
                 src={tableAction}
@@ -131,8 +131,8 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
 
       {type === "customers" && (
         <>
-          <tr key={order?.id} className=" text-[14px] mt-2">
-            <td className="flex items-center gap-1.5">
+          <tr key={order?.id} className="h-[50px] text-[14px]">
+            <td className="flex items-center gap-1.5 h-[50px] w-[200px]">
               <Image
                 alt=""
                 width={26}
@@ -147,9 +147,9 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
               {order?.customer?.username}
             </td>
 
-            <td>{order?.customer?.email}</td>
-            <td>{order?.customer_address.recipient_phone}</td>
-            <td className="flex items-center gap-1.5  capitalize w-[733px]">
+            <td className="w-[200px]">{order?.customer?.email}</td>
+            <td className="w-[150px]">{order?.customer_address.recipient_phone}</td>
+            <td className="flex items-center gap-1.5 h-[50px] capitalize w-[300px] p-2">
               <Image
                 width={26}
                 height={26}
@@ -193,7 +193,7 @@ const OrderTable = ({ order, type, allOrders, action, status }) => {
               </span>
             </td>
 
-            <td className="px-[17px] relative">
+            <td className="px-[17px] relative w-[50px]">
               <Image
                 alt=""
                 src={tableAction}

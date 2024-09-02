@@ -14,6 +14,7 @@ const OrderTable = ({ order, type, status }) => {
   const [orderId, setOrderId] = useState(0);
   const dispatch = useDispatch();
   const navigate = useRouter();
+
   useEffect(() => {
     (async () => {
       const { data } = await axiosPrivate.get(
@@ -27,8 +28,7 @@ const OrderTable = ({ order, type, status }) => {
 
       setOrderTracking(data.order);
     })();
-  }, []),
-    [order.id];
+  }, [order.id]);
 
   const fn_viewDetails = (id) => {
     if (id === orderId) {
@@ -36,13 +36,15 @@ const OrderTable = ({ order, type, status }) => {
     }
     setOrderId(id);
   };
+
   const orderStatus = orderTracking?.status_history?.slice(-1)[0]?.status;
   if (status?.length > 0 && !status.includes(orderStatus)) return null;
+
   return (
     <>
-      <tr key={order?.id} className="text-[12px]">
-        <td>{order?.id}</td>
-        <td className="flex items-start gap-1.5  w-[230px] py-3  my-4">
+      <tr key={order?.id} className="text-[13px]">
+        <td className="w-[100px] p-2">{order?.id}</td>
+        <td className="flex items-center gap-1.5 w-[300px] p-2">
           <Image
             width={26}
             height={26}
@@ -50,20 +52,21 @@ const OrderTable = ({ order, type, status }) => {
             src={order?.products[0]?.featured_image || electronicLED}
             className="h-[26px] w-[26px] rounded-md"
           />
-          {order?.products?.map(
-            (pro, index) =>
-              `${pro?.title}${index < order.products.length - 1 ? ", " : ""}`
-          )}
+          <span className="truncate">
+            {order?.products?.map(
+              (pro, index) =>
+                `${pro?.title}${index < order.products.length - 1 ? ", " : ""}`
+            )}
+          </span>
         </td>
-        <td className="w-4 sm:w-8 md:w-12 lg:w-16"></td>
-        <td>
+        <td className="w-[100px] p-2">
           ₹{" "}
           {order?.products?.reduce((acc, pro) => {
             return acc + pro?.quantity * pro?.price;
           }, 0)}
         </td>
-        <td>{order?.date}</td>
-        <td className="w-[130px]">
+        <td className="w-[150px] p-2">{order?.date}</td>
+        <td className="w-[130px] p-2">
           <p
             className={`${orderStatus === "cancelled" && "bg-[#FFE5E5] text-red-500"
               } ${orderStatus === "completed" && "bg-[#F0FDF4] text-green-500"}
@@ -71,15 +74,15 @@ const OrderTable = ({ order, type, status }) => {
               orderStatus !== "cancelled" &&
               "bg-[#F1F5F9] text-gray-500"
               }
-             h-[23px] w-[60px] rounded-[5px]  text-[10px] font-[500] flex items-center justify-center px-4 py-2`}
+             h-[23px] w-[60px] rounded-[5px] text-[10px] font-[500] flex items-center justify-center px-4 py-2`}
           >
             {orderTracking?.status_history?.slice(-1)[0]?.status}
           </p>
         </td>
-        <td>{order?.products[0]?.seller?.name}</td>
+        <td className="w-[150px] p-2">{order?.products[0]?.seller?.name}</td>
 
         {type === "action" && (
-          <td className="px-[17px] relative">
+          <td className="px-[17px] relative w-[50px]">
             <Image
               alt=""
               src={tableAction}
@@ -90,8 +93,6 @@ const OrderTable = ({ order, type, status }) => {
           </td>
         )}
       </tr>
-      {/* Add space between orders for all screen sizes */}
-      <tr className="h-4 sm:h-6 md:h-8"></tr>
     </>
   );
 };

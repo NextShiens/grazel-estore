@@ -355,12 +355,12 @@ const Dashboard = () => {
               <table className="w-[1000px] xl:w-[100%] table-fixed">
                 <thead>
                   <tr className="font-[500] text-[var(--text-color-body)] text-[15px]">
-                    <td>Order No</td>
-                    <td>Product Name</td>
-                    <td>Price</td>
-                    <td>Customer</td>
-                    <td>Date</td>
-                    <td className="w-[80px]">Status</td>
+                    <td className="w-[100px] p-2">Order No</td>
+                    <td className="w-[300px] p-2">Product Name</td>
+                    <td className="w-[100px] p-2">Price</td>
+                    <td className="w-[150px] p-2">Customer</td>
+                    <td className="w-[150px] p-2">Date</td>
+                    <td className="w-[100px] p-2">Status</td>
                   </tr>
                 </thead>
 
@@ -374,9 +374,11 @@ const Dashboard = () => {
                       />
                     ))}
                   {!allOrders.length && (
-                    <h3 className="text-red-500 text-center mt-2">
-                      No order found
-                    </h3>
+                    <tr>
+                      <td colSpan="6" className="text-red-500 text-center mt-2">
+                        No order found
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>
