@@ -25,7 +25,7 @@ const Products = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(40);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const Products = () => {
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        limit: itemsPerPage.toString(),
+        limit: 40,
       });
 
       const { data } = await axiosPrivate.get(`/vendor/products?${params}`, {

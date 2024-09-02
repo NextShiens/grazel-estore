@@ -22,7 +22,8 @@ const Products = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(20);
+  const [itemsPerPage, setItemsPerPage] = useState(40);
+
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ const Products = () => {
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        limit: itemsPerPage.toString(),
+        limit: 40,
       });
 
       const { data } = await axiosPrivate.get(`/admin/products?${params}`, {
@@ -218,8 +219,8 @@ const Products = () => {
         return category
           ? categoryId === category
           : typeof brand === "string"
-          ? filterProductByDate(null, null, brand, created_at)
-          : brandId === brand;
+            ? filterProductByDate(null, null, brand, created_at)
+            : brandId === brand;
       }
     });
 
