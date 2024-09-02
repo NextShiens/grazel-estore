@@ -146,13 +146,12 @@ const Dashboard = () => {
                   <table className="w-[1000px] xl:w-[100%] table-fixed">
                     <thead>
                       <tr className="font-[500] text-[var(--text-color-body)] text-[15px]">
-                        <td>Order No</td>
-                        <td>Product Name</td>
-                        <td></td>
-                        <td>Price</td>
-                        <td>Date</td>
-                        <td>Status</td>
-                        <td>Seller Name</td>
+                        <td className="w-[100px] p-2">Order No</td>
+                        <td className="w-[300px] p-2">Product Name</td>
+                        <td className="w-[100px] p-2">Price</td>
+                        <td className="w-[150px] p-2">Date</td>
+                        <td className="w-[100px] p-2">Status</td>
+                        <td className="w-[150px] p-2">Seller Name</td>
                       </tr>
                     </thead>
                     <tbody>
@@ -204,11 +203,10 @@ const Dashboard = () => {
 const PageButton = ({ page, currentPage, onClick }) => (
   <button
     onClick={onClick}
-    className={`mx-1 px-3 py-1 rounded ${
-      currentPage === page
+    className={`mx-1 px-3 py-1 rounded ${currentPage === page
         ? "bg-red-500 text-white"
         : "bg-gray-200 text-gray-700"
-    }`}
+      }`}
   >
     {page}
   </button>
