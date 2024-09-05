@@ -138,19 +138,6 @@ const AdminNotificationComponent = () => {
                     required
                   ></textarea>
                 </div>
-                {/* <div>
-                  <label htmlFor="data" className="block mb-2 font-medium">
-                    Data (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    id="data"
-                    name="data"
-                    value={formData.data}
-                    onChange={handleChange}
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                  />
-                </div> */}
                 <div>
                   <label htmlFor="thumbnail" className="block mb-2 font-medium">
                     Thumbnail (Optional)
@@ -204,7 +191,7 @@ const AdminNotificationComponent = () => {
                     </select>
                   </div>
                 )}
-                {formData.url === 'CategoryListing' && (
+                {(formData.url === 'CategoryListing' || formData.url === 'productdetail') && (
                   <div>
                     <label htmlFor="productId" className="block mb-2 font-medium">
                       Product ID
