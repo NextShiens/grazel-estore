@@ -23,7 +23,7 @@ const AdminNotificationComponent = () => {
   const [formData, setFormData] = useState({
     title: '',
     body: '',
-    data: '',
+    data: {},
     thumbnail: '',
     url: options[0].value,
     categoryId: '',
@@ -56,12 +56,16 @@ const AdminNotificationComponent = () => {
     e.preventDefault();
     try {
       dispatch(updatePageLoader(true));
-      const dataToSend = { ...formData };
-      if (formData.url === 'Categories' && formData.categoryId) {
-        dataToSend.data = formData.categoryId;
-      } else if (formData.url === 'productdetail' && formData.productId) {
-        dataToSend.data = formData.productId;
-      }
+      const dataToSend = {
+        title: formData.title,
+        body: formData.body,
+        thumbnail: formData.thumbnail,
+        url: formData.url,
+        data: {
+          categoryId: formData.categoryId || undefined,
+          productId: formData.productId || undefined
+        }
+      };
       await axiosPrivate.post('/admin/push-notification', dataToSend, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
@@ -69,14 +73,14 @@ const AdminNotificationComponent = () => {
         },
       });
       toast.success('Notification sent successfully');
-      setFormData({ 
-        title: '', 
-        body: '', 
-        data: '', 
-        thumbnail: '', 
-        url: options[0].value, 
+      setFormData({
+        title: '',
+        body: '',
+        data: {},
+        thumbnail: '',
+        url: options[0].value,
         categoryId: '',
-        productId: '' 
+        productId: ''
       });
     } catch (error) {
       console.error('Error sending notification:', error);
@@ -87,11 +91,11 @@ const AdminNotificationComponent = () => {
   };
 
   const handleSelectionChange = (event) => {
-    setFormData({ 
-      ...formData, 
-      url: event.target.value, 
-      categoryId: '', 
-      productId: '' 
+    setFormData({
+      ...formData,
+      url: event.target.value,
+      categoryId: '',
+      productId: ''
     });
   };
 
@@ -134,7 +138,7 @@ const AdminNotificationComponent = () => {
                     required
                   ></textarea>
                 </div>
-                <div>
+                {/* <div>
                   <label htmlFor="data" className="block mb-2 font-medium">
                     Data (Optional)
                   </label>
@@ -146,7 +150,7 @@ const AdminNotificationComponent = () => {
                     onChange={handleChange}
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
-                </div>
+                </div> */}
                 <div>
                   <label htmlFor="thumbnail" className="block mb-2 font-medium">
                     Thumbnail (Optional)
@@ -200,7 +204,7 @@ const AdminNotificationComponent = () => {
                     </select>
                   </div>
                 )}
-                {formData.url === 'productdetail' && (
+                {formData.url === 'CategoryListing' && (
                   <div>
                     <label htmlFor="productId" className="block mb-2 font-medium">
                       Product ID
