@@ -16,7 +16,7 @@ import { GrInstagram } from "react-icons/gr";
 import { FaChevronDown } from "react-icons/fa6";
 import Location from "@/assets/location-icon.png";
 import { FaFacebook, FaTwitter } from "react-icons/fa";
-import { getAllCategoriesApi } from "@/apis";
+import { getAllCategoriesApi, getCategoryBySlugApi } from "@/apis";
 import { useDispatch } from "react-redux";
 import { setSelectedCategory } from "@/features/features";
 
@@ -49,9 +49,11 @@ export default function Footer() {
       (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
         setExpanded(isExpanded ? panelIndex : null);
       };
-  const handleCategoryClick = (category) => {
+
+  const handleCategoryClick = async (category) => {
     console.log(category, "category");
-    dispatch(setSelectedCategory(category));
+    const { data } = await getCategoryBySlugApi(category.id);
+    dispatch(setSelectedCategory(data));
   };
 
   return (

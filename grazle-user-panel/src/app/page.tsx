@@ -43,6 +43,7 @@ import {
   getSingleCategoryProductsApi,
   getOfferProductsApi,
   fiftyPercentSaleProductsApi,
+  getCategoryBySlugApi,
 } from "@/apis";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import {
@@ -260,6 +261,12 @@ export default function Home() {
     fetchFiftyPercentSaleProducts();
   }, []);
 
+  const handleCategoryClick = async (category) => {
+    console.log(category, "category");
+    const { data } = await getCategoryBySlugApi(category.id);
+    dispatch(setSelectedCategory(data));
+  };
+
   async function onLiked(e: React.MouseEvent, productId: number) {
     e.stopPropagation();
     if (isPending) return;
@@ -292,12 +299,6 @@ export default function Home() {
   }
   const fn_categoryClickednew = (category) => {
     dispatch(setSelectedCategory(category));
-
-    // Store the selected category in localStorage
-    // localStorage.setItem("selectedCategory", JSON.stringify(category));
-
-    // // You can perform other actions if needed
-    // console.log("Category clicked:", category);
   };
   return (
     <>
@@ -385,39 +386,37 @@ export default function Home() {
           )} */}
         </div>
 
-        {allCategories?.map((item) => (
-          <div
-            key={item?.id}
-            className="w-full flex flex-col justify-center items-center mx-2 text-center"
-            onClick={() => {
-              fn_categoryClickednew(item);
-              fn_categoryClicked(item);
-            }} // This stores the clicked category
-          >
-            <div className="flex justify-center hover:border border-[#FC3030] items-center lg:w-[92px] lg:h-[92px] w-[70px] h-[70px] sm:w-[70px] sm:h-[70px] border-[#F70000] rounded-full bg-[#F8F8F8]">
-              {item?.image !== null ? (
-                <Image
-                  width={92}
-                  height={92}
-                  src={item?.image}
-                  alt=""
-                  className="rounded-full lg:w-[92px] lg:h-[92px] w-[80px] h-[80px] sm:w-[70px] sm:h-[70px]"
-                />
-              ) : (
-                <Image
-                  width={40}
-                  height={40}
-                  src={Widget}
-                  alt=""
-                  className="lg:w-[40px] lg:h-[40px] w-[30px] h-[30px] sm:h-[30px] sm:w-[30px]"
-                />
-              )}
-            </div>
-            <p className="text-nowrap color-[#393A44] lg:text-[14px] text-[10px] sm:text-[12px] font-normal mt-[4px]">
-              {item?.name}
-            </p>
-          </div>
-        ))}
+        {allCategories?.map((category) => (
+  <Link
+    key={category?.id}
+    href={`/search?category=${category?.id}`}
+    className="w-full flex flex-col justify-center items-center mx-2 text-center"
+    onClick={() => handleCategoryClick(category)}
+  >
+    <div className="flex justify-center hover:border border-[#FC3030] items-center lg:w-[92px] lg:h-[92px] w-[70px] h-[70px] sm:w-[70px] sm:h-[70px] border-[#F70000] rounded-full bg-[#F8F8F8]">
+      {category?.image !== null ? (
+        <Image
+          width={92}
+          height={92}
+          src={category?.image}
+          alt=""
+          className="rounded-full lg:w-[92px] lg:h-[92px] w-[80px] h-[80px] sm:w-[70px] sm:h-[70px]"
+        />
+      ) : (
+        <Image
+          width={40}
+          height={40}
+          src={Widget}
+          alt=""
+          className="lg:w-[40px] lg:h-[40px] w-[30px] h-[30px] sm:h-[30px] sm:w-[30px]"
+        />
+      )}
+    </div>
+    <p className="text-nowrap color-[#393A44] lg:text-[14px] text-[10px] sm:text-[12px] font-normal mt-[4px]">
+      {category?.name}
+    </p>
+  </Link>
+))}
       </div>
 
       {/* Flash sale */}
