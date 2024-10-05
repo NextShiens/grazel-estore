@@ -307,6 +307,29 @@ export default function ProductDetail() {
     return <div>Loading...</div>;
   }
 
+  const calculateDiscount = (product) => {
+    if (product.offer && product.offer.active) {
+      // If there's an active offer, use the offer discount
+      const offerDiscount = parseFloat(product.offer.discount_value);
+      const originalPrice = parseFloat(product.discounted_price);
+      const discountedPrice = originalPrice - (originalPrice * offerDiscount / 100);
+      return {
+        discountPercentage: offerDiscount,
+        discountedPrice: discountedPrice.toFixed(2)
+      };
+    } else {
+      // If no offer, use the product's original discount
+      const originalPrice = parseFloat(product.price);
+      const discountedPrice = parseFloat(product.discounted_price);
+      const discountPercentage = ((originalPrice - discountedPrice) / originalPrice) * 100;
+      return {
+        discountPercentage: discountPercentage,
+        discountedPrice: discountedPrice.toFixed(2)
+      };
+    }
+  };
+
+  const { discountPercentage, discountedPrice } = calculateDiscount(singleProduct);
   return (
     <>
       <div className="lg:my-[50px] my-[20px] sm:my-[20px] md:my-[30px] lg:mx-[150px] mx-[20px] sm:mx-[20px] md:mx-[30px]">
@@ -396,20 +419,20 @@ export default function ProductDetail() {
               </p>
             </div>
             <div className="flex text-start justify-start gap-2 pb-8 border-b-[1px] border-[#0000001A]">
-            <p className="text-[18px] text-[#F70000] font-semibold">
-              ₹ {Number(selectedVariant ? selectedVariant.price : singleProduct.discounted_price)?.toFixed(2)}
-            </p>
-            {Number(selectedVariant ? selectedVariant.price : singleProduct.discounted_price) < Number(singleProduct.price) && (
+          <p className="text-[18px] text-[#F70000] font-semibold">
+            ₹ {discountedPrice}
+          </p>
+          {parseFloat(discountedPrice) && (
+            <>
               <p className="text-[16px] text-[#909198] font-normal line-through">
-                ₹ {Number(singleProduct.price)?.toFixed(2)}
+                ₹ {parseFloat(singleProduct.price).toFixed(2)}
               </p>
-            )}
-            {Number(selectedVariant ? selectedVariant.price : singleProduct.discounted_price) < Number(singleProduct.price) && (
               <p className="text-[16px] text-[#4FAD2E] font-normal">
-                {calculateDiscountPercentage(singleProduct.price, selectedVariant ? selectedVariant.price : singleProduct.discounted_price)}% OFF
+                {discountPercentage.toFixed(0)}% OFF
               </p>
-            )}
-          </div>
+            </>
+          )}
+        </div>
 
             <div className="mt-4">
               <p className="text-[14px] text-[#000000] font-semibold">
