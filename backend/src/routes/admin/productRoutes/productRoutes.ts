@@ -29,16 +29,30 @@ router.post(
     { name: "featured_image", maxCount: 1 },
     { name: "gallery_images", maxCount: 8 },
   ]),
-
   [
     body("category_id")
       .notEmpty()
       .withMessage("The category id field is required"),
     body("title").notEmpty().withMessage("The title field is required"),
     body("price").notEmpty().withMessage("The price field is required"),
+    body("dimensions.length")
+      .notEmpty()
+      .isFloat({ gt: 0 })
+      .withMessage("Length must be a positive number"),
+    body("dimensions.width")
+      .notEmpty()
+      .isFloat({ gt: 0 })
+      .withMessage("Width must be a positive number"),
+    body("dimensions.height")
+      .notEmpty()
+      .isFloat({ gt: 0 })
+      .withMessage("Height must be a positive number"),
+    body("dimensions.weight")
+      .notEmpty()
+      .isFloat({ gt: 0 })
+      .withMessage("Weight must be a positive number"),
   ],
   productController.createProduct
-  // productController.createProduct
 );
 
 router.get(

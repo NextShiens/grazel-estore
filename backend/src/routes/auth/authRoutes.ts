@@ -140,4 +140,7 @@ router.post("/logout", authMiddleware, (req: Request, res: Response) => {
   });
 });
 
+// Start Google OAuth flow
+router.post("/google", parsing, authController.googleLogin);
+
 export default router;

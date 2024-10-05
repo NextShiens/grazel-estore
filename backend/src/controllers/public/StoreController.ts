@@ -16,9 +16,10 @@ export class StoreController {
         limit = 10,
         latest_arrival,
         price,
-        discount,
         top_rated,
         popular,
+        more_suitable,
+        discount,
       } = req.query;
 
       // Validate userId parameter
@@ -45,7 +46,10 @@ export class StoreController {
       let queryBuilder = productRepository
         .createQueryBuilder("product")
         .where("product.user_id = :userId", { userId: userIdNumber })
-        .orderBy("product.created_at", "DESC");
+        .leftJoin("product.reviews", "review")
+        .addSelect("COUNT(review.id)", "reviewCount")
+        .orderBy("product.created_at", "DESC")
+        .groupBy("product.id");
 
       // Sorting based on latest_arrival parameter
       if (latest_arrival) {
@@ -63,9 +67,12 @@ export class StoreController {
         );
       }
 
-      // Filtering based on discount parameter
+      // Apply discount filter
       if (discount === "discount") {
-        queryBuilder = queryBuilder.andWhere("product.discount > 0");
+        queryBuilder = queryBuilder.andWhere(
+          "product.discount IS NOT NULL AND product.discount > 0"
+        );
+        queryBuilder = queryBuilder.addOrderBy("product.discount", "DESC");
       }
 
       // Filtering based on top_rated parameter
@@ -82,6 +89,14 @@ export class StoreController {
           .leftJoin("product.reviews", "review")
           .groupBy("product.id")
           .addOrderBy("COUNT(review.id)", "DESC");
+      }
+
+      // Apply more_suitable=suitable filter
+      if (more_suitable === "suitable") {
+        // Apply combination of discount and popular
+        queryBuilder = queryBuilder
+          .andWhere("product.discount IS NOT NULL AND product.discount > 0") // Assuming discount is a column in the product entity
+          .addOrderBy("reviewCount", "DESC"); // Sort by popularity
       }
 
       const pagination = await paginate<Product>(queryBuilder, {
@@ -177,7 +192,14 @@ export class StoreController {
   ) {
     try {
       const { id: userId } = req.params;
-      const { latest_arrival, price, discount, top_rated, popular } = req.query;
+      const {
+        latest_arrival,
+        price,
+        discount,
+        top_rated,
+        popular,
+        more_suitable,
+      } = req.query;
 
       // Validate userId parameter
       if (!userId) {
@@ -203,7 +225,10 @@ export class StoreController {
       let queryBuilder = productRepository
         .createQueryBuilder("product")
         .where("product.user_id = :userId", { userId: userIdNumber })
-        .orderBy("product.created_at", "DESC");
+        .leftJoin("product.reviews", "review")
+        .addSelect("COUNT(review.id)", "reviewCount")
+        .orderBy("product.created_at", "DESC")
+        .groupBy("product.id");
 
       // Sorting based on latest_arrival parameter
       if (latest_arrival) {
@@ -221,11 +246,6 @@ export class StoreController {
         );
       }
 
-      // Filtering based on discount parameter
-      if (discount === "discount") {
-        queryBuilder = queryBuilder.andWhere("product.discount > 0");
-      }
-
       // Filtering based on top_rated parameter
       if (top_rated === "top") {
         queryBuilder = queryBuilder
@@ -240,6 +260,22 @@ export class StoreController {
           .leftJoin("product.reviews", "review")
           .groupBy("product.id")
           .addOrderBy("COUNT(review.id)", "DESC");
+      }
+
+      // Apply more_suitable=suitable filter
+      if (more_suitable === "suitable") {
+        // Apply combination of discount and popular
+        queryBuilder = queryBuilder
+          .andWhere("product.discount IS NOT NULL AND product.discount > 0") // Assuming discount is a column in the product entity
+          .addOrderBy("reviewCount", "DESC"); // Sort by popularity
+      }
+
+      // Apply discount filter
+      if (discount === "discount") {
+        queryBuilder = queryBuilder.andWhere(
+          "product.discount IS NOT NULL AND product.discount > 0"
+        );
+        queryBuilder = queryBuilder.addOrderBy("product.discount", "DESC");
       }
 
       const products = await queryBuilder.getMany();

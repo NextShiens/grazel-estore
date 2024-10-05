@@ -6,12 +6,12 @@ import sellerRoutes from "./seller/sellerRoutes";
 import commonRoutes from "./common/commonRoutes";
 import publicRoutes from "./public/publicRoutes";
 import productRoutes from "./admin/productRoutes/productRoutes";
-// import paymentRoutes from "./payment/paymentRoute";
 import phonePeRoutes from "./payment/phonePeRoutes";
 import ccavenueRoutes from "./payment/ccAvenueRoute";
 
 import profileRoutes from "./profileRoutes";
 import referralRoute from "./referral/referralRoute";
+import shippingRoute from "./shipping/shippingRoutes";
 import { parsing } from "../config/parseMulter";
 
 const router = Router();
@@ -33,5 +33,8 @@ router.use("/ccavenue", ccavenueRoutes);
 
 // For Referral Ranking
 router.use("/", referralRoute);
+
+// For Shipping
+router.use("/shipping", shippingRoute);
 
 export default router;

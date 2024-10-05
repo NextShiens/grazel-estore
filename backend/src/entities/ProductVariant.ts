@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinColumn } from "typeorm";
 import { Product } from "./Product";
+import { ProductDimensions } from "./ProductDimensions";
 
 @Entity("product_variants")
 export class ProductVariant {
@@ -15,8 +16,9 @@ export class ProductVariant {
   @Column({ type: "varchar", length: 255, nullable: true })
   color: string;
 
-  @Column({ type: "varchar", length: 255, nullable: true })
-  measurements: string;
+  @OneToOne(() => ProductDimensions, { cascade: true })
+  @JoinColumn({ name: "dimensions_id" })
+  dimensions: ProductDimensions;
 
   @ManyToOne(
     () => Product,

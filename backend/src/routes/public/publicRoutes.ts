@@ -10,6 +10,7 @@ import { BannerController } from "../../controllers/public/BannerController";
 import { getProductsDynamically } from "../../controllers/public/DynamicProducts";
 import { StateController } from "../../controllers/admin/StateController";
 import { StatesCitiesController } from "../../controllers/public/StatesCitiesController";
+import { NotificationController } from "../../controllers/public/NotificationController";
 
 const router = Router();
 
@@ -125,7 +126,6 @@ router.post(
   [
     body("name").notEmpty().withMessage("The name field is required"),
     body("email").notEmpty().withMessage("The email field is required"),
-
     body("message").notEmpty().withMessage("The message field is required"),
   ],
   customerSupportController.create
@@ -146,5 +146,15 @@ router.get("/cities-by-state/:id", statesCitiesController.findCitiesByState);
 router.get("/cities", statesCitiesController.findAllCities);
 router.get("/states/:id", statesCitiesController.findOneState);
 router.get("/cities/:id", statesCitiesController.findOneCity);
+
+// Notification Routes
+
+const notificationController = new NotificationController();
+
+router.get(
+  "/latest-notifications/:id",
+  notificationController.getUserNotifications
+);
+router.get("/all-notifications/:id", notificationController.seeAllNotifications);
 
 export default router;

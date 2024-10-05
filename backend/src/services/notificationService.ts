@@ -12,20 +12,22 @@ export const sendPushNotifications = async (
     notification: {
       title,
       body,
-      image: thumbnail, // Add the thumbnail URL here
+      image: thumbnail,
     },
     data: {
       ...data,
-      url, // Add the custom URL here
+      url,
     },
     tokens,
   };
 
   try {
+
     const response = await fcm.sendEachForMulticast(message);
-    console.log("Successfully sent messages:", response);
-  } catch (error) {
-    console.log("Error sending messages:", error);
+    // const response = await fcm.sendEachForMulticast(message);
+    console.log("Successfully sent messages:", response.responses);
+  } catch (error : any) {
+    console.log("Error sending messages:", error.message);
   }
 };
 

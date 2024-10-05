@@ -32,9 +32,17 @@ export class Address {
   @Column()
   recipient_phone: string;
 
+  @Column({ nullable: true })
+  city: string;
+
+  @Column({ nullable: true })
+  state: string;
+
+  @Column({ type: "int" })
+  pin_code: string;
+
   @Column({ default: false })
   primary_location: boolean;
-
 
   @CreateDateColumn({ type: "timestamp" })
   created_at: Date;

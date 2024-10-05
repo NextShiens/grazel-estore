@@ -25,6 +25,9 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ type: "varchar", nullable: true })
+  google_id?: string;
+
   @Column({ type: "varchar", length: 255, nullable: false })
   username: string;
 
@@ -83,6 +86,6 @@ export class User {
   )
   notification_settings: NotificationSettings;
 
-  @OneToMany(() => UserMembership, userMembership => userMembership.user)
+  @OneToMany(() => UserMembership, (userMembership) => userMembership.user)
   memberships: UserMembership[];
 }

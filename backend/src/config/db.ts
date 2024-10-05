@@ -20,7 +20,7 @@ export const appDataSource = new DataSource({
   logging: true,
 });
 
-console.log("Database Connection Details:", appDataSource);
+console.log("Database Connection Detaissls:", appDataSource);
 
 appDataSource
   .initialize()

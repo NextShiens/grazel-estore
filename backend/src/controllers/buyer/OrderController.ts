@@ -19,6 +19,7 @@ import { OrderProduct } from "../../entities/OrderProduct";
 import { OrderStatusHistory } from "../../entities/OrderHistory";
 import { UserDeviceToken } from "../../entities/UserDeviceToken";
 import { sendPushNotification } from "../../services/notificationService";
+import { Notification } from "../../entities/Notification";
 
 const omitTimestamps = (order: Order) => {
   const { created_at, updated_at, ...rest } = order;
@@ -109,6 +110,7 @@ export class OrderController {
       // Create a new order instance
       const orderRepository = appDataSource.getRepository(Order);
       const deviceTokenRepo = appDataSource.getRepository(UserDeviceToken);
+      const notificationRepo = appDataSource.getRepository(Notification);
 
       const order = new Order();
       order.user_id = userId;
@@ -199,6 +201,14 @@ export class OrderController {
           savedOrder?.tracking_id || ""
         );
 
+        // Create notification
+        const notification = new Notification();
+        notification.user_id = savedOrder?.user_id || null;
+        notification.title = "Order Confirmation";
+        notification.body = `Your order with ID ${savedOrder?.tracking_id} has been placed successfully.`;
+
+        await notificationRepo.save(notification);
+
         // Convert user_id to string if necessary
         const userId = user?.id?.toString();
 
@@ -255,7 +265,7 @@ export class OrderController {
         .where("order.user_id = :userId", { userId })
         .orderBy("order.created_at", "DESC");
 
-      // Apply status filter if status is provided and valid
+      // Apply status filter only if status is provided and valid
       const validStatuses = [
         "new",
         "in_progress",
@@ -263,8 +273,21 @@ export class OrderController {
         "completed",
         "cancelled",
       ];
+
       if (status && validStatuses.includes(status as string)) {
-        queryBuilder.andWhere("statusHistory.status = :status", { status });
+        queryBuilder.andWhere(
+          (qb) => {
+            const subQuery = qb
+              .subQuery()
+              .select("MAX(statusHistory.changed_at)")
+              .from(OrderStatusHistory, "statusHistory")
+              .where("statusHistory.order_id = order.id")
+              .getQuery();
+
+            return `statusHistory.changed_at = ${subQuery} AND statusHistory.status = :status`;
+          },
+          { status }
+        );
       }
 
       // Define pagination options
@@ -352,6 +375,7 @@ export class OrderController {
                 ? `${BASE_URL}${product.featured_image}`
                 : null,
               price: product.price,
+              order_price: orderProduct.price,
               description: product.description,
               tags: product.tags,
               gallery: product.gallery,
@@ -397,6 +421,177 @@ export class OrderController {
         success: true,
         message: "Orders fetched successfully for the user",
         meta: paginatedOrders.meta, // Pagination metadata
+      });
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      res.status(500).json({ error: "Failed to fetch orders" });
+    }
+  }
+
+  async getAllOrdersWithoutPagination(req: Request, res: Response) {
+    try {
+      const user = (req as any).user;
+      const userId = user.id;
+
+      const { status } = req.query;
+
+      const orderRepo = appDataSource.getRepository(Order);
+
+      // Create query builder for fetching orders
+      let queryBuilder = orderRepo
+        .createQueryBuilder("order")
+        .leftJoinAndSelect("order.orderProducts", "orderProduct")
+        .leftJoinAndSelect("orderProduct.product", "product")
+        .leftJoinAndSelect("order.status_history", "statusHistory")
+        .where("order.user_id = :userId", { userId })
+        .orderBy("order.created_at", "DESC");
+
+      // Apply status filter if status is provided and valid
+      const validStatuses = [
+        "new",
+        "in_progress",
+        "shipped",
+        "completed",
+        "cancelled",
+      ];
+
+      if (status && validStatuses.includes(status as string)) {
+        queryBuilder.andWhere(
+          (qb) => {
+            const subQuery = qb
+              .subQuery()
+              .select("MAX(statusHistory.changed_at)")
+              .from(OrderStatusHistory, "statusHistory")
+              .where("statusHistory.order_id = order.id")
+              .getQuery();
+
+            return `statusHistory.changed_at = ${subQuery} AND statusHistory.status = :status`;
+          },
+          { status }
+        );
+      }
+
+      // Fetch all orders without pagination
+      const orders = await queryBuilder.getMany();
+
+      // Process and group orders
+      const groupedOrders: Record<string, any> = {};
+
+      // Store user, category, and brand information to avoid multiple queries
+      const userCache: Record<string, User> = {};
+      const categoryCache: Record<string, Category> = {};
+      const brandCache: Record<string, Brand> = {};
+
+      for (const order of orders) {
+        if (!groupedOrders[order.reference_id]) {
+          groupedOrders[order.reference_id] = {
+            id: order.id,
+            reference_id: order.reference_id,
+            user_id: order.user_id,
+            address_id: order.address_id,
+            payment_type: order.payment_type,
+            coupon_code: order.coupon_code,
+            discount: order.discount,
+            date: format(new Date(order.date), "MMMM d, yyyy"),
+            payment: order.payment,
+            transaction_id: order.transaction_id,
+            products: [],
+          };
+        }
+
+        for (const orderProduct of order.orderProducts) {
+          const product = orderProduct.product;
+          if (product) {
+            // Fetch the user information if not already cached
+            if (!userCache[product.user_id]) {
+              const userRepo = appDataSource.getRepository(User);
+              const fetchedUser = await userRepo.findOne({
+                where: { id: product.user_id },
+                relations: ["profile", "store_profile"],
+              });
+              if (fetchedUser) {
+                userCache[product.user_id] = fetchedUser;
+              }
+            }
+
+            // Fetch the category information if not already cached
+            if (!categoryCache[product.category_id]) {
+              const categoryRepo = appDataSource.getRepository(Category);
+              const fetchedCategory = await categoryRepo.findOne({
+                where: { id: product.category_id },
+              });
+              if (fetchedCategory) {
+                categoryCache[product.category_id] = fetchedCategory;
+              }
+            }
+
+            // Fetch the brand information if not already cached
+            if (!brandCache[product.brand_id]) {
+              const brandRepo = appDataSource.getRepository(Brand);
+              const fetchedBrand = await brandRepo.findOne({
+                where: { id: product.brand_id },
+              });
+              if (fetchedBrand) {
+                brandCache[product.brand_id] = fetchedBrand;
+              }
+            }
+
+            const productUser = userCache[product.user_id];
+            const productCategory = categoryCache[product.category_id];
+            const productBrand = brandCache[product.brand_id];
+
+            groupedOrders[order.reference_id].products.push({
+              id: product.id,
+              title: product.title,
+              category_id: product.category_id,
+              brand_id: product.brand_id,
+              slug: product.slug,
+              featured_image: product.featured_image
+                ? `${BASE_URL}${product.featured_image}`
+                : null,
+              price: product.price,
+              order_price: orderProduct.price,
+              description: product.description,
+              tags: product.tags,
+              gallery: product.gallery,
+              quantity: orderProduct.quantity,
+              user: {
+                id: productUser?.id,
+                name: productUser?.username,
+                email: productUser?.email,
+                store_name: productUser?.store_profile
+                  ? productUser?.store_profile?.store_name
+                  : null,
+                store_image: productUser?.store_profile
+                  ? `${BASE_URL}${productUser?.store_profile?.store_image}`
+                  : null,
+              },
+              category: {
+                id: productCategory?.id,
+                name: productCategory?.name,
+                slug: productCategory?.slug,
+                image: productCategory?.image
+                  ? `${BASE_URL}${productCategory?.image}`
+                  : null,
+                description: productCategory?.description,
+              },
+              brand: {
+                id: productBrand?.id,
+                name: productBrand?.name,
+                slug: productBrand?.slug,
+              },
+            });
+          }
+        }
+      }
+
+      // Convert groupedOrders object into an array
+      const groupedOrdersArray = Object.values(groupedOrders);
+
+      res.status(200).json({
+        orders: groupedOrdersArray,
+        success: true,
+        message: "Orders fetched successfully for the user",
       });
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -552,11 +747,21 @@ export class OrderController {
       const { id } = req.params;
       const parsedId = parseInt(id, 10);
 
+      if (isNaN(parsedId)) {
+        return res.status(400).json({
+          error: "Invalid ID format",
+          success: false,
+          message: "The provided ID is not valid",
+        });
+      }
+
       const orderRepo = appDataSource.getRepository(Order);
       const order = await orderRepo.findOne({
         where: { id: parsedId },
         relations: ["orderProducts", "orderProducts.product", "status_history"],
       });
+
+      console.log("order get", order);
 
       if (!order) {
         return res.status(404).json({
@@ -568,15 +773,15 @@ export class OrderController {
 
       const addressRepo = appDataSource.getRepository(Address);
       const address = await addressRepo.findOne({
-        where: { id: order.address_id },
+        where: { id:  order.address_id },
       });
 
-      const productRepo = appDataSource.getRepository(Product);
-      const userRepo = appDataSource.getRepository(User);
-      const categoryRepo = appDataSource.getRepository(Category);
-      const brandRepo = appDataSource.getRepository(Brand);
+      // Store user, category, and brand information to avoid multiple queries
+      const userCache: Record<string, User> = {};
+      const categoryCache: Record<string, Category> = {};
+      const brandCache: Record<string, Brand> = {};
 
-      // Fetch and format orderProducts details
+      // Process orderProducts details
       const orderProductsWithDetails = await Promise.all(
         order.orderProducts.map(async (orderProduct) => {
           const product = orderProduct.product;
@@ -588,69 +793,83 @@ export class OrderController {
             return null;
           }
 
-          const user = await userRepo.findOne({
-            where: { id: product.user_id },
-            relations: ["profile", "store_profile"],
-          });
-
-          const category = await categoryRepo.findOne({
-            where: { id: product.category_id },
-          });
-
-          const brand = await brandRepo.findOne({
-            where: { id: product.brand_id },
-          });
-
-          if (!user || !category || !brand) {
-            console.error(
-              `Missing related entity for product ID: ${product.id}`
-            );
-            return null;
+          // Fetch the user information if not already cached
+          if (!userCache[product.user_id]) {
+            const userRepo = appDataSource.getRepository(User);
+            const fetchedUser = await userRepo.findOne({
+              where: { id: product.user_id },
+              relations: ["profile", "store_profile"],
+            });
+            if (fetchedUser) {
+              userCache[product.user_id] = fetchedUser;
+            }
           }
 
+          // Fetch the category information if not already cached
+          if (!categoryCache[product.category_id]) {
+            const categoryRepo = appDataSource.getRepository(Category);
+            const fetchedCategory = await categoryRepo.findOne({
+              where: { id: product.category_id },
+            });
+            if (fetchedCategory) {
+              categoryCache[product.category_id] = fetchedCategory;
+            }
+          }
+
+          // Fetch the brand information if not already cached
+          if (!brandCache[product.brand_id]) {
+            const brandRepo = appDataSource.getRepository(Brand);
+            const fetchedBrand = await brandRepo.findOne({
+              where: { id: product.brand_id },
+            });
+            if (fetchedBrand) {
+              brandCache[product.brand_id] = fetchedBrand;
+            }
+          }
+
+          const productUser = userCache[product.user_id];
+          const productCategory = categoryCache[product.category_id];
+          const productBrand = brandCache[product.brand_id];
+
           return {
-            ...product,
+            id: product.id,
+            title: product.title,
+            category_id: product.category_id,
+            brand_id: product.brand_id,
+            slug: product.slug,
+            featured_image: product.featured_image
+              ? `${BASE_URL}${product.featured_image}`
+              : null,
+            price: product.price,
+            order_price: orderProduct.price,
+            description: product.description,
+            tags: product.tags,
+            gallery: product.gallery,
+            quantity: orderProduct.quantity,
             user: {
-              id: user.id,
-              email: user.email,
-              profile: user.profile
-                ? {
-                    id: user.profile.id,
-                    first_name: user.profile.first_name,
-                    last_name: user.profile.last_name,
-                    phone: user.profile.phone,
-                    country: user.profile.country,
-                    city: user.profile.city,
-                    state: user.profile.state,
-                    address: user.profile.address,
-                    active: user.profile.active,
-                    image: user.profile.image
-                      ? `${BASE_URL}${user.profile.image}`
-                      : null,
-                    created_at: user.profile.created_at,
-                    updated_at: user.profile.updated_at,
-                  }
+              id: productUser?.id,
+              name: productUser?.username,
+              email: productUser?.email,
+              store_name: productUser?.store_profile
+                ? productUser?.store_profile?.store_name
+                : null,
+              store_image: productUser?.store_profile
+                ? `${BASE_URL}${productUser?.store_profile?.store_image}`
                 : null,
             },
-            store_profile: user.store_profile
-              ? {
-                  store_id: user?.store_profile.id,
-                  store_name: user.store_profile.store_name,
-                  store_image: user.store_profile.store_image
-                    ? `${BASE_URL}${user.store_profile.store_image}`
-                    : null,
-                }
-              : null,
-
             category: {
-              id: category.id,
-              name: category.name,
-              image: category.image,
-              description: category.description,
+              id: productCategory?.id,
+              name: productCategory?.name,
+              slug: productCategory?.slug,
+              image: productCategory?.image
+                ? `${BASE_URL}${productCategory?.image}`
+                : null,
+              description: productCategory?.description,
             },
             brand: {
-              id: brand.id,
-              name: brand.name,
+              id: productBrand?.id,
+              name: productBrand?.name,
+              slug: productBrand?.slug,
             },
           };
         })
@@ -686,6 +905,7 @@ export class OrderController {
 
       const orderRepo = appDataSource.getRepository(Order);
       const statusHistoryRepo = appDataSource.getRepository(OrderStatusHistory);
+      const notificationRepo = appDataSource.getRepository(Notification);
 
       // Fetch the order to update
       const order = await orderRepo.findOne({
@@ -730,6 +950,14 @@ export class OrderController {
           user.email,
           order.reference_id
         );
+
+        // Create notification
+        const notification = new Notification();
+        notification.user_id = user?.id || null;
+        notification.title = "Order Confirmation";
+        notification.body = `Your order with ID ${order?.tracking_id} has been cancelled.`;
+
+        await notificationRepo.save(notification);
       }
 
       res.status(200).json({
@@ -922,6 +1150,7 @@ export class OrderController {
 
       const orderRepo = appDataSource.getRepository(Order);
       const deviceTokenRepo = appDataSource.getRepository(UserDeviceToken);
+      const notificationRepo = appDataSource.getRepository(Notification);
 
       // Fetch the order to update
       let order = await orderRepo.findOne({
@@ -954,6 +1183,14 @@ export class OrderController {
           user.email,
           updatedOrder?.tracking_id || ""
         );
+
+        // Create notification
+        const notification = new Notification();
+        notification.user_id = user?.id || null;
+        notification.title = "Order Confirmation";
+        notification.body = `Your order with ID ${order?.tracking_id} has been placed successfully.`;
+
+        await notificationRepo.save(notification);
 
         // Convert user_id to string if necessary
         const userId = user?.id?.toString();

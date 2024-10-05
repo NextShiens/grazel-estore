@@ -86,8 +86,16 @@ export class AddressController {
         return res.status(400).json(errorResponse);
       }
 
-      const { address, address_label, note, recipient_name, recipient_phone } =
-        req.body;
+      const {
+        address,
+        address_label,
+        note,
+        recipient_name,
+        recipient_phone,
+        city,
+        state,
+        pin_code,
+      } = req.body;
 
       const userId = user.id;
 
@@ -111,6 +119,9 @@ export class AddressController {
       newAddress.note = note;
       newAddress.recipient_name = recipient_name;
       newAddress.recipient_phone = recipient_phone;
+      newAddress.city = city;
+      newAddress.state = state;
+      newAddress.pin_code = pin_code;
 
       const createdAddress = await addressRepo.save(newAddress);
       res.status(201).json({
@@ -138,8 +149,16 @@ export class AddressController {
       const { id } = req.params;
       const parsedId = parseInt(id, 10);
 
-      const { address, address_label, note, recipient_name, recipient_phone } =
-        req.body;
+      const {
+        address,
+        address_label,
+        note,
+        recipient_name,
+        recipient_phone,
+        city,
+        state,
+        pin_code,
+      } = req.body;
 
       // const { name, active, description } = req.body;
       const addressRepo = appDataSource.getRepository(Address);
@@ -171,6 +190,18 @@ export class AddressController {
 
       if (recipient_phone) {
         existingAddress.recipient_phone = recipient_phone;
+      }
+
+      if (city) {
+        existingAddress.city = city;
+      }
+
+      if (state) {
+        existingAddress.state = state;
+      }
+
+      if (pin_code) {
+        existingAddress.pin_code = pin_code;
       }
 
       const updatedAddress = await addressRepo.save(existingAddress);
