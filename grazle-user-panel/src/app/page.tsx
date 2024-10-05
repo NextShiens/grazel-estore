@@ -43,6 +43,7 @@ import {
   getSingleCategoryProductsApi,
   getOfferProductsApi,
   fiftyPercentSaleProductsApi,
+  getCategoryBySlugApi,
 } from "@/apis";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import {
@@ -138,6 +139,7 @@ export default function Home() {
     (async () => {
       const { data } = await getOfferProductsApi();
       setOfferProducts(data.offers);
+      console.log(data.offers);
     })();
   }, []);
 
@@ -260,6 +262,12 @@ export default function Home() {
     fetchFiftyPercentSaleProducts();
   }, []);
 
+  const handleCategoryClick = async (category) => {
+    console.log(category, "category");
+    const { data } = await getCategoryBySlugApi(category.id);
+    dispatch(setSelectedCategory(data));
+  };
+
   async function onLiked(e: React.MouseEvent, productId: number) {
     e.stopPropagation();
     if (isPending) return;
@@ -292,12 +300,6 @@ export default function Home() {
   }
   const fn_categoryClickednew = (category) => {
     dispatch(setSelectedCategory(category));
-
-    // Store the selected category in localStorage
-    // localStorage.setItem("selectedCategory", JSON.stringify(category));
-
-    // // You can perform other actions if needed
-    // console.log("Category clicked:", category);
   };
   return (
     <>
@@ -385,21 +387,19 @@ export default function Home() {
           )} */}
         </div>
 
-        {allCategories?.map((item) => (
-          <div
-            key={item?.id}
+        {allCategories?.map((category) => (
+          <Link
+            key={category?.id}
+            href={`/search?category=${category?.id}`}
             className="w-full flex flex-col justify-center items-center mx-2 text-center"
-            onClick={() => {
-              fn_categoryClickednew(item);
-              fn_categoryClicked(item);
-            }} // This stores the clicked category
+            onClick={() => handleCategoryClick(category)}
           >
             <div className="flex justify-center hover:border border-[#FC3030] items-center lg:w-[92px] lg:h-[92px] w-[70px] h-[70px] sm:w-[70px] sm:h-[70px] border-[#F70000] rounded-full bg-[#F8F8F8]">
-              {item?.image !== null ? (
+              {category?.image !== null ? (
                 <Image
                   width={92}
                   height={92}
-                  src={item?.image}
+                  src={category?.image}
                   alt=""
                   className="rounded-full lg:w-[92px] lg:h-[92px] w-[80px] h-[80px] sm:w-[70px] sm:h-[70px]"
                 />
@@ -414,9 +414,9 @@ export default function Home() {
               )}
             </div>
             <p className="text-nowrap color-[#393A44] lg:text-[14px] text-[10px] sm:text-[12px] font-normal mt-[4px]">
-              {item?.name}
+              {category?.name}
             </p>
-          </div>
+          </Link>
         ))}
       </div>
 
@@ -665,8 +665,13 @@ export default function Home() {
                       </span>
                     </div>
                     <div className="flex gap-4 items-center mt-1">
-                      <span className="text-lg text-[#F70000] font-semibold">
-                        ₹{offerProducts[0].offer_products[0].discounted_price}
+                      <span className="text-lg text-[#F70001] font-semibold">
+                        ₹
+                        {(
+                          offerProducts[0].offer_products[0].discounted_price -
+                          offerProducts[0].offer_products[0].discounted_price *
+                            (offerProducts[0].offer.discount_value / 100)
+                        ).toFixed(2)}
                       </span>
                       <span className="text-[#949494] text-sm line-through">
                         ₹{offerProducts[0].offer_products[0].price}
@@ -779,8 +784,13 @@ export default function Home() {
                     </span>
                   </div>
                   <div className="flex gap-4 items-center">
-                    <span className="text-sm text-[#F70000] font-semibold">
-                      ₹{offerProducts[0].offer_products[0].discounted_price}
+                    <span className="text-lg text-[#F70001] font-semibold">
+                      ₹
+                      {(
+                        offerProducts[0].offer_products[0].discounted_price -
+                        offerProducts[0].offer_products[0].discounted_price *
+                          (offerProducts[0].offer.discount_value / 100)
+                      ).toFixed(2)}
                     </span>
                     <span className="text-[#949494] text-sm line-through">
                       ₹{offerProducts[0].offer_products[0].price}
