@@ -17,10 +17,9 @@ export class UserMembership {
   @ManyToOne(() => User, (user) => user.memberships)
   user: User;
 
-  @ManyToOne(
-    () => MembershipPlan,
-    (membershipPlan) => membershipPlan.user_memberships
-  )
+  @ManyToOne(() => MembershipPlan, (membershipPlan) => membershipPlan.user_memberships, {
+    onDelete: "CASCADE",
+  })
   membership_plan: MembershipPlan;
 
   @Column({ nullable: true })

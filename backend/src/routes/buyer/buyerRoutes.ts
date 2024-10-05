@@ -29,6 +29,14 @@ router.post(
     body("recipient_phone")
       .notEmpty()
       .withMessage("The recipient_phone field is required"),
+
+    body("pin_code")
+      .notEmpty()
+      .withMessage("The pin_code field is required")
+      .isLength({ min: 6, max: 6 })
+      .withMessage("The pin_code must be 6 digits long")
+      .matches(/^\d+$/)
+      .withMessage("The pin_code must be a numeric value"),
   ],
   addressesController.create
 );
@@ -49,6 +57,11 @@ router.put(
 
 const orderController = new OrderController();
 router.get("/buyer/orders", authMiddleware, orderController.getAllOrders);
+router.get(
+  "/buyer/orders-default",
+  authMiddleware,
+  orderController.getAllOrdersWithoutPagination
+);
 router.get(
   "/buyer/multi-orders/:ref_id",
   authMiddleware,
@@ -91,7 +104,7 @@ router.put(
     body("payment_status")
       .notEmpty()
       .withMessage("The payment_status field is required"),
-      body("transaction_id")
+    body("transaction_id")
       .notEmpty()
       .withMessage("The transaction_id field is required"),
   ],

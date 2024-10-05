@@ -12,6 +12,10 @@ import { Profile } from "../../entities/Profiles";
 import { StoreProfile } from "../../entities/StoreProfile";
 import { NotificationSettings } from "../../entities/NotificationSettings";
 const ms = require("ms");
+import axios from "axios";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const BASE_URL = process.env.IMAGE_PATH || "https://api.grazle.co.in/";
 
@@ -719,6 +723,107 @@ export class AuthController {
       res.status(500).json({
         success: false,
         message: "Failed to activate account",
+        error: error.message,
+      });
+    }
+  }
+
+  async googleLogin(req: Request, res: Response) {
+    const { token } = req.body;
+
+    if (!token) {
+      res.status(400).json({
+        success: false,
+        message: "Google access token is required",
+      });
+      return;
+    }
+
+    try {
+      // Verify the token with Google
+      const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+
+      const payload = ticket.getPayload();
+      if (!payload) {
+        throw new Error("Token payload is invalid");
+      }
+
+      // Extract user info from payload
+      const { sub: googleId, name, email, picture } = payload;
+
+      // Check if user exists in the database
+      const userRepository = appDataSource.getRepository(User);
+      const roleRepository = appDataSource.getRepository(Role);
+      let user = await userRepository.findOne({
+        where: { email },
+        relations: ["profile"],
+      });
+
+      if (!user) {
+        // Create a new user if not found
+        user = new User();
+        user.google_id = googleId;
+        user.username = name || "";
+        user.email = email || "";
+        user.password = ""; // No password for Google login
+        user.active = true;
+
+        // Create and associate a profile for the user
+        const userProfile = new Profile();
+        userProfile.first_name = name?.split(" ")[0] || "";
+        userProfile.last_name = name?.split(" ")[1] || "";
+        userProfile.image = picture || "";
+        user.profile = userProfile;
+
+        await appDataSource.manager.save(user);
+
+        const userRole = await roleRepository.findOne({
+          where: { name: "buyer" },
+        });
+        if (!userRole) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid role!",
+          });
+        }
+
+        const userHasRole = new UserHasRole();
+        userHasRole.user = user;
+        userHasRole.role = userRole;
+
+        await appDataSource.manager.save(user);
+        await appDataSource.manager.save(userHasRole);
+      }
+
+      const expiresInOneDay = ms("14d");
+
+      const jwt_token = jwt.sign(
+        { userId: user.id, role: "buyer" },
+        JWT_SECRET,
+        {
+          expiresIn: expiresInOneDay / 1000,
+        }
+      );
+
+      // Respond with user data and token
+      res.status(200).json({
+        success: true,
+        message: "User logged in with google successfully!",
+        token: jwt_token,
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          profile: user.profile,
+        },
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to authenticate user",
         error: error.message,
       });
     }

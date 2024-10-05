@@ -14,6 +14,7 @@ import { ProductVariant } from "../../entities/ProductVariant";
 import { Review } from "../../entities/Review";
 import { User } from "../../entities/Users";
 import { v4 as uuidv4 } from "uuid";
+import { ProductDimensions } from "../../entities/ProductDimensions";
 
 const BASE_URL = process.env.IMAGE_PATH || "https://api.grazle.co.in/";
 
@@ -96,6 +97,31 @@ const fileExists = (filePath: string): boolean => {
   }
 };
 
+const generateUniqueSku = async (): Promise<string> => {
+  const productRepository = appDataSource.getRepository(Product);
+  let isUnique = false;
+  let sku: string = ""; // Initialize with a default value
+
+  while (!isUnique) {
+    // Define the SKU format
+    const prefix = "PRD-";
+    const date = new Date().toISOString().split("T")[0].replace(/-/g, ""); // YYYYMMDD
+    const uniquePart = uuidv4().slice(0, 6).toUpperCase(); // 6-character unique part
+
+    // Combine parts to form the SKU
+    sku = `${prefix}${date}-${uniquePart}`;
+
+    // Check if SKU already exists
+    const existingProduct = await productRepository.findOne({ where: { sku } });
+
+    if (!existingProduct) {
+      isUnique = true;
+    }
+  }
+
+  return sku;
+};
+
 export class ProductController {
   //  Create Product
   async createProduct(req: Request, res: Response) {
@@ -167,6 +193,7 @@ export class ProductController {
         questions,
         answers,
         variants,
+        dimensions,
       } = req.body;
 
       const featured_image = (
@@ -202,12 +229,16 @@ export class ProductController {
         slug = `${slug}-${uuidv4().slice(0, 6)}`;
       }
 
+      // Generate unique SKU with professional format
+      const sku = await generateUniqueSku();
+
       const product = new Product();
       product.user_id = getUserId;
       product.category_id = category_id;
       product.brand_id = brand_id;
       product.title = title;
       product.slug = slug;
+      product.sku = sku;
       product.featured_image = featured_image;
       product.price = price;
       product.description = description;
@@ -222,6 +253,16 @@ export class ProductController {
       } else {
         product.discount = null;
         product.discounted_price = product.price;
+      }
+
+      // Handling Dimensions for the Product
+      if (dimensions) {
+        const productDimensions = new ProductDimensions();
+        productDimensions.length = dimensions.length;
+        productDimensions.width = dimensions.width;
+        productDimensions.height = dimensions.height;
+        productDimensions.weight = dimensions.weight;
+        product.dimensions = productDimensions; // Linking dimensions to product
       }
 
       await productRepository.save(product);
@@ -256,7 +297,17 @@ export class ProductController {
           productVariant.variant = variant.variant;
           productVariant.price = variant.price;
           productVariant.color = variant.color;
-          productVariant.measurements = variant.measurements;
+
+          // Handling Dimensions for Variants
+          if (variant.dimensions) {
+            const variantDimensions = new ProductDimensions();
+            variantDimensions.length = variant.dimensions.length;
+            variantDimensions.width = variant.dimensions.width;
+            variantDimensions.height = variant.dimensions.height;
+            variantDimensions.weight = variant.dimensions.weight;
+            productVariant.dimensions = variantDimensions;
+          }
+
           productVariant.product = product;
           return productVariant;
         });
@@ -266,7 +317,7 @@ export class ProductController {
 
       const savedProduct = await productRepository.findOne({
         where: { id: product.id },
-        relations: ["gallery", "faqs", "variants"],
+        relations: ["gallery", "faqs", "variants", "dimensions"],
       });
 
       if (savedProduct) {
@@ -309,32 +360,43 @@ export class ProductController {
       const productRepository = appDataSource.getRepository(Product);
       const reviewRepository = appDataSource.getRepository(Review);
 
-      const queryBuilder = productRepository
+      const distinctProductIds = productRepository
         .createQueryBuilder("product")
-        .leftJoinAndSelect("product.gallery", "gallery")
+        .select(["product.id", "product.created_at"])
         .where("product.user_id = :userId", { userId: user.id })
         .orderBy("product.created_at", "DESC");
 
       if (categoryId) {
-        queryBuilder.andWhere("product.category_id = :categoryId", {
+        distinctProductIds.andWhere("product.category_id = :categoryId", {
           categoryId: Number(categoryId),
         });
       }
 
       if (brandId) {
-        queryBuilder.andWhere("product.brand_id = :brandId", {
+        distinctProductIds.andWhere("product.brand_id = :brandId", {
           brandId: Number(brandId),
         });
       }
 
-      const pagination = await paginate<Product>(queryBuilder, {
+      // Paginate based on distinct product IDs
+      const paginatedIds = await paginate<{ id: number }>(distinctProductIds, {
         page: Number(page),
         limit: Number(limit),
       });
 
+      // Fetch full product details for the paginated product IDs
+      const queryBuilder = productRepository
+        .createQueryBuilder("product")
+        .leftJoinAndSelect("product.offer", "offer")
+        .leftJoinAndSelect("product.gallery", "gallery")
+        .whereInIds(paginatedIds.items.map((item) => item.id))
+        .orderBy("product.created_at", "DESC");
+
+      const products = await queryBuilder.getMany();
+
       // Fetch reviews for each product
       const productsWithReviews = await Promise.all(
-        pagination.items.map(async (product) => {
+        products.map(async (product) => {
           const reviews = await reviewRepository.find({
             where: { product_id: product.id },
             order: { created_at: "DESC" },
@@ -347,7 +409,6 @@ export class ProductController {
                 totalReviews
               : 0;
 
-          // Attach reviews, average rating, and total reviews to the product
           return {
             ...product,
             featured_image: product?.featured_image
@@ -365,13 +426,23 @@ export class ProductController {
 
       res.status(200).json({
         products: productsWithReviews,
-        total: pagination.meta.totalItems,
-        page: pagination.meta.currentPage,
-        limit: pagination.meta.itemsPerPage,
-        totalPages: pagination.meta.totalPages,
+        total: paginatedIds.meta.totalItems,
+        page: paginatedIds.meta.currentPage,
+        limit: paginatedIds.meta.itemsPerPage,
+        totalPages: paginatedIds.meta.totalPages,
         success: true,
         message: "Products retrieved successfully!",
       });
+
+      // res.status(200).json({
+      //   products: productsWithReviews,
+      //   total: pagination.meta.totalItems,
+      //   page: pagination.meta.currentPage,
+      //   limit: pagination.meta.itemsPerPage,
+      //   totalPages: pagination.meta.totalPages,
+      //   success: true,
+      //   message: "Products retrieved successfully!",
+      // });
     } catch (error: any) {
       res.status(500).json({
         success: false,
@@ -389,7 +460,13 @@ export class ProductController {
 
       const product = await productRepository.findOne({
         where: { slug },
-        relations: ["gallery", "offer", "faqs", "variants"],
+        relations: [
+          "gallery",
+          "offer",
+          "faqs",
+          "variants",
+          "product_dimensions",
+        ],
       });
 
       if (!product) {
@@ -436,16 +513,19 @@ export class ProductController {
         questions,
         answers,
         variants,
+        dimensions,
       } = req.body;
 
       const productRepository = appDataSource.getRepository(Product);
       const galleryRepository = appDataSource.getRepository(ProductsGallery);
       const faqsRepository = appDataSource.getRepository(ProductFaqs);
       const variantRepository = appDataSource.getRepository(ProductVariant);
+      const dimensionsRepository =
+        appDataSource.getRepository(ProductDimensions);
 
       const product = await productRepository.findOne({
         where: { id: parseInt(id) },
-        relations: ["gallery", "faqs", "variants"],
+        relations: ["gallery", "faqs", "variants", "dimensions"],
       });
 
       if (!product) {
@@ -538,16 +618,32 @@ export class ProductController {
 
       // Updating Variants
       if (variants && Array.isArray(variants) && variants.length > 0) {
-        const existingVariants = product.variants || [];
+        // const existingVariants = product.variants || [];
 
-        await variantRepository.remove(existingVariants);
+        // Remove existing variants
+        // await variantRepository.remove(existingVariants);
 
         const variantEntries = variants.map((variant: any) => {
           const productVariant = new ProductVariant();
           productVariant.variant = variant.variant;
           productVariant.price = variant.price;
           productVariant.color = variant.color;
-          productVariant.measurements = variant.measurements;
+
+          // Handle dimensions for variants if provided
+          if (variant.dimensions) {
+            const variantDimensions = new ProductDimensions();
+            variantDimensions.length = variant.dimensions.length;
+            variantDimensions.width = variant.dimensions.width;
+            variantDimensions.height = variant.dimensions.height;
+            variantDimensions.weight = variant.dimensions.weight;
+            // Save the dimensions if not already saved
+            variantRepository
+              .save(variantDimensions)
+              .then((savedDimensions) => {
+                productVariant.dimensions = savedDimensions;
+              });
+          }
+
           productVariant.product = product;
           return productVariant;
         });
@@ -555,9 +651,28 @@ export class ProductController {
         await variantRepository.save(variantEntries);
       }
 
+      // Updating Dimensions
+      if (dimensions) {
+        // Check if dimensions exist for the product
+        let productDimensions = product.dimensions;
+
+        if (!productDimensions) {
+          // Create new dimensions if not present
+          productDimensions = new ProductDimensions();
+          productDimensions.product = product;
+        }
+
+        productDimensions.length = dimensions.length;
+        productDimensions.width = dimensions.width;
+        productDimensions.height = dimensions.height;
+        productDimensions.weight = dimensions.weight;
+
+        await dimensionsRepository.save(productDimensions);
+      }
+
       const updatedProduct = await productRepository.findOne({
         where: { id: product.id },
-        relations: ["gallery", "faqs", "variants"],
+        relations: ["gallery", "faqs", "variants", "dimensions"],
       });
 
       if (updatedProduct) {

@@ -1,10 +1,13 @@
 import axios from "axios";
 import crypto from "crypto";
 
-const privateKey = "mkxJlC2vW5Oo9rpGQ0iR";
-const publicKey = "QAT3F5reixLjyhUZWv7C";
 
-const baseURL = "https://shipping-api.com/app/api/v1"; // Example base URL, adjust according to Shipmozo API documentation
+const publicKey = "QAT3F5reixLjyhUZWv7C";
+const privateKey = "mkxJlC2vW5Oo9rpGQ0iR";
+
+const baseURL = "https://shipping-api.com/app/api/v1"; 
+
+
 
 function generateHMACSignature(data: string, key: string): string {
   return crypto.createHmac("sha256", key).update(data).digest("hex");

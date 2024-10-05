@@ -8,6 +8,7 @@ import {
   ManyToOne,
   JoinColumn,
   ManyToMany,
+  OneToOne,
 } from "typeorm";
 import { ProductsGallery } from "./productGallery";
 import { RecentlyViewed } from "./RecentlyViewed";
@@ -19,6 +20,7 @@ import { Order } from "./Order";
 import { OrderProduct } from "./OrderProduct";
 import { ProductFaqs } from "./ProductFaqs";
 import { ProductVariant } from "./ProductVariant";
+import { ProductDimensions } from "./ProductDimensions";
 
 @Entity("products")
 export class Product {
@@ -39,6 +41,9 @@ export class Product {
 
   @Column()
   slug: string;
+
+  @Column({ type: "varchar", length: 100, unique: true })
+  sku: string;
 
   @Column({ type: "longtext", nullable: true })
   featured_image: string;
@@ -118,4 +123,9 @@ export class Product {
 
   @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product)
   orderProducts: OrderProduct[];
+
+  @OneToOne(() => ProductDimensions, (dimensions) => dimensions.product, {
+    cascade: true,
+  })
+  dimensions: ProductDimensions;
 }

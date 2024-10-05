@@ -16,6 +16,7 @@ import { In } from "typeorm";
 import { User } from "../../entities/Users";
 import { ReviewImage } from "../../entities/ReviewImage";
 import { v4 as uuidv4 } from "uuid";
+import { ProductDimensions } from "../../entities/ProductDimensions";
 
 const BASE_URL = process.env.IMAGE_PATH || "https://api.grazle.co.in/";
 
@@ -98,6 +99,31 @@ const fileExists = (filePath: string): boolean => {
   }
 };
 
+const generateUniqueSku = async (): Promise<string> => {
+  const productRepository = appDataSource.getRepository(Product);
+  let isUnique = false;
+  let sku: string = ""; // Initialize with a default value
+
+  while (!isUnique) {
+    // Define the SKU format
+    const prefix = "PRD-";
+    const date = new Date().toISOString().split("T")[0].replace(/-/g, ""); // YYYYMMDD
+    const uniquePart = uuidv4().slice(0, 6).toUpperCase(); // 6-character unique part
+
+    // Combine parts to form the SKU
+    sku = `${prefix}${date}-${uniquePart}`;
+
+    // Check if SKU already exists
+    const existingProduct = await productRepository.findOne({ where: { sku } });
+
+    if (!existingProduct) {
+      isUnique = true;
+    }
+  }
+
+  return sku;
+};
+
 export class ProductController {
   // Create Product
   async createProduct(req: Request, res: Response) {
@@ -152,6 +178,7 @@ export class ProductController {
         questions,
         answers,
         variants,
+        dimensions,
       } = req.body;
 
       const featured_image = (
@@ -178,8 +205,6 @@ export class ProductController {
 
       let slug = slugify(title, { lower: true });
 
-      // Check if a product with the same title already exists
-      // const existingProduct = await productRepository.findOne({ where: { slug } });
       const existingProduct = await productRepository.findOne({
         where: { title },
       });
@@ -189,12 +214,16 @@ export class ProductController {
         slug = `${slug}-${uuidv4().slice(0, 6)}`;
       }
 
+      // Generate unique SKU with professional format
+      const sku = await generateUniqueSku();
+
       const product = new Product();
       product.user_id = getUserId;
       product.category_id = category_id;
       product.brand_id = brand_id;
       product.title = title;
       product.slug = slug;
+      product.sku = sku;
       product.featured_image = featured_image;
       product.price = price;
       product.description = description;
@@ -209,6 +238,16 @@ export class ProductController {
       } else {
         product.discount = null;
         product.discounted_price = product.price;
+      }
+
+      // Handling Dimensions for the Product
+      if (dimensions) {
+        const productDimensions = new ProductDimensions();
+        productDimensions.length = dimensions.length;
+        productDimensions.width = dimensions.width;
+        productDimensions.height = dimensions.height;
+        productDimensions.weight = dimensions.weight;
+        product.dimensions = productDimensions; // Linking dimensions to product
       }
 
       await productRepository.save(product);
@@ -243,7 +282,17 @@ export class ProductController {
           productVariant.variant = variant.variant;
           productVariant.price = variant.price;
           productVariant.color = variant.color;
-          productVariant.measurements = variant.measurements;
+
+          // Handling Dimensions for Variants
+          if (variant.dimensions) {
+            const variantDimensions = new ProductDimensions();
+            variantDimensions.length = variant.dimensions.length;
+            variantDimensions.width = variant.dimensions.width;
+            variantDimensions.height = variant.dimensions.height;
+            variantDimensions.weight = variant.dimensions.weight;
+            productVariant.dimensions = variantDimensions;
+          }
+
           productVariant.product = product;
           return productVariant;
         });
@@ -253,28 +302,28 @@ export class ProductController {
 
       const savedProduct = await productRepository.findOne({
         where: { id: product.id },
-        relations: ["gallery", "faqs", "variants"],
+        relations: ["gallery", "faqs", "variants", "dimensions"],
       });
 
       if (savedProduct) {
-        // Attach base URL to featured_image
-        savedProduct.featured_image = `${BASE_URL}${savedProduct.featured_image}`;
+        // Concatenate BASE_URL with featured_image and gallery images
+        savedProduct.featured_image = savedProduct.featured_image
+          ? `${BASE_URL}${savedProduct.featured_image}`
+          : savedProduct.featured_image;
+        if (savedProduct.gallery) {
+          savedProduct.gallery = savedProduct.gallery.map((g) => ({
+            ...g,
+            image: `${BASE_URL}${g.image}`,
+          }));
+        }
 
-        // Attach base URL to gallery images
-        savedProduct.gallery = savedProduct.gallery.map(
-          (gallery: ProductsGallery) => {
-            gallery.image = `${BASE_URL}${gallery.image}`;
-            return gallery;
-          }
-        );
-
-        res.status(201).json({
-          product: savedProduct,
+        return res.status(201).json({
           success: true,
-          message: "Product created successfully!",
+          message: "Product created successfully",
+          data: savedProduct,
         });
       } else {
-        res.status(500).json({
+        return res.status(500).json({
           success: false,
           message: "Failed to fetch saved product details",
         });
@@ -360,7 +409,9 @@ export class ProductController {
                     phone: user.profile.phone,
                   },
                   store_profile: {
-                    store_name: user.store_profile.store_name,
+                    store_name: user?.store_profile?.store_name
+                      ? user?.store_profile?.store_name
+                      : null,
                     store_image: user.store_profile.store_image
                       ? `${BASE_URL}${user.store_profile.store_image}`
                       : null,
@@ -630,16 +681,19 @@ export class ProductController {
         questions,
         answers,
         variants,
+        dimensions,
       } = req.body;
 
       const productRepository = appDataSource.getRepository(Product);
       const galleryRepository = appDataSource.getRepository(ProductsGallery);
       const faqsRepository = appDataSource.getRepository(ProductFaqs);
       const variantRepository = appDataSource.getRepository(ProductVariant);
+      const dimensionsRepository =
+        appDataSource.getRepository(ProductDimensions);
 
       const product = await productRepository.findOne({
         where: { id: parseInt(id) },
-        relations: ["gallery", "faqs", "variants"],
+        relations: ["gallery", "faqs", "variants", "dimensions"],
       });
 
       if (!product) {
@@ -732,16 +786,32 @@ export class ProductController {
 
       // Updating Variants
       if (variants && Array.isArray(variants) && variants.length > 0) {
-        const existingVariants = product.variants || [];
+        // const existingVariants = product.variants || [];
 
-        await variantRepository.remove(existingVariants);
+        // Remove existing variants
+        // await variantRepository.remove(existingVariants);
 
         const variantEntries = variants.map((variant: any) => {
           const productVariant = new ProductVariant();
           productVariant.variant = variant.variant;
           productVariant.price = variant.price;
           productVariant.color = variant.color;
-          productVariant.measurements = variant.measurements;
+
+          // Handle dimensions for variants if provided
+          if (variant.dimensions) {
+            const variantDimensions = new ProductDimensions();
+            variantDimensions.length = variant.dimensions.length;
+            variantDimensions.width = variant.dimensions.width;
+            variantDimensions.height = variant.dimensions.height;
+            variantDimensions.weight = variant.dimensions.weight;
+            // Save the dimensions if not already saved
+            variantRepository
+              .save(variantDimensions)
+              .then((savedDimensions) => {
+                productVariant.dimensions = savedDimensions;
+              });
+          }
+
           productVariant.product = product;
           return productVariant;
         });
@@ -749,9 +819,28 @@ export class ProductController {
         await variantRepository.save(variantEntries);
       }
 
+      // Updating Dimensions
+      if (dimensions) {
+        // Check if dimensions exist for the product
+        let productDimensions = product.dimensions;
+
+        if (!productDimensions) {
+          // Create new dimensions if not present
+          productDimensions = new ProductDimensions();
+          productDimensions.product = product;
+        }
+
+        productDimensions.length = dimensions.length;
+        productDimensions.width = dimensions.width;
+        productDimensions.height = dimensions.height;
+        productDimensions.weight = dimensions.weight;
+
+        await dimensionsRepository.save(productDimensions);
+      }
+
       const updatedProduct = await productRepository.findOne({
         where: { id: product.id },
-        relations: ["gallery", "faqs", "variants"],
+        relations: ["gallery", "faqs", "variants", "dimensions"],
       });
 
       if (updatedProduct) {
