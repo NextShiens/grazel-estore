@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 import {
   updatePageLoader,
   updatePageNavigation,
@@ -18,26 +19,59 @@ import { toast } from "react-toastify";
 
 const Products = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [selectedTab, setSelectedTab] = useState("manage");
   const [allProducts, setAllProducts] = useState([]);
   const [product, setProduct] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(40);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("products"));
-  }, [dispatch]);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
 
   useEffect(() => {
-    fetchProducts();
-  }, [currentPage, selectedTab]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("products"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      fetchProducts();
+    }
+  }, [currentPage, selectedTab, loginChecked, loggedIn]);
 
   const fetchProducts = async () => {
+    if (!loggedIn) return;
     setIsLoading(true);
     try {
       const params = new URLSearchParams({
@@ -63,15 +97,43 @@ const Products = () => {
     }
   };
 
+  const fetchSearchResults = async (term) => {
+    if (!loggedIn) return;
+    setIsLoading(true);
+    try {
+      const { data } = await axiosPrivate.get(`/vendors/products?keywords=${term}`, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+
+      setSearchResults(data.results);
+    } catch (error) {
+      console.error("Failed to fetch search results", error);
+      toast.error("Failed to fetch search results");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
+    if (!loggedIn) return;
+    const term = event.target.value;
+    setSearchTerm(term);
+    if (term) {
+      fetchSearchResults(term);
+    } else {
+      setSearchResults([]);
+    }
   };
 
   const handlePageChange = (pageNumber) => {
+    if (!loggedIn) return;
     setCurrentPage(pageNumber);
   };
 
   const handleDeleteProduct = async (productId) => {
+    if (!loggedIn) return;
     try {
       await axiosPrivate.delete(`/vendor/products/${productId}`, {
         headers: {
@@ -177,6 +239,9 @@ const Products = () => {
     return pageNumbers;
   };
 
+  if (isLoading) {
+    return <Loading />;
+  }
   return (
     <>
       <Loading />
@@ -267,6 +332,7 @@ const Products = () => {
     </>
   );
 };
+
 const PageButton = ({ page, currentPage, onClick }) => (
   <button
     onClick={onClick}

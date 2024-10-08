@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useDispatch } from "react-redux";
 import { axiosPrivate } from "@/axios";
+import { useRouter } from "next/navigation";
 
 import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
@@ -15,15 +16,45 @@ import Loading from "@/components/loading";
 
 const ReferralRanking = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [topUsers, setTopUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
+
   useEffect(() => {
-    dispatch(updatePageNavigation("referral-ranking"));
-    fetchTopUsers();
-  }, [dispatch]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageNavigation("referral-ranking"));
+      fetchTopUsers();
+    }
+  }, [dispatch, loginChecked, loggedIn]);
 
   const fetchTopUsers = async () => {
+    if (!loggedIn) return;
     try {
       setIsLoading(true);
       const response = await axiosPrivate.get("/top-referrals", {
@@ -44,6 +75,10 @@ const ReferralRanking = () => {
       dispatch(updatePageLoader(false));
     }
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>

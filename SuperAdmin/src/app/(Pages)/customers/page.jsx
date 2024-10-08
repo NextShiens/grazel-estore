@@ -19,9 +19,10 @@ import { axiosPrivate } from "@/axios";
 import Loading from "@/components/loading";
 import { Modal, Button, Form, Input, Switch, DatePicker, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-
+import { useRouter } from "next/navigation";
 
 const Customers = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [selectedCustomer, setSelectedCustomer] = useState(0);
   const [allCustomers, setAllCustomers] = useState([]);
@@ -35,16 +36,47 @@ const Customers = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    getAllCustomers();
-  }, [currentPage]);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
 
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("customers"));
-  }, [dispatch]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      getAllCustomers();
+    }
+  }, [currentPage, loginChecked, loggedIn]);
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("customers"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
 
   const getAllCustomers = async () => {
+    if (!loggedIn) return;
     setIsLoading(true);
     try {
       const params = new URLSearchParams({
@@ -70,6 +102,7 @@ const Customers = () => {
   };
 
   const fn_viewDetails = (id) => {
+    if (!loggedIn) return;
     if (id === selectedCustomer) {
       return setSelectedCustomer(0);
     }
@@ -77,6 +110,7 @@ const Customers = () => {
   };
 
   const showModal = (user = null) => {
+    if (!loggedIn) return;
     setEditingUser(user);
     if (user) {
       form.setFieldsValue({
@@ -92,12 +126,14 @@ const Customers = () => {
   };
 
   const handleCancel = () => {
+    if (!loggedIn) return;
     setIsModalVisible(false);
     setEditingUser(null);
     form.resetFields();
   };
 
   const handleSubmit = async (values) => {
+    if (!loggedIn) return;
     const formData = new FormData();
 
     Object.keys(values).forEach(key => {
@@ -138,6 +174,7 @@ const Customers = () => {
   };
 
   const handleDelete = async (id) => {
+    if (!loggedIn) return;
     try {
       await axiosPrivate.delete(`/users/${id}`, {
         headers: {
@@ -151,6 +188,7 @@ const Customers = () => {
   };
 
   const handlePageChange = (pageNumber) => {
+    if (!loggedIn) return;
     setCurrentPage(pageNumber);
   };
 

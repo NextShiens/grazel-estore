@@ -24,6 +24,7 @@ import OrderTable from "../../../components/OrderTable";
 
 const Orders = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [orderId, setOrderId] = useState(0);
   const [selectedTab, setSelectedTab] = useState("all");
   const [allOrders, setOrders] = useState([]);
@@ -31,11 +32,41 @@ const Orders = () => {
   const [pendingOrder, setPendingOrder] = useState([]);
   const [completedOrder, setCompletedOrder] = useState([]);
   const orderRef = useRef([]);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
+
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("orders"));
-  }, [dispatch]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("orders"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
+
   const fn_viewDetails = (id) => {
+    if (!loggedIn) return;
     if (id === orderId) {
       return setOrderId(0);
     }
@@ -43,44 +74,50 @@ const Orders = () => {
   };
 
   useEffect(() => {
-    const getAllOrders = async () => {
-      const { data } = await axiosPrivate.get("/seller/orders", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
+    if (loginChecked && loggedIn) {
+      const getAllOrders = async () => {
+        const { data } = await axiosPrivate.get("/seller/orders", {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
 
-      orderRef.current = data?.orders;
-      setOrders(data?.orders);
-    };
-    !allOrders?.length && getAllOrders();
-  }, []);
-  useEffect(() => {
-    const allOrderArr = orderRef?.current;
-
-    if (selectedTab === "delivered") {
-      const filterOrder = orderRef?.current?.filter(
-        (item) => item.status === "completed"
-      );
-      setCompletedOrder(filterOrder);
-      // setOrders(filterOrder);
-    } else if (selectedTab === "pending") {
-      const filterOrder = orderRef?.current?.filter(
-        (item) => item.status === "new"
-      );
-      setPendingOrder(filterOrder);
-      // setOrders(filterOrder);
-    } else if (selectedTab === "cancelled") {
-      const filterOrder = orderRef?.current?.filter(
-        (item) => item.status === "cancelled"
-      );
-
-      setCancelOrder(filterOrder);
-      // setOrders(filterOrder);
-    } else {
-      setOrders(allOrderArr);
+        orderRef.current = data?.orders;
+        setOrders(data?.orders);
+      };
+      !allOrders?.length && getAllOrders();
     }
-  }, [selectedTab]);
+  }, [loginChecked, loggedIn, allOrders?.length]);
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      const allOrderArr = orderRef?.current;
+
+      if (selectedTab === "delivered") {
+        const filterOrder = orderRef?.current?.filter(
+          (item) => item.status === "completed"
+        );
+        setCompletedOrder(filterOrder);
+      } else if (selectedTab === "pending") {
+        const filterOrder = orderRef?.current?.filter(
+          (item) => item.status === "new"
+        );
+        setPendingOrder(filterOrder);
+      } else if (selectedTab === "cancelled") {
+        const filterOrder = orderRef?.current?.filter(
+          (item) => item.status === "cancelled"
+        );
+
+        setCancelOrder(filterOrder);
+      } else {
+        setOrders(allOrderArr);
+      }
+    }
+  }, [selectedTab, loginChecked, loggedIn]);
+
+  if (!loginChecked || !loggedIn) {
+    return <Loading />;
+  }
   return (
     <>
       <Loading />

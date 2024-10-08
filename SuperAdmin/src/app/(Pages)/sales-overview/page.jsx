@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updatePageLoader, updatePageNavigation } from "@/features/features";
+import { useRouter } from "next/navigation";
 
 import Loading from "@/components/loading";
 import Navbar from "@/components/navbar";
@@ -12,10 +13,44 @@ import Section3 from "./Section3";
 
 const SalesOverview = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
+
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
+
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("sales-overview"));
-  }, [dispatch]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("sales-overview"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
+
+  if (!loginChecked || !loggedIn) {
+    return <Loading />;
+  }
   return (
     <>
       <Loading />

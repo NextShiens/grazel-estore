@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import Image from "next/image";
 import axios from "axios";
 import Link from "next/link";
+import { isLoggedIn,setLoggedIn } from "@/lib/utils";
 
 import { login } from "@/lib";
 import { updatePageLoader, updateUser } from "../features/features";
@@ -61,7 +62,7 @@ export default function Home() {
             Discover endless possibilities
           </p>
           <p className="text-[60px] font-[600] text-white mt-7">
-            Explore, buy, and sell with our vibrant marketplace!
+            Explore, buy, and sell with our vibrant marketplace! 
           </p>
         </div>
         <Image alt="" src={loginImg} className="w-[400px] mb-[-50px]" />
@@ -131,14 +132,14 @@ export default function Home() {
           <p className="text-[var(--text-color-body)]">or log in with</p>
           <div className="border flex-1"></div>
         </div>
-        <div className="flex w-[400px] mt-[25px] gap-5">
+        {/* <div className="flex w-[400px] mt-[25px] gap-5">
           <button className="flex-1 bg-gray-100 h-[60px] rounded-[11px] font-[500]">
             Log in with Apple
           </button>
           <button className="flex-1 bg-gray-100 h-[60px] rounded-[11px] font-[500]">
             Log in with Google
           </button>
-        </div>
+        </div> */}
         <p className="text-center font-[500] text-[var(--text-color-body)] mt-[35px]">
           Do not Have an Account?
           <Link href="/register">

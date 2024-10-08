@@ -10,21 +10,51 @@ import { axiosPrivate } from "../../../axios/index.js";
 import Loading from "../../../components/loading.jsx";
 import Image from "next/image";
 import { IoMdCamera } from "react-icons/io";
+import { useRouter } from "next/navigation";
 
 const Settings = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [isPending, setPending] = useState(false);
   const [profile, setProfile] = useState({});
   const [profileImage, setProfileImage] = useState(null);
   const formRef = useRef(null);
   const fileInput = useRef(null);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
 
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("settings"));
-  }, [dispatch]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("settings"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
 
   const fetchProfileData = async () => {
+    if (!loggedIn) return;
     try {
       const { data } = await axiosPrivate.get(`/profile`, {
         headers: {
@@ -40,8 +70,10 @@ const Settings = () => {
   };
 
   useEffect(() => {
-    fetchProfileData();
-  }, []);
+    if (loginChecked && loggedIn) {
+      fetchProfileData();
+    }
+  }, [loginChecked, loggedIn]);
 
   const updateLocalStorage = (userData) => {
     localStorage.setItem("name", userData.username || "");
@@ -50,10 +82,12 @@ const Settings = () => {
   };
 
   const openInputFile = () => {
+    if (!loggedIn) return;
     fileInput.current.click();
   };
 
   async function onEditProfile(formdata) {
+    if (!loggedIn) return;
     try {
       setPending(true);
       const userId = localStorage.getItem("userId");
@@ -82,7 +116,9 @@ const Settings = () => {
       }, 1000);
     }
   }
+
   async function onPasswordChange(formdata) {
+    if (!loggedIn) return;
     try {
       const newPassword = formdata.get("new_password");
       const confirmPassword = formdata.get("confirm_password");
@@ -106,6 +142,10 @@ const Settings = () => {
         setPending(false);
       }, 1000);
     }
+  }
+
+  if (!loginChecked || !loggedIn) {
+    return <Loading />;
   }
 
   return (

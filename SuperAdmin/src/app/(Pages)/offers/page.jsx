@@ -7,32 +7,71 @@ import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 import { updatePageLoader, updatePageNavigation } from "@/features/features";
 import SearchOnTop from "@/components/SearchOnTop";
+import { useRouter } from "next/navigation";
 
 import editButton from "@/assets/svgs/edit-button.svg";
 import deleteButton from "@/assets/svgs/delete-button.svg";
 import Loading from "@/components/loading";
+import { axiosPrivate } from "@/axios";
 
 const Offers = () => {
-  const [offers, setOffers] = useState([]);
-  console.log(offers);
-  useEffect(() => {
-    const getAllOffers = async () => {
-      const { data } = await axiosPrivate.get("/vendor/offers", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-
-      setOffers(data); // to show data on web
-    };
-    console.log(offers);
-    getAllOffers();
-  }, []);
   const dispatch = useDispatch();
+  const router = useRouter();
+  const [offers, setOffers] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
+
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("offers"));
-  }, [dispatch]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      const getAllOffers = async () => {
+        try {
+          const { data } = await axiosPrivate.get("/vendor/offers", {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          });
+          setOffers(data); // to show data on web
+        } catch (error) {
+          console.error("Error fetching offers:", error);
+        }
+      };
+      getAllOffers();
+    }
+  }, [loginChecked, loggedIn]);
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("offers"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
+
+  if (!loginChecked || !loggedIn) {
+    return <Loading />;
+  }
 
   return (
     <>

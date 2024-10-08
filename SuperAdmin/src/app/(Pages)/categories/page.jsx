@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 
 import SearchOnTop from "@/components/SearchOnTop";
 import Loading from "@/components/loading";
@@ -21,24 +22,60 @@ import img from "@/assets/dashboard-product-1.png";
 
 const Categories = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [selectedCategory, setSelectedCategpry] = useState(0);
   const [allCategories, setAllCategories] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
+
   useEffect(() => {
-    const getAllCategories = async () => {
-      const { data } = await axiosPrivate.get("/categories", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-      setAllCategories(data?.categories);
-    };
-    getAllCategories();
+    handleCheckLogin();
   }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("categories"));
-  }, [dispatch]);
+    if (loggedIn && loginChecked) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("categories"));
+
+      const getAllCategories = async () => {
+        try {
+          const { data } = await axiosPrivate.get("/categories", {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          });
+          setAllCategories(data?.categories);
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+          toast.error("Failed to fetch categories");
+        }
+      };
+
+      getAllCategories();
+    }
+  }, [loggedIn, loginChecked, dispatch]);
+
   const fn_controlCategory = (id) => {
+    if (!loggedIn) return;
     if (id === selectedCategory) {
       return setSelectedCategpry(0);
     }
@@ -46,6 +83,7 @@ const Categories = () => {
   };
 
   async function onDelete(id) {
+    if (!loggedIn) return;
     try {
       const category = [...allCategories];
       const filterCat = category.filter((item) => item.id !== id);
@@ -57,10 +95,14 @@ const Categories = () => {
       setAllCategories(filterCat);
       return toast.success("Category Deleted");
     } catch (error) {
-      console.log("error");
+      console.error("Error deleting category:", error);
+      toast.error("Failed to delete category");
     }
   }
-  console.log(allCategories);
+
+  if (!loggedIn) {
+    return null; // Render nothing if not logged in
+  }
   return (
     <>
       <Loading />

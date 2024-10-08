@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { FaStar, FaHeart } from "react-icons/fa";
-import { calculateFinalPrice } from "@/utils/priceCalculation";
 import { updateCart } from "@/features/features";
 import { toast } from "react-toastify";
 import Cart from "@/assets/CartVector.png";
@@ -25,7 +24,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, offerId }) => {
   const [isPending, setPending] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  const { basePrice, price, discountInfo } = calculateFinalPrice(product, null);
+  const basePrice = parseFloat(product.price);
+  const discount = parseFloat(product?.offer?.discount_value || product?.discount);
+  const price = basePrice - (basePrice * discount) / 100;
+  const discountInfo = `${discount}% off`;
 
   useEffect(() => {
     async function fetchFavoriteProducts() {

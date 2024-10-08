@@ -8,9 +8,11 @@ import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 import SearchOnTop from "@/components/SearchOnTop";
 import OrderTable from "@/components/OrderTable";
+import { useRouter } from "next/navigation";
 
 const Orders = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [selectedTab, setSelectedTab] = useState("all");
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,16 +21,47 @@ const Orders = () => {
   const [totalOrders, setTotalOrders] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("orders"));
-  }, [dispatch]);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
 
   useEffect(() => {
-    fetchOrders();
-  }, [selectedTab, currentPage]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("orders"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      fetchOrders();
+    }
+  }, [selectedTab, currentPage, loginChecked, loggedIn]);
 
   const fetchOrders = async () => {
+    if (!loggedIn) return;
     setIsLoading(true);
     try {
       const params = new URLSearchParams({
@@ -58,11 +91,13 @@ const Orders = () => {
   };
 
   const handleTabChange = (tab) => {
+    if (!loggedIn) return;
     setSelectedTab(tab);
     setCurrentPage(1);
   };
 
   const handlePageChange = (pageNumber) => {
+    if (!loggedIn) return;
     setCurrentPage(pageNumber);
   };
 
@@ -156,6 +191,10 @@ const Orders = () => {
 
     return pageNumbers;
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>

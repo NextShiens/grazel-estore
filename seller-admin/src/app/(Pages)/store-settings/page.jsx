@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 import { updatePageNavigation } from "../../../features/features";
 
 import Navbar from "../../../components/navbar";
@@ -11,10 +12,49 @@ import Payment from "./payment";
 
 const StoreSettings = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [selectedTab, setSelectedTab] = useState("general");
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
+
   useEffect(() => {
-    dispatch(updatePageNavigation("store-settings"));
-  }, [dispatch]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageNavigation("store-settings"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
+
+  const handleTabChange = (tab) => {
+    if (!loggedIn) return;
+    setSelectedTab(tab);
+  };
+
+  if (!loginChecked) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />

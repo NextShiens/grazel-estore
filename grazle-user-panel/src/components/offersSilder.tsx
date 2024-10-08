@@ -8,7 +8,6 @@ import "react-multi-carousel/lib/styles.css";
 import { FaStar, FaHeart } from "react-icons/fa";
 import Cart from "@/assets/CartVector.png";
 import { updateCart } from "@/features/features";
-import { calculateFinalPrice } from "@/utils/priceCalculation";
 import { IconButton } from "@mui/material";
 import {
   favoriteProductApi,
@@ -154,10 +153,11 @@ const OfferViewSlider = React.forwardRef(({ Data }, ref) => {
           </div>
         ) : (
           offerProducts.map((product, index) => {
-            const { basePrice, price, discountInfo } = calculateFinalPrice(
-              product,
-              null
-            );
+            const basePrice = parseFloat(product.price);
+            const discount = parseFloat(product?.offer?.discount_value || product?.discount);
+            const price = basePrice - (basePrice * discount) / 100;
+            const discountInfo = `${discount}% off`;
+
             return (
               <div
                 key={index}
@@ -227,7 +227,7 @@ const OfferViewSlider = React.forwardRef(({ Data }, ref) => {
                       </p>
 
                       <p className="text-[8px] md:text-[14px] text-[#4FAD2E] ml-[12px] md:ml-[20px] font-semibold">
-                        {discountInfo}
+                        {discountInfo }
                       </p>
                     </div>
                   </div>

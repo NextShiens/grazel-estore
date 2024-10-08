@@ -10,8 +10,10 @@ import { axiosPrivate } from "@/axios";
 import Section1 from "./Section1";
 import Loading from "@/components/loading";
 import OrderTable from "@/components/OrderTable";
+import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,6 +21,31 @@ const Dashboard = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalOrders, setTotalOrders] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+
+
+
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key)
+    }
+    return null
+  }
+
+
+
+  const token = getLocalStorage("token")
+
+  
+  useEffect(() => {
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {  
+    if (!token) {
+      router.push("/login");
+    }
+  };
 
   useEffect(() => {
     dispatch(updatePageLoader(false));
@@ -28,6 +55,10 @@ const Dashboard = () => {
   useEffect(() => {
     fetchOrders();
   }, [currentPage]);
+
+
+
+
 
   const fetchOrders = async () => {
     setIsLoading(true);

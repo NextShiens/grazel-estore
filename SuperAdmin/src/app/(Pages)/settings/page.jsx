@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 
 import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
@@ -12,19 +13,50 @@ import Loading from "@/components/loading";
 
 const Settings = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [isPending, setPending] = useState(false);
 
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
+
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("settings"));
-  }, [dispatch]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("settings"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
+
   async function onPasswordChange(formdata) {
+    if (!loggedIn) return;
     try {
       const newPassword = formdata.get("new_password");
       const confirmPassword = formdata.get("confirm_password");
       setPending(true);
       if (newPassword !== confirmPassword) {
-        return toast.error("New and confirm password did'nt match");
+        return toast.error("New and confirm password didn't match");
       }
       await axios.post("/profile/change-password", formdata, {
         headers: {
@@ -34,7 +66,6 @@ const Settings = () => {
       toast.success("Password has been changed");
     } catch (error) {
       if (error?.request?.status === 400) {
-        //error.data.message
         return toast.error("Invalid old password");
       }
       toast.error("Something went wrong");
@@ -44,6 +75,11 @@ const Settings = () => {
       }, 1000);
     }
   }
+
+  if (!loginChecked || !loggedIn) {
+    return <Loading />;
+  }
+
   return (
     <>
       <Loading />

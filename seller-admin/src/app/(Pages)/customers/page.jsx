@@ -23,37 +23,66 @@ import OrderTable from "../../../components/OrderTable";
 
 const CustomerOrder = () => {
   const dispatch = useDispatch();
-  const [orderId, setOrderId] = useState(0);
-
-  const [allOrders, setOrders] = useState([]);
-
-  const orderRef = useRef([]);
   const router = useRouter();
+  const [orderId, setOrderId] = useState(0);
+  const [allOrders, setOrders] = useState([]);
+  const orderRef = useRef([]);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
 
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("customers"));
-  }, [dispatch]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("customers"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      const getAllOrders = async () => {
+        const { data } = await axiosPrivate.get("/seller/orders", {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+
+        orderRef.current = data?.orders;
+        setOrders(data?.orders);
+      };
+      !allOrders?.length && getAllOrders();
+    }
+  }, [loginChecked, loggedIn, allOrders]);
+
   const fn_viewDetails = (id) => {
+    if (!loggedIn) return;
     if (id === orderId) {
       return setOrderId(0);
     }
     setOrderId(id);
   };
-
-  useEffect(() => {
-    const getAllOrders = async () => {
-      const { data } = await axiosPrivate.get("/seller/orders", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-
-      orderRef.current = data?.orders;
-      setOrders(data?.orders);
-    };
-    !allOrders?.length && getAllOrders();
-  }, []);
 
   const uniqueCustomerOrders = allOrders.reduce((acc, order) => {
     const customerExists = acc.some(
@@ -64,6 +93,10 @@ const CustomerOrder = () => {
     }
     return acc;
   }, []);
+
+  if (!loginChecked || !loggedIn) {
+    return null;
+  }
 
   return (
     <>

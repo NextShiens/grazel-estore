@@ -79,13 +79,16 @@ const Login = () => {
 
   const handleGoogleLoginSuccess = async (credentialResponse: any) => {
     try {
+      // Create a FormData object and append the token
+      const formData = new FormData();
+      formData.append('token', credentialResponse.credential);
+  
+      // Send the FormData object in the fetch request
       const response = await fetch(`https://api.grazle.co.in/api/auth/google`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token: credentialResponse.credential }),
+        body: formData,
       });
+  
       const data = await response.json();
       if (response.ok) {
         handleLoginSuccess(data);

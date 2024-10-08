@@ -17,6 +17,7 @@ import Loading from "@/components/loading";
 
 const GrazleMedia = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,13 +25,42 @@ const GrazleMedia = () => {
   const [selectedBanner, setSelectedBanner] = useState(null);
   const [action, setAction] = useState("");
 
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
+
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("grazle-media"));
-    fetchBanners();
-  }, [dispatch]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("grazle-media"));
+      fetchBanners();
+    }
+  }, [dispatch, loginChecked, loggedIn]);
 
   const fetchBanners = async () => {
+    if (!loggedIn) return;
     try {
       const token = localStorage.getItem('token');
       const response = await axiosPrivate.get("/admin/banners", {
@@ -53,6 +83,7 @@ const GrazleMedia = () => {
   };
 
   const handleDelete = async () => {
+    if (!loggedIn) return;
     try {
       const token = localStorage.getItem('token');
       await axiosPrivate.delete(`/admin/banners/${selectedBanner.id}`, {
@@ -70,6 +101,7 @@ const GrazleMedia = () => {
   };
 
   const handleToggleActivation = async () => {
+    if (!loggedIn) return;
     const endpoint = selectedBanner.is_active ? 'deactivate' : 'activate';
 
     try {
@@ -100,10 +132,15 @@ const GrazleMedia = () => {
   };
 
   const openModal = (banner, actionType) => {
+    if (!loggedIn) return;
     setSelectedBanner(banner);
     setAction(actionType);
     setModalOpen(true);
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <>

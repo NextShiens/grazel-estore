@@ -305,7 +305,7 @@ export default function Home() {
     <>
       {/* MianSlider */}
       <div className="container lg:!w-[80%] m-auto lg:px-0 md:px-3">
-        <MainSlider />
+        <MainSlider position={1}  />
       </div>
 
       {/* Get Now Banner */}
@@ -592,11 +592,8 @@ export default function Home() {
           </>
         )}
       </div>
-      <div
-        className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto"
-        style={{ marginTop: "20px" }}
-      >
-        <Image src={banner} alt="banner" style={{ width: "100%" }} />
+      <div className="container lg:!w-[80%] m-auto lg:px-0 md:px-3">
+        <MainSlider position={2}/>
       </div>
       {/* sale product */}
       <div className="container lg:!w-[80%] md:!w-[80%] sm:!w-[80%] mx-auto flex lg:flex-row flex-col my-[24px] border border-[#E5E7EB] py-5 lg:px-6 px-1 rounded-md">
@@ -635,12 +632,7 @@ export default function Home() {
                         ) ? (
                           <FaHeart className="text-[#F70000]" />
                         ) : (
-                          <Image
-                            src={heart}
-                            alt="like"
-                            width={20}
-                            height={20}
-                          />
+                          <Image src={heart} alt="like" width={20} height={20} />
                         )}
                       </IconButton>
                     </div>
@@ -652,12 +644,8 @@ export default function Home() {
                         precision={0.5}
                         name="read-only"
                         readOnly
-                        value={Number(
-                          offerProducts[0].offer_products[0].rating
-                        )}
-                        defaultValue={Number(
-                          offerProducts[0].offer_products[0].rating
-                        )}
+                        value={Number(offerProducts[0].offer_products[0].rating)}
+                        defaultValue={Number(offerProducts[0].offer_products[0].rating)}
                         className="text-xl"
                       />
                       <span className="text-sm text-[#434343]">
@@ -668,8 +656,8 @@ export default function Home() {
                       <span className="text-lg text-[#F70001] font-semibold">
                         ₹
                         {(
-                          offerProducts[0].offer_products[0].discounted_price -
-                          offerProducts[0].offer_products[0].discounted_price *
+                          offerProducts[0].offer_products[0].price -
+                          offerProducts[0].offer_products[0].price *
                             (offerProducts[0].offer.discount_value / 100)
                         ).toFixed(2)}
                       </span>
@@ -726,7 +714,7 @@ export default function Home() {
                 </button>
               </div>
             </div>
-
+      
             {/* Small Screen Layout */}
             <div className="lg:hidden flex flex-col w-full">
               <Link
@@ -774,9 +762,7 @@ export default function Home() {
                       name="read-only"
                       readOnly
                       value={Number(offerProducts[0].offer_products[0].rating)}
-                      defaultValue={Number(
-                        offerProducts[0].offer_products[0].rating
-                      )}
+                      defaultValue={Number(offerProducts[0].offer_products[0].rating)}
                       className="text-sm"
                     />
                     <span className="text-sm text-[#434343]">
@@ -787,8 +773,8 @@ export default function Home() {
                     <span className="text-lg text-[#F70001] font-semibold">
                       ₹
                       {(
-                        offerProducts[0].offer_products[0].discounted_price -
-                        offerProducts[0].offer_products[0].discounted_price *
+                        offerProducts[0].offer_products[0].price -
+                        offerProducts[0].offer_products[0].price *
                           (offerProducts[0].offer.discount_value / 100)
                       ).toFixed(2)}
                     </span>

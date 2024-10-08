@@ -10,9 +10,11 @@ import LeftSection from "./LeftSection";
 import RightSection from "./RightSection";
 import { axiosPrivate } from "@/axios";
 import Loading from "@/components/loading";
+import { useRouter } from "next/navigation";
 
 const Products = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [allProducts, setAllProducts] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [allBrands, setAllBrands] = useState([]);
@@ -26,18 +28,49 @@ const Products = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("products"));
-  }, [dispatch]);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
 
   useEffect(() => {
-    fetchProducts();
-    fetchCategories();
-    fetchBrands();
-  }, [currentPage]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("products"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      fetchProducts();
+      fetchCategories();
+      fetchBrands();
+    }
+  }, [currentPage, loginChecked, loggedIn]);
 
   const fetchProducts = async () => {
+    if (!loggedIn) return;
     setIsLoading(true);
     try {
       const params = new URLSearchParams({
@@ -64,6 +97,7 @@ const Products = () => {
   };
 
   const fetchCategories = async () => {
+    if (!loggedIn) return;
     try {
       const { data } = await axiosPrivate.get("/categories", {
         headers: {
@@ -77,6 +111,7 @@ const Products = () => {
   };
 
   const fetchBrands = async () => {
+    if (!loggedIn) return;
     try {
       const { data } = await axiosPrivate.get("/brands", {
         headers: {
@@ -90,6 +125,7 @@ const Products = () => {
   };
 
   const handlePageChange = (pageNumber) => {
+    if (!loggedIn) return;
     setCurrentPage(pageNumber);
   };
 
@@ -202,6 +238,7 @@ const Products = () => {
   }
 
   function onFilterProduct({ category, brand }) {
+    if (!loggedIn) return;
     let allProducts = productRef.current || [];
     let filteredProduct = [];
     filteredProduct = allProducts.filter((item) => {
@@ -228,6 +265,7 @@ const Products = () => {
   }
 
   function onChangePrice(priceArray, { category, brand }) {
+    if (!loggedIn) return;
     let allProducts = productRef.current || [];
     const [lowPrice, highPrice] = priceArray;
 
@@ -253,6 +291,10 @@ const Products = () => {
       }
     });
     setAllProducts(filteredProduct);
+  }
+
+  if (isLoading) {
+    return <Loading />;
   }
 
   return (

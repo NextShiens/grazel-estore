@@ -8,9 +8,11 @@ import Navbar from '@/components/navbar';
 import Sidebar from '@/components/sidebar';
 import SearchOnTop from '@/components/SearchOnTop';
 import Loading from '@/components/loading';
+import { useRouter } from 'next/navigation';
 
 const MembershipPlans = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [plans, setPlans] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,13 +26,42 @@ const MembershipPlans = () => {
   });
   const [validationErrors, setValidationErrors] = useState({});
 
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
+
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation('membership-plans'));
-    fetchPlans();
-  }, [dispatch]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation('membership-plans'));
+      fetchPlans();
+    }
+  }, [dispatch, loginChecked, loggedIn]);
 
   const fetchPlans = async () => {
+    if (!loggedIn) return;
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/membership-plans`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -49,12 +80,14 @@ const MembershipPlans = () => {
   };
 
   const handleInputChange = (e) => {
+    if (!loggedIn) return;
     setFormData({ ...formData, [e.target.name]: e.target.value });
     // Clear validation error for this field when user starts typing
     setValidationErrors({ ...validationErrors, [e.target.name]: null });
   };
 
   const handleSubmit = async (e) => {
+    if (!loggedIn) return;
     e.preventDefault();
     setValidationErrors({});
     setError(null);
@@ -69,7 +102,6 @@ const MembershipPlans = () => {
         await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/membership-plans/${currentPlan.id}`, form, {
           headers: {
             'Content-Type': 'multipart/form-data',
-
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
@@ -77,7 +109,6 @@ const MembershipPlans = () => {
         await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/membership-plans`, form, {
           headers: {
             'Content-Type': 'multipart/form-data',
-
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
@@ -97,12 +128,14 @@ const MembershipPlans = () => {
   };
 
   const handleEdit = (plan) => {
+    if (!loggedIn) return;
     setCurrentPlan(plan);
     setFormData(plan);
     setIsModalOpen(true);
   };
 
   const handleDelete = async (id) => {
+    if (!loggedIn) return;
     if (window.confirm('Are you sure you want to delete this plan?')) {
       try {
         await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/admin/membership-plans/${id}`, {
@@ -115,6 +148,10 @@ const MembershipPlans = () => {
       }
     }
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>

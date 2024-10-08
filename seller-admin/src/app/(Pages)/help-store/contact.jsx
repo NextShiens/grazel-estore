@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MessageSentSuccessfully from "../../../components/messageSentSuccessfully";
+import { useRouter } from "next/navigation";
+import Loading from "../../../components/loading";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -10,17 +12,47 @@ const Contact = () => {
   });
   const [formSubmit, setFormSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-   const [showMessage, setShowMessage] = useState(false)
+  const [showMessage, setShowMessage] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+  const router = useRouter();
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
+
+  useEffect(() => {
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
   const handleChange = (e) => {
+    if (!loggedIn) return;
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
+
   const API_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://api.grazle.co.in/api";
 
   const fn_submit = async (e) => {
+    if (!loggedIn) return;
     e.preventDefault();
     setIsLoading(true);
 
@@ -34,11 +66,10 @@ const Contact = () => {
           },
         }
       );
-      setShowMessage(true)
+      setShowMessage(true);
 
       if (response.status === 200) {
         setFormSubmit(true);
-
         setFormData({ name: "", email: "", message: "" });
       }
     } catch (error) {
@@ -49,6 +80,9 @@ const Contact = () => {
     }
   };
 
+  if (!loginChecked || !loggedIn) {
+    return <Loading />;
+  }
   return (
     <div className="bg-white px-[20px] py-[30px] shadow-sm rounded-[8px]">
       <p className="text-[20px] font-[600]">Contact Us</p>

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 
 import { updatePageLoader, updatePageNavigation } from "@/features/features";
 import Navbar from "@/components/navbar";
@@ -19,18 +20,44 @@ import { toast } from "react-toastify";
 
 const CreditLimit = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [requests, setRequests] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
 
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("credit-limit"));
-  }, [dispatch]);
-
-  useEffect(() => {
-    fetchCreditRequests();
+    handleCheckLogin();
   }, []);
 
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loggedIn && loginChecked) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("credit-limit"));
+      fetchCreditRequests();
+    }
+  }, [loggedIn, loginChecked, dispatch]);
+
   const fetchCreditRequests = async () => {
+    if (!loggedIn) return;
     try {
       const { data } = await axiosPrivate.get("/admin/credit-limit-requests", {
         headers: {
@@ -44,6 +71,7 @@ const CreditLimit = () => {
   };
 
   const handleUpdateStatus = async (id, status) => {
+    if (!loggedIn) return;
     const validStatuses = ['completed', 'reject'];
 
     if (!validStatuses.includes(status)) {
@@ -69,6 +97,7 @@ const CreditLimit = () => {
   };
 
   const handleDeleteRequest = async (id) => {
+    if (!loggedIn) return;
     try {
       await axiosPrivate.delete(`/admin/credit-limit-requests/${id}`, {
         headers: {
@@ -80,6 +109,11 @@ const CreditLimit = () => {
       console.error("Error deleting request:", error);
     }
   };
+
+  if (!loggedIn) {
+    return null; // Render nothing if not logged in
+  }
+
 
   return (
     <>

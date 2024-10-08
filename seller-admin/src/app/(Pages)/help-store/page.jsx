@@ -13,36 +13,72 @@ import { IoSearch } from "react-icons/io5";
 import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
 import data from "../../../components/faqs";
 import Loading from "../../../components/loading";
+import { useRouter } from "next/navigation";
 
 const HelpStore = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [selectedFaqs, setSelectedFaqs] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredFaqs, setFilteredFaqs] = useState(data);
   const [showContactForm, setShowContactForm] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
 
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("help-store"));
-  }, [dispatch]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("help-store"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
 
   const handleSearch = useCallback(() => {
+    if (!loggedIn) return;
     const filtered = data.filter(
       (faq) =>
         faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
         faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredFaqs(filtered);
-  }, [searchTerm]);
+  }, [searchTerm, loggedIn]);
 
   useEffect(() => {
-    handleSearch();
-  }, [searchTerm, handleSearch]);
+    if (loginChecked && loggedIn) {
+      handleSearch();
+    }
+  }, [searchTerm, handleSearch, loginChecked, loggedIn]);
 
   const toggleAnswer = (id) => {
+    if (!loggedIn) return;
     setSelectedFaqs((prevId) => (prevId === id ? 0 : id));
   };
 
+  if (!loginChecked || !loggedIn) {
+    return <Loading />;
+  }
   return (
     <>
       <Loading />

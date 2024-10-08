@@ -18,18 +18,48 @@ import Loading from "@/components/loading";
 
 const Feedback = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [selectedTab, setSelectedTab] = useState("customer");
   const [selectedCustomer, setSelectedCustomer] = useState(0);
   const [feedbackData, setFeedbackData] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
+
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("feedback"));
-    fetchFeedbackData();
-  }, [dispatch]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("feedback"));
+      fetchFeedbackData();
+    }
+  }, [dispatch, loginChecked, loggedIn]);
 
   const fetchFeedbackData = async () => {
+    if (!loggedIn) return;
     try {
       const response = await axiosPrivate.get("/admin/customer-support", {
         headers: {
@@ -49,6 +79,7 @@ const Feedback = () => {
   };
 
   const fn_viewDetails = (id) => {
+    if (!loggedIn) return;
     if (id === selectedCustomer) {
       return setSelectedCustomer(0);
     }

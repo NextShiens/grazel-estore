@@ -20,25 +20,53 @@ const AddCategories = () => {
   const [categoryImage, setCategoryImage] = useState([]);
   const [categoryDetail, setCategoryDetail] = useState({});
   const [categoryId, setCategoryId] = useState(null);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
 
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("categories"));
+    handleCheckLogin();
+  }, []);
 
-    // Extract category ID from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const category = urlParams.get("category");
-    setCategoryId(category);
-
-    if (category) {
-      getCategory(category);
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
     } else {
-      setCategoryDetail({});
-      setCategoryImage([]);
+      setLoggedIn(true);
     }
-  }, [dispatch]);
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loggedIn && loginChecked) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("categories"));
+
+      // Extract category ID from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const category = urlParams.get("category");
+      setCategoryId(category);
+
+      if (category) {
+        getCategory(category);
+      } else {
+        setCategoryDetail({});
+        setCategoryImage([]);
+      }
+    }
+  }, [dispatch, loggedIn, loginChecked]);
 
   const getCategory = async (categoryId) => {
+    if (!loggedIn) return;
     try {
       const { data } = await axiosPrivate.get(
         `/categories/details/${categoryId}`,
@@ -59,10 +87,12 @@ const AddCategories = () => {
   };
 
   function onRemoveCategoryImg() {
+    if (!loggedIn) return;
     setCategoryImage([]);
   }
 
   async function onCreate(formData) {
+    if (!loggedIn) return;
     if (!categoryId && !categoryImage?.length) {
       setLoader(false);
       return toast.error("Please select an image");
@@ -92,6 +122,10 @@ const AddCategories = () => {
     } finally {
       setLoader(false);
     }
+  }
+
+  if (!loggedIn) {
+    return null; // Render nothing if not logged in
   }
 
   return (

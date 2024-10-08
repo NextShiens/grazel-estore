@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 
 const Sellers = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [sellerId, setSellerId] = useState(0);
   const [selectedTab, setSelectedTab] = useState("recent");
   const [sellers, setSellers] = useState([]);
@@ -25,16 +26,47 @@ const Sellers = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("sellers"));
-  }, [dispatch]);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
 
   useEffect(() => {
-    fetchSellers();
-  }, [currentPage, selectedTab]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("sellers"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      fetchSellers();
+    }
+  }, [currentPage, selectedTab, loginChecked, loggedIn]);
 
   const fetchSellers = async () => {
+    if (!loggedIn) return;
     setIsLoading(true);
     try {
       const params = new URLSearchParams({
@@ -70,11 +102,13 @@ const Sellers = () => {
   };
 
   const filterData = (value) => {
+    if (!loggedIn) return;
     setSelectedTab(value);
     setCurrentPage(1); // Reset to first page when changing tabs
   };
 
   const handlePageChange = (pageNumber) => {
+    if (!loggedIn) return;
     console.log("Changing to page:", pageNumber); // Debugging log
     setCurrentPage(pageNumber);
   };
@@ -171,11 +205,17 @@ const Sellers = () => {
   };
 
   const fn_viewDetails = (id) => {
+    if (!loggedIn) return;
     if (id === sellerId) {
       return setSellerId(0);
     }
     setSellerId(id);
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
 
   return (
     <>

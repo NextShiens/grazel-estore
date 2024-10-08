@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Carousel from "react-multi-carousel";
-import {getBannersApi} from '@/apis'
+import { getBannersApi } from '@/apis';
 import "react-multi-carousel/lib/styles.css";
 
 const responsive = {
@@ -32,10 +32,10 @@ const responsive = {
   },
 };
 
-
-const MainSlider = () => {
+const MainSlider = ({ position }) => {
   const [banners, setBanners] = useState([]);
   const [screen, setScreen] = useState("web");
+
   useEffect(() => {
     const handleResize = () => {
       const screenWidth = window.innerWidth;
@@ -52,23 +52,25 @@ const MainSlider = () => {
     };
   }, []);
 
-
   useEffect(() => {
     const fetchBanners = async () => {
       try {
         let allBanners = [];
         for (let i = 1; i <= 5; i++) {
-          const response = await getBannersApi(i,screen);
+          const response = await getBannersApi(i, screen);
           allBanners = [...allBanners, ...response.data.banners];
         }
         setBanners(allBanners);
+        console.log(allBanners, 'ufhsd sfduhisdf sdfuihisdbf');
       } catch (error) {
         console.error("Error fetching banners:", error);
       }
     };
     fetchBanners();
-  }, []);
-  
+  }, [screen]);
+
+  const filteredBanners = banners.filter(banner => banner.position === position);
+
   return (
     <div className="parent">
       <Carousel
@@ -79,7 +81,7 @@ const MainSlider = () => {
         infinite={true}
         dotListClass="custom-dot-list-style"
       >
-        {banners.map((item, index) => (
+        {filteredBanners.map((item, index) => (
           <div key={index} style={{ width: "100%" }} className="">
             <Image
               width={1920}

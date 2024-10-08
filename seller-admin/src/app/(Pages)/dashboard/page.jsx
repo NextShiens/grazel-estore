@@ -24,6 +24,7 @@ import productOne from "../../../assets/dashboard-product-1.png";
 import productTwo from "../../../assets/dashboard-product-2.png";
 import productThree from "../../../assets/dashboard-product-3.png";
 import electronicLED from "../../../assets/Electronic-LED.png";
+import { useRouter } from "next/navigation";
 
 import {
   Chart as ChartJS,
@@ -42,29 +43,61 @@ import { toast } from "react-toastify";
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const Dashboard = () => {
+  const dispatch = useDispatch();
+  const router = useRouter();
   const [allOrders, setOrders] = useState([]);
   const [returnOrders, setReturnOrders] = useState([]);
   const [revenue, setRevenue] = useState(0);
   const [totalOrdersCount, setTotalOrdersCount] = useState(0);
   const [sales, setSales] = useState(0);
-  useEffect(() => {
-    const getAllOrders = async () => {
-      const { data } = await axiosPrivate.get("/seller/orders", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
 
-      setOrders(data?.orders);
-    };
-    !allOrders?.length && getAllOrders();
-  }, [allOrders?.length]);
-  const dispatch = useDispatch();
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
 
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("dashboard"));
-  }, [dispatch]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("dashboard"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      const getAllOrders = async () => {
+        const { data } = await axiosPrivate.get("/seller/orders", {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+
+        setOrders(data?.orders);
+      };
+      !allOrders?.length && getAllOrders();
+    }
+  }, [loginChecked, loggedIn, allOrders?.length]);
+
   const data = {
     labels: ["Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan"],
     datasets: [
@@ -82,6 +115,7 @@ const Dashboard = () => {
       },
     ],
   };
+
   const options = {
     plugins: {
       legend: {
@@ -104,73 +138,85 @@ const Dashboard = () => {
 
   // total sales
   useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await axiosPrivate.get("/seller/statistics/sales", {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        });
-        setSales(data);
-        console.log(data, "sellerData");
-        toast.success("Sales data fetched successfully!");
-      } catch (error) {
-        console.error("Error fetching sales data:", error);
-        toast.error("Failed to fetch sales data.");
-      }
-    })();
-  }, []);
+    if (loginChecked && loggedIn) {
+      (async () => {
+        try {
+          const { data } = await axiosPrivate.get("/seller/statistics/sales", {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          });
+          setSales(data);
+          console.log(data, "sellerData");
+          toast.success("Sales data fetched successfully!");
+        } catch (error) {
+          console.error("Error fetching sales data:", error);
+          toast.error("Failed to fetch sales data.");
+        }
+      })();
+    }
+  }, [loginChecked, loggedIn]);
 
   useEffect(() => {
-    (async () => {
-      try {
+    if (loginChecked && loggedIn) {
+      (async () => {
+        try {
+          const { data } = await axiosPrivate.get(
+            "/seller/statistics/orders-stats",
+            {
+              headers: {
+                Authorization: "Bearer " + localStorage.getItem("token"),
+              },
+            }
+          );
+          setTotalOrdersCount(data);
+          // toast.success("Order statistics fetched successfully!");
+        } catch (error) {
+          console.error("Error fetching order statistics:", error);
+          // toast.error("Failed to fetch order statistics.");
+        }
+      })();
+    }
+  }, [loginChecked, loggedIn]);
+
+  // life time revenue
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      (async () => {
         const { data } = await axiosPrivate.get(
-          "/seller/statistics/orders-stats",
+          "/seller/statistics/lifetime-revenue",
           {
             headers: {
               Authorization: "Bearer " + localStorage.getItem("token"),
             },
           }
         );
-        setTotalOrdersCount(data);
-        // toast.success("Order statistics fetched successfully!");
-      } catch (error) {
-        console.error("Error fetching order statistics:", error);
-        // toast.error("Failed to fetch order statistics.");
-      }
-    })();
-  }, []);
-
-  // life time revenue
-  useEffect(() => {
-    (async () => {
-      const { data } = await axiosPrivate.get(
-        "/seller/statistics/lifetime-revenue",
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      );
-      console.log(data);
-      setRevenue(data);
-    })();
-  }, []);
+        console.log(data);
+        setRevenue(data);
+      })();
+    }
+  }, [loginChecked, loggedIn]);
 
   // return orders
   useEffect(() => {
-    (async () => {
-      const { data } = await axiosPrivate.get(
-        "/seller/statistics/return-stats",
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      );
-      setReturnOrders(data);
-    })();
-  }, []);
+    if (loginChecked && loggedIn) {
+      (async () => {
+        const { data } = await axiosPrivate.get(
+          "/seller/statistics/return-stats",
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          }
+        );
+        setReturnOrders(data);
+      })();
+    }
+  }, [loginChecked, loggedIn]);
+
+  if (!loginChecked || !loggedIn) {
+    return <Loading />;
+  }
 
   return (
     <>

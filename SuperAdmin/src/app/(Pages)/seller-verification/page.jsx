@@ -18,6 +18,7 @@ import tableAction from "@/assets/svgs/table-action.svg";
 
 const SellerVerification = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [selectedCustomer, setSelectedCustomer] = useState(0);
   const [allSellers, setAllSellers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,16 +27,47 @@ const SellerVerification = () => {
   const [itemsPerPage, setItemsPerPage] = useState(15);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("seller-verification"));
-  }, [dispatch]);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
 
   useEffect(() => {
-    fetchSellers();
-  }, [currentPage]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("seller-verification"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      fetchSellers();
+    }
+  }, [currentPage, loginChecked, loggedIn]);
 
   const fetchSellers = async () => {
+    if (!loggedIn) return;
     setIsLoading(true);
     try {
       const params = new URLSearchParams({
@@ -61,6 +93,7 @@ const SellerVerification = () => {
   };
 
   const fn_viewDetails = (id) => {
+    if (!loggedIn) return;
     if (id === selectedCustomer) {
       return setSelectedCustomer(0);
     }
@@ -68,6 +101,7 @@ const SellerVerification = () => {
   };
 
   const handlePageChange = (pageNumber) => {
+    if (!loggedIn) return;
     setCurrentPage(pageNumber);
   };
 
@@ -161,6 +195,10 @@ const SellerVerification = () => {
 
     return pageNumbers;
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>

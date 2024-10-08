@@ -196,21 +196,49 @@ const Offers = () => {
   const dispatch = useDispatch();
   const [offers, setOffers] = useState([]);
   const router = useRouter();
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
 
   useEffect(() => {
-    const getAllOffers = async () => {
-      const { data } = await axiosPrivate.get("/vendor/offers", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-
-      !offers?.length && setOffers(data?.data);
-    };
-    getAllOffers();
+    handleCheckLogin();
   }, []);
 
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      const getAllOffers = async () => {
+        const { data } = await axiosPrivate.get("/vendor/offers", {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+
+        !offers?.length && setOffers(data?.data);
+      };
+      getAllOffers();
+    }
+  }, [loginChecked, loggedIn, offers?.length]);
+
   async function onDelete(id) {
+    if (!loggedIn) return;
     try {
       await axiosPrivate.delete("/vendor/offers/" + id, {
         headers: {
@@ -218,16 +246,22 @@ const Offers = () => {
         },
       });
       toast.success("Offer has been deleted....");
-      setOffers(offers.filter(offer => offer.id !== id));
+      setOffers(offers.filter((offer) => offer.id !== id));
     } catch (error) {
       toast.error("something went wrong");
     }
   }
 
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("offers"));
-  }, [dispatch]);
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("offers"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
+
+  if (!loginChecked || !loggedIn) {
+    return <Loading />;
+  }
 
   return (
     <>

@@ -310,8 +310,8 @@ export default function ProductDetail() {
   const calculateDiscount = (product) => {
     if (product.offer && product.offer.active) {
       // If there's an active offer, use the offer discount
-      const offerDiscount = parseFloat(product.offer.discount_value);
-      const originalPrice = parseFloat(product.discounted_price);
+      const offerDiscount = parseFloat(product?.offer?.discount_value|| product?.price);
+      const originalPrice = parseFloat(product?.price);
       const discountedPrice = originalPrice - (originalPrice * offerDiscount / 100);
       return {
         discountPercentage: offerDiscount,
@@ -344,6 +344,8 @@ export default function ProductDetail() {
                   src={images[currentImageIndex]}
                   className="w-full h-[350px] sm:[400px] md:[400px] lg:h-[500px] cursor-pointer"
                   onClick={() => handleImageClick(images[currentImageIndex])}
+                  quality={100}
+                  priority={true}
                 />
               )}
               <div className="absolute bottom-4 left-0 right-0 flex justify-center">
@@ -370,6 +372,7 @@ export default function ProductDetail() {
                       : ""
                       }`}
                     onClick={() => setCurrentImageIndex(index)}
+                    quality={100}
                   />
                 ))}
               </div>

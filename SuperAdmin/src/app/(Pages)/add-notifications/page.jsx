@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 import SearchOnTop from "@/components/SearchOnTop";
 import Navbar from "@/components/navbar";
@@ -19,6 +20,7 @@ const options = [
 ];
 
 const AdminNotificationComponent = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     title: '',
@@ -30,23 +32,48 @@ const AdminNotificationComponent = () => {
     productId: ''
   });
   const [allCategories, setAllCategories] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
 
   useEffect(() => {
-    const getAllCategories = async () => {
-      try {
-        const { data } = await axiosPrivate.get("/categories", {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        });
-        setAllCategories(data?.categories);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-        toast.error('Failed to fetch categories');
-      }
-    };
-    getAllCategories();
+    handleCheckLogin();
   }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loggedIn && loginChecked) {
+      const getAllCategories = async () => {
+        try {
+          const { data } = await axiosPrivate.get("/categories", {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          });
+          setAllCategories(data?.categories);
+        } catch (error) {
+          console.error('Error fetching categories:', error);
+          toast.error('Failed to fetch categories');
+        }
+      };
+      getAllCategories();
+    }
+  }, [loggedIn, loginChecked]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -99,6 +126,9 @@ const AdminNotificationComponent = () => {
     });
   };
 
+  if (!loggedIn) {
+    return null; // Render nothing if not logged in
+  }
   return (
     <>
       <div className="flex flex-col min-h-screen bg-gray-50">

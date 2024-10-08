@@ -16,15 +16,47 @@ import { toast } from "react-toastify";
 import Loading from "../../../components/loading";
 import { FiLoader } from "react-icons/fi";
 import { LuLoader2 } from "react-icons/lu";
+import { useRouter } from "next/navigation";
 
 const Feedback = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [isPending, setPending] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [loginChecked, setLoginChecked] = useState(false);
+
+  const getLocalStorage = (key) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
+  };
+
+  const token = getLocalStorage("token");
+
   useEffect(() => {
-    dispatch(updatePageLoader(false));
-    dispatch(updatePageNavigation("feedback"));
-  }, [dispatch]);
+    handleCheckLogin();
+  }, []);
+
+  const handleCheckLogin = () => {
+    if (!token) {
+      setLoggedIn(false);
+      router.push("/");
+    } else {
+      setLoggedIn(true);
+    }
+    setLoginChecked(true);
+  };
+
+  useEffect(() => {
+    if (loginChecked && loggedIn) {
+      dispatch(updatePageLoader(false));
+      dispatch(updatePageNavigation("feedback"));
+    }
+  }, [dispatch, loginChecked, loggedIn]);
+
   async function onAddFeedback(formdata) {
+    if (!loggedIn) return;
     try {
       setPending(true);
       await axiosPrivate.post("/give-feedback", formdata, {
@@ -40,6 +72,10 @@ const Feedback = () => {
         setPending(false);
       }, 700);
     }
+  }
+
+  if (!loginChecked || !loggedIn) {
+    return <Loading />;
   }
 
   return (

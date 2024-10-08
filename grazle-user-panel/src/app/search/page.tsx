@@ -108,19 +108,19 @@ export default function StoreProductPage() {
     setFilters((prev) => {
       const newValue = prev[key] === value ? "" : value;
       let updatedFilters = { ...prev, [key]: newValue, page: 1 };
-
+  
       if (key === "category_id") {
         const selectedCategory = categories.find(
           (cat) => cat.id.toString() === value
         );
-        if (selectedCategory) {
-          const firstWord = selectedCategory.name.split(" ")[0];
-          updatedFilters.keyword = firstWord;
-        } else {
-          updatedFilters.keyword = prev.keyword;
-        }
+        // if (selectedCategory) {
+        //   const firstWord = selectedCategory.name.split(" ")[0];
+        //   updatedFilters.keyword = firstWord;
+        // } else {
+        //   updatedFilters.keyword = "";
+        // }
       }
-
+  
       return updatedFilters;
     });
   };
