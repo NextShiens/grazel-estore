@@ -25,6 +25,7 @@ const Products = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(40);
+  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -67,7 +68,7 @@ const Products = () => {
       fetchCategories();
       fetchBrands();
     }
-  }, [currentPage, loginChecked, loggedIn]);
+  }, [currentPage, loginChecked, loggedIn, searchTerm]); // Added searchTerm to dependencies
 
   const fetchProducts = async () => {
     if (!loggedIn) return;
@@ -76,6 +77,7 @@ const Products = () => {
       const params = new URLSearchParams({
         page: currentPage.toString(),
         limit: 40,
+        keywords: searchTerm, // Include search term in the request
       });
 
       const { data } = await axiosPrivate.get(`/admin/products?${params}`, {
@@ -127,6 +129,10 @@ const Products = () => {
   const handlePageChange = (pageNumber) => {
     if (!loggedIn) return;
     setCurrentPage(pageNumber);
+  };
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
   };
 
   const renderPageNumbers = () => {
@@ -308,13 +314,16 @@ const Products = () => {
           <div className="flex-1 mt-[30px] px-[22px]">
             <div className="flex flex-row gap-3 w-full">
               <div className="w-[90%]">
-                <SearchOnTop title="New Product" url="/products/add" />
-
+                <SearchOnTop
+                  showButton={true}
+                  navigateTo="/products/add"
+                  onSearch={handleSearch}
+                  searchTerm={searchTerm} // Pass searchTerm as a prop
+                />
               </div>
 
               <button onClick={() => window.location.href = "/products/add"}
-                className="h-[50px] rounded-[8px] bg-[#FE4242] flex items-center justify-center text-white font-[500] w-full sm:w-[150px]  disabled:border-none transition-colors hover:bg-[#E63B3B]"
-              >
+                className="h-[50px] rounded-[8px] bg-[#FE4242] flex items-center justify-center text-white font-[500] w-full sm:w-[150px]  disabled:border-none transition-colors hover:bg-[#E63B3B]">
                 Add Product
               </button>
             </div>

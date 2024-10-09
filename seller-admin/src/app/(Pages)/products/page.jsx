@@ -101,13 +101,14 @@ const Products = () => {
     if (!loggedIn) return;
     setIsLoading(true);
     try {
-      const { data } = await axiosPrivate.get(`/vendors/products?keywords=${term}`, {
+      const { data } = await axiosPrivate.get(`/vendor/products?keywords=${term}`, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
 
-      setSearchResults(data.results);
+      setSearchResults(data.products);
+      console.log(data.products,'aidjsaijsda');
     } catch (error) {
       console.error("Failed to fetch search results", error);
       toast.error("Failed to fetch search results");
@@ -282,50 +283,51 @@ const Products = () => {
               </p>
             </div>
             {selectedTab === "manage" ? (
-              <>
-                <Manage
-                  allProducts={allProducts}
-                  setSelectedTab={setSelectedTab}
-                  setProduct={setProduct}
-                  searchTerm={searchTerm}
-                  onDeleteProduct={handleDeleteProduct}
-                />
-                {allProducts.length > 0 && (
-                  <div className="flex flex-col items-center mt-4">
-                    <div className="flex justify-center items-center">
-                      <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
-                      >
-                        Previous
-                      </button>
-                      {renderPageNumbers()}
-                      <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
-                      >
-                        Next
-                      </button>
-                    </div>
-                    <div className="mt-2 text-sm text-gray-600">
-                      Page {currentPage} of {totalPages} | Total Products: {totalProducts}
-                    </div>
-                  </div>
-                )}
-              </>
-            ) : selectedTab === "createNew" ? (
-              <CreateNew setSelectedTab={setSelectedTab} />
-            ) : (
-              selectedTab === "edit" && (
-                <EditProduct
-                  product={product}
-                  setSelectedTab={setSelectedTab}
-                  onProductUpdated={fetchProducts}
-                />
-              )
-            )}
+  <>
+    <Manage
+      allProducts={searchTerm && searchResults.length > 0 ? searchResults : allProducts} // Conditionally spread search results or products
+      setSelectedTab={setSelectedTab}
+      setProduct={setProduct}
+      searchTerm={searchTerm}
+      onDeleteProduct={handleDeleteProduct}
+    />
+    {(searchTerm && searchResults.length > 0 ? searchResults : allProducts).length > 0 && (
+      <div className="flex flex-col items-center mt-4">
+        <div className="flex justify-center items-center">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          {renderPageNumbers()}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="mx-1 px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+        <div className="mt-2 text-sm text-gray-600">
+          Page {currentPage} of {totalPages} | Total Products: {totalProducts}
+        </div>
+      </div>
+    )}
+  </>
+) : selectedTab === "createNew" ? (
+  <CreateNew setSelectedTab={setSelectedTab} />
+) : (
+  selectedTab === "edit" && (
+    <EditProduct
+      product={product}
+      setSelectedTab={setSelectedTab}
+      onProductUpdated={fetchProducts}
+    />
+  )
+)}
+
           </div>
         </div>
       </div>
