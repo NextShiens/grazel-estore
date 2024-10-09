@@ -127,11 +127,11 @@ export default function Home() {
             <button className="bg-red-300 text-white rounded-[11px] h-[60px] font-[500] cursor-not-allowed" disabled>Loading...</button>
           )}
         </div>
-        <div className="flex items-center justify-center w-[400px] gap-5 mt-[25px]">
+        {/* <div className="flex items-center justify-center w-[400px] gap-5 mt-[25px]">
           <div className="border flex-1"></div>
           <p className="text-[var(--text-color-body)]">or log in with</p>
           <div className="border flex-1"></div>
-        </div>
+        </div> */}
         {/* <div className="flex w-[400px] mt-[25px] gap-5">
           <button className="flex-1 bg-gray-100 h-[60px] rounded-[11px] font-[500]">
             Log in with Apple
@@ -140,12 +140,12 @@ export default function Home() {
             Log in with Google
           </button>
         </div> */}
-        <p className="text-center font-[500] text-[var(--text-color-body)] mt-[35px]">
+        {/* <p className="text-center font-[500] text-[var(--text-color-body)] mt-[35px]">
           Do not Have an Account?
           <Link href="/register">
             <span className="text-[var(--text-color)]">Sign Up</span>
           </Link>
-        </p>
+        </p> */}
       </div>
     </form>
   );
