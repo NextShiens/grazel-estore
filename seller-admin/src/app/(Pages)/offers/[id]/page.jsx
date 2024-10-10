@@ -68,6 +68,7 @@ const EditOffer = () => {
             await axiosPrivate.put(`/vendor/offers/${offerId}`, formData, {
                 headers: {
                     Authorization: "Bearer " + localStorage.getItem("token"),
+                    "Content-Type": "multipart/form-data", 
                 },
             });
             toast.success("Offer has been updated");
@@ -119,7 +120,7 @@ const EditOffer = () => {
                             <div className="flex flex-col gap-1">
                                 <label className="text-[#777777]">Offer Title</label>
                                 <input
-                                    name="name"
+                                    name="title"
                                     required
                                     defaultValue={offer?.name}
                                     placeholder="Offer Title"
